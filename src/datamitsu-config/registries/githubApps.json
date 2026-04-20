@@ -2785,9 +2785,9 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-vscode-0.9.18-linux-x64.vsix",
-              "hash": "d4dd83d7ee40662a271b0d297ee7fd3d6f8f7dcdc023fbfd066a8b8ae7bf6190",
-              "contentType": "binary"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-unknown-linux-musl.gz",
+              "hash": "a139a80c4116d2ac94f5fe0f86b87c39f3d4314874ed78b353fba017d1afb7dc",
+              "contentType": "gz"
             },
             "musl": {
               "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-unknown-linux-musl.gz",
@@ -2797,9 +2797,9 @@
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-vscode-0.9.18-linux-arm64.vsix",
-              "hash": "b5c8f3a9b1a5c9c5438096c7bae55432fac1594fd40f863e91a87db309f2dd6b",
-              "contentType": "binary"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-unknown-linux-musl.gz",
+              "hash": "59ef8e9c7981b32ef062e5c311955eaaf534a996a5c652af361d5703d2c204d6",
+              "contentType": "gz"
             },
             "musl": {
               "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-unknown-linux-musl.gz",
