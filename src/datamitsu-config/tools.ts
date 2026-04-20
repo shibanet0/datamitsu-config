@@ -80,32 +80,32 @@ const toolPriority = [...new Set<Tool>(_toolPriority)].reduce<Record<Tool, numbe
   {} as Record<Tool, number>,
 );
 
-const isCI = facts().env.CI === "true" || facts().env.CI === "1";
+// const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 export const toolsConfig: config.MapOfTools = {
-  ...(isCI && {
-    trufflehog: {
-      name: "trufflehog",
-      // disabled: !isCI,
-      operations: {
-        lint: {
-          app: "trufflehog",
-          args: [
-            "filesystem",
-            "{root}",
-            "--only-verified",
-            "--fail",
-            "--no-update",
-            "--exclude-paths",
-            "{root}/.trufflehog-exclude-paths.txt",
-          ],
-          globs: ["**/*"],
-          scope: "repository",
-          // cacheKeyEnv: ["TRUFFLEHOG_GITHUB_TOKEN", "TRUFFLEHOG_AWS_ACCESS_KEY_ID"],
-        },
-      },
-    },
-  }),
+  // ...(isCI && {
+  //   trufflehog: {
+  //     name: "trufflehog",
+  //     // disabled: !isCI,
+  //     operations: {
+  //       lint: {
+  //         app: "trufflehog",
+  //         args: [
+  //           "filesystem",
+  //           "{root}",
+  //           "--only-verified",
+  //           "--fail",
+  //           "--no-update",
+  //           "--exclude-paths",
+  //           "{root}/.trufflehog-exclude-paths.txt",
+  //         ],
+  //         globs: ["**/*"],
+  //         scope: "repository",
+  //         // cacheKeyEnv: ["TRUFFLEHOG_GITHUB_TOKEN", "TRUFFLEHOG_AWS_ACCESS_KEY_ID"],
+  //       },
+  //     },
+  //   },
+  // }),
   cspell: {
     name: "CSpell - A Spelling Checker for Code!",
     operations: {
