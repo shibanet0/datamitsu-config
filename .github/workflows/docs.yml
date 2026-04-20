@@ -9,20 +9,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          cache: pnpm
-          node-version-file: ".node-version"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build datamitsu config
-        run: ./node_modules/.bin/datamitsu --no-auto-config exec task -- build:datamitsu-config
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Generate documentation content
         run: pnpm dm exec task -- docs:generate
