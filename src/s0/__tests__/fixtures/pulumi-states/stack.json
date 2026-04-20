@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "checkpoint": {
+    "latest": {
+      "resources": [
+        {
+          "urn": "urn:pulumi:dev::myproject::pulumi:pulumi:Stack::myproject-dev",
+          "type": "pulumi:pulumi:Stack"
+        }
+      ]
+    }
+  }
+}

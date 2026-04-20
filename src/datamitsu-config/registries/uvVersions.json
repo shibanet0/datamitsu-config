@@ -1,0 +1,42 @@
+{
+  "bandit": {
+    "packageName": "bandit",
+    "version": "1.9.4",
+    "description": "Security oriented static analyser for python code."
+  },
+  "checkov": {
+    "packageName": "checkov",
+    "version": "3.2.521",
+    "description": "Infrastructure as code static analysis"
+  },
+  "detect-secrets": {
+    "packageName": "detect-secrets",
+    "version": "1.5.0",
+    "description": "Tool for detecting secrets in the codebase"
+  },
+  "pre-commit": {
+    "packageName": "pre-commit",
+    "version": "4.5.1",
+    "description": "A framework for managing and maintaining multi-language pre-commit hooks."
+  },
+  "semgrep": {
+    "packageName": "semgrep",
+    "version": "1.159.0",
+    "description": "Lightweight static analysis for many languages. Find bug variants with patterns that look like source code."
+  },
+  "sqlfluff": {
+    "packageName": "sqlfluff",
+    "version": "4.1.0",
+    "description": "The SQL Linter for Humans"
+  },
+  "yamllint": {
+    "packageName": "yamllint",
+    "version": "1.38.0",
+    "description": "A linter for YAML files."
+  },
+  "zensical": {
+    "packageName": "zensical",
+    "version": "0.0.33",
+    "description": "A modern static site generator built by the creators of Material for MkDocs"
+  }
+}

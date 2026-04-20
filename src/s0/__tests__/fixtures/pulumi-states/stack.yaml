@@ -1,0 +1,6 @@
+checkpoint:
+  latest:
+    resources:
+      - type: "pulumi:pulumi:Stack"
+        urn: "urn:pulumi:dev::myproject::pulumi:pulumi:Stack::myproject-dev"
+version: 3

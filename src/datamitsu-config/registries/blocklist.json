@@ -1,0 +1,253 @@
+{
+  "fnm": {
+    "lint-staged": {
+      "reason": "Outdated pre-commit tool, replaced by lefthook's built-in staged file filtering",
+      "replacement": "Use lefthook with {staged_files} placeholder for running tools on staged files"
+    },
+    "husky": {
+      "reason": "Legacy git hooks manager with complex setup, replaced by lefthook",
+      "replacement": "Use lefthook (faster, simpler configuration, better cross-platform support)"
+    }
+  },
+  "uv": {
+    "black": {
+      "reason": "Replaced by Ruff formatter (10-100x faster)",
+      "replacement": "ruff format"
+    },
+    "flake8": {
+      "reason": "Replaced by Ruff linter (10-100x faster)",
+      "replacement": "ruff check"
+    },
+    "isort": {
+      "reason": "Replaced by Ruff import sorter",
+      "replacement": "ruff check --select I"
+    },
+    "pyupgrade": {
+      "reason": "Replaced by Ruff (UP rules)",
+      "replacement": "ruff check --select UP"
+    },
+    "autoflake": {
+      "reason": "Replaced by Ruff (removes unused imports and variables)",
+      "replacement": "ruff check --select F401,F841"
+    },
+    "yesqa": {
+      "reason": "Replaced by Ruff (removes unnecessary noqa comments)",
+      "replacement": "ruff check with --fix"
+    },
+    "eradicate": {
+      "reason": "Replaced by Ruff (ERA rules - finds commented-out code)",
+      "replacement": "ruff check --select ERA"
+    },
+    "pydocstyle": {
+      "reason": "Replaced by Ruff (D rules - docstring conventions)",
+      "replacement": "ruff check --select D"
+    },
+    "pep8-naming": {
+      "reason": "Replaced by Ruff (N rules - PEP 8 naming conventions)",
+      "replacement": "ruff check --select N"
+    },
+    "flake8-2020": {
+      "reason": "Replaced by Ruff (YTT rules - flake8-2020 plugin)",
+      "replacement": "ruff check --select YTT"
+    },
+    "flake8-annotations": {
+      "reason": "Replaced by Ruff (ANN rules - type annotation checks)",
+      "replacement": "ruff check --select ANN"
+    },
+    "flake8-async": {
+      "reason": "Replaced by Ruff (ASYNC rules - async/await best practices)",
+      "replacement": "ruff check --select ASYNC"
+    },
+    "flake8-bandit": {
+      "reason": "Replaced by Ruff (S rules - security checks)",
+      "replacement": "ruff check --select S"
+    },
+    "flake8-blind-except": {
+      "reason": "Replaced by Ruff (BLE rules - blind except checks)",
+      "replacement": "ruff check --select BLE"
+    },
+    "flake8-boolean-trap": {
+      "reason": "Replaced by Ruff (FBT rules - boolean trap detection)",
+      "replacement": "ruff check --select FBT"
+    },
+    "flake8-bugbear": {
+      "reason": "Replaced by Ruff (B rules - bugbear checks)",
+      "replacement": "ruff check --select B"
+    },
+    "flake8-builtins": {
+      "reason": "Replaced by Ruff (A rules - builtin shadowing checks)",
+      "replacement": "ruff check --select A"
+    },
+    "flake8-commas": {
+      "reason": "Replaced by Ruff (COM rules - trailing comma checks)",
+      "replacement": "ruff check --select COM"
+    },
+    "flake8-comprehensions": {
+      "reason": "Replaced by Ruff (C4 rules - comprehension checks)",
+      "replacement": "ruff check --select C4"
+    },
+    "flake8-copyright": {
+      "reason": "Replaced by Ruff (CPY rules - copyright notice checks)",
+      "replacement": "ruff check --select CPY"
+    },
+    "flake8-datetimez": {
+      "reason": "Replaced by Ruff (DTZ rules - datetime timezone checks)",
+      "replacement": "ruff check --select DTZ"
+    },
+    "flake8-debugger": {
+      "reason": "Replaced by Ruff (T10 rules - debugger statement detection)",
+      "replacement": "ruff check --select T10"
+    },
+    "flake8-django": {
+      "reason": "Replaced by Ruff (DJ rules - Django best practices)",
+      "replacement": "ruff check --select DJ"
+    },
+    "flake8-docstrings": {
+      "reason": "Replaced by Ruff (D rules - docstring conventions)",
+      "replacement": "ruff check --select D"
+    },
+    "flake8-eradicate": {
+      "reason": "Replaced by Ruff (ERA rules - commented-out code detection)",
+      "replacement": "ruff check --select ERA"
+    },
+    "flake8-errmsg": {
+      "reason": "Replaced by Ruff (EM rules - exception message checks)",
+      "replacement": "ruff check --select EM"
+    },
+    "flake8-executable": {
+      "reason": "Replaced by Ruff (EXE rules - executable file checks)",
+      "replacement": "ruff check --select EXE"
+    },
+    "flake8-fixme": {
+      "reason": "Replaced by Ruff (FIX rules - FIXME/TODO comment detection)",
+      "replacement": "ruff check --select FIX"
+    },
+    "flake8-future-annotations": {
+      "reason": "Replaced by Ruff (FA rules - __future__ annotations checks)",
+      "replacement": "ruff check --select FA"
+    },
+    "flake8-gettext": {
+      "reason": "Replaced by Ruff (INT rules - gettext string checks)",
+      "replacement": "ruff check --select INT"
+    },
+    "flake8-implicit-str-concat": {
+      "reason": "Replaced by Ruff (ISC rules - implicit string concatenation)",
+      "replacement": "ruff check --select ISC"
+    },
+    "flake8-import-conventions": {
+      "reason": "Replaced by Ruff (ICN rules - import naming conventions)",
+      "replacement": "ruff check --select ICN"
+    },
+    "flake8-logging": {
+      "reason": "Replaced by Ruff (LOG rules - logging best practices)",
+      "replacement": "ruff check --select LOG"
+    },
+    "flake8-logging-format": {
+      "reason": "Replaced by Ruff (G rules - logging format string checks)",
+      "replacement": "ruff check --select G"
+    },
+    "flake8-no-pep420": {
+      "reason": "Replaced by Ruff (INP rules - checks for __init__.py presence)",
+      "replacement": "ruff check --select INP"
+    },
+    "flake8-pie": {
+      "reason": "Replaced by Ruff (PIE rules - miscellaneous lints)",
+      "replacement": "ruff check --select PIE"
+    },
+    "flake8-print": {
+      "reason": "Replaced by Ruff (T20 rules - print statement detection)",
+      "replacement": "ruff check --select T20"
+    },
+    "flake8-pyi": {
+      "reason": "Replaced by Ruff (PYI rules - .pyi stub file checks)",
+      "replacement": "ruff check --select PYI"
+    },
+    "flake8-pytest-style": {
+      "reason": "Replaced by Ruff (PT rules - pytest style checks)",
+      "replacement": "ruff check --select PT"
+    },
+    "flake8-quotes": {
+      "reason": "Replaced by Ruff (Q rules - quote style checks)",
+      "replacement": "ruff check --select Q"
+    },
+    "flake8-raise": {
+      "reason": "Replaced by Ruff (RSE rules - raise statement checks)",
+      "replacement": "ruff check --select RSE"
+    },
+    "flake8-return": {
+      "reason": "Replaced by Ruff (RET rules - return statement checks)",
+      "replacement": "ruff check --select RET"
+    },
+    "flake8-self": {
+      "reason": "Replaced by Ruff (SLF rules - private member access checks)",
+      "replacement": "ruff check --select SLF"
+    },
+    "flake8-simplify": {
+      "reason": "Replaced by Ruff (SIM rules - code simplification suggestions)",
+      "replacement": "ruff check --select SIM"
+    },
+    "flake8-slots": {
+      "reason": "Replaced by Ruff (SLOT rules - __slots__ usage checks)",
+      "replacement": "ruff check --select SLOT"
+    },
+    "flake8-super": {
+      "reason": "Replaced by Ruff (checks for super() usage)",
+      "replacement": "ruff check"
+    },
+    "flake8-tidy-imports": {
+      "reason": "Replaced by Ruff (TID rules - tidy imports checks)",
+      "replacement": "ruff check --select TID"
+    },
+    "flake8-todos": {
+      "reason": "Replaced by Ruff (TD rules - TODO comment formatting)",
+      "replacement": "ruff check --select TD"
+    },
+    "flake8-type-checking": {
+      "reason": "Replaced by Ruff (TC rules - type-checking block imports)",
+      "replacement": "ruff check --select TC"
+    },
+    "flake8-use-pathlib": {
+      "reason": "Replaced by Ruff (PTH rules - pathlib usage suggestions)",
+      "replacement": "ruff check --select PTH"
+    },
+    "flake8-unused-arguments": {
+      "reason": "Replaced by Ruff (ARG rules - unused argument detection)",
+      "replacement": "ruff check --select ARG"
+    },
+    "flynt": {
+      "reason": "Replaced by Ruff (FLY rules - f-string conversion)",
+      "replacement": "ruff check --select FLY"
+    },
+    "mccabe": {
+      "reason": "Replaced by Ruff (C90 rules - cyclomatic complexity)",
+      "replacement": "ruff check --select C90"
+    },
+    "pandas-vet": {
+      "reason": "Replaced by Ruff (PD rules - pandas best practices)",
+      "replacement": "ruff check --select PD"
+    },
+    "perflint": {
+      "reason": "Replaced by Ruff (PERF rules - performance anti-patterns)",
+      "replacement": "ruff check --select PERF"
+    },
+    "pygrep-hooks": {
+      "reason": "Replaced by Ruff (PGH rules - common patterns)",
+      "replacement": "ruff check --select PGH"
+    },
+    "tombi": {
+      "reason": "Python wrapper is unnecessary. Use native Tombi binary from GitHub instead",
+      "replacement": "Use tombi from GitHub releases (tombi-toml/tombi) as native binary"
+    },
+    "tryceratops": {
+      "reason": "Replaced by Ruff (TRY rules - exception handling best practices)",
+      "replacement": "ruff check --select TRY"
+    }
+  },
+  "github": {
+    "taplo": {
+      "reason": "Replaced by Tombi (TOML toolkit). Use native Tombi binary instead",
+      "replacement": "Use tombi from GitHub releases (native Rust binary)"
+    }
+  },
+  "runtimes": {}
+}

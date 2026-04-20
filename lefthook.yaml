@@ -1,0 +1,30 @@
+commit-msg:
+  commands:
+    lint commit message:
+      run: "node bin/datamitsu.js exec commitlint -- --edit {1}"
+post-checkout:
+  commands:
+    init datamitsu:
+      priority: 2
+      run: node bin/datamitsu.js init
+    install deps:
+      priority: 1
+      run: pnpm i
+pre-commit:
+  commands:
+    datamitsu-check:
+      priority: 3
+      run: node bin/datamitsu.js check --file-scoped
+      stage_fixed: true
+    docs-generate:
+      priority: 1
+      run: node bin/datamitsu.js exec task -- docs:generate
+      stage_fixed: true
+    test:
+      priority: 4
+      run: pnpm test
+    validate-blocklist:
+      priority: 2
+      run: node bin/datamitsu.js exec task -- validate:blocklist
+      stage_fixed: false
+  parallel: false

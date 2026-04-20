@@ -1,0 +1,75 @@
+[project]
+site_name = "@shibanet0 / datamitsu-config"
+site_description = "Shared configuration package for datamitsu with 79+ managed development tools"
+site_author = "Alexander Svinarev <shibanet0@gmail.com>"
+site_url = "https://datamitsu-config.shibanet0.com/"
+copyright = "Copyright &copy; 2026 Alexander Svinarev (shibanet0)"
+repo_url = "https://github.com/shibanet0/datamitsu-config"
+repo_name = "shibanet0/datamitsu-config"
+
+docs_dir = "docs"
+site_dir = "site"
+exclude_docs = ["plans/", "overrides/"]
+extra_css = ["assets/stylesheets/extra.css"]
+
+[project.theme]
+language = "en"
+custom_dir = "docs/overrides"
+logo = "https://datamitsu.com/img/icon.png"
+favicon = "https://datamitsu.com/img/icon.png"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+primary = "green"
+accent = "green"
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+primary = "green"
+accent = "green"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+primary = "green"
+accent = "green"
+
+[project.theme.features]
+"announce.dismiss" = true
+"content.code.annotate" = true
+"content.code.copy" = true
+"navigation.expand" = true
+"navigation.instant" = true
+"navigation.sections" = true
+"navigation.top" = true
+"search.highlight" = true
+"search.suggest" = true
+
+# See: docs/overrides/partials/integrations/analytics/custom.html
+[project.extra.analytics]
+provider = "custom"
+
+# Navigation structure
+[[project.nav]]
+Home = "index.md"
+
+[[project.nav]]
+"Getting Started" = "get-started/usage.md"
+
+[[project.nav]]
+Reference = [
+  { Apps = "reference/apps.md" },
+  { Tools = "reference/tools.md" },
+  { "Project Types" = "reference/project-types.md" },
+  { "Init Configs" = "reference/init-configs.md" },
+  { "TypeScript Configurations" = "reference/tsconfig.md" },
+]

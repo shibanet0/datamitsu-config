@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1
+
+# Base datamitsu image (version locked to dependency in package.json)
+FROM ghcr.io/datamitsu/datamitsu:0.0.4-rc.1
+
+# Set working directory for config
+WORKDIR /opt/datamitsu-config
+
+# Copy pre-built config from artifacts (built in CI)
+COPY datamitsu.config.js ./
+
+# Pre-install all tools defined in config
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js init --all
+
+# OCI labels (dynamic labels injected via docker/metadata-action)
+LABEL org.opencontainers.image.title="datamitsu-config" \
+      org.opencontainers.image.description="Datamitsu configuration package with pre-installed development tools" \
+      org.opencontainers.image.vendor="shibanet0" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/shibanet0/datamitsu-config" \
+      org.opencontainers.image.url="https://github.com/shibanet0/datamitsu-config"
+
+USER datamitsu
+WORKDIR /workspace
+
+ENTRYPOINT ["/usr/local/bin/datamitsu", "--before-config", "/opt/datamitsu-config/datamitsu.config.js"]
+CMD ["--help"]

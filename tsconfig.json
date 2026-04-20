@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig/shared-library.json",
+  "compilerOptions": {
+    "declarationMap": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["node"],
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+  },
+  "include": ["src", "src/**/*.json", ".datamitsu/datamitsu.config.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

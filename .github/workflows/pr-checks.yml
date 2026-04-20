@@ -1,0 +1,104 @@
+jobs:
+  build-verify:
+    name: Build and Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Set PR version
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_VERSION="0.0.0-pr.${PR_NUMBER}"
+          node -e "
+            const pkg = require('./package.json');
+            pkg.version = '$PR_VERSION';
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+          echo "📦 PR version: $PR_VERSION"
+
+      - name: Bootstrap build (datamitsu.config.js)
+        run: |
+          ./node_modules/.bin/datamitsu --no-auto-config exec task -- build:datamitsu-config
+          echo "✓ Built datamitsu.config.js"
+          ls -lh datamitsu.config.js
+
+      - name: Run full build
+        run: pnpm build
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run lint
+        run: pnpm dm check
+
+      - name: Validate blocklist
+        run: pnpm dm exec task -- validate:blocklist
+
+      - name: Test npm pack
+        run: |
+          npm pack
+          echo "📦 Packed tarball:"
+          ls -lh *.tgz
+          echo "📋 Verifying contents:"
+          tar -tzf *.tgz | grep -E "(datamitsu.config.js|dist/)" || {
+            echo "❌ Required files not found in tarball"
+            exit 1
+          }
+          echo "✅ Tarball contains required files"
+          rm *.tgz
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-artifacts
+          path: |
+            datamitsu.config.js
+            datamitsu.config.d.ts
+            dist/
+            package.json
+            bin/
+            tsconfig/
+          retention-days: 1
+
+  docker-build:
+    name: Docker Build Test
+    needs: [build-verify]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: pr-artifacts
+          path: .
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v7
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: datamitsu-config:pr-${{ github.event.pull_request.number }}${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+    strategy:
+      matrix:
+        variant: [debian, alpine]
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]

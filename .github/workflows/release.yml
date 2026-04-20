@@ -1,0 +1,389 @@
+jobs:
+  build:
+    if: |
+      always() &&
+      !cancelled() &&
+      (needs.validate-stable.result == 'success' || needs.generate-unstable-version.result == 'success')
+    name: Build Release
+    needs: [determine-release-type, validate-stable, generate-unstable-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Sync version to package.json
+        run: |
+          VERSION=${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
+          node -e "
+            const pkg = require('./package.json');
+            pkg.version = '$VERSION';
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+          echo "📦 Version set to: $VERSION"
+          grep '"version":' package.json
+
+      - name: Bootstrap build (datamitsu.config.js)
+        run: |
+          ./node_modules/.bin/datamitsu --no-auto-config exec task -- build:datamitsu-config
+          echo "✓ Built datamitsu.config.js"
+          ls -lh datamitsu.config.js
+
+      - name: Run full build
+        run: pnpm build
+
+      - name: Verify critical files exist
+        run: |
+          test -f datamitsu.config.js || { echo "❌ datamitsu.config.js missing"; exit 1; }
+          test -f datamitsu.config.d.ts || { echo "❌ datamitsu.config.d.ts missing"; exit 1; }
+          test -d dist/ || { echo "❌ dist/ directory missing"; exit 1; }
+          echo "✅ All critical files present"
+
+      - name: Test npm pack
+        run: |
+          npm pack
+          echo "📦 Packed tarball:"
+          ls -lh *.tgz
+          echo "📋 Contents:"
+          tar -tzf *.tgz | grep -E "(datamitsu.config.js|dist/)" | head -20
+          rm *.tgz
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-artifacts
+          path: |
+            datamitsu.config.js
+            datamitsu.config.d.ts
+            dist/
+            package.json
+            bin/
+            tsconfig/
+          retention-days: 1
+
+  determine-release-type:
+    name: Determine Release Type
+    outputs:
+      checkout_ref: ${{ steps.determine.outputs.checkout_ref }}
+      is_stable: ${{ steps.determine.outputs.is_stable }}
+      is_unstable: ${{ steps.determine.outputs.is_unstable }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: determine
+        name: Determine release type
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            # Tag push - always stable
+            echo "is_stable=true" >> $GITHUB_OUTPUT
+            echo "is_unstable=false" >> $GITHUB_OUTPUT
+            echo "checkout_ref=${{ github.ref }}" >> $GITHUB_OUTPUT
+            echo "📦 Detected: Tag push (stable release)"
+          elif [[ "${{ github.event.inputs.release_type }}" == "stable" ]]; then
+            # Manual stable release
+            VERSION_TAG="${{ github.event.inputs.version }}"
+            if [[ -z "$VERSION_TAG" ]]; then
+              echo "❌ Error: version input is required for manual stable releases"
+              exit 1
+            fi
+            echo "is_stable=true" >> $GITHUB_OUTPUT
+            echo "is_unstable=false" >> $GITHUB_OUTPUT
+            echo "checkout_ref=$VERSION_TAG" >> $GITHUB_OUTPUT
+            echo "📦 Detected: Manual stable release ($VERSION_TAG)"
+          else
+            # Manual unstable release
+            echo "is_stable=false" >> $GITHUB_OUTPUT
+            echo "is_unstable=true" >> $GITHUB_OUTPUT
+            echo "checkout_ref=${{ github.event.inputs.ref }}" >> $GITHUB_OUTPUT
+            echo "📦 Detected: Unstable release"
+          fi
+
+  generate-unstable-version:
+    if: |
+      always() &&
+      needs.determine-release-type.outputs.is_unstable == 'true'
+    name: Generate Unstable Version
+    needs: determine-release-type
+    outputs:
+      short_sha: ${{ steps.version.outputs.short_sha }}
+      tag_name: ${{ steps.version.outputs.tag_name }}
+      version: ${{ steps.version.outputs.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - id: version
+        name: Generate unstable version
+        run: |
+          DATE=$(date +%Y%m%d)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="0.0.0-unstable.${DATE}.${SHORT_SHA}"
+          TAG_NAME="unstable-${DATE}-${SHORT_SHA}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "📦 npm version: $VERSION"
+          echo "🏷️  git tag: $TAG_NAME"
+
+  publish-docker:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build.result == 'success'
+    name: Publish Docker Images
+    needs: [build, determine-release-type, validate-stable, generate-unstable-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: release-artifacts
+          path: .
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+          registry: ghcr.io
+          username: ${{ github.actor }}
+
+      - id: image-name
+        name: Determine image name
+        run: |
+          IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
+          if [[ "$IS_STABLE" == "true" ]]; then
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> $GITHUB_OUTPUT
+            echo "🐳 Image: ghcr.io/shibanet0/datamitsu-config (stable)"
+          else
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> $GITHUB_OUTPUT
+            echo "🐳 Image: ghcr.io/shibanet0/datamitsu-config-unstable (unstable)"
+          fi
+
+      - id: meta
+        name: Generate Docker metadata
+        uses: docker/metadata-action@v6
+        with:
+          flavor: |
+            suffix=${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+          images: ${{ steps.image-name.outputs.name }}
+          labels: |
+            org.opencontainers.image.version=${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
+          tags: |
+            type=semver,pattern={{version}},enable=${{ needs.determine-release-type.outputs.is_stable == 'true' }},value=${{ needs.validate-stable.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ needs.determine-release-type.outputs.is_stable == 'true' }},value=${{ needs.validate-stable.outputs.version }}
+            type=raw,value=stable,enable=${{ needs.determine-release-type.outputs.is_stable == 'true' }}
+            type=raw,value=latest,enable=${{ needs.determine-release-type.outputs.is_stable == 'true' && !contains(needs.validate-stable.outputs.version, '-rc.') && !contains(needs.validate-stable.outputs.version, '-alpha.') }}
+            type=raw,value=unstable,enable=${{ needs.determine-release-type.outputs.is_unstable == 'true' }}
+            type=raw,value=${{ needs.generate-unstable-version.outputs.tag_name }},enable=${{ needs.determine-release-type.outputs.is_unstable == 'true' }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+    strategy:
+      matrix:
+        variant: [debian, alpine]
+  publish-github:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build.result == 'success' &&
+      needs.determine-release-type.outputs.is_stable == 'true'
+    name: Publish to GitHub Releases
+    needs: [build, determine-release-type, validate-stable, generate-unstable-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: release-artifacts
+          path: .
+
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          body: |
+            ## Installation
+
+            ```bash
+            npm install @shibanet0/datamitsu-config@${{ needs.validate-stable.outputs.version }}
+            ```
+
+            ## Docker Images
+
+            ```bash
+            # Debian
+            docker pull ghcr.io/shibanet0/datamitsu-config:${{ needs.validate-stable.outputs.version }}
+
+            # Alpine
+            docker pull ghcr.io/shibanet0/datamitsu-config:${{ needs.validate-stable.outputs.version }}-alpine
+            ```
+
+            ## Changes
+
+            See commit history for details.
+          draft: false
+          files: |
+            datamitsu.config.js
+            datamitsu.config.d.ts
+          name: Release ${{ needs.validate-stable.outputs.version }}
+          prerelease: ${{ contains(needs.validate-stable.outputs.version, '-rc.') || contains(needs.validate-stable.outputs.version, '-alpha.') }}
+          tag_name: ${{ github.ref_name }}
+  publish-npm:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build.result == 'success'
+    name: Publish to npm
+    needs: [build, determine-release-type, validate-stable, generate-unstable-version]
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+        with:
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: release-artifacts
+          path: .
+
+      - id: npm-tag
+        name: Determine npm tag
+        run: |
+          IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
+          if [[ "$IS_STABLE" == "true" ]]; then
+            VERSION="${{ needs.validate-stable.outputs.version }}"
+            if [[ "$VERSION" == *"-rc."* ]] || [[ "$VERSION" == *"-alpha."* ]]; then
+              echo "tag=next" >> $GITHUB_OUTPUT
+              echo "📦 npm tag: next (prerelease)"
+            else
+              echo "tag=latest" >> $GITHUB_OUTPUT
+              echo "📦 npm tag: latest"
+            fi
+          else
+            echo "tag=unstable" >> $GITHUB_OUTPUT
+            echo "📦 npm tag: unstable"
+          fi
+
+      - env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        name: Publish to npm
+        run: |
+          NPM_TAG="${{ steps.npm-tag.outputs.tag }}"
+          echo "Publishing with tag: $NPM_TAG"
+          npm publish --access public --provenance --tag $NPM_TAG
+
+  validate-stable:
+    if: |
+      always() &&
+      needs.determine-release-type.outputs.is_stable == 'true'
+    name: Validate Stable Release
+    needs: determine-release-type
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+
+      - name: Verify tag is on main branch
+        run: |
+          TAG_REF="${{ needs.determine-release-type.outputs.checkout_ref }}"
+          TAG_COMMIT=$(git rev-parse $TAG_REF)
+          if ! git branch -r --contains $TAG_COMMIT | grep -q 'origin/main'; then
+            echo "❌ Error: Tag $TAG_REF is not on main branch"
+            exit 1
+          fi
+          echo "✅ Tag is on main branch"
+
+      - id: version
+        name: Extract version from tag
+        run: |
+          TAG_REF="${{ needs.determine-release-type.outputs.checkout_ref }}"
+          VERSION="${TAG_REF#refs/tags/v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Stable version: $VERSION"
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      ref:
+        default: "main"
+        description: "Branch or commit to build (unstable only)"
+        required: false
+      release_type:
+        default: unstable
+        description: "Release type"
+        options:
+          - unstable
+          - stable
+        required: true
+        type: choice
+      skip_github_release:
+        default: true
+        description: "Skip GitHub release creation (recommended for unstable)"
+        required: false
+
+        type: boolean
+      version:
+        description: "Version tag for manual stable (e.g., v1.0.0)"
+        required: false
+permissions:
+  contents: write
+  id-token: write
+  packages: write

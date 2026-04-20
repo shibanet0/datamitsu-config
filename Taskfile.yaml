@@ -1,0 +1,198 @@
+tasks:
+  # ──────────────────────────────────────────────
+  # Build
+  # ──────────────────────────────────────────────
+
+  build:
+    cmds:
+      - task: oxlint:sync:schema
+      - task: build:lib:datamitsu-types
+      - task: build:inline
+      - pnpm exec tsdown
+      - task: build:datamitsu-config
+    desc: Full build (oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
+  build:agents-md:
+    cmds:
+      - node scripts/gen-agents-md.ts
+    desc: Regenerate src/datamitsu-config/agents.md.ts from agents-md-chunks/
+  build:datamitsu-config:
+    cmds:
+      - pnpm exec tsdown --config ./tsdown.config.datamitsu.ts --config-loader unrun
+      - mv dist-datamitsu-config/datamitsu.config.js datamitsu.config.js
+      - pnpm dm init
+    desc: Build datamitsu.config.js and reinitialise datamitsu
+  build:inline:
+    deps:
+      - task: build:agents-md
+      - task: build:tsconfig-md
+      - task: build:inline:eslint
+      - task: build:inline:prettier
+      - task: build:inline:commitlint
+      - task: build:inline:knip
+      - task: build:inline:cspell
+    desc: Build all inline configs in parallel
+  build:inline:commitlint:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.commitlint.ts --config-loader unrun
+    desc: Build inline commitlint config
+  build:inline:cspell:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.cspell.ts --config-loader unrun
+    desc: Build inline cspell config
+  build:inline:eslint:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.eslint.ts --config-loader unrun
+    desc: Build inline eslint config
+  build:inline:knip:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
+    desc: Build inline knip config
+  build:inline:prettier:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
+    desc: Build inline prettier config
+  build:lib:
+    cmds:
+      - task: build:lib:datamitsu-types
+    desc: Build library artifacts (datamitsu-types)
+  build:lib:datamitsu-types:
+    cmds:
+      - echo "// prettier-ignore" > src/datamitsu-config/datamitsu.config.d.ts
+      - datamitsu config types >> src/datamitsu-config/datamitsu.config.d.ts
+      - mkdir -p dist
+      - cp src/datamitsu-config/datamitsu.config.d.ts dist/datamitsu.config.d.ts
+    desc: Generate datamitsu.config.d.ts type file
+  build:tsconfig-md:
+    cmds:
+      - node scripts/gen-tsconfig-md.ts
+    desc: Regenerate src/datamitsu-config/tsconfig.md.ts from docs/reference/tsconfig.md
+  docs:build:
+    cmds:
+      - pnpm dm exec zensical -- build
+    desc: Build Zensical documentation site
+  docs:clean:
+    cmds:
+      - rm -rf site/
+    desc: Clean generated site directory
+
+  # ──────────────────────────────────────────────
+  # Docs
+  # ──────────────────────────────────────────────
+
+  docs:generate:
+    deps:
+      [
+        docs:generate:apps,
+        docs:generate:tools,
+        docs:generate:project-types,
+        docs:generate:init-configs,
+      ]
+    desc: Generate all documentation
+  docs:generate:apps:
+    cmds:
+      - node scripts/generate-docs-apps.ts
+    desc: Generate docs/reference/apps.md from config
+  docs:generate:init-configs:
+    cmds:
+      - node scripts/generate-docs-init-configs.ts
+    desc: Generate docs/reference/init-configs.md from init config
+  docs:generate:project-types:
+    cmds:
+      - node scripts/generate-docs-project-types.ts
+    desc: Generate docs/reference/project-types.md from project config
+  docs:generate:tools:
+    cmds:
+      - node scripts/generate-docs-tools.ts
+    desc: Generate docs/reference/tools.md from tools config
+  docs:serve:
+    cmds:
+      - pnpm dm exec zensical -- serve --dev-addr 0.0.0.0:8000
+    desc: Serve documentation site locally (http://localhost:8000)
+
+  oxlint:codegen:
+    cmds:
+      - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts
+    desc: Generate TypeScript types from oxlint JSON schema
+
+  # ──────────────────────────────────────────────
+  # oxlint
+  # ──────────────────────────────────────────────
+
+  oxlint:sync:schema:
+    cmds:
+      - node scripts/oxlint-sync-schema.ts
+      - task: oxlint:codegen
+    desc: Sync oxlint schema from node_modules and regenerate types
+
+  # ──────────────────────────────────────────────
+  # Pull / registry update
+  # ──────────────────────────────────────────────
+
+  pull:fnm:
+    cmds:
+      - pnpm dm devtools pull-fnm ./src/datamitsu-config/registries/fnmVersions.json
+      - node scripts/sync-fnm-versions-to-package-json.ts
+    desc: Pull fnm versions (no update)
+  pull:fnm:update:
+    cmds:
+      - pnpm dm devtools pull-fnm --update ./src/datamitsu-config/registries/fnmVersions.json
+      - node scripts/sync-fnm-versions-to-package-json.ts
+    desc: Pull fnm versions with update flag
+  pull:github:
+    cmds:
+      - datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
+    desc: Pull GitHub app registry (verify extraction only)
+  pull:github:update:
+    cmds:
+      - datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
+    desc: Pull GitHub app registry with update flag
+  pull:runtimes:update:
+    cmds:
+      - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json
+    desc: Pull runtimes registry with update flag
+  pull:uv:
+    cmds:
+      - pnpm dm devtools pull-uv ./src/datamitsu-config/registries/uvVersions.json
+    desc: Pull uv versions (no update)
+  pull:uv:update:
+    cmds:
+      - pnpm dm devtools pull-uv --update ./src/datamitsu-config/registries/uvVersions.json
+    desc: Pull uv versions with update flag
+
+  # ──────────────────────────────────────────────
+  # Misc
+  # ──────────────────────────────────────────────
+
+  s0:
+    cmds:
+      - pnpm exec tsdown --silent
+      - node bin/s0.js
+    desc: Build silently then run s0
+
+  # ──────────────────────────────────────────────
+  # Test
+  # ──────────────────────────────────────────────
+
+  test:platform:darwin:
+    cmds:
+      - node scripts/test-platforms.ts darwin --skip-passed
+    desc: Run platform tests for darwin, skipping passed
+  test:platform:linux-amd64:
+    cmds:
+      - node scripts/test-platforms.ts linux-amd64 --skip-passed
+    desc: Run platform tests for linux-amd64, skipping passed
+  test:platform:linux-arm64:
+    cmds:
+      - node scripts/test-platforms.ts linux-arm64 --skip-passed
+    desc: Run platform tests for linux-arm64, skipping passed
+
+  # ──────────────────────────────────────────────
+  # Validation
+  # ──────────────────────────────────────────────
+
+  validate:blocklist:
+    cmds:
+      - node scripts/validate-registry-blocklist.ts
+    desc: Validate registry files against blocklist
+
+version: "3"
