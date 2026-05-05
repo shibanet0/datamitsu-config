@@ -1,6 +1,6 @@
 {
   "name": "@shibanet0/datamitsu-config",
-  "version": "0.0.3-alpha-27",
+  "version": "0.0.3-alpha-28",
   "description": "Shared datamitsu configuration with 79+ managed development tools",
   "keywords": [],
   "license": "MIT",
@@ -48,7 +48,6 @@
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
-    "preinstall": "npx only-allow@1.2.2 pnpm",
     "postinstall": "pnpm build",
     "prepack": "pnpm build && clean-pkg-json clean",
     "postpack": "clean-pkg-json restore",
@@ -153,9 +152,9 @@
     "typescript-eslint": "8.56.0",
     "vitest": "4.1.4"
   },
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@11.0.6",
   "engines": {
-    "node": ">=24.14.0",
-    "pnpm": ">=10.32.1"
+    "node": ">=24.15.0",
+    "pnpm": ">=11.0.6"
   }
 }

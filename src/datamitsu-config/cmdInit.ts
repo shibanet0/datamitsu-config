@@ -247,14 +247,7 @@ export const init: config.MapOfConfigInit = {
   ".npmrc": {
     content: () => {
       const m: Record<string, string> = {
-        audit: "true",
-        "audit-level": "high",
-        "auto-install-peers": "true",
         registry: "https://registry.npmjs.org/",
-        "save-prefix": "",
-        "strict-ssl": "true",
-        // "ignore-scripts": "true",
-        "unsafe-perm": "false",
       };
 
       return (
@@ -718,7 +711,7 @@ export default config;
         ...(isRoot
           ? ({
               postinstall: undefined,
-              preinstall: "npx only-allow@1.2.2 pnpm",
+              preinstall: undefined,
               prepare: env().DATAMITSU_DEV_MODE ? "pnpm datamitsu init" : "datamitsu init",
             } as any)
           : {}),
@@ -762,6 +755,7 @@ export default config;
           cspell: undefined,
           eslintConfig: undefined,
           "lint-staged": undefined,
+          pnpm: undefined,
           prettier: undefined,
           syncpack: undefined,
         } as any),
@@ -798,12 +792,18 @@ export default config;
         // // linkWorkspacePackages: true,
         // saveWorkspaceProtocol:"rolling"
 
+        audit: true,
+        auditLevel: "high",
+        autoInstallPeers: true,
         enableGlobalVirtualStore: true,
         enablePrePostScripts: false,
         hoistPattern: [],
         ignorePatchFailures: false,
         optimisticRepeatInstall: true,
         resolutionMode: "lowest-direct",
+        savePrefix: "",
+        strictSsl: true,
+        unsafePerm: false,
         verifyDepsBeforeRun: "install",
       };
 
