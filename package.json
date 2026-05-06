@@ -59,13 +59,13 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.4-rc.1",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260506.2b87264",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
     "tsx": "4.21.0",
     "type-fest": "5.5.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "devDependencies": {
     "@antebudimir/eslint-plugin-vanilla-extract": "1.16.0",
@@ -154,7 +154,7 @@
   },
   "packageManager": "pnpm@11.0.6",
   "engines": {
-    "node": ">=24.15.0",
+    "node": ">=24.14.0",
     "pnpm": ">=11.0.6"
   }
 }

@@ -54,8 +54,8 @@
     },
     "fnm": {
       "nodeVersion": "24.15.0",
-      "pnpmVersion": "10.33.0",
-      "pnpmHash": "bfcc1bcbad279b13a516c446a75b3c58b6904b45d57a1951411015e50b751a80"
+      "pnpmVersion": "11.0.6",
+      "pnpmHash": "5cc39c9c736000c7a73d2807669a2c74fb94b37d125b9f794d898d28877053ca"
     }
   },
   "jvm": {

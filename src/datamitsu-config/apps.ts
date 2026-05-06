@@ -5,6 +5,7 @@ import { eslintApp } from "./apps/eslint";
 import { knipApp } from "./apps/knip";
 import { prettierApp } from "./apps/prettier";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
+import { pnpmWorkspaceConfigYAML } from "./pnpmWorkspaceConfig";
 import fnmVersions from "./registries/fnmVersions.json";
 import {
   apps as githubAppsJSON,
@@ -226,19 +227,25 @@ export const mapOfApps: BinManager.MapOfApps = {
   },
   syncpack: {
     description: fnmVersions.syncpack.description,
+    files: {
+      "pnpm-workspace.yaml": pnpmWorkspaceConfigYAML,
+    },
     fnm: {
       binPath: "node_modules/.bin/syncpack",
       lockFile:
-        "br:G3wKICwG7LZkqFEwdiPhyfj0Bi1ZHCFJ55CbVX9VY6xA0KQyVIO8IpohJIMNQJpH+lbrJTMdTmaDYG+lAFI5PtmzEndwTX1QvvhcBTa9zj/jaCU0oeEEJtQI88wCwmFQu+J0eK+VwEBA6aws52n50k9EmZ9EgzyOVtcumfLpLiY/cqGh/aI0Wmh21NTFYwsb/GBDwMsGeh5DX5Jl3pYj4RSyBYYNOy1a1xA3PDX1tb5EyfrT0GTLKI8m2InPIoVr+/xMYc9QZ9Ykgcdg9k7nwk2fo5220zQpTRw+scGa83KX9/cSVIU7rEtKah5V4Jx8cDzU2hcJeh7ZkTtUVW8Y8xIYdMdU2RS1yxHUjYnWi3q3izoqrhaNJEm7YBe+/CvnNZ9udVn/kHVfNlJu6T9aEER4UwD2cFmOL2c9tDfZVJfx2+FCzqpFypaktz/FWX/z+aHtqYViVO6G9QN/HQuMtXp51G8MMJBVTou0k0Jcm69NlBSlnuohYPhCpn+wz34egSZ+M6gafI0HnDM4rVzU5JGcUxr3inQL39+PDQ5A2ECUDzsuKniPcpYJ4v4aaBB+z0y0m25UZXheu9zI6tDqVnmT67sVoJKj6CLB5XzezcVkn/PkgFyWzguTlru3XtJJyXKwU4VIH9/Czih//8pgGybYXY5X/N4KhA2zwiCjpdwOERjuR1En5H1OnkiMHUgjG3hT+hsWzXHCDtSFJc0XJJFzqK+b1WgPTxAV3j1ORkK6NuE1d2EYn3oMwFtWNrfzGts2WZZ9acal5TVAVnC59Isl+dk6CSAIIvxpcpLEWkO9AEWXsIeYO6tHTJLf9hpdlW8RoKxsjgwyK3MM6gjzeNnY5okJxguVpwTj6ICDM9O+1f6axDNkBMVz3FrxHNUl7HZ+FNfRxLuEXcG9ZY/ehWRlentGMVjrl+LsTicYFlMyMOXw+3dE99uNUkfKaOdCTpdphDc0zUPwZjM+5hjo7pvmDjxRT8q6BnnQgiDCezaucI3m0qFIbtmuxKyGE9lXzYB3Qcv7zKrygKy06kFeV90eLxe3LcynPFB3bF5L9Zs7po4nzaaJRy+KeIDgYB6/u6kOQmJKvtDEEYWYZ/w3DdZMfJS8gXFJYyIHJIyR5DnhG7jWrQrJv/hLzxWhKtCiDSJbumiTbS4RwxjqfS79xJ7i9bJcoeeEzsQva6l3bqXq6MrUl9kv/WQzvel4xVGpLc/0leJIJA5T00wsRBi3+gjhoXXSXBPkJY/kEkHw+8KE+ckghLOsyidv/HaqJWAiMKuIoJl93D+bdnSmMaWrg0Tym3ksdlkE",
+        "br:G3wKIJyHsY2ivRynGYlPq6bXra/fqjlhloh/jzvkNOpAXoBcHOnbrLuMwyQLhisFkISJ6Ts4lw6UL/ZZ2DR9X8bRl9ALRZqnWiuUZ5nNvzNKMBBQOitL/6WYq98+iDL6Ihrk7Wg1nJIp7+6i/5EDDW0VpdFCs6OKIR5bWPuDDQEvDaixB31JJnlb7oQD8EkCho0rTrmuIcbtyyaurihZfzlUPmwZ5ckJduGzSLejnT7TbSTxX6xJApPBrHyZAzd9jvZxfukmJRD0E4SqLT9jXWHD2L55usMOLqqit/F8aotYooQMRwCFSnfW016UOuy2uKWz2qZmdGTbUwgQFdDmhTl0qs4D0XluacN+/778U7s8vxx1lf4ha/y+kHIT/9GCIMBr9sjZBNuyuJ7jNMC6XIiS2zpn6FF3o9LA8gs4gJg1aNHgjH4OaOnf4Krh5vwtdhH8IuKJa56lELFVDKWuTql0PmNDNgAMX8j01/Y5PvdBE1+KJsp9+wULZOmx/MZritM55oQo9PxylyQt7rMQGmgeI3NwWFAZW86M7kKS2pfQttx9i2+wESLySjBLpu5YcA4PYXGtAJXsRhc+TodBgV2QbJVU4hzRDWEf/38IxgwdwMoc6jv3lpRKB3FH3i5YaT/7BT2D+27WjLszNS0cdmWal8mfNXkTEQUqy6EI6QsLaWADL4rJ74jJM+2xWqzwaDS6qDLV0hVnjpMAZ4Jx7J1XtmURDLm6kut4sOb9Zm2KOFOWtBkk9zLEuIhLKMqKk3IyYXg2xyAAIAjwo1mnQTPLdH9BQ5ZgSUma9zlgRv9WkYwXJA+SbhWwlh0QosiRn07xYPuK3G5qErfi0Gga1ruHHF+S+VLCSaG/2lUza8VzVOez2/lSNObIvIN72xwO86DJNyGpLkQpPWLktwP3nyvo4vNinQM4OhoVVGW7VMY780dBcq1WWo83Ut8JUnoGsnIJ09ce9/XNHZRjBgzVgiDAa0YXr2qrfe6I5gF1eK2MTtGfgmIABQs3M3JgkOjyMdmCtCbtFzwc1FiJFuMrQjsiQdQ2y4ZTx0bp+oN5YG5LFsw6ZAHwT8lXmfJRW9UMNWJNWyPFJBwv2Xd6soZ8wXzfPaE7DYLOqYHC65Xm+CWURm1LktCAmIPs5W1SwEAq+xqWdtSleLKsgU/lm7XUnFOp2lg/vodfo65+YzO4dOdWjko1ntIlxeFLHKammVgIJ27ZAZxDa7+5+shLHsglAmD1hT7zkwFwZplWSN5Y7TSXgHHBLCVAzuy9fti03TP1KF0WIJLVzD2xCwMA",
       ...fnmVersions.syncpack,
     },
   },
   tsc: {
     description: fnmVersions.typescript.description,
+    files: {
+      "pnpm-workspace.yaml": pnpmWorkspaceConfigYAML,
+    },
     fnm: {
       binPath: "node_modules/.bin/tsc",
       lockFile:
-        "br:G7MBoBwHdiz4goGDjYmgyaWBefalIvFuEBvEBW1uKYAMnrMpzCnqSdlUeK0CO8JVr9skguh4LYbO+tIkZBC1uUpjJSgTFAhCqcg4nkOrr+bzy/WriwyoyFBrNqeVPDkyMyzuLBvgHXh+uSqQRxxJPV3PrwILdkRifOARGDK5KIUogpFz48QweRj3h6lbqwxuRsRL+S3U9D/r21t5XY15msEn4cyOLyPquQ69I7+Tpiga9W+TceH2Oy3X7TzEZtyJyM6qFy8328c8uUnsXuQmTpQn27s7ue6G0vq1zJzeKInLdb2rO5tFret/IGF7ofJ7q76UoKHTHEGLYBtsfHXWB04bP4xPR2+HMWhT+P0D",
+        "br:G7MBoBwHdiz4goGDjYmgyaWBefalIvFuEBvEBW1uKYAMnrMpzCnqSdlUeK0CO8JVr9skguh4LYbO+tIkZBC1uUpjJSgTFAhCqcg4nkOrr+bzy/WriwyoyFBrNqeVPDkyMyzuLBvgHXh+uSqQRxxJPV3PrwILdkRifOARGDK5KIUogpVz48QweRj3h6lbqwxuRsRL+S3U9D/r21t5XY15msHfTOdxf7WjynvX4+02aKpRlAZ7NE1753h9nS1l0h099/Li9kgHWSUVTX/DSmTpbYrJhWPb63FwLu72+uov6HDmvs796cx56vofSNheqPzeqi8laOg0R9Ai2AYbX531gdPGD+PT0dthDNoUfv8A",
       ...fnmVersions.typescript,
     },
   },
