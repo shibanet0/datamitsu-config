@@ -6,12 +6,12 @@
   },
   "@commitlint/cli": {
     "packageName": "@commitlint/cli",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Lint your commit messages"
   },
   "@commitlint/config-conventional": {
     "packageName": "@commitlint/config-conventional",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Shareable commitlint config enforcing conventional commits"
   },
   "@e18e/eslint-plugin": {
@@ -21,12 +21,12 @@
   },
   "@commitlint/format": {
     "packageName": "@commitlint/format",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Format commitlint reports"
   },
   "@commitlint/types": {
     "packageName": "@commitlint/types",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Shared types for commitlint packages"
   },
   "conventional-changelog": {
@@ -250,7 +250,7 @@
   },
   "eslint-plugin-pnpm": {
     "packageName": "eslint-plugin-pnpm",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "ESLint Plugin for pnpm"
   },
   "eslint-plugin-promise": {
@@ -340,7 +340,7 @@
   },
   "knip": {
     "packageName": "knip",
-    "version": "6.4.1",
+    "version": "6.12.2",
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects"
   },
   "markdown-link-check": {
@@ -365,7 +365,7 @@
   },
   "pnpm": {
     "packageName": "pnpm",
-    "version": "10.32.1",
+    "version": "11.0.9",
     "description": "Fast, disk space efficient package manager"
   },
   "prettier": {
@@ -410,7 +410,7 @@
   },
   "syncpack": {
     "packageName": "syncpack",
-    "version": "14.2.0",
+    "version": "15.1.2",
     "description": "Consistent dependency versions in large JavaScript Monorepos"
   },
   "typescript-eslint": {
@@ -420,7 +420,7 @@
   },
   "typescript": {
     "packageName": "typescript",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "description": "TypeScript is a language for application scale JavaScript development"
   },
   "@cspell/dict-ru_ru": {

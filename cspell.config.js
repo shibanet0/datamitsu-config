@@ -14,5 +14,6 @@ export default {
     "tryceratops",
     "yesqa",
     "softprops",
+    "unrs",
   ],
 };
