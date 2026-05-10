@@ -7,6 +7,7 @@ describe("ignoreGroups", () => {
     "Build outputs",
     "Cache & temporary files",
     "Claude Code project files",
+    "Codex CLI project files",
     "Dependencies",
     "Environment",
     "Golang specific",

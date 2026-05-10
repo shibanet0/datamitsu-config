@@ -10,23 +10,32 @@ interface ReferencePattern {
 const AGENTS_REFERENCE_PATTERNS: Record<string, ReferencePattern> = {
   "agents-base.md": {
     canonical:
-      "**Read [.datamitsu/agents-base.md](.datamitsu/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
+      "**Read [.datamitsu/ai/agents/agents-base.md](.datamitsu/ai/agents/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     oldPatterns: [
+      // v1 format (original)
       "Read and follow the shared rules in [.datamitsu/agents-base.md](.datamitsu/agents-base.md) before proceeding.",
+      // v2 format (pre-ai/ restructure)
+      "**Read [.datamitsu/agents-base.md](.datamitsu/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     ],
   },
   "agents-docs-markdown.md": {
     canonical:
-      "**Read [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
+      "**Read [.datamitsu/ai/agents/agents-docs-markdown.md](.datamitsu/ai/agents/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     oldPatterns: [
+      // v1 format (original)
       "Read and follow the shared rules in [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) before proceeding.",
+      // v2 format (pre-ai/ restructure)
+      "**Read [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     ],
   },
   "agents-docs-website.md": {
     canonical:
-      "**Read [.datamitsu/agents-docs-website.md](.datamitsu/agents-docs-website.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
+      "**Read [.datamitsu/ai/agents/agents-docs-website.md](.datamitsu/ai/agents/agents-docs-website.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     oldPatterns: [
+      // v1 format (original)
       "Read and follow the shared rules in [.datamitsu/agents-docs-website.md](.datamitsu/agents-docs-website.md) before proceeding.",
+      // v2 format (pre-ai/ restructure)
+      "**Read [.datamitsu/agents-docs-website.md](.datamitsu/agents-docs-website.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**",
     ],
   },
 };
@@ -73,7 +82,6 @@ export function upgradeAgentsReference(content: string): string {
 
 /**
  * Default AGENTS.md template for new projects.
- * Uses the old format initially; will be upgraded on next setup.
  */
 export const AGENTS_MD = `# AGENTS.md
 
