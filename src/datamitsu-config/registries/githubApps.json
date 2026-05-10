@@ -23,7 +23,7 @@
     "ast-grep": {
       "owner": "ast-grep",
       "repo": "ast-grep",
-      "tag": "0.42.1"
+      "tag": "0.42.2"
     },
     "bearer": {
       "owner": "Bearer",
@@ -38,7 +38,7 @@
     "casey": {
       "owner": "casey",
       "repo": "just",
-      "tag": "1.50.0"
+      "tag": "1.51.0"
     },
     "checkmake": {
       "owner": "checkmake",
@@ -113,7 +113,7 @@
     "golangci-lint": {
       "owner": "golangci",
       "repo": "golangci-lint",
-      "tag": "v2.12.1"
+      "tag": "v2.12.2"
     },
     "goose": {
       "owner": "pressly",
@@ -168,7 +168,7 @@
     "osv-scanner": {
       "owner": "google",
       "repo": "osv-scanner",
-      "tag": "v2.3.6"
+      "tag": "v2.3.8"
     },
     "oxipng": {
       "owner": "oxipng",
@@ -218,12 +218,12 @@
     "snyk": {
       "owner": "snyk",
       "repo": "cli",
-      "tag": "v1.1304.1"
+      "tag": "v1.1304.2"
     },
     "sops": {
       "owner": "getsops",
       "repo": "sops",
-      "tag": "v3.12.2"
+      "tag": "v3.13.0"
     },
     "sqlc": {
       "owner": "sqlc-dev",
@@ -253,7 +253,7 @@
     "tombi": {
       "owner": "tombi-toml",
       "repo": "tombi",
-      "tag": "v0.10.4"
+      "tag": "v0.11.1"
     },
     "trivy": {
       "owner": "aquasecurity",
@@ -268,7 +268,7 @@
     "typos": {
       "owner": "crate-ci",
       "repo": "typos",
-      "tag": "v1.46.0"
+      "tag": "v1.46.1"
     },
     "typst": {
       "owner": "typst",
@@ -549,22 +549,22 @@
       }
     },
     "ast-grep": {
-      "configHash": "2473ea78f175fdca41cdcb9ed20168c8",
+      "configHash": "b7a486f652e67f9ed77cfd6ca79c3f44",
       "description": "⚡A CLI tool for code structural search, lint and rewriting. Written in Rust",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-x86_64-apple-darwin.zip",
-              "hash": "a038965bfd7fe44257c771cdf8918dc3467dd8ec0eef673b8b14f639b144cdbd",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-x86_64-apple-darwin.zip",
+              "hash": "6652401a9b98f7c8c528f969d34e2a42d2cb60f29fc4dc569209d16c29702d9c",
               "contentType": "zip",
               "binaryPath": "ast-grep"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-aarch64-apple-darwin.zip",
-              "hash": "c3961d8e8a4ee0ce2d0d98c7beeb168bb331cdc766b53630118a7b6c4fd39015",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-aarch64-apple-darwin.zip",
+              "hash": "9f1522db1f7174ab0cba5a6d1df1861f9b92803fac407988177c28f744bd0f94",
               "contentType": "zip",
               "binaryPath": "ast-grep"
             }
@@ -573,16 +573,16 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-x86_64-unknown-linux-gnu.zip",
-              "hash": "5de8b87cba67fc8dc3e239d54b6484802ad745a7ae3de76be4fe89661dc52657",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-x86_64-unknown-linux-gnu.zip",
+              "hash": "52aef3ed330a5fb1d9f399b83285bfcf47d92401249803f62711573e83cb47ae",
               "contentType": "zip",
               "binaryPath": "ast-grep"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-aarch64-unknown-linux-gnu.zip",
-              "hash": "3ba383839044cf9817929435f5ce0027f91d06931e8efb32d942e58d73d92be5",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-aarch64-unknown-linux-gnu.zip",
+              "hash": "a68d7645d49dbd97b423cc8a64f7839fe5541eedf0b4bb4ab79f4ba5d53f0376",
               "contentType": "zip",
               "binaryPath": "ast-grep"
             }
@@ -591,16 +591,16 @@
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-x86_64-pc-windows-msvc.zip",
-              "hash": "fe34f631bb24c08ad146f92ca2a92971a53d179461b509fd8d32dc863bff9f83",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-x86_64-pc-windows-msvc.zip",
+              "hash": "b9b87a283f45de1d604db1b747549b30110227fe905dd9f0362d0cf3022e381f",
               "contentType": "zip",
               "binaryPath": "ast-grep.exe"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.1/app-aarch64-pc-windows-msvc.zip",
-              "hash": "c590f9b12c014fac5e751e08f91075732530a4495dfacf7cae93e8f867d27291",
+              "url": "https://github.com/ast-grep/ast-grep/releases/download/0.42.2/app-aarch64-pc-windows-msvc.zip",
+              "hash": "9a2461935cee6a3ab04552aa7e7793a3a4f8ad24b82a501039182dfcad67dcc4",
               "contentType": "zip",
               "binaryPath": "ast-grep.exe"
             }
@@ -745,22 +745,22 @@
       }
     },
     "casey": {
-      "configHash": "b04c3b7e4111a6dd1e9376819a1d4059",
+      "configHash": "2d359cae5c951e892d24d94e72de37d8",
       "description": "🤖 Just a command runner",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/casey/just/releases/download/1.50.0/just-1.50.0-x86_64-apple-darwin.tar.gz",
-              "hash": "e4fa28fe63381ca32fad101e86d4a1da7cd2d34d1b080985a37ec9dc951922fe",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-apple-darwin.tar.gz",
+              "hash": "d583e45f1f9fcdd26069ad2fe3bb9dea414756d8d0752eb9093974cb5c0246f0",
               "contentType": "tar.gz",
               "binaryPath": "just"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/casey/just/releases/download/1.50.0/just-1.50.0-aarch64-apple-darwin.tar.gz",
-              "hash": "891262207663bff1aa422dbe799a76deae4064eaa445f14eb28aef7a388222cd",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-apple-darwin.tar.gz",
+              "hash": "61e3f1b8a545ff064b091eab4b6e14f8cc743ff15549be293b1e92f5b1467002",
               "contentType": "tar.gz",
               "binaryPath": "just"
             }
@@ -769,16 +769,16 @@
         "linux": {
           "amd64": {
             "musl": {
-              "url": "https://github.com/casey/just/releases/download/1.50.0/just-1.50.0-loongarch64-unknown-linux-musl.tar.gz",
-              "hash": "dc9b1f5e7868de83a2b942d718ca4596c415d6ca35acd1bc7e5eb9e2f06ba680",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-loongarch64-unknown-linux-musl.tar.gz",
+              "hash": "afab5eb3443123ac68e8cab22de1c866a20783b4c9eee880b00dca89104c2f79",
               "contentType": "tar.gz",
               "binaryPath": "just"
             }
           },
           "arm64": {
             "musl": {
-              "url": "https://github.com/casey/just/releases/download/1.50.0/just-1.50.0-aarch64-unknown-linux-musl.tar.gz",
-              "hash": "3beb4967ce05883cf09ac12d6d128166eb4c6d0b03eff74b61018a6880655d7d",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-unknown-linux-musl.tar.gz",
+              "hash": "ed7ec466b77709198fd4afed253dba0270203ba5eb1c006bee2b0139090284f5",
               "contentType": "tar.gz",
               "binaryPath": "just"
             }
@@ -1484,78 +1484,78 @@
       }
     },
     "golangci-lint": {
-      "configHash": "5cc41f430debc91325aa6f8a001e7562",
+      "configHash": "1904971b6018a6c6f846bc95f9ae5aec",
       "description": "Fast linters runner for Go",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-darwin-amd64.tar.gz",
-              "hash": "26a9508ee6d35e89201145b94261d7b55d779474c57677a7bba8b1f12f59309f",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-darwin-amd64.tar.gz",
+              "hash": "f6f06d94b6241521c53d15450c5209b028270bf966f842afb11c030c79f5bc16",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-darwin-arm64.tar.gz",
-              "hash": "393a64ef9b75a5b6c8c8bf8895b8d8208790e6690a43de19a12f3f8bc0e9ad52",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-darwin-arm64.tar.gz",
+              "hash": "a9c54498731b3128f79e090be6110f3e5fffccc617b08142ed244d4126c73f29",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           }
         },
         "freebsd": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-freebsd-amd64.tar.gz",
-              "hash": "6b86a54402f91e3f95d727b820b7e8149a330b6bb889c189aa789759b8b414f6",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-freebsd-amd64.tar.gz",
+              "hash": "737384f94a3e37fd646971eb5c505deba23ae1fd90aa6131e30b7c609f447617",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-freebsd-arm64.tar.gz",
-              "hash": "dbfcf6be5a79796c617fcbc4a6c6653c1a40b41e78e6623683fdecba51409f21",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-freebsd-arm64.tar.gz",
+              "hash": "0de8bdfaa0e818f44db40f65b22f3feca283bdf67e17658652f0fc4168c06ca8",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-illumos-amd64.tar.gz",
-              "hash": "b4a8a07f090b0be6e4622bce8ef58a08562e3f50f322e23c067c821d423d292b",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-illumos-amd64.tar.gz",
+              "hash": "7e9029211a996e5b43aa16ef10631f65810ed0553d637b64a1a0b936c225ce97",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-linux-arm64.tar.gz",
-              "hash": "23c8e14f42b288d11d46ef52c622e2481d92901edfb263c2cf10875f38d386c4",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-linux-arm64.tar.gz",
+              "hash": "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a",
               "contentType": "tar.gz",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-windows-amd64.zip",
-              "hash": "2b2f837b2a7b91787ecb9b7493bdeae801e9f84e6588984b2c33c34dc2956478",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-windows-amd64.zip",
+              "hash": "bd42e3ebc8cb4ececb86941983baaf1dc221bbb04d838e94ce63b49cc91e02bb",
               "contentType": "zip",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint.exe"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint.exe"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.1/golangci-lint-2.12.1-windows-arm64.zip",
-              "hash": "a75111a6e839907cfba5da9bce9ef98056707ae623d9e68f7de263dd7ef99ace",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-windows-arm64.zip",
+              "hash": "947b9a5bf762d465710b376c156f0184abb2168378b0826af1899e0ee7183742",
               "contentType": "zip",
-              "binaryPath": "golangci-lint-2.12.1/golangci-lint.exe"
+              "binaryPath": "golangci-lint-2.12.2/golangci-lint.exe"
             }
           }
         }
@@ -1972,21 +1972,21 @@
       }
     },
     "osv-scanner": {
-      "configHash": "53867fa28dd917bc72bd7fbaa184120a",
+      "configHash": "dcf85520ce53326c0270fbcd8c74d554",
       "description": "Vulnerability scanner written in Go which uses the data provided by https://osv.dev",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_darwin_amd64",
-              "hash": "d5c91db387e0559b12136106bce5a57dbcea6fac22942721bd25b2334b28db28",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_darwin_amd64",
+              "hash": "b8a80a9f14ca4c0cd0fc2d351b28f740da9e6a5b18385ac9f9d083360b5b504e",
               "contentType": "binary"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_darwin_arm64",
-              "hash": "3d7a12f4349a9e8f822513e5544d4a747ab53b7225d4bf5a2d00211cbc9dfe19",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_darwin_arm64",
+              "hash": "a8cd6507b06239f463a7642430cfd2d154882f150f6e30cdc0653e28dfc34216",
               "contentType": "binary"
             }
           }
@@ -1994,15 +1994,15 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_linux_amd64",
-              "hash": "f689e183ef0d573d2459738aae457d411a26241ae58b5088de1af288b3355604",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_linux_amd64",
+              "hash": "bc98e15319ed0d515e3f9235287ba53cdc5535d576d24fd573978ecfe9ab92dc",
               "contentType": "binary"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_linux_arm64",
-              "hash": "e6ab0955cc906f308704575a608d28e55068d00c7fa7f47797131c89b30c0373",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_linux_arm64",
+              "hash": "8158b18edd2d03b1a30d905ca91b032bc62262167be8f206c27114f08823e27c",
               "contentType": "binary"
             }
           }
@@ -2010,15 +2010,15 @@
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_windows_amd64.exe",
-              "hash": "14856196d681e18238b41d4741bbe0558bef157c4b3b49d618528294afebe19f",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_windows_amd64.exe",
+              "hash": "cb04e79dd9698a7bc821bbfdddec916a416d1409fda79c927c509d37d00c9716",
               "contentType": "binary"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.6/osv-scanner_windows_arm64.exe",
-              "hash": "5edd366ce55b696dbe74237987d8947808c400721b0cc4852f8224fbfd9f3c17",
+              "url": "https://github.com/google/osv-scanner/releases/download/v2.3.8/osv-scanner_windows_arm64.exe",
+              "hash": "285d1fbcf2c69ab5ee38ae3a850ab46e83f32ef1cd5f3c4c9eb161cc493f6d52",
               "contentType": "binary"
             }
           }
@@ -2407,21 +2407,21 @@
       }
     },
     "snyk": {
-      "configHash": "6ab63249b9ef4ef1b98b43330afba0aa",
+      "configHash": "272713c7620cd29d41ae137bafcf1462",
       "description": "Snyk CLI scans and monitors your projects for security vulnerabilities.",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-macos",
-              "hash": "cf177235dbc7d11b52a4120336b67ddea306cfd7eb845842d25ff1bab727dc10",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1304.2/snyk-macos",
+              "hash": "e1a0cc72fb2c34820b548852f7a958c39550fbc89d0a3cd5a9ad5b0c0f606c03",
               "contentType": "binary"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-macos-arm64",
-              "hash": "c7f587c31464e2fb3df00fa54e214fbf1305de9612be766ac331329cb6412bca",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1304.2/snyk-macos-arm64",
+              "hash": "34d5e5361b9fefabcd8739d6b0332ea9b5bf61844ee14d92200645d976b2e1d0",
               "contentType": "binary"
             }
           }
@@ -2429,20 +2429,20 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-linux",
-              "hash": "e175f909a4b6f9158985d9603e581a5736ae70546ecb52746dc32fd9575cd920",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1304.2/snyk-linux",
+              "hash": "9a93da771dfc4eb5fdda93b32dec1d3013eb49af72db7e8408ec4cf3c7a8e307",
               "contentType": "binary"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-linux-arm64",
-              "hash": "3a9429391c800b2b02b6385522737f55aee367c8f5c6f9bd26da3f10398068bf",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1304.2/snyk-linux-arm64",
+              "hash": "7bc078339b4db675f4009257c0cb97713ff8e0c63add204200509832e3ad98b0",
               "contentType": "binary"
             },
             "musl": {
-              "url": "https://github.com/snyk/cli/releases/download/v1.1304.1/snyk-alpine-arm64",
-              "hash": "8dd5036fea83362a0819f10baadf218c3e395857caeb309d770e487c2f3c3466",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1304.2/snyk-alpine-arm64",
+              "hash": "e92bf512ada1f12056a83aeef698babbfb5c80e6780b0d21e69652e32290e926",
               "contentType": "binary"
             }
           }
@@ -2450,21 +2450,21 @@
       }
     },
     "sops": {
-      "configHash": "f43d461f86467ae9f7789c9de57d3625",
+      "configHash": "8365b2a01df0a2dcad0d32ac51da4e99",
       "description": "Simple and flexible tool for managing secrets",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/getsops/sops/releases/download/v3.12.2/sops-v3.12.2.darwin",
-              "hash": "d3e81973ea6372e22ffe4f3f8690be362559af5c0ae855430c61ebffaaef6ace",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.0/sops-v3.13.0.darwin",
+              "hash": "9d139f000329f6eaadc92fd344f80a113728a107ece585ac7c0a7b48afb094c3",
               "contentType": "binary"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/getsops/sops/releases/download/v3.12.2/sops-v3.12.2.darwin.arm64",
-              "hash": "284edc64acf91ca249f227ffa2b444632656e4e1ac02baa26bed7051a7d51ce5",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.0/sops-v3.13.0.darwin.arm64",
+              "hash": "f2ec6a0f5f22aaef3723e5898d921751bc113834dd3d3b1af9c59ca18794069c",
               "contentType": "binary"
             }
           }
@@ -2472,15 +2472,15 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/getsops/sops/releases/download/v3.12.2/sops-3.12.2-1.x86_64.rpm",
-              "hash": "1d5382d11932a662a5d7e7dddf223289c2fe16f2da5b7478a64c0513d5a6733b",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.0/sops-v3.13.0.amd64.exe",
+              "hash": "b71e99f7701502c32d8d919ebccb89bb895a27837218402b61c7318c774bd409",
               "contentType": "binary"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://github.com/getsops/sops/releases/download/v3.12.2/sops-3.12.2-1.aarch64.rpm",
-              "hash": "3ddab12919679607fe851cd6970706c0444c35a11f8090c81e6fc336c6324bd8",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.0/sops-v3.13.0.arm64.exe",
+              "hash": "bc0d733108d69db607bdc3eaa19742995ea73da7c9f94ea96c73609802b08d43",
               "contentType": "binary"
             }
           }
@@ -2780,59 +2780,60 @@
       }
     },
     "tombi": {
-      "configHash": "01de5b7524b9272166d3ebdbeaef67c0",
+      "configHash": "56b1a05779a1c47de29fcc729dff4a50",
       "description": "TOML Formatter / Linter / Language Server",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-apple-darwin.tar.gz",
-              "hash": "f3ba04e491d0e2dbf42ecf6fc5d0e0c54d2b71cc74c8a4f59d34717a57544d15",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-x86_64-apple-darwin.tar.gz",
+              "hash": "c9245de0d601154d01e0cd6d57f0b92465b1fa03f95221faca13a929b1e4648e",
               "contentType": "tar.gz",
-              "binaryPath": "tombi-0.10.4/tombi"
+              "binaryPath": "tombi-0.11.1/tombi"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-apple-darwin.tar.gz",
-              "hash": "efff1d4fd57364c1b6f0ab7045006ed58d6fdf79925022213d44f4e0993a37a1",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-aarch64-apple-darwin.tar.gz",
+              "hash": "e8624e4fce53073c0ae85b759eb0b901c95d9ae28c025586e4c629ac9ea2cf67",
               "contentType": "tar.gz",
-              "binaryPath": "tombi-0.10.4/tombi"
+              "binaryPath": "tombi-0.11.1/tombi"
             }
           }
         },
         "linux": {
           "amd64": {
             "musl": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-unknown-linux-musl.tar.gz",
-              "hash": "2988df7c5ac115dc20ebd42f45ba039df0b8cda110b444f419bec814db2c880a",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-x86_64-unknown-linux-musl.tar.gz",
+              "hash": "827a8de6959b37b28e9a4d2dc3bfdb28e647d6de690d81a9a6751afabaa73763",
               "contentType": "tar.gz",
-              "binaryPath": "tombi-0.10.4/tombi"
+              "binaryPath": "tombi-0.11.1/tombi"
             }
           },
           "arm64": {
             "musl": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-unknown-linux-musl.tar.gz",
-              "hash": "0aac20f61dc0ead3eab386ecaf176ad19b8734e02a2efc031bbaeefc3ace7661",
-              "contentType": "binary"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-aarch64-unknown-linux-musl.tar.gz",
+              "hash": "f08c006ac16e8cf100c41e66276b22d29ea1a051f0d8a36b5a07dbfa36ce41fd",
+              "contentType": "tar.gz",
+              "binaryPath": "tombi-0.11.1/tombi"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-pc-windows-msvc.zip",
-              "hash": "150c3b9f0ddb3a16faec88980df034889f618d671bdeecec4a49e45f507a4a7d",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-x86_64-pc-windows-msvc.zip",
+              "hash": "ad90d99ed4a525b820afeb414946e9bfe20770913d1975da04f57a350729e7d4",
               "contentType": "zip",
-              "binaryPath": "tombi-0.10.4/tombi.exe"
+              "binaryPath": "tombi-0.11.1/tombi.exe"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-pc-windows-msvc.zip",
-              "hash": "2a035a8a3b51dcc5cbff9c84391734499acf7d70279ecf317fc717d22e003647",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-aarch64-pc-windows-msvc.zip",
+              "hash": "b9d8f1614b33691ff0ff7258c57c83f193f758dd378081a5ffb6c8bcb1910e4d",
               "contentType": "zip",
-              "binaryPath": "tombi-0.10.4/tombi.exe"
+              "binaryPath": "tombi-0.11.1/tombi.exe"
             }
           }
         }
@@ -2961,52 +2962,52 @@
       }
     },
     "typos": {
-      "configHash": "6a5c64a35ffffb6caabc98329b9ae538",
+      "configHash": "cfc2364f43e6eb096ea383cded2ca967",
       "description": "Source code spell checker",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.0/typos-v1.46.0-x86_64-apple-darwin.tar.gz",
-              "hash": "ca0bba6c8a80b4981951dbc3519987d51ef3a60e0b0a462db005ad99de47b40d",
+              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.1/typos-v1.46.1-x86_64-apple-darwin.tar.gz",
+              "hash": "bc585c22f2c4f5963ad782df1d4764a91476d3079477a08833ff87dfa416bb72",
               "contentType": "tar.gz",
-              "binaryPath": "typos-v1.46.0/typos"
+              "binaryPath": "typos-v1.46.1/typos"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.0/typos-v1.46.0-aarch64-apple-darwin.tar.gz",
-              "hash": "322f90609f951bc27e204cf8d0370702510ae99e87285b217916fb2c09d76111",
+              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.1/typos-v1.46.1-aarch64-apple-darwin.tar.gz",
+              "hash": "bb5e07df5c938f41b95903ca8943d9230eb5a4cfbc8a2ff1f3a029d5370926a8",
               "contentType": "tar.gz",
-              "binaryPath": "typos-v1.46.0/typos"
+              "binaryPath": "typos-v1.46.1/typos"
             }
           }
         },
         "linux": {
           "amd64": {
             "musl": {
-              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.0/typos-v1.46.0-x86_64-unknown-linux-musl.tar.gz",
-              "hash": "c62a626df385c96574743fd4974aeb271a41a67d080a0398e36e1a42782f614a",
+              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.1/typos-v1.46.1-x86_64-unknown-linux-musl.tar.gz",
+              "hash": "c574fa505596922ba2e7b1027a0a5b2df528f399b86b6915d85748186a65ca44",
               "contentType": "tar.gz",
-              "binaryPath": "typos-v1.46.0/typos"
+              "binaryPath": "typos-v1.46.1/typos"
             }
           },
           "arm64": {
             "musl": {
-              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.0/typos-v1.46.0-aarch64-unknown-linux-musl.tar.gz",
-              "hash": "1f8324d5b17c7354c4a83865007efb55c8278ef4cc22bed748df6b92ca439384",
+              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.1/typos-v1.46.1-aarch64-unknown-linux-musl.tar.gz",
+              "hash": "70a8e5a2c6272e25438ed8a9f10c40c9becf79f2800183fd34603a0840162eac",
               "contentType": "tar.gz",
-              "binaryPath": "typos-v1.46.0/typos"
+              "binaryPath": "typos-v1.46.1/typos"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.0/typos-v1.46.0-x86_64-pc-windows-msvc.zip",
-              "hash": "a95e17043bdc0b890936e0213f7a533f4ccdf5430bb7c4a26984de8c77238536",
+              "url": "https://github.com/crate-ci/typos/releases/download/v1.46.1/typos-v1.46.1-x86_64-pc-windows-msvc.zip",
+              "hash": "a7b042fc79bf7b73b00ece054ec3109858e001136c2642f28004544b571d37a2",
               "contentType": "zip",
-              "binaryPath": "typos-v1.46.0/typos.exe"
+              "binaryPath": "typos-v1.46.1/typos.exe"
             }
           }
         }

@@ -6,12 +6,12 @@
   },
   "@commitlint/cli": {
     "packageName": "@commitlint/cli",
-    "version": "20.5.3",
+    "version": "21.0.0",
     "description": "Lint your commit messages"
   },
   "@commitlint/config-conventional": {
     "packageName": "@commitlint/config-conventional",
-    "version": "20.5.3",
+    "version": "21.0.0",
     "description": "Shareable commitlint config enforcing conventional commits"
   },
   "@e18e/eslint-plugin": {
@@ -21,12 +21,12 @@
   },
   "@commitlint/format": {
     "packageName": "@commitlint/format",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Format commitlint reports"
   },
   "@commitlint/types": {
     "packageName": "@commitlint/types",
-    "version": "20.5.0",
+    "version": "21.0.0",
     "description": "Shared types for commitlint packages"
   },
   "conventional-changelog": {
@@ -340,7 +340,7 @@
   },
   "knip": {
     "packageName": "knip",
-    "version": "6.4.1",
+    "version": "6.12.2",
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects"
   },
   "markdown-link-check": {
