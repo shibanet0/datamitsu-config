@@ -4,6 +4,7 @@ import { init, initCommands } from "./cmdInit";
 import { buildManagedGitleaksToml } from "./gitleaksDefaults";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
+import { SKILLS } from "./skills";
 import { toolsConfig } from "./tools";
 import { TSCONFIG_MD } from "./tsconfig.md";
 
@@ -26,9 +27,9 @@ function getConfig(cfg: config.Config): config.Config {
             .join("\n\n---\n\n"),
         },
         links: {
-          "agents-base.md": "agents-base.md",
-          "agents-docs-markdown.md": "agents-docs-markdown.md",
-          "agents-docs-website.md": "agents-docs-website.md",
+          "ai/agents/agents-base.md": "agents-base.md",
+          "ai/agents/agents-docs-markdown.md": "agents-docs-markdown.md",
+          "ai/agents/agents-docs-website.md": "agents-docs-website.md",
         },
       },
       "gitleaks-managed": {
@@ -37,6 +38,12 @@ function getConfig(cfg: config.Config): config.Config {
         },
         links: {
           "gitleaks-managed.toml": "gitleaks-managed.toml",
+        },
+      },
+      skills: {
+        files: Object.fromEntries(SKILLS.map((s) => [`${s.name}/instructions.md`, s.instructions])),
+        links: {
+          "ai/skills": ".",
         },
       },
       tsconfig_guide: {
@@ -80,7 +87,7 @@ function getConfig(cfg: config.Config): config.Config {
 globalThis.getConfig = getConfig;
 
 const getMinVersion = (): string => {
-  return "v0.0.4-rc.1";
+  return "0.0.0-unstable.20260506.2b87264";
 };
 
 globalThis.getMinVersion = getMinVersion;

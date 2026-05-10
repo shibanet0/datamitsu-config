@@ -2,6 +2,7 @@ export const ignoreGroups: tools.Ignore.IgnoreMap<
   | "Build outputs"
   | "Cache & temporary files"
   | "Claude Code project files"
+  | "Codex CLI project files"
   | "Dependencies"
   | "Environment"
   | "Golang specific"
@@ -39,6 +40,7 @@ export const ignoreGroups: tools.Ignore.IgnoreMap<
     "**/.tmp/",
   ],
   "Claude Code project files": [".claude/*", "!.claude/skills/"],
+  "Codex CLI project files": [".codex/*", "!.codex/prompts/"],
   Dependencies: [
     "**/node_modules/",
     "**/vendor/",

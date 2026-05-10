@@ -8,9 +8,6 @@
 **/.output/
 **/public/build/
 
-# Zensical build output
-site/
-
 # Cache & temporary files
 .datamitsu/
 **/tsconfig.tsbuildinfo
@@ -29,6 +26,10 @@ site/
 # Claude Code project files
 .claude/*
 !.claude/skills/
+
+# Codex CLI project files
+.codex/*
+!.codex/prompts/
 
 # Dependencies
 **/node_modules/
@@ -143,6 +144,9 @@ dist-inline-*/
 test-reports/
 store/
 cache/
+
+# Zensical build output
+site/
 
 # Both patterns are intentional — do not "normalize" one to the other
 !**/.pulumi/**/*.enc.json

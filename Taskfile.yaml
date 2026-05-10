@@ -24,6 +24,7 @@ tasks:
   build:inline:
     deps:
       - task: build:agents-md
+      - task: build:skills
       - task: build:tsconfig-md
       - task: build:inline:eslint
       - task: build:inline:prettier
@@ -62,6 +63,10 @@ tasks:
       - mkdir -p dist
       - cp src/datamitsu-config/datamitsu.config.d.ts dist/datamitsu.config.d.ts
     desc: Generate datamitsu.config.d.ts type file
+  build:skills:
+    cmds:
+      - node scripts/gen-skills.ts
+    desc: Regenerate src/datamitsu-config/skills.ts from skills-chunks/
   build:tsconfig-md:
     cmds:
       - node scripts/gen-tsconfig-md.ts

@@ -1,6 +1,14 @@
 # AGENTS.md
 
-**Read [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
+**Read [.datamitsu/ai/agents/agents-docs-markdown.md](.datamitsu/ai/agents/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
+
+## Runtime Environment
+
+The `datamitsu.config.js` bundle (everything under `src/datamitsu-config/`) runs in **goja** — a Go-based JavaScript runtime. There is no Node.js, no `node:fs`, no `node:crypto`, no Node.js built-in modules at runtime. Only plain ES5/ES6 JavaScript is available (what goja supports). The `tsdown` bundler compiles TypeScript to a single JS file that goja evaluates.
+
+Build-time scripts (`scripts/*.ts`) run in Node.js and **can** use Node APIs — they generate source files that are then compiled into the goja bundle.
+
+**Key constraint:** code in `src/datamitsu-config/` must never import `node:*` modules or use Node-specific APIs. All Node API usage must be confined to `scripts/`.
 
 ## Documentation Generation
 
