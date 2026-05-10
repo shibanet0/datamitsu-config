@@ -14,5 +14,9 @@ export default {
     "tryceratops",
     "yesqa",
     "softprops",
+    "footgun",
+    "slugified",
+    "footguns",
+    "goja",
   ],
 };

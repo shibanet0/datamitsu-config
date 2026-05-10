@@ -8,6 +8,7 @@ import { env } from "./env";
 import { ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
 import fnmVersions from "./registries/fnmVersions.json";
+import { REMOVED_SKILLS, SKILLS } from "./skills";
 import { safeJsonParse } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
 
@@ -49,6 +50,42 @@ const aiTools: config.MapOfConfigInit = {
     linkTarget: "AGENTS.md",
     scope: "git-root",
   },
+
+  // Skills: Claude Code adapters
+  ...Object.fromEntries(
+    SKILLS.map((s) => [
+      `.claude/skills/${s.name}/SKILL.md`,
+      {
+        content: () => s.adapters.claude,
+        scope: "git-root" as const,
+      },
+    ]),
+  ),
+
+  // Skills: Codex CLI adapters
+  ...Object.fromEntries(
+    SKILLS.map((s) => [
+      `.codex/prompts/${s.name}.md`,
+      {
+        content: () => s.adapters.codex,
+        scope: "git-root" as const,
+      },
+    ]),
+  ),
+
+  // Cleanup adapters of removed skills
+  ...(REMOVED_SKILLS.length > 0
+    ? {
+        "removed-skills-cleanup": {
+          deleteOnly: true,
+          otherFileNameList: REMOVED_SKILLS.flatMap((name) => [
+            `.claude/skills/${name}/SKILL.md`,
+            `.codex/prompts/${name}.md`,
+          ]),
+          scope: "git-root" as const,
+        },
+      }
+    : {}),
 };
 
 export const trufflehogExcludePaths: string[] = [

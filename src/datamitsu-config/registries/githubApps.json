@@ -253,7 +253,7 @@
     "tombi": {
       "owner": "tombi-toml",
       "repo": "tombi",
-      "tag": "v0.9.18"
+      "tag": "v0.10.4"
     },
     "trivy": {
       "owner": "aquasecurity",
@@ -2763,66 +2763,59 @@
       }
     },
     "tombi": {
-      "configHash": "2af14e0b74c3d1b44b72d10720da5a0a",
+      "configHash": "01de5b7524b9272166d3ebdbeaef67c0",
       "description": "TOML Formatter / Linter / Language Server",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-apple-darwin.gz",
-              "hash": "20409916b06053fb33051b7fd5f1a4fdb150f3dfefe10aff085ce1a0b4ec9faf",
-              "contentType": "gz"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-apple-darwin.tar.gz",
+              "hash": "f3ba04e491d0e2dbf42ecf6fc5d0e0c54d2b71cc74c8a4f59d34717a57544d15",
+              "contentType": "tar.gz",
+              "binaryPath": "tombi-0.10.4/tombi"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-apple-darwin.gz",
-              "hash": "1292188d80906c698dc3728756a9efe0f6ba2b74a87ae2406ec91fadc1611fd7",
-              "contentType": "gz"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-apple-darwin.tar.gz",
+              "hash": "efff1d4fd57364c1b6f0ab7045006ed58d6fdf79925022213d44f4e0993a37a1",
+              "contentType": "tar.gz",
+              "binaryPath": "tombi-0.10.4/tombi"
             }
           }
         },
         "linux": {
           "amd64": {
-            "glibc": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-vscode-0.9.18-linux-x64.vsix",
-              "hash": "d4dd83d7ee40662a271b0d297ee7fd3d6f8f7dcdc023fbfd066a8b8ae7bf6190",
-              "contentType": "binary"
-            },
             "musl": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-unknown-linux-musl.gz",
-              "hash": "a139a80c4116d2ac94f5fe0f86b87c39f3d4314874ed78b353fba017d1afb7dc",
-              "contentType": "gz"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-unknown-linux-musl.tar.gz",
+              "hash": "2988df7c5ac115dc20ebd42f45ba039df0b8cda110b444f419bec814db2c880a",
+              "contentType": "tar.gz",
+              "binaryPath": "tombi-0.10.4/tombi"
             }
           },
           "arm64": {
-            "glibc": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-vscode-0.9.18-linux-arm64.vsix",
-              "hash": "b5c8f3a9b1a5c9c5438096c7bae55432fac1594fd40f863e91a87db309f2dd6b",
-              "contentType": "binary"
-            },
             "musl": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-unknown-linux-musl.gz",
-              "hash": "59ef8e9c7981b32ef062e5c311955eaaf534a996a5c652af361d5703d2c204d6",
-              "contentType": "gz"
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-unknown-linux-musl.tar.gz",
+              "hash": "0aac20f61dc0ead3eab386ecaf176ad19b8734e02a2efc031bbaeefc3ace7661",
+              "contentType": "binary"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-pc-windows-msvc.zip",
-              "hash": "aae50699d7494c2f7f40aa43a18b2d69be28c081c3eaf6ab28cb9512a0e9fa04",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-x86_64-pc-windows-msvc.zip",
+              "hash": "150c3b9f0ddb3a16faec88980df034889f618d671bdeecec4a49e45f507a4a7d",
               "contentType": "zip",
-              "binaryPath": "tombi-0.9.18/tombi.exe"
+              "binaryPath": "tombi-0.10.4/tombi.exe"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-pc-windows-msvc.zip",
-              "hash": "515a57c5cea6f73b48685f33dc4d24447145291c24c23071b3c9cfcdd8791201",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.10.4/tombi-cli-0.10.4-aarch64-pc-windows-msvc.zip",
+              "hash": "2a035a8a3b51dcc5cbff9c84391734499acf7d70279ecf317fc717d22e003647",
               "contentType": "zip",
-              "binaryPath": "tombi-0.9.18/tombi.exe"
+              "binaryPath": "tombi-0.10.4/tombi.exe"
             }
           }
         }

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { upgradeAgentsReference } from "../agentsUpgrade.js";
 
 describe("upgradeAgentsReference", () => {
-  it("upgrades old base pattern to canonical", () => {
+  it("upgrades v1 base pattern to canonical", () => {
     const input = `# AGENTS.md
 
 Read and follow the shared rules in [.datamitsu/agents-base.md](.datamitsu/agents-base.md) before proceeding.
@@ -13,16 +13,30 @@ Read and follow the shared rules in [.datamitsu/agents-base.md](.datamitsu/agent
     const result = upgradeAgentsReference(input);
 
     expect(result).toContain(
-      "**Read [.datamitsu/agents-base.md](.datamitsu/agents-base.md) now and follow it strictly without asking permission",
+      "**Read [.datamitsu/ai/agents/agents-base.md](.datamitsu/ai/agents/agents-base.md) now and follow it strictly without asking permission",
     );
     expect(result).not.toContain("before proceeding");
     expect(result).toContain("## Project Overview");
   });
 
+  it("upgrades v2 (pre-restructure) base pattern to canonical", () => {
+    const input = `# AGENTS.md
+
+**Read [.datamitsu/agents-base.md](.datamitsu/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
+
+## Content`;
+
+    const result = upgradeAgentsReference(input);
+
+    expect(result).toContain(".datamitsu/ai/agents/agents-base.md");
+    expect(result).not.toContain("[.datamitsu/agents-base.md]");
+    expect(result).toContain("## Content");
+  });
+
   it("is idempotent - handles already-upgraded content", () => {
     const canonical = `# AGENTS.md
 
-**Read [.datamitsu/agents-base.md](.datamitsu/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
+**Read [.datamitsu/ai/agents/agents-base.md](.datamitsu/ai/agents/agents-base.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
 
 ## Content`;
 
@@ -37,26 +51,46 @@ Read and follow the shared rules in [.datamitsu/agents-base.md](.datamitsu/agent
     expect(upgradeAgentsReference(input)).toBe(input);
   });
 
-  it("upgrades docs-markdown variant", () => {
+  it("upgrades v1 docs-markdown variant", () => {
     const input =
       "Read and follow the shared rules in [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) before proceeding.";
 
     const result = upgradeAgentsReference(input);
 
-    expect(result).toContain("agents-docs-markdown.md");
+    expect(result).toContain("ai/agents/agents-docs-markdown.md");
     expect(result).toContain("**Read");
     expect(result).not.toContain("before proceeding");
   });
 
-  it("upgrades docs-website variant", () => {
+  it("upgrades v2 docs-markdown variant", () => {
+    const input =
+      "**Read [.datamitsu/agents-docs-markdown.md](.datamitsu/agents-docs-markdown.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**";
+
+    const result = upgradeAgentsReference(input);
+
+    expect(result).toContain("ai/agents/agents-docs-markdown.md");
+    expect(result).not.toContain("[.datamitsu/agents-docs-markdown.md]");
+  });
+
+  it("upgrades v1 docs-website variant", () => {
     const input =
       "Read and follow the shared rules in [.datamitsu/agents-docs-website.md](.datamitsu/agents-docs-website.md) before proceeding.";
 
     const result = upgradeAgentsReference(input);
 
-    expect(result).toContain("agents-docs-website.md");
+    expect(result).toContain("ai/agents/agents-docs-website.md");
     expect(result).toContain("**Read");
     expect(result).not.toContain("before proceeding");
+  });
+
+  it("upgrades v2 docs-website variant", () => {
+    const input =
+      "**Read [.datamitsu/agents-docs-website.md](.datamitsu/agents-docs-website.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**";
+
+    const result = upgradeAgentsReference(input);
+
+    expect(result).toContain("ai/agents/agents-docs-website.md");
+    expect(result).not.toContain("[.datamitsu/agents-docs-website.md]");
   });
 
   it("preserves content before and after reference line", () => {
