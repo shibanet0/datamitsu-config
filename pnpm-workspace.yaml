@@ -1,7 +1,9 @@
+allowBuilds:
+  esbuild: false
+  unrs-resolver: false
 enableGlobalVirtualStore: true
 enablePrePostScripts: false
 hoistPattern: []
-ignorePatchFailures: false
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7

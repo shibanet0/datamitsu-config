@@ -18,5 +18,6 @@ export default {
     "slugified",
     "footguns",
     "goja",
+    "unrs",
   ],
 };
