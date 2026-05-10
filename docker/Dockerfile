@@ -10,7 +10,7 @@ WORKDIR /opt/datamitsu-config
 COPY datamitsu.config.js ./
 
 # Pre-install all tools defined in config
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js init --all
+RUN git init && datamitsu --config /opt/datamitsu-config/datamitsu.config.js init --all && rm -rf .git
 
 # OCI labels (dynamic labels injected via docker/metadata-action)
 LABEL org.opencontainers.image.title="datamitsu-config" \
