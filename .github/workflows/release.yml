@@ -148,7 +148,7 @@ jobs:
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: release-artifacts
           path: .
@@ -227,7 +227,7 @@ jobs:
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: release-artifacts
           path: .
@@ -287,7 +287,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: release-artifacts
           path: .
