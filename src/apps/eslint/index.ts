@@ -241,7 +241,7 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
 
   composer.append(...resolved);
 
-  composer.append(...(config || []));
+  composer.append(...((config || []) as unknown as TypedFlatConfigItem[]));
 
   return composer;
 };

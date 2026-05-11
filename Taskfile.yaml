@@ -60,8 +60,6 @@ tasks:
     cmds:
       - echo "// prettier-ignore" > src/datamitsu-config/datamitsu.config.d.ts
       - datamitsu config types >> src/datamitsu-config/datamitsu.config.d.ts
-      - mkdir -p dist
-      - cp src/datamitsu-config/datamitsu.config.d.ts dist/datamitsu.config.d.ts
     desc: Generate datamitsu.config.d.ts type file
   build:skills:
     cmds:

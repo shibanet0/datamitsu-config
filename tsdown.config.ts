@@ -1,8 +1,5 @@
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
+import { execSync } from "node:child_process";
 import { defineConfig } from "tsdown";
-
-const execAsync = promisify(exec);
 
 export default defineConfig({
   entry: [
@@ -14,8 +11,10 @@ export default defineConfig({
   ],
   fixedExtension: false,
   hooks: {
-    "build:done": async () => {
-      await execAsync("rm -f tsconfig.tsbuildinfo && pnpm exec tsc --emitDeclarationOnly");
+    "build:done": () => {
+      execSync("rm -f tsconfig.tsbuildinfo && pnpm exec tsc --emitDeclarationOnly", {
+        stdio: "inherit",
+      });
     },
   },
 });

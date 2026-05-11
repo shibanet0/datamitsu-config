@@ -3,6 +3,10 @@
   "version": "0.0.3-alpha-28",
   "description": "Shared datamitsu configuration with 79+ managed development tools",
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shibanet0/datamitsu-config"
+  },
   "license": "MIT",
   "author": "Alexander Svinarev <shibanet0@gmail.com> (shibanet0.com)",
   "type": "module",

@@ -20,15 +20,6 @@ jobs:
           "
           echo "📦 PR version: $PR_VERSION"
 
-      - name: Bootstrap build (datamitsu.config.js)
-        run: |
-          ./node_modules/.bin/datamitsu --no-auto-config exec task -- build:datamitsu-config
-          echo "✓ Built datamitsu.config.js"
-          ls -lh datamitsu.config.js
-
-      - name: Run full build
-        run: pnpm build
-
       - name: Run tests
         run: pnpm test
 
@@ -57,7 +48,6 @@ jobs:
           name: pr-artifacts
           path: |
             datamitsu.config.js
-            datamitsu.config.d.ts
             dist/
             package.json
             bin/

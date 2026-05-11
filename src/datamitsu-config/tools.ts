@@ -86,7 +86,6 @@ export const toolsConfig: config.MapOfTools = {
   ...(isCI && {
     trufflehog: {
       name: "trufflehog",
-      // disabled: !isCI,
       operations: {
         lint: {
           app: "trufflehog",
@@ -101,7 +100,6 @@ export const toolsConfig: config.MapOfTools = {
           ],
           globs: ["**/*"],
           scope: "repository",
-          // cacheKeyEnv: ["TRUFFLEHOG_GITHUB_TOKEN", "TRUFFLEHOG_AWS_ACCESS_KEY_ID"],
         },
       },
     },

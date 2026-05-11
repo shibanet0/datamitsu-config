@@ -28,19 +28,10 @@ jobs:
           echo "📦 Version set to: $VERSION"
           grep '"version":' package.json
 
-      - name: Bootstrap build (datamitsu.config.js)
-        run: |
-          ./node_modules/.bin/datamitsu --no-auto-config exec task -- build:datamitsu-config
-          echo "✓ Built datamitsu.config.js"
-          ls -lh datamitsu.config.js
-
-      - name: Run full build
-        run: pnpm build
-
       - name: Verify critical files exist
         run: |
           test -f datamitsu.config.js || { echo "❌ datamitsu.config.js missing"; exit 1; }
-          test -f datamitsu.config.d.ts || { echo "❌ datamitsu.config.d.ts missing"; exit 1; }
+          test -f dist-datamitsu-config/datamitsu.config.d.ts || { echo "❌ dist-datamitsu-config/datamitsu.config.d.ts missing"; exit 1; }
           test -d dist/ || { echo "❌ dist/ directory missing"; exit 1; }
           echo "✅ All critical files present"
 
@@ -59,7 +50,6 @@ jobs:
           name: release-artifacts
           path: |
             datamitsu.config.js
-            datamitsu.config.d.ts
             dist/
             package.json
             bin/
@@ -260,7 +250,7 @@ jobs:
           draft: false
           files: |
             datamitsu.config.js
-            datamitsu.config.d.ts
+            dist-datamitsu-config/datamitsu.config.d.ts
           name: Release ${{ needs.validate-stable.outputs.version }}
           prerelease: ${{ contains(needs.validate-stable.outputs.version, '-rc.') || contains(needs.validate-stable.outputs.version, '-alpha.') }}
           tag_name: ${{ github.ref_name }}

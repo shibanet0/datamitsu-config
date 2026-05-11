@@ -2803,6 +2803,11 @@
         },
         "linux": {
           "amd64": {
+            "glibc": {
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-x86_64-unknown-linux-musl.gz",
+              "hash": "a139a80c4116d2ac94f5fe0f86b87c39f3d4314874ed78b353fba017d1afb7dc",
+              "contentType": "gz"
+            },
             "musl": {
               "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-x86_64-unknown-linux-musl.tar.gz",
               "hash": "827a8de6959b37b28e9a4d2dc3bfdb28e647d6de690d81a9a6751afabaa73763",
@@ -2811,6 +2816,11 @@
             }
           },
           "arm64": {
+            "glibc": {
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.9.18/tombi-cli-0.9.18-aarch64-unknown-linux-musl.gz",
+              "hash": "59ef8e9c7981b32ef062e5c311955eaaf534a996a5c652af361d5703d2c204d6",
+              "contentType": "gz"
+            },
             "musl": {
               "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.1/tombi-cli-0.11.1-aarch64-unknown-linux-musl.tar.gz",
               "hash": "f08c006ac16e8cf100c41e66276b22d29ea1a051f0d8a36b5a07dbfa36ce41fd",
