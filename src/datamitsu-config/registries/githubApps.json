@@ -1526,8 +1526,8 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-illumos-amd64.tar.gz",
-              "hash": "7e9029211a996e5b43aa16ef10631f65810ed0553d637b64a1a0b936c225ce97",
+              "url": "https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-linux-amd64.tar.gz",
+              "hash": "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553",
               "contentType": "tar.gz",
               "binaryPath": "golangci-lint-2.12.2/golangci-lint"
             }
