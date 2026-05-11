@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execSync } from "node:child_process";
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
@@ -12,13 +12,9 @@ export default defineConfig({
   fixedExtension: false,
   hooks: {
     "build:done": () => {
-      execFileSync(
-        "bash",
-        ["-c", "rm -f tsconfig.tsbuildinfo && pnpm exec tsc --emitDeclarationOnly"],
-        {
-          stdio: "inherit",
-        },
-      );
+      execSync("rm -f tsconfig.tsbuildinfo && pnpm exec tsc --emitDeclarationOnly", {
+        stdio: "inherit",
+      });
     },
   },
 });

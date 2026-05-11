@@ -1,13 +1,16 @@
 description: Setup Node.js, pnpm, and caching for datamitsu-config
 
 inputs:
+  build:
+    default: "true"
+    description: "Whether to run full build after install"
+    required: false
   cache-datamitsu:
     default: "true"
     description: "Whether to cache datamitsu store"
     required: false
   install-dependencies:
     default: "true"
-
     description: "Whether to run pnpm install"
     required: false
   registry-url:
@@ -41,5 +44,10 @@ runs:
     - if: ${{ inputs.install-dependencies == 'true' }}
       name: Install dependencies
       run: pnpm install --frozen-lockfile
+      shell: bash
+
+    - if: ${{ inputs.build == 'true' && inputs.install-dependencies == 'true' }}
+      name: Build
+      run: pnpm build
       shell: bash
   using: composite
