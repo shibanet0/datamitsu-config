@@ -48,7 +48,6 @@ jobs:
           name: pr-artifacts
           path: |
             datamitsu.config.js
-            datamitsu.config.d.ts
             dist/
             package.json
             bin/
