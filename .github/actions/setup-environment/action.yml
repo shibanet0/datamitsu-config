@@ -33,9 +33,6 @@ runs:
       with:
         key: datamitsu-store-${{ hashFiles('package.json', 'pnpm-lock.yaml', 'datamitsu.config.js') }}
         path: ~/.cache/datamitsu/store
-        restore-keys: |
-          datamitsu-store-${{ hashFiles('package.json', 'pnpm-lock.yaml') }}
-          datamitsu-store-
 
     - if: ${{ inputs.install-dependencies == 'true' }}
       name: Install dependencies
