@@ -83,7 +83,7 @@
     "@next/eslint-plugin-next": "16.1.6",
     "@ovineko/clean-pkg-json": "0.0.3",
     "@prettier/plugin-xml": "3.4.2",
-    "@stylistic/eslint-plugin": "5.8.0",
+    "@stylistic/eslint-plugin": "5.10.0",
     "@types/eslint-plugin-jsx-a11y": "6.10.1",
     "@types/node": "24.10.13",
     "@types/remove-markdown": "0.3.4",
