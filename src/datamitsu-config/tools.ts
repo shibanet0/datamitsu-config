@@ -190,6 +190,7 @@ export const toolsConfig: config.MapOfTools = {
         args: [
           "dir",
           "--redact",
+          "--verbose",
           "--no-banner",
           "--exit-code",
           "1",

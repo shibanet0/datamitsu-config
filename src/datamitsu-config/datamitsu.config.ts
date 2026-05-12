@@ -87,7 +87,7 @@ function getConfig(cfg: config.Config): config.Config {
 globalThis.getConfig = getConfig;
 
 const getMinVersion = (): string => {
-  return "0.0.0-unstable.20260506.2b87264";
+  return "0.0.7";
 };
 
 globalThis.getMinVersion = getMinVersion;
