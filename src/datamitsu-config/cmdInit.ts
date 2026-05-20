@@ -5,7 +5,7 @@ import { oxlintConfig } from "../apps/oxlint";
 import { AGENTS_MD, upgradeAgentsReference } from "./agentsUpgrade";
 import { runtimeVersions } from "./constants";
 import { env } from "./env";
-import { ignoreGroups } from "./ignore";
+import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
 import fnmVersions from "./registries/fnmVersions.json";
 import { REMOVED_SKILLS, SKILLS } from "./skills";
@@ -106,7 +106,9 @@ export const init: config.MapOfConfigInit = {
   ".dockerignore": {
     content: (context) => {
       const mergedRules = tools.Ignore.parse(
-        [tools.Ignore.stringify(ignoreGroups), context.originalContent || ""].join("\n"),
+        [tools.Ignore.stringify(ignoreGroups), filterIgnore(context.originalContent || "")].join(
+          "\n",
+        ),
       );
 
       return tools.Ignore.stringify(mergedRules.groups, mergedRules.groupOrder) + "\n";
@@ -229,7 +231,9 @@ export const init: config.MapOfConfigInit = {
   ".gitignore": {
     content: (context) => {
       const mergedRules = tools.Ignore.parse(
-        [tools.Ignore.stringify(ignoreGroups), context.originalContent || ""].join("\n"),
+        [tools.Ignore.stringify(ignoreGroups), filterIgnore(context.originalContent || "")].join(
+          "\n",
+        ),
       );
 
       return tools.Ignore.stringify(mergedRules.groups, mergedRules.groupOrder) + "\n";
