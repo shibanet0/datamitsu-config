@@ -30,6 +30,7 @@ const defaultOptions: DefineConfigOptions = {
     regexp: { disabled: true },
     turbo: { disabled: true },
     "vanilla-extract": { disabled: true },
+    yml: { disabled: true },
   },
 };
 

@@ -58,3 +58,15 @@ Blocklist validation prevents adding deprecated/replaced tools to registry files
 2. Validator will enforce on next commit
 
 See [blocklist.json](src/datamitsu-config/registries/blocklist.json) for complete list and rationales.
+
+## One Config Per Tool
+
+Each tool config uses a single **canonical filename** per project. The `otherFileNameList` field in `cmdInit.ts` lists all alternate filenames that `datamitsu init` deletes automatically. This prevents conflicts from multiple config files for the same tool.
+
+Similarly, each file-type concern (linting, formatting) should be handled by **one dedicated tool**, not multiple overlapping ones. For example:
+
+- YAML: yamllint (lint) + yamlfmt (format) — ESLint yml plugin is disabled
+- TOML: eslint-plugin-toml (lint) + tombi (format)
+- JS/TS: ESLint (lint) + Prettier (format)
+
+When adding new tools, check that no existing tool already covers the same file types and operations.

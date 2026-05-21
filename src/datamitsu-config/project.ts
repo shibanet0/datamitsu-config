@@ -25,6 +25,10 @@ export const projectTypes: config.MapOfProjectTypes = {
     description: "Terraform infrastructure",
     markers: ["**/*.tf"],
   },
+  "terragrunt-project": {
+    description: "Terragrunt infrastructure",
+    markers: ["**/terragrunt.hcl"],
+  },
   "turbo-package": {
     description: "turbo project",
     markers: ["turbo.json"],

@@ -103,6 +103,83 @@ function escapeRegExp(string: string): string {
 }
 
 export const init: config.MapOfConfigInit = {
+  ".datamitsu/scripts/check-empty-files.sh": {
+    content: () => {
+      return [
+        "#!/usr/bin/env bash",
+        "",
+        "# Check for empty files",
+        'for file in "$@"; do',
+        '  if [ ! -f "$file" ]; then',
+        '    echo "Error: File not found: $file"',
+        "    exit 1",
+        "  fi",
+        "",
+        "  # Check if file has no content or only whitespace",
+        `  if [ ! -s "$file" ] || [ -z "$(tr -d '[:space:]' < "$file")" ]; then`,
+        '    echo "Error: Empty file detected: $file"',
+        "    exit 1",
+        "  fi",
+        "done",
+        "",
+        "exit 0",
+        "",
+      ].join("\n");
+    },
+    scope: "git-root",
+  },
+  ".datamitsu/scripts/format-terraform-spacing.sh": {
+    content: () => {
+      return [
+        "#!/usr/bin/env bash",
+        "",
+        "# Terraform entities that should have blank lines before them",
+        "TERRAFORM_ENTITIES=(",
+        '  "variable"',
+        '  "resource"',
+        '  "data"',
+        '  "output"',
+        '  "locals"',
+        '  "module"',
+        '  "terraform"',
+        '  "provider"',
+        ")",
+        "",
+        "# Cross-platform sed in-place",
+        "if sed --version 2>/dev/null | grep -q GNU; then",
+        '  sed_inplace() { sed -i "$@"; }',
+        "else",
+        `  sed_inplace() { sed -i '' "$@"; }`,
+        "fi",
+        "",
+        'for file in "$@"; do',
+        "  # Step 1: Add 3 blank lines before each Terraform entity",
+        "  temp_file=$(mktemp)",
+        '  cp "$file" "$temp_file"',
+        "",
+        // oxlint-disable-next-line no-template-curly-in-string -- shell script syntax, not JS template
+        '  for entity in "${TERRAFORM_ENTITIES[@]}"; do',
+        "    # Match entity at the beginning of line (with optional spaces)",
+        "    # Replace with 3 newlines + the matched line",
+        `    sed_inplace "s/^[[:space:]]*\${entity}[[:space:]]*\\"/\\n\\n\\n\${entity} \\"/g" "$temp_file"`,
+        "  done",
+        "",
+        "  # Step 2: Remove duplicate blank lines (keep max 1 consecutive blank line)",
+        `  awk 'BEGIN{blank=0} /^[[:space:]]*$/{blank++; if(blank<=1) print; next} {blank=0; print}' "$temp_file" > "$temp_file.2"`,
+        "",
+        "  # Step 3: Remove leading blank lines",
+        `  sed_inplace '1{/^[[:space:]]*$/d;}' "$temp_file.2"`,
+        "",
+        "  # Move the result back to the original file",
+        '  mv "$temp_file.2" "$file"',
+        '  rm -f "$temp_file"',
+        "done",
+        "",
+      ].join("\n");
+    },
+    projectTypes: ["terraform-project", "terragrunt-project"],
+    scope: "git-root",
+  },
   ".dockerignore": {
     content: (context) => {
       const mergedRules = tools.Ignore.parse(
@@ -376,6 +453,36 @@ export const init: config.MapOfConfigInit = {
     projectTypes: ["npm-package"],
     scope: "git-root",
   },
+  ".tflint.hcl": {
+    content: (context) => {
+      const existing = context.originalContent || "";
+      if (existing.trim().length > 0) {
+        return existing;
+      }
+
+      return [
+        `plugin "terraform" {`,
+        `  enabled = true`,
+        `  preset  = "recommended"`,
+        `}`,
+        // ``,
+        // `plugin "aws" {`,
+        // `  enabled = true`,
+        // `  version = "0.47.0"`,
+        // `  source  = "github.com/terraform-linters/tflint-ruleset-aws"`,
+        // `}`,
+        // ``,
+        // `plugin "terraform" {`,
+        // `  enabled = true`,
+        // `  version = "0.14.1"`,
+        // `  source  = "github.com/terraform-linters/tflint-ruleset-terraform"`,
+        // `}`,
+        ``,
+      ].join("\n");
+    },
+    projectTypes: ["terraform-project"],
+    scope: "git-root",
+  },
   ".tombi.toml": {
     content: (context) => {
       const data = TOML.parse(context.originalContent || "");
@@ -420,6 +527,28 @@ export const init: config.MapOfConfigInit = {
   },
   ".vscode/settings.json": {
     content: vscodeSettings,
+    scope: "git-root",
+  },
+  ".yamlfmt.yml": {
+    content: (context) => {
+      const existing = context.originalContent || "";
+      if (existing.trim().length > 0) {
+        return existing;
+      }
+
+      return YAML.stringify({
+        formatter: {
+          include_document_start: false,
+          indent: 2,
+          retain_line_breaks_single: true,
+          type: "basic",
+        },
+        global: {
+          exclude: [".sops.yaml", "**/.sops.yaml"],
+        },
+      });
+    },
+    otherFileNameList: [".yamlfmt", ".yamlfmt.yml", ".yamlfmt.yaml"],
     scope: "git-root",
   },
   "commitlint.config.js": {

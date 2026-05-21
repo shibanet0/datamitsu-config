@@ -13,8 +13,6 @@ const eslintGlobs: string[] = [
   "**/*.json",
   "**/*.jsonc",
   "**/*.json5",
-  "**/*.yaml",
-  "**/*.yml",
   "**/*.toml",
 ];
 
@@ -46,13 +44,21 @@ type Tool =
   | "oxlint"
   | "pre-commit"
   | "prettier"
+  | "ruff"
+  | "ruff-format"
   | "shellcheck"
   | "shfmt"
   | "sort-package-json"
   | "syncpack"
+  | "terraform-docs"
+  | "terraform-fmt"
+  | "terragrunt-fmt"
+  | "tflint"
   | "toml"
   | "tsc"
-  | "typstyle";
+  | "typstyle"
+  | "yamlfmt"
+  | "yamllint";
 
 const _toolPriority: Tool[] = [
   "syncpack",
@@ -63,6 +69,8 @@ const _toolPriority: Tool[] = [
   "prettier",
   "sort-package-json",
   "golangci-lint",
+  "ruff",
+  "ruff-format",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -70,6 +78,12 @@ const _toolPriority: Tool[] = [
   "shellcheck",
   "hadolint",
   "toml",
+  "tflint",
+  "terraform-fmt",
+  "terragrunt-fmt",
+  "terraform-docs",
+  "yamllint",
+  "yamlfmt",
   "pre-commit",
 ];
 const toolPriority = [...new Set<Tool>(_toolPriority)].reduce<Record<Tool, number>>(
@@ -281,18 +295,6 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["pre-commit-project"],
   },
-  // knip: {
-  //   name: "Knip",
-  //   operations: {
-  //     lint: {
-  //       args: ["--config", tools.Path.join(facts().gitRoot, "knip.config.js")],
-  //       app: "knip",
-  //       globs: [],
-  //       mode: "whole-project",
-  //     },
-  //   },
-  //   projectTypes: ["npm-package","typescript-project"],
-  // },
   prettier: {
     name: "Prettier - Code Formatter",
     operations: {
@@ -314,6 +316,50 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  ruff: {
+    name: "Ruff - Python Linter",
+    operations: {
+      fix: {
+        app: "ruff",
+        args: ["check", "--fix", "--quiet", "{files}"],
+        batch: true,
+        globs: ["**/*.py", "**/*.pyi"],
+        priority: toolPriority.ruff,
+        scope: "per-project",
+      },
+      lint: {
+        app: "ruff",
+        args: ["check", "--quiet", "{files}"],
+        batch: true,
+        globs: ["**/*.py", "**/*.pyi"],
+        priority: toolPriority.ruff,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["python-package"],
+  },
+  "ruff-format": {
+    name: "Ruff Format",
+    operations: {
+      fix: {
+        app: "ruff",
+        args: ["format", "--quiet", "{files}"],
+        batch: true,
+        globs: ["**/*.py", "**/*.pyi"],
+        priority: toolPriority["ruff-format"],
+        scope: "per-project",
+      },
+      lint: {
+        app: "ruff",
+        args: ["format", "--check", "--quiet", "{files}"],
+        batch: true,
+        globs: ["**/*.py", "**/*.pyi"],
+        priority: toolPriority["ruff-format"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["python-package"],
   },
   shellcheck: {
     name: "ShellCheck - Shell Script Linter",
@@ -388,6 +434,92 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["npm-package", "typescript-project"],
   },
+  "terraform-docs": {
+    name: "terraform-docs",
+    operations: {
+      fix: {
+        app: "terraform-docs",
+        args: [
+          "markdown",
+          "table",
+          "--output-file",
+          "README.md",
+          "--output-mode",
+          "inject",
+          "{cwd}",
+        ],
+        globs: ["**/*.tf"],
+        priority: toolPriority["terraform-docs"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["terraform-project"],
+  },
+  "terragrunt-fmt": {
+    name: "Terragrunt HCL Format",
+    operations: {
+      fix: {
+        app: "terragrunt",
+        args: ["hclfmt"],
+        globs: ["**/*.hcl"],
+        priority: toolPriority["terragrunt-fmt"],
+        scope: "repository",
+      },
+    },
+    projectTypes: ["terragrunt-project"],
+  },
+  tflint: {
+    name: "TFLint - Terraform Linter",
+    operations: {
+      lint: {
+        app: "tflint",
+        args: [
+          "--recursive",
+          "--config",
+          "{root}/.tflint.hcl",
+          "--color",
+          "--minimum-failure-severity=notice",
+          "--call-module-type=none",
+        ],
+        globs: ["**/*.tf"],
+        priority: toolPriority.tflint,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["terraform-project"],
+  },
+  // knip: {
+  //   name: "Knip",
+  //   operations: {
+  //     lint: {
+  //       args: ["--config", tools.Path.join(facts().gitRoot, "knip.config.js")],
+  //       app: "knip",
+  //       globs: [],
+  //       mode: "whole-project",
+  //     },
+  //   },
+  //   projectTypes: ["npm-package","typescript-project"],
+  // },
+  "tofu-fmt": {
+    name: "OpenTofu fmt",
+    operations: {
+      fix: {
+        app: "tofu",
+        args: ["fmt", "-recursive", "{cwd}"],
+        globs: ["**/*.tf", "**/*.tfvars"],
+        priority: toolPriority["terraform-fmt"],
+        scope: "per-project",
+      },
+      lint: {
+        app: "tofu",
+        args: ["fmt", "-check", "-recursive", "-diff", "{cwd}"],
+        globs: ["**/*.tf", "**/*.tfvars"],
+        priority: toolPriority["terraform-fmt"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["terraform-project"],
+  },
   tombi: {
     name: "🦅 TOML Toolkit 🦅",
     operations: {
@@ -453,6 +585,44 @@ export const toolsConfig: config.MapOfTools = {
         ],
         globs: ["**/*.typ"],
         priority: toolPriority.typstyle,
+        scope: "per-file",
+      },
+    },
+  },
+  yamlfmt: {
+    name: "yamlfmt - YAML Formatter",
+    operations: {
+      fix: {
+        app: "yamlfmt",
+        args: ["{files}"],
+        batch: true,
+        globs: ["**/*.yaml", "**/*.yml"],
+        priority: toolPriority.yamlfmt,
+        scope: "per-file",
+      },
+      lint: {
+        app: "yamlfmt",
+        args: ["-lint", "{files}"],
+        batch: true,
+        globs: ["**/*.yaml", "**/*.yml"],
+        priority: toolPriority.yamlfmt,
+        scope: "per-file",
+      },
+    },
+  },
+  yamllint: {
+    name: "yamllint - YAML Linter",
+    operations: {
+      lint: {
+        app: "yamllint",
+        args: [
+          "-d",
+          "{extends: default, rules: {document-start: disable, line-length: disable}}",
+          "{files}",
+        ],
+        batch: true,
+        globs: ["**/*.yaml", "**/*.yml"],
+        priority: toolPriority.yamllint,
         scope: "per-file",
       },
     },

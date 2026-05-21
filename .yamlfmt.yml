@@ -1,0 +1,9 @@
+formatter:
+  include_document_start: false
+  indent: 2
+  retain_line_breaks_single: true
+  type: basic
+global:
+  exclude:
+    - .sops.yaml
+    - "**/.sops.yaml"

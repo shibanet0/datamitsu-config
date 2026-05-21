@@ -249,5 +249,6 @@
       "replacement": "Use tombi from GitHub releases (native Rust binary)"
     }
   },
-  "runtimes": {}
+  "runtimes": {},
+  "external": {}
 }

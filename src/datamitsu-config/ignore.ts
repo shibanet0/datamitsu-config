@@ -21,6 +21,7 @@ export const ignoreGroups: tools.Ignore.IgnoreMap<
   | "Pulumi"
   | "ralphex progress logs"
   | "Security & Secrets"
+  | "Terraform & Terragrunt"
   | "Testing"
 > = {
   "Build outputs": [
@@ -143,6 +144,17 @@ export const ignoreGroups: tools.Ignore.IgnoreMap<
     "**/*.crt",
     "**/secrets.yml",
     "**/secrets.json",
+  ],
+  "Terraform & Terragrunt": [
+    "**/.terraform/",
+    "**/.terragrunt-cache/",
+    "**/*.tfstate",
+    "**/*.tfstate.backup",
+    "**/crash.log",
+    "**/override.tf",
+    "**/override.tf.json",
+    "**/*_override.tf",
+    "**/*_override.tf.json",
   ],
   Testing: [
     "**/coverage/",

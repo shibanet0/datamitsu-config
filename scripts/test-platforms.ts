@@ -308,38 +308,37 @@ function buildReport(results: PlatformResult[]): string {
     const result = results.find((r) => r.platform === platform);
     if (!result || !result.data) {
       lines.push(`| ${platform} | ✗ ERROR | — | — | — | — |`);
-      continue;
+    } else {
+      const { overallStatus, summary } = result.data;
+      const overall = overallStatus === "ok" ? "✓ OK" : "✗ FAILED";
+
+      const binaryDl = formatCount(
+        summary.binaryDownloads.ok,
+        summary.binaryDownloads.cached,
+        summary.binaryDownloads.failed,
+      );
+      const runtimeDl = formatCount(
+        summary.runtimeDownloads.ok,
+        summary.runtimeDownloads.cached,
+        summary.runtimeDownloads.failed,
+      );
+      const runtimeInst = formatCount(
+        summary.runtimeInstalls.ok,
+        summary.runtimeInstalls.cached,
+        summary.runtimeInstalls.failed,
+      );
+      let versionCh = "—";
+      if (summary.versionChecks.ok + summary.versionChecks.execFailed > 0) {
+        versionCh =
+          summary.versionChecks.execFailed === 0
+            ? `${summary.versionChecks.ok}✓`
+            : `${summary.versionChecks.ok}✓ ${summary.versionChecks.execFailed}✗`;
+      }
+
+      lines.push(
+        `| ${platform} | ${overall} | ${binaryDl} | ${runtimeDl} | ${runtimeInst} | ${versionCh} |`,
+      );
     }
-
-    const { overallStatus, summary } = result.data;
-    const overall = overallStatus === "ok" ? "✓ OK" : "✗ FAILED";
-
-    const binaryDl = formatCount(
-      summary.binaryDownloads.ok,
-      summary.binaryDownloads.cached,
-      summary.binaryDownloads.failed,
-    );
-    const runtimeDl = formatCount(
-      summary.runtimeDownloads.ok,
-      summary.runtimeDownloads.cached,
-      summary.runtimeDownloads.failed,
-    );
-    const runtimeInst = formatCount(
-      summary.runtimeInstalls.ok,
-      summary.runtimeInstalls.cached,
-      summary.runtimeInstalls.failed,
-    );
-    let versionCh = "—";
-    if (summary.versionChecks.ok + summary.versionChecks.execFailed > 0) {
-      versionCh =
-        summary.versionChecks.execFailed === 0
-          ? `${summary.versionChecks.ok}✓`
-          : `${summary.versionChecks.ok}✓ ${summary.versionChecks.execFailed}✗`;
-    }
-
-    lines.push(
-      `| ${platform} | ${overall} | ${binaryDl} | ${runtimeDl} | ${runtimeInst} | ${versionCh} |`,
-    );
   }
 
   lines.push("");

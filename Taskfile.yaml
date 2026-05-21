@@ -83,13 +83,7 @@ tasks:
   # ──────────────────────────────────────────────
 
   docs:generate:
-    deps:
-      [
-        docs:generate:apps,
-        docs:generate:tools,
-        docs:generate:project-types,
-        docs:generate:init-configs,
-      ]
+    deps: ['docs:generate:apps', 'docs:generate:tools', 'docs:generate:project-types', 'docs:generate:init-configs']
     desc: Generate all documentation
   docs:generate:apps:
     cmds:
@@ -149,6 +143,14 @@ tasks:
     cmds:
       - datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry with update flag
+  pull:external:
+    cmds:
+      - node scripts/pull-external-apps.ts ./src/datamitsu-config/registries/externalApps.json
+    desc: Pull external app registry (verify hashes only)
+  pull:external:update:
+    cmds:
+      - node scripts/pull-external-apps.ts --update ./src/datamitsu-config/registries/externalApps.json
+    desc: Pull external app registry with update flag
   pull:runtimes:update:
     cmds:
       - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json

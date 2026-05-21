@@ -119,20 +119,18 @@ export const pulumiCleanup = async () => {
       .then(() => true)
       .catch(() => false);
 
-    if (!originalExists) {
-      continue;
-    }
+    if (originalExists) {
+      // Verify encrypted file is valid
+      // oxlint-disable-next-line no-await-in-loop
+      const isValid = await verifyEncryptedFile(encFile, datamitsu, GPG_TTY);
 
-    // Verify encrypted file is valid
-    // oxlint-disable-next-line no-await-in-loop
-    const isValid = await verifyEncryptedFile(encFile, datamitsu, GPG_TTY);
-
-    if (isValid) {
-      filesToRemove.push(originalFile);
-    } else {
-      console.warn(
-        `⚠️  Warning: ${path.relative(process.cwd(), encFile)} failed verification, keeping original`,
-      );
+      if (isValid) {
+        filesToRemove.push(originalFile);
+      } else {
+        console.warn(
+          `⚠️  Warning: ${path.relative(process.cwd(), encFile)} failed verification, keeping original`,
+        );
+      }
     }
   }
 

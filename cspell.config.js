@@ -21,5 +21,6 @@ export default {
     "unrs",
     "tfupdate",
     "minamijoyo",
+    "hclfmt",
   ],
 };

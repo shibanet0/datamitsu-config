@@ -6,6 +6,10 @@ import { knipApp } from "./apps/knip";
 import { prettierApp } from "./apps/prettier";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
 import { pnpmWorkspaceConfigYAML } from "./pnpmWorkspaceConfig";
+import {
+  apps as externalAppsJSON,
+  binaries as externalBinariesJSON,
+} from "./registries/externalApps.json";
 import fnmVersions from "./registries/fnmVersions.json";
 import {
   apps as githubAppsJSON,
@@ -34,7 +38,20 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
       acc[key].versionCheck = { args: ["-v"] };
     }
 
-    if (["cosign", "crane", "dasel", "gcrane", "scorecard", "sqlc", "vacuum"].includes(key)) {
+    if (
+      [
+        "cosign",
+        "crane",
+        "dasel",
+        "gcrane",
+        "helm",
+        "scorecard",
+        "sqlc",
+        "terraform-docs",
+        "tofu",
+        "vacuum",
+      ].includes(key)
+    ) {
       acc[key].versionCheck = { args: ["version"] };
     }
 
@@ -43,8 +60,30 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
   {},
 );
 
+const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapOfApps>(
+  (acc, [key, el]) => {
+    const binaries = el.binaries as unknown as BinManager.MapOfBinaries;
+    const app = externalAppsJSON[key as keyof typeof externalAppsJSON];
+
+    acc[key] = {
+      binary: {
+        binaries,
+        version: app.version,
+      },
+      description: (el as any).description ?? undefined,
+    };
+
+    if (app.versionCheck) {
+      acc[key].versionCheck = app.versionCheck;
+    }
+
+    return acc;
+  },
+  {},
+);
 export const mapOfApps: BinManager.MapOfApps = {
   ...githubApps,
+  ...externalApps,
   bandit: {
     description: uvVersions.bandit.description,
     uv: {

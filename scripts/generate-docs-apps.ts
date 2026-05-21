@@ -290,11 +290,7 @@ function extractRepositoryFromBinary(app: AppConfig): string | undefined {
   for (const os of Object.values(binaries)) {
     for (const arch of Object.values(os)) {
       for (const variant of Object.values(arch)) {
-        const url = variant.url;
-        if (!url) {
-          continue;
-        }
-        const match = url.match(/github\.com\/([^/]+\/[^/]+)/);
+        const match = variant.url?.match(/github\.com\/([^/]+\/[^/]+)/);
         if (match) {
           return `https://github.com/${match[1]}`;
         }
