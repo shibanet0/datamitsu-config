@@ -1,66 +1,76 @@
 {
   "apps": {
     "kubectl": {
-      "version": "v1.36.1",
+      "contentType": "binary",
       "description": "Kubernetes command-line tool",
+      "latestVersionUrl": "https://dl.k8s.io/release/stable.txt",
+      "platforms": {
+        "darwin": {
+          "amd64": "unknown",
+          "arm64": "unknown"
+        },
+        "linux": {
+          "amd64": "glibc",
+          "arm64": "glibc"
+        },
+        "windows": {
+          "amd64": "unknown"
+        }
+      },
       "source": "kubernetes",
       "urlTemplate": "https://dl.k8s.io/release/{version}/bin/{os}/{arch}/kubectl{ext}",
-      "latestVersionUrl": "https://dl.k8s.io/release/stable.txt",
-      "versionCheck": { "args": ["version", "--client"] },
-      "platforms": {
-        "darwin": { "amd64": "unknown", "arm64": "unknown" },
-        "linux": { "amd64": "glibc", "arm64": "glibc" },
-        "windows": { "amd64": "unknown" }
-      },
-      "contentType": "binary"
+      "version": "v1.36.1",
+      "versionCheck": {
+        "args": ["version", "--client"]
+      }
     }
   },
   "binaries": {
     "kubectl": {
-      "description": "Kubernetes command-line tool",
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "url": "https://dl.k8s.io/release/v1.36.1/bin/darwin/amd64/kubectl",
+              "contentType": "binary",
               "hash": "b4973e90ebb00537d735b63d6f8293c1959156e6ff435f6a43c08aeaa1a2e7d7",
-              "contentType": "binary"
+              "url": "https://dl.k8s.io/release/v1.36.1/bin/darwin/amd64/kubectl"
             }
           },
           "arm64": {
             "unknown": {
-              "url": "https://dl.k8s.io/release/v1.36.1/bin/darwin/arm64/kubectl",
+              "contentType": "binary",
               "hash": "9092778abaef3079449da4cd70ded0e4be112480c93efcdeace3155968d1d133",
-              "contentType": "binary"
+              "url": "https://dl.k8s.io/release/v1.36.1/bin/darwin/arm64/kubectl"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "url": "https://dl.k8s.io/release/v1.36.1/bin/linux/amd64/kubectl",
+              "contentType": "binary",
               "hash": "629d3f410e09bf49b64ae7079f7f0bda1191efed311f7d37fdbab0ad5b0ec2b7",
-              "contentType": "binary"
+              "url": "https://dl.k8s.io/release/v1.36.1/bin/linux/amd64/kubectl"
             }
           },
           "arm64": {
             "glibc": {
-              "url": "https://dl.k8s.io/release/v1.36.1/bin/linux/arm64/kubectl",
+              "contentType": "binary",
               "hash": "59f7ee8e477fae658447607dc3c8790ac17a1b016c01c622c12070e969e2d4e7",
-              "contentType": "binary"
+              "url": "https://dl.k8s.io/release/v1.36.1/bin/linux/arm64/kubectl"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "url": "https://dl.k8s.io/release/v1.36.1/bin/windows/amd64/kubectl.exe",
+              "contentType": "binary",
               "hash": "538f4229eee91a17b34724da7daade7687393d6988e33b723c6c306572c13900",
-              "contentType": "binary"
+              "url": "https://dl.k8s.io/release/v1.36.1/bin/windows/amd64/kubectl.exe"
             }
           }
         }
-      }
+      },
+      "description": "Kubernetes command-line tool"
     }
   }
 }

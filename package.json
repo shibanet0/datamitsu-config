@@ -15,6 +15,7 @@
       "types": "./dist/datamitsu-api/index.d.ts",
       "default": "./dist/datamitsu-api/index.js"
     },
+    "./package.json": "./package.json",
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/library.json": "./tsconfig/library.json",
     "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
@@ -22,7 +23,6 @@
     "./tsconfig/service.json": "./tsconfig/service.json",
     "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
     "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
-    "./package.json": "./package.json",
     "./type-fest": {
       "import": {
         "types": "./dist/type-fest/index.d.ts"
