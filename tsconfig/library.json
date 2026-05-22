@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Standalone shared library",
-  "extends": "./base.json",
   "compilerOptions": {
     "noEmit": true
-  }
+  },
+  "display": "Standalone shared library",
+  "extends": "./base.json"
 }

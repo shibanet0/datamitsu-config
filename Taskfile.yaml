@@ -2,7 +2,6 @@ tasks:
   # ──────────────────────────────────────────────
   # Build
   # ──────────────────────────────────────────────
-
   build:
     cmds:
       - task: oxlint:sync:schema
@@ -77,19 +76,15 @@ tasks:
     cmds:
       - rm -rf site/
     desc: Clean generated site directory
-
   # ──────────────────────────────────────────────
   # Docs
   # ──────────────────────────────────────────────
-
   docs:generate:
     deps:
-      [
-        docs:generate:apps,
-        docs:generate:tools,
-        docs:generate:project-types,
-        docs:generate:init-configs,
-      ]
+      - docs:generate:apps
+      - docs:generate:tools
+      - docs:generate:project-types
+      - docs:generate:init-configs
     desc: Generate all documentation
   docs:generate:apps:
     cmds:
@@ -111,26 +106,21 @@ tasks:
     cmds:
       - pnpm dm exec zensical -- serve --dev-addr 0.0.0.0:8000
     desc: Serve documentation site locally (http://localhost:8000)
-
   oxlint:codegen:
     cmds:
       - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts
     desc: Generate TypeScript types from oxlint JSON schema
-
   # ──────────────────────────────────────────────
   # oxlint
   # ──────────────────────────────────────────────
-
   oxlint:sync:schema:
     cmds:
       - node scripts/oxlint-sync-schema.ts
       - task: oxlint:codegen
     desc: Sync oxlint schema from node_modules and regenerate types
-
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────
-
   pull:fnm:
     cmds:
       - pnpm dm devtools pull-fnm ./src/datamitsu-config/registries/fnmVersions.json
@@ -161,21 +151,17 @@ tasks:
     cmds:
       - pnpm dm devtools pull-uv --update ./src/datamitsu-config/registries/uvVersions.json
     desc: Pull uv versions with update flag
-
   # ──────────────────────────────────────────────
   # Misc
   # ──────────────────────────────────────────────
-
   s0:
     cmds:
       - pnpm exec tsdown --silent
       - node bin/s0.js
     desc: Build silently then run s0
-
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────
-
   test:platform:darwin:
     cmds:
       - node scripts/test-platforms.ts darwin --skip-passed
@@ -188,14 +174,11 @@ tasks:
     cmds:
       - node scripts/test-platforms.ts linux-arm64 --skip-passed
     desc: Run platform tests for linux-arm64, skipping passed
-
   # ──────────────────────────────────────────────
   # Validation
   # ──────────────────────────────────────────────
-
   validate:blocklist:
     cmds:
       - node scripts/validate-registry-blocklist.ts
     desc: Validate registry files against blocklist
-
 version: "3"

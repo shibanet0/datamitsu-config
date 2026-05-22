@@ -19,5 +19,6 @@ export default {
     "footguns",
     "goja",
     "unrs",
+    "tfupdate",
   ],
 };

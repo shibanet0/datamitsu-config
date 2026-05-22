@@ -1,40 +1,21 @@
 import { indentSettings } from "./constants";
-
-const eslintGlobs: string[] = [
-  "**/*.js",
-  "**/*.jsx",
-  "**/*.mjs",
-  "**/*.cjs",
-  "**/*.ts",
-  "**/*.mts",
-  "**/*.cts",
-  "**/*.tsx",
-  "**/*.html",
-  "**/*.json",
-  "**/*.jsonc",
-  "**/*.json5",
-  "**/*.yaml",
-  "**/*.yml",
-  "**/*.toml",
-];
-
-const prettierGlobs: string[] = [...eslintGlobs, "**/*.d.ts", "**/*.md"];
-
-const oxlintGlobs: string[] = [
-  "**/*.js",
-  "**/*.mjs",
-  "**/*.cjs",
-  "**/*.ts",
-  "**/*.mts",
-  "**/*.cts",
-  "**/*.tsx",
-  "**/*.jsx",
-  "**/*.vue",
-  "**/*.astro",
-  "**/*.svelte",
-];
-
-const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
+import {
+  dockerfileGlobs,
+  dotenvLinterGlobs,
+  eslintGlobs,
+  jsonExcludeGlobs,
+  jsonGlobs,
+  oxlintGlobs,
+  packageJsonGlobs,
+  prettierGlobs,
+  propertiesGlobs,
+  shellGlobs,
+  tomlGlobs,
+  typescriptGlobs,
+  typstGlobs,
+  yamlExcludeGlobs,
+  yamlGlobs,
+} from "./globs";
 
 type Tool =
   | "cspell"
@@ -52,13 +33,20 @@ type Tool =
   | "syncpack"
   | "toml"
   | "tsc"
-  | "typstyle";
+  | "typstyle"
+  | "yamlfmt"
+  | "yamllint"
+  | "yq-json"
+  | "yq-properties"
+  | "yq-yaml";
 
 const _toolPriority: Tool[] = [
   "syncpack",
   "oxlint",
   "tsc",
   "cspell",
+  "yq-json",
+  "yq-properties",
   "eslint",
   "prettier",
   "sort-package-json",
@@ -70,6 +58,9 @@ const _toolPriority: Tool[] = [
   "shellcheck",
   "hadolint",
   "toml",
+  "yq-yaml",
+  "yamlfmt",
+  "yamllint",
   "pre-commit",
 ];
 const toolPriority = [...new Set<Tool>(_toolPriority)].reduce<Record<Tool, number>>(
@@ -220,14 +211,12 @@ export const toolsConfig: config.MapOfTools = {
       fix: {
         app: "golangci-lint",
         args: ["run", "--fix"],
-        globs: ["**/*.go"],
         priority: toolPriority["golangci-lint"],
         scope: "per-project",
       },
       lint: {
         app: "golangci-lint",
         args: ["run"],
-        globs: ["**/*.go"],
         priority: toolPriority["golangci-lint"],
         scope: "per-project",
       },
@@ -240,7 +229,7 @@ export const toolsConfig: config.MapOfTools = {
       lint: {
         app: "hadolint",
         args: ["-c", "{root}/hadolint.yaml", "--verbose", "{file}"],
-        globs: ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"],
+        globs: dockerfileGlobs,
         priority: toolPriority.hadolint,
         scope: "per-file",
       },
@@ -321,7 +310,7 @@ export const toolsConfig: config.MapOfTools = {
       lint: {
         app: "shellcheck",
         args: ["-x", "{file}"],
-        globs: ["**/*.sh", "**/*.bash"],
+        globs: shellGlobs,
         priority: toolPriority.shellcheck,
         scope: "per-file",
       },
@@ -333,14 +322,14 @@ export const toolsConfig: config.MapOfTools = {
       fix: {
         app: "shfmt",
         args: ["-w", "-i", "2", "-ci", "-sr", "{file}"],
-        globs: ["**/*.sh", "**/*.bash"],
+        globs: shellGlobs,
         priority: toolPriority.shfmt,
         scope: "per-file",
       },
       lint: {
         app: "shfmt",
         args: ["-d", "-i", "2", "-ci", "-sr", "{file}"],
-        globs: ["**/*.sh", "**/*.bash"],
+        globs: shellGlobs,
         priority: toolPriority.shfmt,
         scope: "per-file",
       },
@@ -353,7 +342,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "sort-package-json",
         args: ["--quiet"],
         batch: false,
-        globs: ["**/package.json"],
+        globs: packageJsonGlobs,
         priority: toolPriority["sort-package-json"],
         scope: "per-file",
       },
@@ -361,7 +350,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "sort-package-json",
         args: ["--check", "--quiet"],
         batch: false,
-        globs: ["**/package.json"],
+        globs: packageJsonGlobs,
         priority: toolPriority["sort-package-json"],
         scope: "per-file",
       },
@@ -374,14 +363,14 @@ export const toolsConfig: config.MapOfTools = {
       fix: {
         app: "syncpack",
         args: ["fix", "--config", "{root}/.syncpackrc.json"],
-        globs: ["**/package.json"],
+        globs: packageJsonGlobs,
         priority: toolPriority.syncpack,
         scope: "repository",
       },
       lint: {
         app: "syncpack",
         args: ["lint", "--config", "{root}/.syncpackrc.json"],
-        globs: ["**/package.json"],
+        globs: packageJsonGlobs,
         priority: toolPriority.syncpack,
         scope: "repository",
       },
@@ -395,7 +384,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "tombi",
         args: ["format", "--quiet", "--no-cache", "--offline", "{files}"],
         batch: true,
-        globs: ["**/*.toml"],
+        globs: tomlGlobs,
         priority: toolPriority.toml,
         scope: "repository",
       },
@@ -403,7 +392,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "tombi",
         args: ["lint", "--quiet", "--no-cache", "--offline", "{files}"],
         batch: true,
-        globs: ["**/*.toml"],
+        globs: tomlGlobs,
         priority: toolPriority.toml,
         scope: "repository",
       },
@@ -415,7 +404,7 @@ export const toolsConfig: config.MapOfTools = {
       lint: {
         app: "tsc",
         args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
-        globs: ["**/*.d.ts", "**/*.ts", "**/*.mts", "**/*.cts", "**/*.tsx"],
+        globs: typescriptGlobs,
         priority: toolPriority.tsc,
         scope: "per-project",
       },
@@ -436,7 +425,7 @@ export const toolsConfig: config.MapOfTools = {
           "--inplace",
           "{file}",
         ],
-        globs: ["**/*.typ"],
+        globs: typstGlobs,
         priority: toolPriority.typstyle,
         scope: "per-file",
       },
@@ -451,8 +440,83 @@ export const toolsConfig: config.MapOfTools = {
           "--check",
           "{file}",
         ],
-        globs: ["**/*.typ"],
+        globs: typstGlobs,
         priority: toolPriority.typstyle,
+        scope: "per-file",
+      },
+    },
+  },
+  yamlfmt: {
+    name: "yamlfmt - YAML Formatter",
+    operations: {
+      fix: {
+        app: "yamlfmt",
+        args: ["-conf", "{root}/.yamlfmt.yaml", "{files}"],
+        batch: true,
+        excludeGlobs: yamlExcludeGlobs,
+        globs: yamlGlobs,
+        priority: toolPriority.yamlfmt,
+        scope: "repository",
+      },
+      lint: {
+        app: "yamlfmt",
+        args: ["-conf", "{root}/.yamlfmt.yaml", "-lint", "{files}"],
+        batch: true,
+        excludeGlobs: yamlExcludeGlobs,
+        globs: yamlGlobs,
+        priority: toolPriority.yamlfmt,
+        scope: "repository",
+      },
+    },
+  },
+  yamllint: {
+    name: "yamllint - YAML Linter",
+    operations: {
+      lint: {
+        app: "yamllint",
+        args: ["-c", "{root}/.yamllint.yaml", "--strict", "{files}"],
+        batch: true,
+        excludeGlobs: yamlExcludeGlobs,
+        globs: yamlGlobs,
+        priority: toolPriority.yamllint,
+        scope: "repository",
+      },
+    },
+  },
+  "yq-json": {
+    name: "yq - JSON Key Sorter",
+    operations: {
+      fix: {
+        app: "yq",
+        args: ["-i", "-p", "json", "-o", "json", "sort_keys(..)", "{file}"],
+        excludeGlobs: jsonExcludeGlobs,
+        globs: jsonGlobs,
+        priority: toolPriority["yq-json"],
+        scope: "per-file",
+      },
+    },
+  },
+  "yq-properties": {
+    name: "yq - Properties Key Sorter",
+    operations: {
+      fix: {
+        app: "yq",
+        args: ["-i", "-p", "props", "-o", "props", "sort_keys(..)", "{file}"],
+        globs: propertiesGlobs,
+        priority: toolPriority["yq-properties"],
+        scope: "per-file",
+      },
+    },
+  },
+  "yq-yaml": {
+    name: "yq - YAML Key Sorter",
+    operations: {
+      fix: {
+        app: "yq",
+        args: ["-i", "sort_keys(..)", "{file}"],
+        excludeGlobs: yamlExcludeGlobs,
+        globs: yamlGlobs,
+        priority: toolPriority["yq-yaml"],
         scope: "per-file",
       },
     },

@@ -12,6 +12,8 @@ import { REMOVED_SKILLS, SKILLS } from "./skills";
 import { safeJsonParse } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
 
+const yamlIgnore: string[] = ["pnpm-lock.yaml"];
+
 const aiTools: config.MapOfConfigInit = {
   ".cursor/rules": {
     linkTarget: "../AGENTS.md",
@@ -388,7 +390,6 @@ export const init: config.MapOfConfigInit = {
     otherFileNameList: ["tombi.toml", ".tombi.toml"],
     scope: "git-root",
   },
-
   ".trufflehog-exclude-paths.txt": {
     content: (context) => {
       const MANAGED_BEGIN = "# BEGIN datamitsu managed — regenerated on init";
@@ -420,6 +421,70 @@ export const init: config.MapOfConfigInit = {
   },
   ".vscode/settings.json": {
     content: vscodeSettings,
+    scope: "git-root",
+  },
+  ".yamlfmt.yaml": {
+    content: (context) => {
+      const data = YAML.parse(context.originalContent || "");
+
+      const formatter = Object.fromEntries(
+        Object.entries({
+          ...data?.formatter,
+          array_indent: 2,
+          eof_newline: true,
+          force_array_style: "block",
+          force_quote_style: "double",
+          indent: 2,
+          line_ending: "lf",
+          pad_line_comments: 1,
+          retain_line_breaks_single: false,
+          trim_trailing_whitespace: true,
+          type: "basic",
+        }).sort(([a], [b]) => a.localeCompare(b)),
+      );
+
+      return YAML.stringify(
+        Object.fromEntries(
+          Object.entries({ ...data, exclude: yamlIgnore, formatter }).sort(([a], [b]) =>
+            a.localeCompare(b),
+          ),
+        ),
+      );
+    },
+    otherFileNameList: [".yamlfmt", "yamlfmt.yml", "yamlfmt.yaml", ".yamlfmt.yml"],
+    scope: "git-root",
+  },
+  ".yamllint.yaml": {
+    content: (context) => {
+      const data = YAML.parse(context.originalContent || "");
+
+      const rules = Object.fromEntries(
+        Object.entries({
+          ...data?.rules,
+          comments: { "min-spaces-from-content": 1 },
+          "comments-indentation": "enable",
+          "document-end": "disable",
+          "document-start": "disable",
+          "empty-lines": { max: 1 },
+          indentation: { "indent-sequences": true, spaces: 2 },
+          "key-ordering": "disable",
+          "line-length": "disable",
+          truthy: { "check-keys": false, level: "error" },
+        }).sort(([a], [b]) => a.localeCompare(b)),
+      );
+
+      return YAML.stringify(
+        Object.fromEntries(
+          Object.entries({
+            ...data,
+            extends: "default",
+            ignore: yamlIgnore.join("\n") + "\n",
+            rules,
+          }).sort(([a], [b]) => a.localeCompare(b)),
+        ),
+      );
+    },
+    otherFileNameList: [".yamllint", ".yamllint.yml"],
     scope: "git-root",
   },
   "commitlint.config.js": {
@@ -657,13 +722,11 @@ export default config;
                     "eslint-plugin-security",
                     "eslint-plugin-sonarjs",
                     "eslint-plugin-storybook",
-                    "eslint-plugin-toml",
                     "eslint-plugin-turbo",
                     "@prettier/plugin-xml",
                     "eslint-plugin-unicorn",
                     "eslint-plugin-unused-imports",
                     "@antebudimir/eslint-plugin-vanilla-extract",
-                    "eslint-plugin-yml",
                   ],
                 },
                 null,
@@ -813,26 +876,6 @@ export default config;
 
       const config = {
         ...existing,
-
-        // registry: "https://registry.npmjs.org/",
-        // "@jsr:registry": "https://npm.jsr.io/",
-        // dedupePeerDependents: true,
-        // minimumReleaseAge: 1440, // minutes
-        // minimumReleaseAgeExclude:[
-        //   "react"
-        // ],
-        // preferFrozenLockfile:true,
-        // autoInstallPeers:true,
-        // strictPeerDependencies: true,
-        // ignoreScripts: true,
-        // ignoreDepScripts: true,
-        // nodeOptions: "${NODE_OPTIONS:- } --experimental-vm-modules",
-        // verifyDepsBeforeRun:true,
-        // strictDepBuilds:true,
-        // // useNodeVersion
-        // // linkWorkspacePackages: true,
-        // saveWorkspaceProtocol:"rolling"
-
         audit: true,
         auditLevel: "high",
         autoInstallPeers: true,
@@ -852,7 +895,9 @@ export default config;
         config.hoistPattern = [];
       }
 
-      return YAML.stringify(config);
+      return YAML.stringify(
+        Object.fromEntries(Object.entries(config).sort(([a], [b]) => a.localeCompare(b))),
+      );
     },
     projectTypes: ["pnpm-package"],
     scope: "git-root",

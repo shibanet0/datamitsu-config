@@ -57,11 +57,9 @@ export const eslintDeps = {
   "eslint-plugin-security": fnmVersions["eslint-plugin-security"].version,
   "eslint-plugin-sonarjs": fnmVersions["eslint-plugin-sonarjs"].version,
   "eslint-plugin-storybook": fnmVersions["eslint-plugin-storybook"].version,
-  "eslint-plugin-toml": fnmVersions["eslint-plugin-toml"].version,
   "eslint-plugin-turbo": fnmVersions["eslint-plugin-turbo"].version,
   "eslint-plugin-unicorn": fnmVersions["eslint-plugin-unicorn"].version,
   "eslint-plugin-unused-imports": fnmVersions["eslint-plugin-unused-imports"].version,
-  "eslint-plugin-yml": fnmVersions["eslint-plugin-yml"].version,
   globals: fnmVersions["globals"].version,
   "typescript-eslint": fnmVersions["typescript-eslint"].version,
 } as const;

@@ -1,6 +1,6 @@
 ---
 name: cleanup-agents-md
-description: Cleanup the project AGENTS.md by removing sections that duplicate the shared rules in datamitsu chunks (.datamitsu/ai/agents/agents-base.md, .datamitsu/ai/agents/agents-docs-markdown.md, or .datamitsu/ai/agents/agents-docs-website.md). Use this skill whenever the user asks to compress, clean up, deduplicate, slim down, sync, or compact AGENTS.md against the datamitsu config — even if they describe it informally as "AGENTS.md got too big", "remove duplicates from AGENTS.md", or "fix my agents file".
+description: Cleanup the project AGENTS.md by removing chunk duplicates, extracting non-rule content (architecture docs, templates, release notes) to separate files, and stripping migration cruft. Use this skill whenever the user asks to compress, clean up, deduplicate, slim down, sync, or compact AGENTS.md against the datamitsu config — even if they describe it informally as "AGENTS.md got too big", "remove duplicates from AGENTS.md", "fix my agents file", or "extract architecture from AGENTS.md".
 ---
 
 # Cleanup AGENTS.md

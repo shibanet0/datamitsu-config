@@ -1,12 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Monorepo shared React component library",
-  "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "jsx": "react-jsx",
     "composite": true,
     "declaration": true,
-    "declarationMap": true
-  }
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"]
+  },
+  "display": "Monorepo shared React component library",
+  "extends": "./base.json"
 }

@@ -33,13 +33,11 @@ const internalConfig = {
     "eslint-plugin-security",
     "eslint-plugin-sonarjs",
     "eslint-plugin-storybook",
-    "eslint-plugin-toml",
     "eslint-plugin-turbo",
     "@prettier/plugin-xml",
     "eslint-plugin-unicorn",
     "eslint-plugin-unused-imports",
     "@antebudimir/eslint-plugin-vanilla-extract",
-    "eslint-plugin-yml",
   ],
 };
 

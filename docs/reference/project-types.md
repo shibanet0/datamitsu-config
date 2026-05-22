@@ -12,7 +12,7 @@ Do not edit manually. To update, run: `pnpm dm exec task -- docs:generate`
 Project types define how datamitsu detects different kinds of projects in your repository.
 Each type has marker files or patterns that datamitsu uses for automatic detection.
 
-This configuration includes **10 project types**.
+This configuration includes **9 project types**.
 
 ## Project Types Reference
 
@@ -24,7 +24,6 @@ This configuration includes **10 project types**.
 | **pre-commit-project** | Project using pre-commit framework | `.pre-commit-config.yaml` |
 | **python-package**     | Python project                     | `**/pyproject.toml`       |
 | **terraform-project**  | Terraform infrastructure           | `**/*.tf`                 |
-| **terragrunt-project** | Terragrunt infrastructure          | `**/terragrunt.hcl`       |
 | **turbo-package**      | turbo project                      | `turbo.json`              |
 | **typescript-project** | TypeScript project                 | `**/tsconfig.json`        |
 | **typst-project**      | Typst document                     | `**/*.typ`                |

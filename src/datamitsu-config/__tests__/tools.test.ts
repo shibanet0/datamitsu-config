@@ -8,7 +8,7 @@ describe("tools", () => {
     const eslintGlobs = toolsConfig.eslint!.operations.lint!.globs;
 
     it("should contain all eslint glob patterns", () => {
-      for (const pattern of eslintGlobs) {
+      for (const pattern of eslintGlobs || []) {
         expect(prettierGlobs).toContain(pattern);
       }
     });
@@ -42,6 +42,11 @@ describe("tools", () => {
         "syncpack",
         "tsc",
         "typstyle",
+        "yamlfmt",
+        "yamllint",
+        "yq-json",
+        "yq-properties",
+        "yq-yaml",
       ];
       for (const tool of expectedTools) {
         expect(toolsConfig).toHaveProperty(tool);
