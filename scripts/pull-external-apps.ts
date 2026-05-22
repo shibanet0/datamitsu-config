@@ -2,14 +2,19 @@ import { createHash } from "node:crypto";
 import fsPromise from "node:fs/promises";
 
 interface BinaryEntry {
+  binaryPath?: string;
   contentType: string;
   hash: string;
   url: string;
 }
 
 interface ExternalAppMeta {
+  binaryPathTemplate?: string;
   contentType: string;
+  contentTypeMap?: Record<string, string>;
   description: string;
+  extMap?: Record<string, string>;
+  latestVersionType?: "github-release" | "text";
   latestVersionUrl: string;
   platforms: Record<string, Record<string, string>>;
   source: string;
@@ -32,8 +37,13 @@ interface ExternalRegistry {
 function buildUrl(
   template: string,
   replacements: { arch: string; os: string; version: string },
+  extMap?: Record<string, string>,
 ): string {
-  const ext = replacements.os === "windows" ? ".exe" : "";
+  const ext = extMap
+    ? (extMap[replacements.os] ?? extMap["default"] ?? "")
+    : replacements.os === "windows"
+      ? ".exe"
+      : "";
   return template
     .replaceAll("{version}", replacements.version)
     .replaceAll("{os}", replacements.os)
@@ -50,10 +60,17 @@ async function computeSha256(url: string): Promise<string> {
   return createHash("sha256").update(buffer).digest("hex");
 }
 
-async function fetchLatestVersion(url: string): Promise<string> {
+async function fetchLatestVersion(
+  url: string,
+  type: "github-release" | "text" = "text",
+): Promise<string> {
   const resp = await fetch(url);
   if (!resp.ok) {
     throw new Error(`Failed to fetch ${url}: ${resp.status}`);
+  }
+  if (type === "github-release") {
+    const json = await resp.json();
+    return (json as { tag_name: string }).tag_name;
   }
   const text = await resp.text();
   return text.trim();
@@ -75,7 +92,10 @@ async function main(): Promise<void> {
     let { version } = appMeta;
 
     if (update) {
-      const latestVersion = await fetchLatestVersion(appMeta.latestVersionUrl);
+      const latestVersion = await fetchLatestVersion(
+        appMeta.latestVersionUrl,
+        appMeta.latestVersionType,
+      );
       if (latestVersion === version) {
         console.log(`${appName}: already at latest ${version}`);
       } else {
@@ -90,16 +110,19 @@ async function main(): Promise<void> {
     for (const [os, arches] of Object.entries(appMeta.platforms)) {
       binariesMap[os] = {};
       for (const [arch, libc] of Object.entries(arches)) {
-        const url = buildUrl(appMeta.urlTemplate, { arch, os, version });
+        const url = buildUrl(appMeta.urlTemplate, { arch, os, version }, appMeta.extMap);
+        const contentType = appMeta.contentTypeMap?.[os] ?? appMeta.contentType;
         console.log(`  ${appName} ${os}/${arch}: downloading ${url}`);
         const hash = await computeSha256(url);
-        binariesMap[os][arch] = {
-          [libc]: {
-            contentType: appMeta.contentType,
-            hash,
-            url,
-          },
-        };
+        const entry: BinaryEntry = { contentType, hash, url };
+        if (appMeta.binaryPathTemplate) {
+          const binExt = os === "windows" ? ".exe" : "";
+          entry.binaryPath = appMeta.binaryPathTemplate
+            .replaceAll("{os}", os)
+            .replaceAll("{arch}", arch)
+            .replaceAll("{binExt}", binExt);
+        }
+        binariesMap[os][arch] = { [libc]: entry };
       }
     }
 

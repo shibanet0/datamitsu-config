@@ -44,7 +44,6 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
         "crane",
         "dasel",
         "gcrane",
-        "helm",
         "scorecard",
         "sqlc",
         "terraform-docs",

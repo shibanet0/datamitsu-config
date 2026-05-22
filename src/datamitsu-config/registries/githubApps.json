@@ -135,11 +135,6 @@
       "repo": "hadolint",
       "tag": "v2.14.0"
     },
-    "helm": {
-      "owner": "helm",
-      "repo": "helm",
-      "tag": "v4.2.0"
-    },
     "httpstat": {
       "owner": "davecheney",
       "repo": "httpstat",
@@ -1725,60 +1720,6 @@
         }
       },
       "configHash": "91c677063c24300fa33027f36d9066b3"
-    },
-    "helm": {
-      "binaries": {
-        "darwin": {
-          "amd64": {
-            "unknown": {
-              "contentType": "binary",
-              "hash": "49f84ef21cec937fca0dba29101d355a11a86c4cc44d250a5fa83d82106e554c",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-darwin-amd64.tar.gz.asc"
-            }
-          },
-          "arm64": {
-            "unknown": {
-              "contentType": "binary",
-              "hash": "ebfdf3a0513bb153f38f2cd88ccff28c7e608e3d431cba1505cc4b5a1f565f3b",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-darwin-arm64.tar.gz.asc"
-            }
-          }
-        },
-        "linux": {
-          "amd64": {
-            "glibc": {
-              "contentType": "binary",
-              "hash": "6354fe9f457ff639bdfe7f460ad6e8204e9bc22d03dfab6b4f3326475d129647",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-linux-amd64.tar.gz.asc"
-            }
-          },
-          "arm64": {
-            "glibc": {
-              "contentType": "binary",
-              "hash": "f1f226cb644903e5c8308821a315127f018866fb20fd8413d4e8b6a2ab635a22",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-linux-arm64.tar.gz.asc"
-            }
-          }
-        },
-        "windows": {
-          "amd64": {
-            "unknown": {
-              "contentType": "binary",
-              "hash": "4ca659a8deeb855b4c8dc8706803ba99c72d111e4c45a74a46d7bf4be8acca18",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-windows-amd64.zip.asc"
-            }
-          },
-          "arm64": {
-            "unknown": {
-              "contentType": "binary",
-              "hash": "53de41963367de1d7524be3743e898651911d99bd2ffbf4e48ddbce96957c622",
-              "url": "https://github.com/helm/helm/releases/download/v4.2.0/helm-v4.2.0-windows-arm64.zip.asc"
-            }
-          }
-        }
-      },
-      "configHash": "7ac955e25b1ff59b7824664f058d8b35",
-      "description": "The Kubernetes Package Manager"
     },
     "jq": {
       "binaries": {

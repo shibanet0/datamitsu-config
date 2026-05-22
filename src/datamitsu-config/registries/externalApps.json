@@ -1,5 +1,39 @@
 {
   "apps": {
+    "helm": {
+      "binaryPathTemplate": "{os}-{arch}/helm{binExt}",
+      "contentType": "tar.gz",
+      "contentTypeMap": {
+        "windows": "zip"
+      },
+      "description": "The Kubernetes Package Manager",
+      "extMap": {
+        "default": ".tar.gz",
+        "windows": ".zip"
+      },
+      "latestVersionType": "github-release",
+      "latestVersionUrl": "https://api.github.com/repos/helm/helm/releases/latest",
+      "platforms": {
+        "darwin": {
+          "amd64": "unknown",
+          "arm64": "unknown"
+        },
+        "linux": {
+          "amd64": "glibc",
+          "arm64": "glibc"
+        },
+        "windows": {
+          "amd64": "unknown",
+          "arm64": "unknown"
+        }
+      },
+      "source": "helm",
+      "urlTemplate": "https://get.helm.sh/helm-{version}-{os}-{arch}{ext}",
+      "version": "v4.2.0",
+      "versionCheck": {
+        "args": ["version"]
+      }
+    },
     "kubectl": {
       "contentType": "binary",
       "description": "Kubernetes command-line tool",
@@ -26,6 +60,65 @@
     }
   },
   "binaries": {
+    "helm": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "darwin-amd64/helm",
+              "contentType": "tar.gz",
+              "hash": "1376ea697140e4db316736e760d5a47d12afc1524dce704476ef06fd7fdeddc6",
+              "url": "https://get.helm.sh/helm-v4.2.0-darwin-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "darwin-arm64/helm",
+              "contentType": "tar.gz",
+              "hash": "f13f959015447b6bc309f9fd506509926543988a39035c088b52522ec95e2acb",
+              "url": "https://get.helm.sh/helm-v4.2.0-darwin-arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "linux-amd64/helm",
+              "contentType": "tar.gz",
+              "hash": "97dbeb971be4ac4b27e3839976d9564c0fb35c6f3b1da89dd1e292d236af4096",
+              "url": "https://get.helm.sh/helm-v4.2.0-linux-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "linux-arm64/helm",
+              "contentType": "tar.gz",
+              "hash": "1f8de130dfbd04de64978e7b852a7a547be1404956a366608276d2520b678670",
+              "url": "https://get.helm.sh/helm-v4.2.0-linux-arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "windows-amd64/helm.exe",
+              "contentType": "zip",
+              "hash": "614f68ddc567ac9bfb0c205f869b1f83ba4e0a9aacd26cbae47743ae6082a579",
+              "url": "https://get.helm.sh/helm-v4.2.0-windows-amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "windows-arm64/helm.exe",
+              "contentType": "zip",
+              "hash": "e740e4c19b6e2a0b428f7a52c38b7f0b092f0c43ac49870537d7e7fac9cedc07",
+              "url": "https://get.helm.sh/helm-v4.2.0-windows-arm64.zip"
+            }
+          }
+        }
+      },
+      "description": "The Kubernetes Package Manager"
+    },
     "kubectl": {
       "binaries": {
         "darwin": {
