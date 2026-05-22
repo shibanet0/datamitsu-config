@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **89 apps** across multiple runtimes (binary, node, python).
+This configuration manages **90 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **89 apps** across multiple runtimes (binary, node, p
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (40 apps): actionlint, age, air, etc.
+- **Utilities** (41 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -60,6 +60,7 @@ This configuration manages **89 apps** across multiple runtimes (binary, node, p
 | helm                   | binary  | N/A                                                                                                                                      | The Kubernetes Package Manager                                                                                                                                           |
 | jq                     | binary  | [Info](https://github.com/jqlang/jq){:target="\_blank"}                                                                                  | N/A                                                                                                                                                                      |
 | knip                   | node    | [Info](https://www.npmjs.com/package/knip){:target="\_blank"}                                                                            | Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects                                                                           |
+| ktfmt                  | jvm     | [Info](https://github.com/facebook/ktfmt/releases/download/v0.62/ktfmt-0.62-with-dependencies.jar){:target="\_blank"}                    | A program that reformats Kotlin source code to comply with the common community standard for Kotlin code conventions.                                                    |
 | ktlint                 | jvm     | [Info](https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint){:target="\_blank"}                                            | An anti-bikeshedding Kotlin linter with built-in formatter                                                                                                               |
 | kube-linter            | binary  | [Info](https://github.com/stackrox/kube-linter){:target="\_blank"}                                                                       | N/A                                                                                                                                                                      |
 | kubectl                | binary  | N/A                                                                                                                                      | Kubernetes command-line tool                                                                                                                                             |

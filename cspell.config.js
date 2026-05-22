@@ -22,5 +22,6 @@ export default {
     "tfupdate",
     "minamijoyo",
     "hclfmt",
+    "ktfmt",
   ],
 };

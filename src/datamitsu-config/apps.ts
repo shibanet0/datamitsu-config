@@ -124,8 +124,18 @@ export const mapOfApps: BinManager.MapOfApps = {
   },
   eslint: eslintApp,
   knip: knipApp,
+  ktfmt: {
+    description:
+      "A program that reformats Kotlin source code to comply with the common community standard for Kotlin code conventions.",
+    jvm: {
+      jarHash: "f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
+      jarUrl:
+        "https://github.com/facebook/ktfmt/releases/download/v0.62/ktfmt-0.62-with-dependencies.jar",
+      version: "v0.62",
+    },
+  },
   ktlint: {
-    description: `An anti-bikeshedding Kotlin linter with built-in formatter`,
+    description: "An anti-bikeshedding Kotlin linter with built-in formatter",
     jvm: {
       jarHash: "a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
       jarUrl: "https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint",
