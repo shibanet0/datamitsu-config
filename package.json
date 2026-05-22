@@ -151,7 +151,7 @@
     "prettier-plugin-sql": "0.20.0",
     "remove-markdown": "0.6.4",
     "tsdown": "0.22.0",
-    "typescript-eslint": "8.56.0",
+    "typescript-eslint": "8.59.4",
     "unrun": "0.3.0",
     "vitest": "4.1.7"
   },
