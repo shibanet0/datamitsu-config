@@ -782,9 +782,13 @@ export default config;
           commands: {
             ...existing?.["pre-commit"]?.commands,
             [`${facts().packageName}-check`]: {
-              priority: 1,
+              priority: 2,
               run: `${facts().binaryCommand} check --file-scoped`,
               stage_fixed: true,
+            },
+            [`${facts().packageName}-init`]: {
+              priority: 1,
+              run: `${facts().binaryCommand} init`,
             },
           },
           parallel: false,

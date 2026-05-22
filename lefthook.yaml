@@ -13,18 +13,21 @@ post-checkout:
 pre-commit:
   commands:
     datamitsu-check:
-      priority: 3
+      priority: 4
       run: node bin/datamitsu.js check --file-scoped
       stage_fixed: true
-    docs-generate:
+    datamitsu-init:
       priority: 1
+      run: node bin/datamitsu.js init
+    docs-generate:
+      priority: 2
       run: node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/init-configs.md
       stage_fixed: true
     test:
-      priority: 4
+      priority: 5
       run: pnpm test
     validate-blocklist:
-      priority: 2
+      priority: 3
       run: node bin/datamitsu.js exec task -- validate:blocklist
       stage_fixed: false
   parallel: false

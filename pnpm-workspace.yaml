@@ -4,6 +4,9 @@ allowBuilds:
 enableGlobalVirtualStore: true
 enablePrePostScripts: false
 hoistPattern: []
+minimumReleaseAgeExclude:
+  - "@datamitsu/*"
+  - "@ovineko/*"
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
