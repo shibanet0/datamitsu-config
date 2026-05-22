@@ -203,6 +203,7 @@ const words: string[] = [
   "changeme",
   "stopwords",
   "tombi",
+  "trixie",
 ];
 
 export const config = defineConfig({

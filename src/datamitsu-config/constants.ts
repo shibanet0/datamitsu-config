@@ -1,6 +1,6 @@
 export const runtimeVersions = {
-  node: "24.14.0",
-  python: "3.14.3",
+  node: "26.2.0",
+  python: "3.14.5",
 };
 
 export const indentSettings: Record<
