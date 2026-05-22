@@ -7,30 +7,30 @@
   "@commitlint/cli": {
     "description": "Lint your commit messages",
     "packageName": "@commitlint/cli",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/config-conventional": {
     "description": "Shareable commitlint config enforcing conventional commits",
     "packageName": "@commitlint/config-conventional",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/format": {
     "description": "Format commitlint reports",
     "packageName": "@commitlint/format",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/types": {
     "description": "Shared types for commitlint packages",
     "packageName": "@commitlint/types",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@cspell/dict-ru_ru": {
-    "description": "",
+    "description": "Russian dictionary for cspell.",
     "packageName": "@cspell/dict-ru_ru",
     "version": "2.3.2"
   },
   "@e18e/eslint-plugin": {
-    "description": "",
+    "description": "The official e18e ESLint plugin for modernizing code and improving performance.",
     "packageName": "@e18e/eslint-plugin",
     "version": "0.3.0"
   },
@@ -69,7 +69,7 @@
     "version": "3.0.1"
   },
   "conventional-changelog": {
-    "description": "Generate a markdown changelog from git commit data",
+    "description": "Generate a changelog from git metadata.",
     "packageName": "conventional-changelog",
     "version": "7.2.0"
   },
@@ -313,11 +313,6 @@
     "packageName": "eslint-plugin-storybook",
     "version": "10.2.9"
   },
-  "eslint-plugin-toml": {
-    "description": "This ESLint plugin provides linting rules for TOML.",
-    "packageName": "eslint-plugin-toml",
-    "version": "1.1.0"
-  },
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
@@ -333,11 +328,6 @@
     "packageName": "eslint-plugin-unused-imports",
     "version": "4.4.1"
   },
-  "eslint-plugin-yml": {
-    "description": "This ESLint plugin provides linting rules for YAML.",
-    "packageName": "eslint-plugin-yml",
-    "version": "3.2.0"
-  },
   "globals": {
     "description": "Global identifiers from different JavaScript environments",
     "packageName": "globals",
@@ -346,7 +336,7 @@
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
     "packageName": "knip",
-    "version": "6.12.2"
+    "version": "6.14.1"
   },
   "markdown-link-check": {
     "description": "checks the all of the hyperlinks in a markdown text to determine if they are alive or dead",
@@ -356,12 +346,12 @@
   "markdownlint-cli2": {
     "description": "A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the `markdownlint` library",
     "packageName": "markdownlint-cli2",
-    "version": "0.21.0"
+    "version": "0.22.1"
   },
   "mmdc": {
     "description": "Command-line interface for mermaid",
     "packageName": "@mermaid-js/mermaid-cli",
-    "version": "11.12.0"
+    "version": "11.15.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
@@ -371,7 +361,7 @@
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
     "packageName": "pnpm",
-    "version": "11.0.9"
+    "version": "11.2.2"
   },
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
@@ -401,7 +391,7 @@
   "slidev": {
     "description": "Presentation slides for developers",
     "packageName": "@slidev/cli",
-    "version": "52.14.2"
+    "version": "52.15.2"
   },
   "sort-package-json": {
     "description": "Sort an Object or package.json based on the well-known package.json keys",
@@ -411,12 +401,12 @@
   "spectral": {
     "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
     "packageName": "@stoplight/spectral-cli",
-    "version": "6.15.0"
+    "version": "6.16.0"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",
     "packageName": "syncpack",
-    "version": "15.1.2"
+    "version": "15.3.1"
   },
   "typescript": {
     "description": "TypeScript is a language for application scale JavaScript development",

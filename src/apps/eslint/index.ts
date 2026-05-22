@@ -30,7 +30,6 @@ const defaultOptions: DefineConfigOptions = {
     regexp: { disabled: true },
     turbo: { disabled: true },
     "vanilla-extract": { disabled: true },
-    yml: { disabled: true },
   },
 };
 
@@ -100,7 +99,6 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
       loader: () => import("./plugins/import").then((r) => r.pluginImport()),
       name: "import",
     },
-    { loader: () => import("./plugins/yml").then((r) => r.yml()), name: "yml" },
     { loader: () => import("./plugins/regexp").then((r) => r.regexp()), name: "regexp" },
     { loader: () => import("./plugins/promise").then((r) => r.promise()), name: "promise" },
     { loader: () => import("./plugins/turbo").then((r) => r.turbo()), name: "turbo" },
@@ -129,7 +127,6 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
       name: "playwright",
     },
     { loader: () => import("./plugins/n").then((r) => r.n()), name: "n" },
-    { loader: () => import("./plugins/toml").then((r) => r.toml()), name: "toml" },
     {
       loader: () => import("./plugins/no-unsanitized").then((r) => r.noUnsanitized()),
       name: "no-unsanitized",

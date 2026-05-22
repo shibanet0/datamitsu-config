@@ -1,6 +1,14 @@
 {
   "external": {},
   "fnm": {
+    "eslint-plugin-toml": {
+      "reason": "TOML linting/formatting via ESLint is unnecessary, replaced by dedicated tombi and yq-toml tools",
+      "replacement": "Use tombi for formatting/linting and yq-toml for key sorting of TOML files"
+    },
+    "eslint-plugin-yml": {
+      "reason": "YAML linting/formatting via ESLint is unnecessary, replaced by dedicated yamlfmt and yamllint tools",
+      "replacement": "Use yamlfmt for formatting and yamllint for linting YAML files"
+    },
     "husky": {
       "reason": "Legacy git hooks manager with complex setup, replaced by lefthook",
       "replacement": "Use lefthook (faster, simpler configuration, better cross-platform support)"

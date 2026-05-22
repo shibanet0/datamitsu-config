@@ -4,12 +4,13 @@ tasks:
   # ──────────────────────────────────────────────
   build:
     cmds:
+      - task: sync:datamitsu-version
       - task: oxlint:sync:schema
       - task: build:lib:datamitsu-types
       - task: build:inline
       - pnpm exec tsdown
       - task: build:datamitsu-config
-    desc: Full build (oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
+    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -80,7 +81,11 @@ tasks:
   # Docs
   # ──────────────────────────────────────────────
   docs:generate:
-    deps: ['docs:generate:apps', 'docs:generate:tools', 'docs:generate:project-types', 'docs:generate:init-configs']
+    deps:
+      - docs:generate:apps
+      - docs:generate:tools
+      - docs:generate:project-types
+      - docs:generate:init-configs
     desc: Generate all documentation
   docs:generate:apps:
     cmds:
@@ -129,31 +134,38 @@ tasks:
     cmds:
       - pnpm dm devtools pull-fnm ./src/datamitsu-config/registries/fnmVersions.json
       - node scripts/sync-fnm-versions-to-package-json.ts
+      - pnpm dm fix ./src/datamitsu-config/registries/fnmVersions.json
     desc: Pull fnm versions (no update)
   pull:fnm:update:
     cmds:
       - pnpm dm devtools pull-fnm --update ./src/datamitsu-config/registries/fnmVersions.json
       - node scripts/sync-fnm-versions-to-package-json.ts
+      - pnpm dm fix ./src/datamitsu-config/registries/fnmVersions.json
     desc: Pull fnm versions with update flag
   pull:github:
     cmds:
       - datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
+      - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry (verify extraction only)
   pull:github:update:
     cmds:
       - datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
+      - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry with update flag
   pull:runtimes:update:
     cmds:
       - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json
+      - pnpm dm fix ./src/datamitsu-config/registries/runtimes.json
     desc: Pull runtimes registry with update flag
   pull:uv:
     cmds:
       - pnpm dm devtools pull-uv ./src/datamitsu-config/registries/uvVersions.json
+      - pnpm dm fix ./src/datamitsu-config/registries/uvVersions.json
     desc: Pull uv versions (no update)
   pull:uv:update:
     cmds:
       - pnpm dm devtools pull-uv --update ./src/datamitsu-config/registries/uvVersions.json
+      - pnpm dm fix ./src/datamitsu-config/registries/uvVersions.json
     desc: Pull uv versions with update flag
   # ──────────────────────────────────────────────
   # Misc
@@ -163,6 +175,13 @@ tasks:
       - pnpm exec tsdown --silent
       - node bin/s0.js
     desc: Build silently then run s0
+  # ──────────────────────────────────────────────
+  # Sync
+  # ──────────────────────────────────────────────
+  sync:datamitsu-version:
+    cmds:
+      - node scripts/sync-datamitsu-version.ts
+    desc: Sync @datamitsu/datamitsu version from package.json to Dockerfile and datamitsu.config.ts
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────

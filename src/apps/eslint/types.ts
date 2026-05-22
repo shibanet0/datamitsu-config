@@ -67,8 +67,6 @@ export type ConfigNames =
   | "antfu/svelte/setup"
   | "antfu/test/rules"
   | "antfu/test/setup"
-  | "antfu/toml/rules"
-  | "antfu/toml/setup"
   | "antfu/typescript/erasable-syntax-only"
   | "antfu/typescript/parser"
   | "antfu/typescript/rules"
@@ -78,9 +76,7 @@ export type ConfigNames =
   | "antfu/unicorn/rules"
   | "antfu/unocss"
   | "antfu/vue/rules"
-  | "antfu/vue/setup"
-  | "antfu/yaml/rules"
-  | "antfu/yaml/setup";
+  | "antfu/vue/setup";
 
 export type DefineConfigFn = (
   packageJSON: PackageJson,
@@ -210,9 +206,6 @@ export interface DefineConfigOptions {
     stylistic?: {
       disabled?: boolean;
     };
-    toml?: {
-      disabled?: boolean;
-    };
     turbo?: {
       disabled?: boolean;
     };
@@ -226,9 +219,6 @@ export interface DefineConfigOptions {
       disabled?: boolean;
     };
     vitest?: {
-      disabled?: boolean;
-    };
-    yml?: {
       disabled?: boolean;
     };
   };

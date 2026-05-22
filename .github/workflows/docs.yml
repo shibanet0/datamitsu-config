@@ -1,6 +1,5 @@
 concurrency:
   cancel-in-progress: false
-
   group: "pages"
 jobs:
   build:
@@ -8,21 +7,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-
       - name: Generate documentation content
         run: pnpm dm exec task -- docs:generate
-
       - name: Build documentation site
         run: pnpm dm exec task -- docs:build
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: site
-
   deploy:
     environment:
       name: github-pages
@@ -34,14 +28,12 @@ jobs:
         name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v5
 name: Documentation
-
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch: {}
-
 permissions:
   contents: read
   id-token: write
-
   pages: write

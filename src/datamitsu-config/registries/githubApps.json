@@ -13,7 +13,7 @@
     "air": {
       "owner": "air-verse",
       "repo": "air",
-      "tag": "v1.65.2"
+      "tag": "v1.65.3"
     },
     "allurectl": {
       "owner": "allure-framework",
@@ -198,7 +198,7 @@
     "ruff": {
       "owner": "astral-sh",
       "repo": "ruff",
-      "tag": "0.15.13"
+      "tag": "0.15.14"
     },
     "scorecard": {
       "owner": "ossf",
@@ -278,7 +278,7 @@
     "tombi": {
       "owner": "tombi-toml",
       "repo": "tombi",
-      "tag": "v0.11.5"
+      "tag": "v0.11.6"
     },
     "trivy": {
       "owner": "aquasecurity",
@@ -469,36 +469,36 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "air-1.65.2/air",
+              "binaryPath": "air-1.65.3/air",
               "contentType": "tar.gz",
-              "hash": "e5a69827b1b509dbe4a9d981eaa3b7549edaef67ce5deec1866a92f4f672c59f",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_darwin_amd64.tar.gz"
+              "hash": "3376ab73901d1620c56bc57b8087d5856c002715b1c71d50574abb343088bf60",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "air-1.65.2/air",
+              "binaryPath": "air-1.65.3/air",
               "contentType": "tar.gz",
-              "hash": "84890f5aedd704fb4db2591cbfaa9fdd429d3aa504f67dc0bb0e06ddf73637ee",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_darwin_arm64.tar.gz"
+              "hash": "30526dc9cd0227fa8cd9933ea17666f8abf63dbc183e53d2a721bb4807726f32",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "air-1.65.2/air",
+              "binaryPath": "air-1.65.3/air",
               "contentType": "tar.gz",
-              "hash": "b85c99e5a1ae56627a15d5401dbe319cd0fe5402f9fcbd4120299441d229ea6f",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_amd64.tar.gz"
+              "hash": "8f5b198c5d81a59928155581715fbf04be7aa3b807a63609a2694faab8b91ac1",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "air-1.65.2/air",
+              "binaryPath": "air-1.65.3/air",
               "contentType": "tar.gz",
-              "hash": "2fe12a405530a380351fe62cf15c0c4f7328a649989483d7d46fce9057be2daf",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_linux_arm64.tar.gz"
+              "hash": "f17d43fb67bf09e97b17f7e332b1731efc081206ff1ac61923523853788c5b47",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_linux_arm64.tar.gz"
             }
           }
         },
@@ -506,20 +506,20 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "5316c71fbbef4983e39fed230edb0212c3c00d195ec607d967a8f1b02e5a55d9",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_windows_amd64.exe"
+              "hash": "469943c4a990663fb534362fa4c3fc5d88e22911196bab49cf5332e504daeda1",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_windows_amd64.exe"
             }
           },
           "arm64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "d794ec2aa2f8e974b43e7194a8afcf1f11cbfc844ba1db57b4847b62614caae4",
-              "url": "https://github.com/air-verse/air/releases/download/v1.65.2/air_1.65.2_windows_arm64.exe"
+              "hash": "48ed45b891adf0025f396f53cf8975b4d9f76ce80e61ef33229c755b135ea24f",
+              "url": "https://github.com/air-verse/air/releases/download/v1.65.3/air_1.65.3_windows_arm64.exe"
             }
           }
         }
       },
-      "configHash": "721e1cd33a148fc716ea73e6d9198ce2",
+      "configHash": "b975a5ff07603b1024459f24271556f9",
       "description": "☁️ Live reload for Go apps"
     },
     "allurectl": {
@@ -2252,16 +2252,16 @@
             "unknown": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "3ff692a61d5231ea6c94e6dafc575f87582a089d1281fac6b31cef2b4f2e4b6b",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-x86_64-apple-darwin.tar.gz"
+              "hash": "537f569780fc71f63238f1f43dc04285b24fddbc6eea7219a9a18f408bdd869d",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "66ab3abeeba319266612e675dfbe0ca9c63f1e5f6ca3c6174482b0b088b8f6ff",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-aarch64-apple-darwin.tar.gz"
+              "hash": "953243859467ed3f4f2bc6c11e241cd42a11ed42605b33d971dc2b174772da7d",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-aarch64-apple-darwin.tar.gz"
             }
           }
         },
@@ -2270,28 +2270,28 @@
             "glibc": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "fd09d74c60963714b9b0fbda226c669e85624e5a8488398b3e0d0b5ee7684dd1",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-x86_64-unknown-linux-gnu.tar.gz"
+              "hash": "e9fe1bb63fb8950cf8596d069f5c61b5a962bdd6c75edbdd2c8320871c40d6dd",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-x86_64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "66ac0b0582c8d24badc210b8e933e9aa0ad6707414e236409c9b9ad638972fb9",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "e380c9cf14764b7134434c49d445d13c6e3db732cfd18d72c4bc2316a6dbb82e",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "8b8ee2a0f7e9ace1a734b2993ab2bfd68112d8a9c151ffa3025dbccaed4da52f",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-aarch64-unknown-linux-gnu.tar.gz"
+              "hash": "9740a687b333e5e9b3764a9d09001268bd841c93140a0766ddceef53fd1ccd87",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-aarch64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "ruff",
               "contentType": "tar.gz",
-              "hash": "1084d8038eeb51f55c7b7c9779bb37e5f53b28b987767df61333e9d0da7b2701",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-aarch64-unknown-linux-musl.tar.gz"
+              "hash": "1693dfc1f402a81b32ff4fee5f8b494857a1a857a2b8d63cad88d9d39c201297",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-aarch64-unknown-linux-musl.tar.gz"
             }
           }
         },
@@ -2300,21 +2300,22 @@
             "unknown": {
               "binaryPath": "ruff.exe",
               "contentType": "zip",
-              "hash": "59892c6773df805effe7928e69796447585b42af54310cb6f1552536b746c39a",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-x86_64-pc-windows-msvc.zip"
+              "hash": "c589a77b0e112c374e9a5e0c42a7fb18d8725c5322ae261e343f66d1c87f0a5e",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "ruff.exe",
               "contentType": "zip",
-              "hash": "b16d436afac64f8032831d2f7874fe5fa6b1b238bfae97924d2233904372deed",
-              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.13/ruff-aarch64-pc-windows-msvc.zip"
+              "hash": "2f7a3fc221ca307c441306eb8f66740bfa129835a921862d124474080311933e",
+              "url": "https://github.com/astral-sh/ruff/releases/download/0.15.14/ruff-aarch64-pc-windows-msvc.zip"
             }
           }
         }
       },
-      "configHash": "f8cf75c30029abeadef399f4d96dad22"
+      "configHash": "3c2daf4870159f07e2e4275bee7d55f2",
+      "description": "An extremely fast Python linter and code formatter, written in Rust."
     },
     "scorecard": {
       "binaries": {
@@ -3092,51 +3093,52 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tombi-0.11.5/tombi",
+              "binaryPath": "tombi-0.11.6/tombi",
               "contentType": "tar.gz",
-              "hash": "1e4dbf0c75c5c681a8081e0d55d78572895a1a60e18ae8e8e9e87135fea8d2e6",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.5/tombi-cli-0.11.5-x86_64-apple-darwin.tar.gz"
+              "hash": "104782c8e80ab336511127639d182309d488179be823001a4b2a40abe7578fce",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.6/tombi-cli-0.11.6-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "tombi-0.11.5/tombi",
+              "binaryPath": "tombi-0.11.6/tombi",
               "contentType": "tar.gz",
-              "hash": "f763beba6764a6533ebb9a2692762df0a1c27953fcd4fb6824b087909b01878e",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.5/tombi-cli-0.11.5-aarch64-apple-darwin.tar.gz"
+              "hash": "fd2c09d4c632db5af85f02a883468e33c84bafca3706eb39529bbb04cee10187",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.6/tombi-cli-0.11.6-aarch64-apple-darwin.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "musl": {
-              "binaryPath": "tombi-0.11.5/tombi",
+              "binaryPath": "tombi-0.11.6/tombi",
               "contentType": "tar.gz",
-              "hash": "1014df3fb672ecd7c7e060539c305b93fe8d6eec936e5f2aff4fdac45339783b",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.5/tombi-cli-0.11.5-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "e1305b8c822d64e2aebe1bf6dee37b29a941dba5a80f6cc3ba129d76360eaa3b",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.6/tombi-cli-0.11.6-x86_64-unknown-linux-musl.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tombi-0.11.5/tombi.exe",
+              "binaryPath": "tombi-0.11.6/tombi.exe",
               "contentType": "zip",
-              "hash": "099a3632f1a2c08d2b87eae8c1faacb44d5977c9215026814bfe43ffa3b5d98c",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.5/tombi-cli-0.11.5-x86_64-pc-windows-msvc.zip"
+              "hash": "fc253878ac92e253bf9ed74da6fb159bfb9e17575351aaeccd912630fa76a5b7",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.6/tombi-cli-0.11.6-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "tombi-0.11.5/tombi.exe",
+              "binaryPath": "tombi-0.11.6/tombi.exe",
               "contentType": "zip",
-              "hash": "ca5390c6e52bb0ecca91f50c420bf4fb6ed9ddf0dfdac77c46aec4b3da7ee39c",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.5/tombi-cli-0.11.5-aarch64-pc-windows-msvc.zip"
+              "hash": "d85059c4e218e6a952630023c78766196111f19726b07fe1018fe43989f5b929",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v0.11.6/tombi-cli-0.11.6-aarch64-pc-windows-msvc.zip"
             }
           }
         }
       },
-      "configHash": "dc0c9a05c95c27ac531a04881b2d0144"
+      "configHash": "fd0673742174cabf8f898f234aad91ae",
+      "description": "TOML Formatter / Linter / Language Server"
     },
     "trivy": {
       "binaries": {
@@ -3759,24 +3761,63 @@
     },
     "yq": {
       "binaries": {
-        "windows": {
+        "darwin": {
           "amd64": {
             "unknown": {
-              "contentType": "binary",
-              "hash": "2aee32f1de46a20672f48c25df3018839798bd509143f2ce05fdab1550ff5592",
-              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_windows_amd64.exe"
+              "binaryPath": "yq_darwin_amd64/yq_darwin_amd64",
+              "contentType": "tar.gz",
+              "hash": "48bc2dbb33f456efaf639e1e573b8e5a654701c2e92ef231e691c3971d5d4a5e",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "contentType": "binary",
-              "hash": "448208550332ca33ef816e4cee49fc1e79987b8a08a451c6ae529703c8cfc8a9",
-              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_windows_arm64.exe"
+              "binaryPath": "yq_darwin_arm64/yq_darwin_arm64",
+              "contentType": "tar.gz",
+              "hash": "f135c0c60edd5ded11bc418d12711c259795b17501112e843e93e7a3959a3d41",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "yq_linux_amd64/yq_linux_amd64",
+              "contentType": "tar.gz",
+              "hash": "44c3c6df6c58ef1460d98425954ca5e832926e0e8a1d75c5c8fd261691351510",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "yq_linux_arm64/yq_linux_arm64",
+              "contentType": "tar.gz",
+              "hash": "c8180249ff9ff0577f4976c4481d0d0962d170d24ab390d325ef0be608df5706",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "yq_windows_amd64/yq_windows_amd64.exe",
+              "contentType": "zip",
+              "hash": "63e24aac0a75b760a491002b4bbeb7078f5ec1a0c868ec60fa0f525abecd6037",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_windows_amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "yq_windows_arm64/yq_windows_arm64.exe",
+              "contentType": "zip",
+              "hash": "56d0bdb53369d0f04bc3d769fa6de60d030f2f0f83463b3072518472d7ab1346",
+              "url": "https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_windows_arm64.zip"
             }
           }
         }
       },
-      "configHash": "183e462b1c14b717c03599bf0b94d9d6"
+      "configHash": "183e462b1c14b717c03599bf0b94d9d6",
+      "description": "yq is a portable command-line YAML, JSON, XML, CSV, TOML, HCL  and properties processor"
     }
   }
 }
