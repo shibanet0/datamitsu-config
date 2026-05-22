@@ -7,22 +7,22 @@
   "@commitlint/cli": {
     "description": "Lint your commit messages",
     "packageName": "@commitlint/cli",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/config-conventional": {
     "description": "Shareable commitlint config enforcing conventional commits",
     "packageName": "@commitlint/config-conventional",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/format": {
     "description": "Format commitlint reports",
     "packageName": "@commitlint/format",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@commitlint/types": {
     "description": "Shared types for commitlint packages",
     "packageName": "@commitlint/types",
-    "version": "21.0.0"
+    "version": "21.0.1"
   },
   "@cspell/dict-ru_ru": {
     "description": "",
@@ -336,7 +336,7 @@
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
     "packageName": "knip",
-    "version": "6.12.2"
+    "version": "6.14.1"
   },
   "markdown-link-check": {
     "description": "checks the all of the hyperlinks in a markdown text to determine if they are alive or dead",
