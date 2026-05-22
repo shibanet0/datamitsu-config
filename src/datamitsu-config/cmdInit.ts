@@ -33,10 +33,11 @@ const aiTools: config.MapOfConfigInit = {
   },
   "AGENTS.md": {
     content: (context) => {
-      // CRITICAL: Use existingContent (not originalContent)
-      // existingContent reflects prior transformations from layer merges
-      if (context.existingContent) {
-        return upgradeAgentsReference(context.existingContent);
+      // Prefer existingContent (reflects prior layer merge transformations),
+      // fall back to originalContent (raw file from disk)
+      const existing = context.existingContent ?? context.originalContent;
+      if (existing) {
+        return upgradeAgentsReference(existing);
       }
 
       // Fallback for new files (no existing content)
