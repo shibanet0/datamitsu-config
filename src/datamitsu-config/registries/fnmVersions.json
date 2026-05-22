@@ -25,12 +25,12 @@
     "version": "21.0.1"
   },
   "@cspell/dict-ru_ru": {
-    "description": "",
+    "description": "Russian dictionary for cspell.",
     "packageName": "@cspell/dict-ru_ru",
     "version": "2.3.2"
   },
   "@e18e/eslint-plugin": {
-    "description": "",
+    "description": "The official e18e ESLint plugin for modernizing code and improving performance.",
     "packageName": "@e18e/eslint-plugin",
     "version": "0.3.0"
   },
@@ -69,7 +69,7 @@
     "version": "3.0.1"
   },
   "conventional-changelog": {
-    "description": "Generate a markdown changelog from git commit data",
+    "description": "Generate a changelog from git metadata.",
     "packageName": "conventional-changelog",
     "version": "7.2.0"
   },
@@ -346,12 +346,12 @@
   "markdownlint-cli2": {
     "description": "A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the `markdownlint` library",
     "packageName": "markdownlint-cli2",
-    "version": "0.21.0"
+    "version": "0.22.1"
   },
   "mmdc": {
     "description": "Command-line interface for mermaid",
     "packageName": "@mermaid-js/mermaid-cli",
-    "version": "11.12.0"
+    "version": "11.15.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
@@ -391,7 +391,7 @@
   "slidev": {
     "description": "Presentation slides for developers",
     "packageName": "@slidev/cli",
-    "version": "52.14.2"
+    "version": "52.15.2"
   },
   "sort-package-json": {
     "description": "Sort an Object or package.json based on the well-known package.json keys",
@@ -401,12 +401,12 @@
   "spectral": {
     "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
     "packageName": "@stoplight/spectral-cli",
-    "version": "6.15.0"
+    "version": "6.16.0"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",
     "packageName": "syncpack",
-    "version": "15.1.2"
+    "version": "15.3.1"
   },
   "typescript": {
     "description": "TypeScript is a language for application scale JavaScript development",
