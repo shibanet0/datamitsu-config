@@ -139,6 +139,18 @@ jobs:
         with:
           name: release-artifacts
           path: .
+      - name: Sync datamitsu version to Dockerfile
+        run: |
+          VERSION=$(node -e "console.log(require('./package.json').dependencies['@datamitsu/datamitsu'])")
+          echo "Datamitsu version: $VERSION"
+          if [[ "$VERSION" == 0.0.0-unstable.* ]]; then
+            echo "Unstable version — skipping Dockerfile sync"
+            exit 0
+          fi
+          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}|" docker/Dockerfile
+          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}-alpine|" docker/Dockerfile.alpine
+          echo "Updated Dockerfile versions to ${VERSION}"
+          grep "^FROM" docker/Dockerfile docker/Dockerfile.alpine
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx

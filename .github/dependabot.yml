@@ -37,15 +37,4 @@ updates:
     schedule:
       day: "monday"
       interval: "weekly"
-  - commit-message:
-      prefix: "build(deps)"
-    directory: "/docker"
-    labels:
-      - "dependencies"
-      - "docker"
-    open-pull-requests-limit: 3
-    package-ecosystem: "docker"
-    schedule:
-      day: "monday"
-      interval: "weekly"
 version: 2

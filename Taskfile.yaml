@@ -4,12 +4,13 @@ tasks:
   # ──────────────────────────────────────────────
   build:
     cmds:
+      - task: sync:datamitsu-version
       - task: oxlint:sync:schema
       - task: build:lib:datamitsu-types
       - task: build:inline
       - pnpm exec tsdown
       - task: build:datamitsu-config
-    desc: Full build (oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
+    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -166,6 +167,13 @@ tasks:
       - pnpm exec tsdown --silent
       - node bin/s0.js
     desc: Build silently then run s0
+  # ──────────────────────────────────────────────
+  # Sync
+  # ──────────────────────────────────────────────
+  sync:datamitsu-version:
+    cmds:
+      - node scripts/sync-datamitsu-version.ts
+    desc: Sync @datamitsu/datamitsu version from package.json to Dockerfile and datamitsu.config.ts
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────
