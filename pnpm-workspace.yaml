@@ -28,6 +28,7 @@ resolutionMode: lowest-direct
 savePrefix: ""
 strictDepBuilds: true
 strictSsl: true
+trustLockfile: false
 trustPolicy:
   allowDowngrade:
     - semver@6.3.1

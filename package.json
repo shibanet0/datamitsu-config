@@ -154,9 +154,9 @@
     "unrun": "0.3.0",
     "vitest": "4.1.7"
   },
-  "packageManager": "pnpm@11.2.2",
+  "packageManager": "pnpm@11.5.0",
   "engines": {
     "node": ">=26.2.0",
-    "pnpm": ">=11.2.2"
+    "pnpm": ">=11.5.0"
   }
 }
