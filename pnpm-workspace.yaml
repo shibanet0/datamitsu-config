@@ -1,14 +1,37 @@
 allowBuilds:
   esbuild: false
   unrs-resolver: false
+audit: true
+auditLevel: high
+autoInstallPeers: true
+blockExoticSubdeps: true
+dangerouslyAllowAllBuilds: false
+dedupeDirectDeps: true
+dedupePeerDependents: true
 enableGlobalVirtualStore: true
 enablePrePostScripts: false
+engineStrict: true
 hoistPattern: []
+ignorePatchFailures: false
+lockfile: true
+minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@datamitsu/*"
   - "@ovineko/*"
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
+packageManagerStrict: true
+packageManagerStrictVersion: true
+preferFrozenLockfile: true
 resolutionMode: lowest-direct
+savePrefix: ""
+strictDepBuilds: true
+strictSsl: true
+trustPolicy:
+  allowDowngrade:
+    - semver@6.3.1
+unsafePerm: false
+updateNotifier: false
 verifyDepsBeforeRun: install
+verifyStoreIntegrity: true

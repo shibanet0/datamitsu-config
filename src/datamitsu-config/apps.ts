@@ -5,7 +5,6 @@ import { eslintApp } from "./apps/eslint";
 import { knipApp } from "./apps/knip";
 import { prettierApp } from "./apps/prettier";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
-import { pnpmWorkspaceConfig, pnpmWorkspaceConfigYAML } from "./pnpmWorkspaceConfig";
 import fnmVersions from "./registries/fnmVersions.json";
 import {
   apps as githubAppsJSON,
@@ -116,7 +115,6 @@ export const mapOfApps: BinManager.MapOfApps = {
     description: fnmVersions.mmdc.description,
     files: {
       "pnpm-workspace.yaml": YAML.stringify({
-        ...pnpmWorkspaceConfig,
         allowBuilds: {
           puppeteer: true,
         },
@@ -236,7 +234,7 @@ export const mapOfApps: BinManager.MapOfApps = {
   syncpack: {
     description: fnmVersions.syncpack.description,
     files: {
-      "pnpm-workspace.yaml": pnpmWorkspaceConfigYAML,
+      "pnpm-workspace.yaml": YAML.stringify(pnpmWorkspaceDefaults),
     },
     fnm: {
       binPath: "node_modules/.bin/syncpack",
@@ -248,7 +246,7 @@ export const mapOfApps: BinManager.MapOfApps = {
   tsc: {
     description: fnmVersions.typescript.description,
     files: {
-      "pnpm-workspace.yaml": pnpmWorkspaceConfigYAML,
+      "pnpm-workspace.yaml": YAML.stringify(pnpmWorkspaceDefaults),
     },
     fnm: {
       binPath: "node_modules/.bin/tsc",

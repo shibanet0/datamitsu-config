@@ -229,6 +229,7 @@ export const config = defineConfig({
     "filetypes",
     "docker",
     "npm",
+    "Subdeps",
   ],
   failFast: false,
   ignorePaths: [

@@ -1,5 +1,4 @@
 import { data as archiveCommitlintConfig } from "../inline-config/commitlint";
-import { pnpmWorkspaceConfigYAML } from "../pnpmWorkspaceConfig";
 import fnmVersions from "../registries/fnmVersions.json";
 import { commitlintDeps } from "./commitlint.deps";
 
@@ -11,7 +10,7 @@ export const commitlintApp: BinManager.App = {
   },
   description: fnmVersions["@commitlint/cli"].description,
   files: {
-    "pnpm-workspace.yaml": pnpmWorkspaceConfigYAML,
+    "pnpm-workspace.yaml": YAML.stringify(pnpmWorkspaceDefaults),
   },
   fnm: {
     binPath: "node_modules/.bin/commitlint",
