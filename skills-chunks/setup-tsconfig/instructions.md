@@ -27,7 +27,7 @@ Gather these signals (do all reads in parallel where possible):
 
 **`package.json` (project root):**
 
-- `dependencies` + `devDependencies` + `peerDependencies` — look for: `next`, `react`, `react-dom`, `vite`, `express`, `fastify`, `hono`, `@nestjs/core`, `aws-lambda`, `@aws-sdk/*`, `vitest`, `playwright`, `@playwright/test`, `tsx`, `tsdown`, `tsup`.
+- `dependencies` + `devDependencies` + `peerDependencies` — look for: `next`, `react`, `react-dom`, `vite`, `express`, `fastify`, `hono`, `@nestjs/core`, `aws-lambda`, `@aws-sdk/*`, `@pulumi/pulumi`, `@pulumi/*`, `@cloudflare/workers-types`, `wrangler`, `vitest`, `playwright`, `@playwright/test`, `tsx`, `tsdown`, `tsup`.
 - `bin` field — CLI tool.
 - `main` / `module` / `exports` / `types` fields — library that publishes artifacts.
 - `private: true` + `workspaces` field — monorepo root.
@@ -43,6 +43,8 @@ Gather these signals (do all reads in parallel where possible):
 
 - `next.config.{js,mjs,ts,cjs}` → Next.js app
 - `vite.config.{js,mjs,ts,cjs}` → Vite-based app
+- `Pulumi.yaml` / `Pulumi.*.yaml` at the root → Pulumi IaC project
+- `wrangler.toml` / `wrangler.jsonc` → Cloudflare Workers service
 - `astro.config.*` → Astro app (not in the table — flag, do not auto-pick a preset)
 - `playwright.config.*` without app code under `src/` → E2E test project
 - `index.html` at the root with a Vite config → SPA
@@ -65,20 +67,23 @@ Do **not** read more files than needed to make the call. The signals above are u
 
 Apply the rules from `.datamitsu/tsconfig.md` to the signals you gathered. The canonical decision order:
 
-1. **Next.js** (any `next.config.*` or `next` in deps) → `nextjs.json`.
-2. **React library** (peerDep on `react` + no app markers + has `main`/`exports`):
+1. **Pulumi / IaC** (`Pulumi.yaml`/`Pulumi.*.yaml` at the root, or `@pulumi/*` in deps) → `infra-pulumi.json`. This is a **standalone** preset (does not extend `base.json`) and is the **only** preset that permits non-erasable syntax — Pulumi compiles via its own ts-node runtime, so decorators/`enum` are legal here.
+2. **Next.js** (any `next.config.*` or `next` in deps) → `nextjs.json`.
+3. **React library** (peerDep on `react` + no app markers + has `main`/`exports`):
    - monorepo → `shared-react-library.json`
    - standalone → `react-library.json`
-3. **React app** (dep on `react` + Vite/CRA markers, no `peerDep` on react) → `base.json`.
-4. **Backend service** (server framework dep, or Lambda/serverless markers, or `node:*` imports without React) → `service.json`.
-5. **Node library** (publishes artifacts via `exports`/`main`/`types`, no React, no server framework):
+4. **React app** (dep on `react` + Vite/CRA markers, no `peerDep` on react) → `base.json`.
+5. **Backend service** (server framework dep, or Lambda/serverless markers, or `node:*` imports without React):
+   - Cloudflare Workers (`wrangler.toml`/`wrangler.jsonc`, or `@cloudflare/workers-types` in deps) → `service-worker.json`
+   - otherwise (Node.js runtime) → `service.json`
+6. **Node library** (publishes artifacts via `exports`/`main`/`types`, no React, no server framework):
    - monorepo → `shared-library.json`
    - standalone → `library.json`
-6. **Node CLI** (`bin` field, no other strong signals):
+7. **Node CLI** (`bin` field, no other strong signals):
    - if it imports `node:*` heavily → `service.json`
    - otherwise → `base.json`
-7. **E2E tests** (only test code, no app source) → `base.json`.
-8. **Cannot determine** → do not guess. Ask the user which category their project falls into and re-run the decision with that input.
+8. **E2E tests** (only test code, no app source) → `base.json`.
+9. **Cannot determine** → do not guess. Ask the user which category their project falls into and re-run the decision with that input.
 
 ### Apply the "Common Mistakes" checks
 
@@ -87,6 +92,7 @@ Before finalizing the preset, validate against the negative rules in `.datamitsu
 - **DOM types in a Node project.** If picked preset is `react-library.json`/`shared-react-library.json` but no React deps exist, downgrade to `library.json`/`shared-library.json` and note the correction.
 - **`library.json` in a monorepo.** If picked preset is `library.json` but the project is inside a monorepo, upgrade to `shared-library.json` (so project references work). Same for `react-library.json` → `shared-react-library.json`.
 - **Missing `types: ["node"]`.** If the picked preset is `base.json` or one of the library presets, but the source imports `node:*` modules, add `compilerOptions.types: ["node"]` to the override block of `tsconfig.json`.
+- **Node types in a Cloudflare Worker.** If the project has `wrangler.*` or `@cloudflare/workers-types` but was assigned `service.json` (Node types), switch to `service-worker.json`. `@types/node` globals (`process`, `Buffer`, etc.) don't exist on the Workers runtime.
 - **TypeScript version.** If `typescript` in devDependencies is `< 6.0.0`, flag it — `.datamitsu/tsconfig.md` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally.
 
 ### Compute the override block

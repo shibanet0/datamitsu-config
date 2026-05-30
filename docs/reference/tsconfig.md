@@ -9,17 +9,19 @@ This package provides reusable TypeScript configurations for different project t
 
 ## Quick Selection
 
-| Project Type        | Monorepo? | Config                        |
-| ------------------- | --------- | ----------------------------- |
-| Next.js app         | Any       | `nextjs.json`                 |
-| React + Vite app    | Any       | `base.json`                   |
-| React library       | Yes       | `shared-react-library.json`   |
-| React library       | No        | `react-library.json`          |
-| Node.js library     | Yes       | `shared-library.json`         |
-| Node.js library     | No        | `library.json`                |
-| Backend API/service | Any       | `service.json`                |
-| Node.js CLI         | Any       | `base.json` or `service.json` |
-| E2E tests           | Any       | `base.json`                   |
+| Project Type              | Monorepo? | Config                        |
+| ------------------------- | --------- | ----------------------------- |
+| Next.js app               | Any       | `nextjs.json`                 |
+| React + Vite app          | Any       | `base.json`                   |
+| React library             | Yes       | `shared-react-library.json`   |
+| React library             | No        | `react-library.json`          |
+| Node.js library           | Yes       | `shared-library.json`         |
+| Node.js library           | No        | `library.json`                |
+| Backend service (Node.js) | Any       | `service.json`                |
+| Backend service (Workers) | Any       | `service-worker.json`         |
+| Pulumi / IaC              | Any       | `infra-pulumi.json`           |
+| Node.js CLI               | Any       | `base.json` or `service.json` |
+| E2E tests                 | Any       | `base.json`                   |
 
 ## Configuration Descriptions
 
@@ -69,7 +71,7 @@ This package provides reusable TypeScript configurations for different project t
 
 ### `service.json`
 
-**For:** Backend APIs, serverless functions, microservices
+**For:** Backend APIs, serverless functions, microservices — running on **Node.js**
 
 **Adds:**
 
@@ -77,6 +79,21 @@ This package provides reusable TypeScript configurations for different project t
 - `noEmit: true`
 
 **Example:** Express API, AWS Lambda
+
+**Note:** For the Cloudflare Workers runtime use `service-worker.json` instead — it swaps Node types for Workers types.
+
+---
+
+### `service-worker.json`
+
+**For:** Backend services on the **Cloudflare Workers** runtime
+
+**Adds:**
+
+- `types: ["@cloudflare/workers-types"]`
+- `noEmit: true`
+
+**Note:** Add `@cloudflare/workers-types` as a dev dependency. For Node.js services use `service.json`.
 
 ---
 
@@ -115,6 +132,23 @@ This package provides reusable TypeScript configurations for different project t
 - `jsx: "preserve"` - Next.js transforms itself
 - `noEmit: true`
 - Next.js plugin
+
+---
+
+### `infra-pulumi.json`
+
+**For:** [Pulumi](https://www.pulumi.com/) Infrastructure-as-Code projects
+
+**Standalone preset** — does **NOT** extend `base.json`. Pulumi runs TypeScript through its own ts-node runtime (full transpile), which is incompatible with the base preset's `verbatimModuleSyntax`, `module: "preserve"`, and erasable-only constraints.
+
+**Adds / differs:**
+
+- `experimentalDecorators: true` — Pulumi component resources use decorators
+- `module: "esnext"`, `sourceMap: true`, `noEmit: true`
+- `types: ["node"]`
+- `allowImportingTsExtensions: true` — import sibling modules with an explicit `.ts`
+
+**⚠️ The erasable-only rule does NOT apply here.** Because Pulumi _compiles_ the code (rather than stripping types), non-erasable syntax (`enum`, decorators, etc.) is legal in Pulumi code — and **only** in Pulumi code. Every other preset in this family forbids it.
 
 ---
 
@@ -241,4 +275,4 @@ tsc --noEmit
 
 ## Based on
 
-[@codecompose/typescript-config](https://github.com/0x80/typescript-config/commit/2cca1bb6db84ba63c7764a2cefc345e34fcc8ee6) by 0x80.
+[@codecompose/typescript-config](https://github.com/0x80/typescript-config/commit/58337f95dea59ca25031ffa55a593bda5c78b882) by 0x80.

@@ -241,15 +241,17 @@ This package includes reusable tsconfig presets. Extend them in your `tsconfig.j
 
 Available presets:
 
-| Preset                      | Use Case                      |
-| --------------------------- | ----------------------------- |
-| `base.json`                 | Any TypeScript project        |
-| `library.json`              | Standalone libraries          |
-| `react-library.json`        | Standalone React libraries    |
-| `service.json`              | Backend services              |
-| `shared-library.json`       | Libraries in a monorepo       |
-| `shared-react-library.json` | React libraries in a monorepo |
-| `nextjs.json`               | Next.js applications          |
+| Preset                      | Use Case                              |
+| --------------------------- | ------------------------------------- |
+| `base.json`                 | Any TypeScript project                |
+| `library.json`              | Standalone libraries                  |
+| `react-library.json`        | Standalone React libraries            |
+| `service.json`              | Backend services (Node.js)            |
+| `service-worker.json`       | Backend services (Cloudflare Workers) |
+| `shared-library.json`       | Libraries in a monorepo               |
+| `shared-react-library.json` | React libraries in a monorepo         |
+| `nextjs.json`               | Next.js applications                  |
+| `infra-pulumi.json`         | Pulumi / Infrastructure-as-Code       |
 
 ### Git Hooks
 
