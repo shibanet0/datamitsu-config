@@ -20,5 +20,8 @@ export default {
     "goja",
     "unrs",
     "tfupdate",
+    "alphabetised",
+    "summarise",
+    "initialising",
   ],
 };
