@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Base datamitsu image (version locked to dependency in package.json)
-FROM ghcr.io/datamitsu/datamitsu-unstable:0.0.0-unstable.20260530.86858e3
+FROM ghcr.io/datamitsu/datamitsu-unstable:unstable-20260530-86858e3
 
 # Set working directory for config
 WORKDIR /opt/datamitsu-config
