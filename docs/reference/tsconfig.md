@@ -241,4 +241,4 @@ tsc --noEmit
 
 ## Based on
 
-[@codecompose/typescript-config](https://github.com/0x80/typescript-config) by 0x80.
+[@codecompose/typescript-config](https://github.com/0x80/typescript-config/commit/2cca1bb6db84ba63c7764a2cefc345e34fcc8ee6) by 0x80.
