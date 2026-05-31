@@ -8,10 +8,6 @@ export interface AppConfig {
     binaries?: BinaryPlatforms;
   };
   description: string | undefined;
-  fnm?: {
-    packageName?: string;
-    version?: string;
-  };
   go?: {
     packageName?: string;
     version?: string;
@@ -19,6 +15,10 @@ export interface AppConfig {
   jvm?: {
     jarHash?: string;
     jarUrl?: string;
+    version?: string;
+  };
+  node?: {
+    packageName?: string;
     version?: string;
   };
   uv?: {
@@ -155,8 +155,8 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
 
   if (app.binary) {
     repository = extractRepositoryFromBinary(app);
-  } else if (app.fnm) {
-    repository = extractRepositoryFromFnm(app);
+  } else if (app.node) {
+    repository = extractRepositoryFromNode(app);
   } else if (app.go) {
     repository = extractRepositoryFromGo(app);
   } else if (app.uv) {
@@ -272,7 +272,7 @@ export function parseConfigJson(jsonStr: string): ConfigShowOutput {
 }
 
 function detectRuntime(app: AppConfig): string {
-  if (app.fnm) {
+  if (app.node) {
     return "node";
   }
   if (app.uv) {
@@ -313,14 +313,6 @@ function extractRepositoryFromBinary(app: AppConfig): string | undefined {
   return undefined;
 }
 
-function extractRepositoryFromFnm(app: AppConfig): string | undefined {
-  const packageName = app.fnm?.packageName;
-  if (!packageName) {
-    return undefined;
-  }
-  return `https://www.npmjs.com/package/${packageName}`;
-}
-
 function extractRepositoryFromGo(app: AppConfig): string | undefined {
   const packageName = app.go?.packageName;
   if (!packageName) {
@@ -335,6 +327,14 @@ function extractRepositoryFromJvm(app: AppConfig): string | undefined {
     return undefined;
   }
   return jarUrl;
+}
+
+function extractRepositoryFromNode(app: AppConfig): string | undefined {
+  const packageName = app.node?.packageName;
+  if (!packageName) {
+    return undefined;
+  }
+  return `https://www.npmjs.com/package/${packageName}`;
 }
 
 function extractRepositoryFromUv(app: AppConfig): string | undefined {

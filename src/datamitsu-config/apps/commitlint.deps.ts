@@ -1,9 +1,9 @@
-import fnmVersions from "../registries/fnmVersions.json";
+import nodeVersions from "../registries/nodeVersions.json";
 
 export const commitlintDeps = {
-  "@commitlint/config-conventional": fnmVersions["@commitlint/config-conventional"].version,
-  "@commitlint/format": fnmVersions["@commitlint/format"].version,
-  "@commitlint/types": fnmVersions["@commitlint/types"].version,
+  "@commitlint/config-conventional": nodeVersions["@commitlint/config-conventional"].version,
+  "@commitlint/format": nodeVersions["@commitlint/format"].version,
+  "@commitlint/types": nodeVersions["@commitlint/types"].version,
   "conventional-changelog-conventionalcommits":
-    fnmVersions["conventional-changelog-conventionalcommits"].version,
+    nodeVersions["conventional-changelog-conventionalcommits"].version,
 } as const;

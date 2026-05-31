@@ -50,7 +50,7 @@ Blocklist validation prevents adding deprecated/replaced tools to registry files
 **Blocked tools:**
 
 - Python (uv): black, flake8, isort, and 60+ others replaced by Ruff
-- NPM (fnm): lodash, underscore, moment, request
+- NPM (node): lodash, underscore, moment, request
 
 **Adding to blocklist:**
 

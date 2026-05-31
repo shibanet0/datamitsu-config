@@ -1,6 +1,6 @@
-import fnmVersions from "../registries/fnmVersions.json";
+import nodeVersions from "../registries/nodeVersions.json";
 
 export const cspellDeps = {
-  "@cspell/dict-ru_ru": fnmVersions["@cspell/dict-ru_ru"].version,
-  cspell: fnmVersions["cspell"].version,
+  "@cspell/dict-ru_ru": nodeVersions["@cspell/dict-ru_ru"].version,
+  cspell: nodeVersions["cspell"].version,
 } as const;

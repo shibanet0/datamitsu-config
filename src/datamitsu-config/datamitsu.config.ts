@@ -65,10 +65,10 @@ function getConfig(cfg: config.Config): config.Config {
     projectTypes,
     runtimes: {
       ...mapOfRuntimes,
-      ...(mapOfRuntimes?.fnm
+      ...(mapOfRuntimes?.node
         ? {
-            fnm: {
-              ...mapOfRuntimes.fnm,
+            node: {
+              ...mapOfRuntimes.node,
             },
           }
         : {}),

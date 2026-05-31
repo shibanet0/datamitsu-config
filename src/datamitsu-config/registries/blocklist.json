@@ -1,5 +1,11 @@
 {
-  "fnm": {
+  "github": {
+    "taplo": {
+      "reason": "Replaced by Tombi (TOML toolkit). Use native Tombi binary instead",
+      "replacement": "Use tombi from GitHub releases (native Rust binary)"
+    }
+  },
+  "node": {
     "eslint-plugin-toml": {
       "reason": "TOML linting/formatting via ESLint is unnecessary, replaced by dedicated tombi and yq-toml tools",
       "replacement": "Use tombi for formatting/linting and yq-toml for key sorting of TOML files"
@@ -15,12 +21,6 @@
     "lint-staged": {
       "reason": "Outdated pre-commit tool, replaced by lefthook's built-in staged file filtering",
       "replacement": "Use lefthook with {staged_files} placeholder for running tools on staged files"
-    }
-  },
-  "github": {
-    "taplo": {
-      "reason": "Replaced by Tombi (TOML toolkit). Use native Tombi binary instead",
-      "replacement": "Use tombi from GitHub releases (native Rust binary)"
     }
   },
   "runtimes": {},

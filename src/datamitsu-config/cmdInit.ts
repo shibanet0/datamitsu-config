@@ -7,7 +7,7 @@ import { runtimeVersions } from "./constants";
 import { env } from "./env";
 import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
-import fnmVersions from "./registries/fnmVersions.json";
+import nodeVersions from "./registries/nodeVersions.json";
 import { REMOVED_SKILLS, SKILLS } from "./skills";
 import { safeJsonParse, withTrailingNewline } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
@@ -854,11 +854,11 @@ export default config;
         engines: isRoot
           ? {
               node: `>=${runtimeVersions.node}`,
-              pnpm: `>=${fnmVersions.pnpm.version}`,
+              pnpm: `>=${nodeVersions.pnpm.version}`,
             }
           : undefined,
         optionalDependencies: cleanDependencies(data.optionalDependencies),
-        packageManager: isRoot ? `pnpm@${fnmVersions.pnpm.version}` : undefined,
+        packageManager: isRoot ? `pnpm@${nodeVersions.pnpm.version}` : undefined,
         peerDependencies: cleanDependencies(data.peerDependencies),
         ...({
           cspell: undefined,
