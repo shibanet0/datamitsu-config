@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["node"]
+    "types": ["@cloudflare/workers-types"]
   },
-  "display": "Backend service (Node.js)",
+  "display": "Backend service (Cloudflare Workers)",
   "extends": "./base.json"
 }

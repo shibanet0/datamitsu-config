@@ -9,7 +9,7 @@ import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
 import fnmVersions from "./registries/fnmVersions.json";
 import { REMOVED_SKILLS, SKILLS } from "./skills";
-import { safeJsonParse } from "./utils";
+import { safeJsonParse, withTrailingNewline } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
 
 const yamlIgnore: string[] = ["pnpm-lock.yaml"];
@@ -37,11 +37,11 @@ const aiTools: config.MapOfConfigInit = {
       // fall back to originalContent (raw file from disk)
       const existing = context.existingContent ?? context.originalContent;
       if (existing) {
-        return upgradeAgentsReference(existing);
+        return withTrailingNewline(upgradeAgentsReference(existing));
       }
 
       // Fallback for new files (no existing content)
-      return AGENTS_MD;
+      return withTrailingNewline(AGENTS_MD);
     },
     scope: "git-root",
   },
@@ -59,7 +59,7 @@ const aiTools: config.MapOfConfigInit = {
     SKILLS.map((s) => [
       `.claude/skills/${s.name}/SKILL.md`,
       {
-        content: () => s.adapters.claude,
+        content: () => withTrailingNewline(s.adapters.claude),
         scope: "git-root" as const,
       },
     ]),
@@ -70,7 +70,7 @@ const aiTools: config.MapOfConfigInit = {
     SKILLS.map((s) => [
       `.codex/prompts/${s.name}.md`,
       {
-        content: () => s.adapters.codex,
+        content: () => withTrailingNewline(s.adapters.codex),
         scope: "git-root" as const,
       },
     ]),

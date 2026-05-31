@@ -7,6 +7,7 @@ import runtimes from "./registries/runtimes.json";
 import { SKILLS } from "./skills";
 import { toolsConfig } from "./tools";
 import { TSCONFIG_MD } from "./tsconfig.md";
+import { withTrailingNewline } from "./utils";
 
 const mapOfRuntimes = runtimes as unknown as BinManager.MapOfRuntimes;
 
@@ -18,13 +19,15 @@ function getConfig(cfg: config.Config): config.Config {
     bundles: {
       agents_md: {
         files: {
-          "agents-base.md": [AGENTS_BASE, datamitsuAgentPrompt].filter(Boolean).join("\n\n---\n\n"),
-          "agents-docs-markdown.md": [AGENTS_DOCS_MARKDOWN, datamitsuAgentPrompt]
-            .filter(Boolean)
-            .join("\n\n---\n\n"),
-          "agents-docs-website.md": [AGENTS_DOCS_WEBSITE, datamitsuAgentPrompt]
-            .filter(Boolean)
-            .join("\n\n---\n\n"),
+          "agents-base.md": withTrailingNewline(
+            [AGENTS_BASE, datamitsuAgentPrompt].filter(Boolean).join("\n\n---\n\n"),
+          ),
+          "agents-docs-markdown.md": withTrailingNewline(
+            [AGENTS_DOCS_MARKDOWN, datamitsuAgentPrompt].filter(Boolean).join("\n\n---\n\n"),
+          ),
+          "agents-docs-website.md": withTrailingNewline(
+            [AGENTS_DOCS_WEBSITE, datamitsuAgentPrompt].filter(Boolean).join("\n\n---\n\n"),
+          ),
         },
         links: {
           "ai/agents/agents-base.md": "agents-base.md",
@@ -34,21 +37,23 @@ function getConfig(cfg: config.Config): config.Config {
       },
       "gitleaks-managed": {
         files: {
-          "gitleaks-managed.toml": buildManagedGitleaksToml(),
+          "gitleaks-managed.toml": withTrailingNewline(buildManagedGitleaksToml()),
         },
         links: {
           "gitleaks-managed.toml": "gitleaks-managed.toml",
         },
       },
       skills: {
-        files: Object.fromEntries(SKILLS.map((s) => [`${s.name}/instructions.md`, s.instructions])),
+        files: Object.fromEntries(
+          SKILLS.map((s) => [`${s.name}/instructions.md`, withTrailingNewline(s.instructions)]),
+        ),
         links: {
           "ai/skills": ".",
         },
       },
       tsconfig_guide: {
         files: {
-          "tsconfig.md": TSCONFIG_MD,
+          "tsconfig.md": withTrailingNewline(TSCONFIG_MD),
         },
         links: {
           "tsconfig.md": "tsconfig.md",
