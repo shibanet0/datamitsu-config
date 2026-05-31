@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **83 apps** across multiple runtimes (binary, node, python).
+This configuration manages **84 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **83 apps** across multiple runtimes (binary, node, p
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (34 apps): actionlint, age, air, etc.
+- **Utilities** (35 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -55,6 +55,7 @@ This configuration manages **83 apps** across multiple runtimes (binary, node, p
 | golang-migrate         | binary  | [Info](https://github.com/golang-migrate/migrate){:target="\_blank"}                                                                     | Database migrations. CLI and Golang library.                                                                                                                                                               |
 | golangci-lint          | binary  | [Info](https://github.com/golangci/golangci-lint){:target="\_blank"}                                                                     | Fast linters runner for Go                                                                                                                                                                                 |
 | goose                  | binary  | [Info](https://github.com/pressly/goose){:target="\_blank"}                                                                              | A database migration tool. Supports SQL migrations and Go functions.                                                                                                                                       |
+| govulncheck            | go      | [Info](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck){:target="\_blank"}                                                          | Govulncheck reports known vulnerabilities that affect Go code.                                                                                                                                             |
 | grype                  | binary  | [Info](https://github.com/anchore/grype){:target="\_blank"}                                                                              | A vulnerability scanner for container images and filesystems                                                                                                                                               |
 | hadolint               | binary  | [Info](https://github.com/hadolint/hadolint){:target="\_blank"}                                                                          | Dockerfile linter, validate inline bash, written in Haskell                                                                                                                                                |
 | jq                     | binary  | [Info](https://github.com/jqlang/jq){:target="\_blank"}                                                                                  | Command-line JSON processor                                                                                                                                                                                |

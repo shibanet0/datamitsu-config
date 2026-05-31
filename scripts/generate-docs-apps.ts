@@ -12,6 +12,10 @@ export interface AppConfig {
     packageName?: string;
     version?: string;
   };
+  go?: {
+    packageName?: string;
+    version?: string;
+  };
   jvm?: {
     jarHash?: string;
     jarUrl?: string;
@@ -153,6 +157,8 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
     repository = extractRepositoryFromBinary(app);
   } else if (app.fnm) {
     repository = extractRepositoryFromFnm(app);
+  } else if (app.go) {
+    repository = extractRepositoryFromGo(app);
   } else if (app.uv) {
     repository = extractRepositoryFromUv(app);
   } else if (app.jvm) {
@@ -272,6 +278,9 @@ function detectRuntime(app: AppConfig): string {
   if (app.uv) {
     return "python";
   }
+  if (app.go) {
+    return "go";
+  }
   if (app.binary) {
     return "binary";
   }
@@ -310,6 +319,14 @@ function extractRepositoryFromFnm(app: AppConfig): string | undefined {
     return undefined;
   }
   return `https://www.npmjs.com/package/${packageName}`;
+}
+
+function extractRepositoryFromGo(app: AppConfig): string | undefined {
+  const packageName = app.go?.packageName;
+  if (!packageName) {
+    return undefined;
+  }
+  return `https://pkg.go.dev/${packageName}`;
 }
 
 function extractRepositoryFromJvm(app: AppConfig): string | undefined {

@@ -23,5 +23,6 @@ export default {
     "alphabetised",
     "summarise",
     "initialising",
+    "govulncheck",
   ],
 };
