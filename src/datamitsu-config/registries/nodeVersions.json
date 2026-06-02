@@ -54,6 +54,11 @@
     "packageName": "@prettier/plugin-xml",
     "version": "3.4.2"
   },
+  "@slidev/theme-default": {
+    "description": "The default theme for Slidev.",
+    "packageName": "@slidev/theme-default",
+    "version": "0.25.0"
+  },
   "@stylistic/eslint-plugin": {
     "packageName": "@stylistic/eslint-plugin",
     "version": "5.8.0"
@@ -357,6 +362,11 @@
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
     "version": "1.58.0"
+  },
+  "playwright-chromium": {
+    "description": "A high-level API to automate Chromium",
+    "packageName": "playwright-chromium",
+    "version": "1.60.0"
   },
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
