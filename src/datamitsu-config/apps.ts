@@ -265,6 +265,18 @@ export const mapOfApps: BinManager.MapOfApps = {
       ...nodeVersions.typescript,
     },
   },
+  tsgo: {
+    description: nodeVersions.tsgo.description,
+    files: {
+      "pnpm-workspace.yaml": YAML.stringify(pnpmWorkspaceDefaults),
+    },
+    node: {
+      binPath: "node_modules/.bin/tsgo",
+      lockFile:
+        "br:G1sMAJwHtmO6wG7/mC6DcpI4QpLZ6dv8vP/TZdsyWUyqiEhSxSNY0BeaIApzyIQjnWWpJLcXTJ/Pd6oGlPfGTYvyomn3tzvsMqvKBKxZhl8Sk2VubSJcYF+xeZtD/VTyHuG5S7zGnG/sd9++UlNwYaH0IS3Pq1/pfxfpFycNDarat50yj72lUBqx8Ksh4h+ri6aEl0mq8lEvtSX5w0ny9/FNOEDDy2SP/a1dwvsiT2cOXd9dqno/60OGEBgaSlvJBcfAKix4Ysf3/sdLlc/HY7jkc08Rf+iT+G35+orz/1lQf+OxfjjLPSdR7NJoOzrjtz4ZqRNsvK70W4YfrA+KMt9GFQmX9N5LR08lfbAVVucaetlHa9cnuMEX7OgOb8bazlv3PCPax9kmtH3p+PXXBHqbNs6fPI2/K72fSJ/E31bSA5goZhoFFChSdoWMkJZIydfPkSand5IlaQwU1rN3GAopsAzuU0wqqkUeQCuVSbEN2wxjf1K9mbmRDV0wr4WytBRBn60QBxDmOewQrjOJZctb3+HCPS6gZ24hUeYTYE9cCRgKFNxfOrQK6d59hsXQidc9yuTHkd6hw3ONeWmE4KoEdiZvGONWHaxlr+tZMyKwP1NG5XkipJbv4kPdW1KYkN4ok6qn1WgVs9J6p2lzZ+Cyq9n4WU6EdfdGxHwMZeW9FQ1+m3UMgz3FyL5VtrrpbuhQErO5HQIAMjgn+juejTQSSPjYiWMIVCQKMrnjQYm9Pi/nETgfWZffQmH1p9TN5c6ndBB8GDsbr+jtEz1M1d5Q4rHecMCOKQUVnTIFh5w3ccdlcaysFEFJOUva3XpxIa+xmZxme4yCOwaxunhnuRKCZAcZUi4SWtW7JQglwRdxlpqLERTTofPD23bRriIWR5ML6MjaxtF8Edifw0Z6ABNF9XcUqj45ulLyW8HEaSkgMI7nuFcZihhx2FBmBzPAeUX5dPadVkGbPUPMa8OfOh9GYAzUAbFfXft84rZkzm60Wa0QBkBZ9Zpinz81HSO1KUllNkAzZQQzVE53wwPjVcJr5TH6K79n15etmINV6aIdslM216z3KR5nQZP1MwBPUyJhMVERkpxlXQaXL8JjWJ7rHvJpF8PIOifv1KRezqCZAgBgRgfeLAFgPmDSgGV2uJ6sjKC0A9yN0YffONeZNFEDUMIFXbBcgOYoMYVVdHQG",
+      ...nodeVersions.tsgo,
+    },
+  },
   yamllint: {
     description: uvVersions.yamllint.description,
     uv: {
