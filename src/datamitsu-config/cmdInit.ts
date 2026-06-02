@@ -908,7 +908,7 @@ export default config;
         resolutionMode: "lowest-direct",
         savePrefix: "",
         strictSsl: true,
-        trustLockfile: false,
+        trustLockfile: true,
         unsafePerm: false,
         updateNotifier: false,
         verifyDepsBeforeRun: "install",
