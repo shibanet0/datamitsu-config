@@ -12,7 +12,7 @@ Do not edit manually. To update, run: `pnpm dm exec task -- docs:generate`
 Tools are configurations that define how to run [apps](apps.md) automatically via `dm check` and `dm fix`.
 Each tool references an app with specific arguments, file globs, and execution scope.
 
-This configuration includes **22 tools**.
+This configuration includes **23 tools**.
 
 ## Tools Reference
 
@@ -34,6 +34,7 @@ This configuration includes **22 tools**.
 | **syncpack**             | fix<br>lint | `**/package.json`                                                                                                                                                                                    | npm-package<br>typescript-project | repository  |
 | **tombi**                | fix<br>lint | `**/*.toml`                                                                                                                                                                                          | all                               | repository  |
 | **tsc**                  | lint        | `**/*.cts`<br>`**/*.d.ts`<br>`**/*.mts`<br>`**/*.ts`<br>`**/*.tsx`                                                                                                                                   | typescript-project                | per-project |
+| **tsgo**                 | lint        | `**/*.cts`<br>`**/*.d.ts`<br>`**/*.mts`<br>`**/*.ts`<br>`**/*.tsx`                                                                                                                                   | typescript-project                | per-project |
 | **typstyle**             | fix<br>lint | `**/*.typ`                                                                                                                                                                                           | all                               | per-file    |
 | **yamlfmt**              | fix<br>lint | `**/*.yaml`<br>`**/*.yml`                                                                                                                                                                            | all                               | repository  |
 | **yamllint**             | lint        | `**/*.yaml`<br>`**/*.yml`                                                                                                                                                                            | all                               | repository  |
