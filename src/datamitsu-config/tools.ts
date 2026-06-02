@@ -411,6 +411,19 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["typescript-project"],
   },
+  tsgo: {
+    name: "tsgo",
+    operations: {
+      lint: {
+        app: "tsgo",
+        args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
+        globs: typescriptGlobs,
+        priority: toolPriority.tsc,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["typescript-project"],
+  },
   typstyle: {
     name: "typstyle - Typst Code Formatter",
     operations: {
