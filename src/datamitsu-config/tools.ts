@@ -5,6 +5,7 @@ import {
   eslintGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  oxfmtGlobs,
   oxlintGlobs,
   packageJsonGlobs,
   prettierGlobs,
@@ -24,6 +25,7 @@ type Tool =
   | "eslint"
   | "golangci-lint"
   | "hadolint"
+  | "oxfmt"
   | "oxlint"
   | "pre-commit"
   | "prettier"
@@ -58,6 +60,7 @@ const _fixPriority: Tool[] = [
   "yq-properties",
   "eslint",
   "prettier",
+  "oxfmt",
   "sort-package-json",
   "golangci-lint",
   "typstyle",
@@ -78,6 +81,7 @@ const _lintPriority: Tool[] = [
   "cspell",
   "eslint",
   "prettier",
+  "oxfmt",
   "sort-package-json",
   "golangci-lint",
   "typstyle",
@@ -258,6 +262,27 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+  oxfmt: {
+    name: "oxfmt - The JavaScript Oxidation Compiler Formatter",
+    operations: {
+      fix: {
+        app: "oxfmt",
+        args: ["--write", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        batch: true,
+        globs: oxfmtGlobs,
+        priority: fixPriority.oxfmt,
+        scope: "repository",
+      },
+      lint: {
+        app: "oxfmt",
+        args: ["--check", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        batch: true,
+        globs: oxfmtGlobs,
+        priority: lintPriority.oxfmt,
+        scope: "repository",
+      },
+    },
+  },
   oxlint: {
     name: "Oxlint",
     operations: {
@@ -344,14 +369,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "shfmt",
-        args: ["-w", "-i", "2", "-ci", "-sr", "{file}"],
+        args: ["-w", "-i", String(indentSettings.indentWidth), "-ci", "-sr", "{file}"],
         globs: shellGlobs,
         priority: fixPriority.shfmt,
         scope: "per-file",
       },
       lint: {
         app: "shfmt",
-        args: ["-d", "-i", "2", "-ci", "-sr", "{file}"],
+        args: ["-d", "-i", String(indentSettings.indentWidth), "-ci", "-sr", "{file}"],
         globs: shellGlobs,
         priority: lintPriority.shfmt,
         scope: "per-file",
@@ -454,9 +479,9 @@ export const toolsConfig: config.MapOfTools = {
         app: "typstyle",
         args: [
           "-l",
-          String(indentSettings.typ?.lineWidth),
+          String(indentSettings.lineWidth),
           "-t",
-          String(indentSettings.typ?.indentWidth),
+          String(indentSettings.indentWidth),
           "-v",
           "--inplace",
           "{file}",
@@ -469,9 +494,9 @@ export const toolsConfig: config.MapOfTools = {
         app: "typstyle",
         args: [
           "-l",
-          String(indentSettings.typ?.lineWidth),
+          String(indentSettings.lineWidth),
           "-t",
-          String(indentSettings.typ?.indentWidth),
+          String(indentSettings.indentWidth),
           "-v",
           "--check",
           "{file}",

@@ -4,8 +4,8 @@ interface ReferencePattern {
 }
 
 /**
- * Mapping of agent file variants to their reference line patterns.
- * oldPatterns is append-only - add new historical versions here as the format evolves.
+ * Mapping of agent file variants to their reference line patterns. oldPatterns is append-only - add
+ * new historical versions here as the format evolves.
  */
 const AGENTS_REFERENCE_PATTERNS: Record<string, ReferencePattern> = {
   "agents-base.md": {
@@ -43,9 +43,9 @@ const AGENTS_REFERENCE_PATTERNS: Record<string, ReferencePattern> = {
 /**
  * Auto-upgrades AGENTS.md reference lines from old formats to canonical format.
  *
- * Searches through content line-by-line for old reference patterns and replaces
- * them with the current canonical version. Supports all three file variants
- * (agents-base.md, agents-docs-markdown.md, agents-docs-website.md).
+ * Searches through content line-by-line for old reference patterns and replaces them with the
+ * current canonical version. Supports all three file variants (agents-base.md,
+ * agents-docs-markdown.md, agents-docs-website.md).
  *
  * Operation is idempotent - safe to run on already-upgraded content.
  *

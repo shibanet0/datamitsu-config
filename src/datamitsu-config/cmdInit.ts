@@ -3,7 +3,7 @@ import type { PackageJson } from "type-fest";
 import { name as packageJsonName, version as packageJsonVersion } from "../../package.json";
 import { oxlintConfig } from "../apps/oxlint";
 import { AGENTS_MD, upgradeAgentsReference } from "./agentsUpgrade";
-import { runtimeVersions } from "./constants";
+import { indentSettings, runtimeVersions } from "./constants";
 import { env } from "./env";
 import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
@@ -144,7 +144,7 @@ export const init: config.MapOfConfigInit = {
           properties: {
             charset: "utf8",
             end_of_line: "lf",
-            indent_size: "2",
+            indent_size: String(indentSettings.indentWidth),
             insert_final_newline: "true",
             trim_trailing_whitespace: "true",
             ...existing["*"],
@@ -188,11 +188,19 @@ export const init: config.MapOfConfigInit = {
         // },
         {
           name: "GNUmakefile",
-          properties: { indent_size: "2", indent_style: "tab", ...existing["GNUmakefile"] },
+          properties: {
+            indent_size: String(indentSettings.indentWidth),
+            indent_style: "tab",
+            ...existing["GNUmakefile"],
+          },
         },
         {
           name: "Makefile",
-          properties: { indent_size: "2", indent_style: "tab", ...existing["Makefile"] },
+          properties: {
+            indent_size: String(indentSettings.indentWidth),
+            indent_style: "tab",
+            ...existing["Makefile"],
+          },
         },
         // {
         //   name: "COMMIT_EDITMSG",
@@ -431,11 +439,11 @@ export const init: config.MapOfConfigInit = {
       const formatter = Object.fromEntries(
         Object.entries({
           ...data?.formatter,
-          array_indent: 2,
+          array_indent: indentSettings.indentWidth,
           eof_newline: true,
           force_array_style: "block",
           force_quote_style: "double",
-          indent: 2,
+          indent: indentSettings.indentWidth,
           line_ending: "lf",
           pad_line_comments: 1,
           retain_line_breaks_single: false,
@@ -467,7 +475,7 @@ export const init: config.MapOfConfigInit = {
           "document-end": "disable",
           "document-start": "disable",
           "empty-lines": { max: 1 },
-          indentation: { "indent-sequences": true, spaces: 2 },
+          indentation: { "indent-sequences": true, spaces: indentSettings.indentWidth },
           "key-ordering": "disable",
           "line-length": "disable",
           truthy: { "check-keys": false, level: "error" },
@@ -810,7 +818,30 @@ export default config;
     ],
     scope: "git-root",
   },
-
+  "oxfmt.config.ts": {
+    content: (context) => {
+      return [
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "oxfmt.config.js"))}";`,
+        "",
+        `const config = defineConfig();`,
+        "",
+        "export default config;",
+        "",
+      ].join("\n");
+    },
+    otherFileNameList: [
+      ".oxfmtrc",
+      ".oxfmtrc.json",
+      ".oxfmtrc.jsonc",
+      "oxfmt.config.js",
+      "oxfmt.config.mjs",
+      "oxfmt.config.cjs",
+      "oxfmt.config.ts",
+      "oxfmt.config.mts",
+      "oxfmt.config.cts",
+    ],
+    scope: "git-root",
+  },
   "package.json": {
     content: ({ isRoot, originalContent }) => {
       const data = JSON.parse(originalContent || "{}") as PackageJson;
@@ -926,9 +957,6 @@ export default config;
     projectTypes: ["pnpm-package"],
     scope: "git-root",
   },
-  // 		return INI.stringify(data);
-  // 	},
-  // },
   "prettier.config.js": {
     content: (context) => {
       return [

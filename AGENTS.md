@@ -66,3 +66,14 @@ Each tool config uses a single **canonical filename** per project. The `otherFil
 Similarly, each file-type concern (linting, formatting) should be handled by **one dedicated tool**, not multiple overlapping ones.
 
 When adding new tools, check that no existing tool already covers the same file types and operations.
+
+## Shared Formatter Settings
+
+`indentSettings` in [src/datamitsu-config/constants.ts](src/datamitsu-config/constants.ts) is the **single source of truth** for indent width and line width across every formatter (prettier, oxfmt, ruff, typstyle, …). It is one object — `{ indentWidth, lineWidth }` — not a per-language map.
+
+When wiring a formatter, reference `indentSettings.indentWidth` / `indentSettings.lineWidth` instead of hardcoding `2` / `100`, so every formatter stays in lockstep:
+
+- Tools defined in `src/datamitsu-config/` read it directly (e.g. typstyle in `tools.ts`).
+- The bundled `defineConfig` sources in `src/apps/*/index.ts` (prettier, oxfmt) import it from `../../datamitsu-config/constants` and feed it into the tool's native config (`printWidth`, `tabWidth`, …). These bundle into the inline config archive, so the value is baked in at build time.
+
+Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.

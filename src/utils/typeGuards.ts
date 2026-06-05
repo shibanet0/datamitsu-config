@@ -1,11 +1,12 @@
 /**
  * Type guards for safe error handling with unknown types
+ *
  * @module utils/typeGuards
  */
 
 /**
- * Type guard for objects with message property
- * Useful for error-like objects that may not be Error instances
+ * Type guard for objects with message property Useful for error-like objects that may not be Error
+ * instances
  */
 export const hasMessage = (error: unknown): error is { message: string } => {
   return (
@@ -17,8 +18,7 @@ export const hasMessage = (error: unknown): error is { message: string } => {
 };
 
 /**
- * Type guard for execa command errors
- * Execa throws errors with exitCode, stderr, stdout properties
+ * Type guard for execa command errors Execa throws errors with exitCode, stderr, stdout properties
  */
 export const isExecaError = (
   error: unknown,

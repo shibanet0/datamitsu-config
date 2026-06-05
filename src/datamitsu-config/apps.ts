@@ -4,6 +4,7 @@ import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
 import { knipApp } from "./apps/knip";
 import { prettierApp } from "./apps/prettier";
+import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
 import {
   apps as githubAppsJSON,
@@ -148,7 +149,15 @@ export const mapOfApps: BinManager.MapOfApps = {
     },
   },
   oxfmt: {
+    archives: {
+      main: {
+        inline: oxfmtConfigArchive,
+      },
+    },
     description: nodeVersions["oxfmt"].description,
+    links: {
+      "oxfmt.config.js": "index.js",
+    },
     node: {
       binPath: "node_modules/.bin/oxfmt",
       lockFile:

@@ -103,8 +103,7 @@ export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult>
 }
 
 /**
- * Update a Dockerfile's FROM line with a new version.
- * Returns [updatedContent, wasChanged].
+ * Update a Dockerfile's FROM line with a new version. Returns [updatedContent, wasChanged].
  */
 export function updateDockerfileFromLine(
   content: string,
@@ -130,8 +129,8 @@ export function updateDockerfileFromLine(
 }
 
 /**
- * Update the getMinVersion return value in datamitsu.config.ts.
- * Returns [updatedContent, wasChanged].
+ * Update the getMinVersion return value in datamitsu.config.ts. Returns [updatedContent,
+ * wasChanged].
  */
 export function updateMinVersion(content: string, version: string): [string, boolean] {
   const match = content.match(MIN_VERSION_REGEX);

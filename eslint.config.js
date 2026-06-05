@@ -5,7 +5,9 @@ import { defineConfig } from "./.datamitsu/eslint.config.js";
 import packageJSON from "./package.json" with { type: "json" };
 
 const config = await defineConfig(
-  /** @type {import("./dist/type-fest").PackageJson} */ (packageJSON),
+  /**
+   * @type {import("./dist/type-fest").PackageJson}
+   */ (packageJSON),
   undefined,
   {
     plugins: {
