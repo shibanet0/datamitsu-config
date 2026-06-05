@@ -217,6 +217,12 @@ export const mapOfApps: BinManager.MapOfApps = {
   },
   slidev: {
     description: nodeVersions.slidev.description,
+    // Install playwright-chromium browsers into the shared datamitsu store
+    // (cleaned by `datamitsu store clear`) instead of the per-user default
+    // cache, so the deck-export browser is colocated with the app deps.
+    env: {
+      PLAYWRIGHT_BROWSERS_PATH: "${STORE}/.playwright/browsers",
+    },
     files: {
       "pnpm-workspace.yaml": YAML.stringify({
         allowBuilds: {
