@@ -358,6 +358,11 @@
     "packageName": "@mermaid-js/mermaid-cli",
     "version": "11.15.0"
   },
+  "oxfmt": {
+    "description": "Formatter for the JavaScript Oxidation Compiler",
+    "packageName": "oxfmt",
+    "version": "0.52.0"
+  },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
