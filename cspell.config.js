@@ -24,5 +24,6 @@ export default {
     "summarise",
     "initialising",
     "govulncheck",
+    "GOPATH",
   ],
 };

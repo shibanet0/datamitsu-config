@@ -150,8 +150,7 @@ export async function main(): Promise<void> {
 }
 
 /**
- * Validate GitHub apps registry against blocklist
- * Checks both 'apps' and 'binaries' sections
+ * Validate GitHub apps registry against blocklist Checks both 'apps' and 'binaries' sections
  */
 export function validateGithubRegistry(
   registry: { apps?: Record<string, any>; binaries?: Record<string, any> },

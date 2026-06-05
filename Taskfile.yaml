@@ -31,6 +31,7 @@ tasks:
       - task: build:inline:commitlint
       - task: build:inline:knip
       - task: build:inline:cspell
+      - task: build:inline:oxfmt
     desc: Build all inline configs in parallel
   build:inline:commitlint:
     cmds:
@@ -48,6 +49,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
     desc: Build inline knip config
+  build:inline:oxfmt:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun
+    desc: Build inline oxfmt config
   build:inline:prettier:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun

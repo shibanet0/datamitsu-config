@@ -6,8 +6,8 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const REPORTS_DIR = path.join(ROOT, "test-reports");
 
 // --- Docker images ---
-const DOCKER_IMAGE_NODE = "node:26.2.0-trixie-slim";
-const DOCKER_IMAGE_NODE_ALPINE = "node:26.2.0-alpine3.23";
+const DOCKER_IMAGE_NODE = "node:26.3.0-trixie-slim";
+const DOCKER_IMAGE_NODE_ALPINE = "node:26.3.0-alpine3.23";
 
 // --- CLI args ---
 const rawArgs = process.argv.slice(2);
@@ -675,7 +675,9 @@ async function cleanup() {
   process.exit(130); // 128 + SIGINT (2)
 }
 
-/** Run a command, stream stdout+stderr to terminal, return captured stdout. */
+/**
+ * Run a command, stream stdout+stderr to terminal, return captured stdout.
+ */
 async function runWithOutput(file: string, args: string[], cwd: string): Promise<string> {
   const proc = execa(file, args, {
     cwd,

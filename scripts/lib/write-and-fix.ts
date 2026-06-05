@@ -19,8 +19,8 @@ export interface WriteAndFixResult {
 }
 
 /**
- * Writes content to a file and automatically runs datamitsu fix on it.
- * Creates parent directories if they don't exist.
+ * Writes content to a file and automatically runs datamitsu fix on it. Creates parent directories
+ * if they don't exist.
  *
  * @param options - Configuration for writing and fixing the file
  * @returns Result object indicating success/failure

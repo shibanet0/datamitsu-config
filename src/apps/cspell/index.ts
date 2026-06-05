@@ -204,6 +204,7 @@ const words: string[] = [
   "stopwords",
   "tombi",
   "trixie",
+  "GOPATH",
 ];
 
 export const config = defineConfig({

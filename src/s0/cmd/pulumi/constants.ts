@@ -2,39 +2,54 @@
  * Constants and utilities for Pulumi SOPS state management
  */
 
-/** File extension for encrypted files */
+/**
+ * File extension for encrypted files
+ */
 export const ENCRYPTED_FILE_SUFFIX = ".enc" as const;
 
-/** Glob patterns for unencrypted Pulumi state files */
+/**
+ * Glob patterns for unencrypted Pulumi state files
+ */
 export const PULUMI_STATE_PATTERNS = [
   "**/.pulumi/meta.yaml",
   "**/.pulumi/stacks/**/*.{yaml,yml,json}",
 ] as const;
 
-/** Glob patterns for encrypted Pulumi state files */
+/**
+ * Glob patterns for encrypted Pulumi state files
+ */
 export const PULUMI_ENCRYPTED_STATE_PATTERNS = [
   "**/.pulumi/meta.yaml.enc",
   "**/.pulumi/stacks/**/*.{yaml,yml,json}.enc",
 ] as const;
 
-/** Patterns to exclude (already encrypted) */
+/**
+ * Patterns to exclude (already encrypted)
+ */
 export const PULUMI_ENCRYPTED_EXCLUDE_PATTERNS = [
   "**/*.json.enc",
   "**/*.yaml.enc",
   "**/*.yml.enc",
 ] as const;
 
-/** Concurrent SOPS operations limit (conservative for GPG agent) */
+/**
+ * Concurrent SOPS operations limit (conservative for GPG agent)
+ */
 export const DEFAULT_CONCURRENCY_LIMIT = 5;
 
-/** SOPS exit code for unchanged files */
+/**
+ * SOPS exit code for unchanged files
+ */
 export const SOPS_EXIT_CODE_UNCHANGED = 200;
 
-/** Supported file types for SOPS operations */
+/**
+ * Supported file types for SOPS operations
+ */
 export type SopsFileType = "json" | "yaml";
 
 /**
  * Detect file type from path
+ *
  * @param filePath Path to the file
  * @returns 'json' if JSON file, 'yaml' otherwise
  */
@@ -48,6 +63,7 @@ export function detectFileType(filePath: string): SopsFileType {
 
 /**
  * Get original path from encrypted file
+ *
  * @param filePath Encrypted file path
  * @returns File path without .enc suffix
  */
@@ -57,6 +73,7 @@ export function getDecryptedPath(filePath: string): string {
 
 /**
  * Get output path for encrypted file
+ *
  * @param filePath Original file path
  * @returns File path with .enc suffix
  */
@@ -66,8 +83,9 @@ export function getEncryptedPath(filePath: string): string {
 
 /**
  * Check if file is encrypted
+ *
  * @param filePath File path to check
- * @returns true if file has .enc suffix
+ * @returns True if file has .enc suffix
  */
 export function isEncryptedFile(filePath: string): boolean {
   return filePath.endsWith(ENCRYPTED_FILE_SUFFIX);

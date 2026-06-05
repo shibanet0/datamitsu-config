@@ -69,6 +69,17 @@ declare global {
   const pnpmWorkspaceDefaults: Record<string, unknown>;
 
   /**
+   * Bounded config-evaluation input surface, injected (frozen) by the Go engine.
+   * Only fields explicitly allowlisted here may be used in config JS decisions.
+   * Unlike `pnpmWorkspaceDefaults` (a published recommendation), every field here
+   * is a genuine config evaluation input. Adding a field requires updating
+   * fingerprinting, cache invalidation, explain/debug output, and documentation.
+   */
+  const datamitsuConfigInputs: Readonly<{
+    minimumReleaseAgeMinutes: number;
+  }>;
+
+  /**
    * Returns the minimum datamitsu version required by this config (semver format).
    * The tool validates this version during config loading and fails early with
    * upgrade instructions if the current version is too old.
@@ -678,6 +689,25 @@ declare global {
        */
       description?: string;
       /**
+       * Custom environment variables for this app, applied to all app kinds
+       * (binary, uv, node, jvm, go, shell). Injected both at install time
+       * (uv/node/go dependency install) and at run time (every app type).
+       *
+       * Values support placeholder expansion (done in Go, never written into
+       * the committed config):
+       * - `${STORE}` → the shared datamitsu store path (cleaned by
+       *   `datamitsu store clear`).
+       * - `${APP_DIR}` → this app's install directory (per-app, config-hashed).
+       *
+       * Precedence: any key already set by datamitsu or the runtime wins, so a
+       * user config can never relocate the pnpm store, uv cache, GOPATH, etc.
+       *
+       * @example
+       * // Redirect playwright to download browsers into the datamitsu store
+       * env: { PLAYWRIGHT_BROWSERS_PATH: "${STORE}/.playwright/browsers" }
+       */
+      env?: Record<string, string>;
+      /**
        * Static file contents to write into the app's install directory before
        * the package manager runs. Keys are filenames; values are file contents.
        *
@@ -775,7 +805,6 @@ declare global {
 
     interface AppConfigShell {
       args?: string[];
-      env?: Record<string, string>;
       name: string;
     }
 

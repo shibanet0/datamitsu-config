@@ -34,6 +34,36 @@ export const oxlintGlobs: string[] = [
   "**/*.svelte",
 ];
 
+// oxfmt formats by file type, independent of project type. Covers the languages
+// oxfmt supports out of the box (https://oxc.rs/compatibility.html). Svelte and
+// Astro are intentionally omitted — they require extra deps/plugins to format.
+export const oxfmtGlobs: string[] = [
+  "**/*.js",
+  "**/*.jsx",
+  "**/*.mjs",
+  "**/*.cjs",
+  "**/*.ts",
+  "**/*.tsx",
+  "**/*.mts",
+  "**/*.cts",
+  "**/*.d.ts",
+  "**/*.json",
+  "**/*.jsonc",
+  "**/*.json5",
+  "**/*.css",
+  "**/*.scss",
+  "**/*.less",
+  "**/*.html",
+  "**/*.vue",
+  "**/*.graphql",
+  "**/*.gql",
+  "**/*.md",
+  "**/*.mdx",
+  "**/*.yaml",
+  "**/*.yml",
+  "**/*.toml",
+];
+
 export const packageJsonGlobs: string[] = ["**/package.json"];
 
 export const prettierGlobs: string[] = [...eslintGlobs, "**/*.d.ts", "**/*.md"];
