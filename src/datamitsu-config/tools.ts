@@ -25,6 +25,7 @@ type Tool =
   | "editorconfig-checker"
   | "eslint"
   | "golangci-lint"
+  | "golangci-lint-fmt"
   | "hadolint"
   | "harper-cli"
   | "oxfmt"
@@ -89,6 +90,7 @@ const _lintPriority: Tool[] = [
   "oxfmt",
   "sort-package-json",
   "golangci-lint",
+  "golangci-lint-fmt",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -242,14 +244,35 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "golangci-lint",
-        args: ["run", "--fix"],
+        args: ["run", "--fix", "--allow-parallel-runners"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
         priority: fixPriority["golangci-lint"],
         scope: "per-project",
       },
       lint: {
         app: "golangci-lint",
-        args: ["run"],
+        args: ["run", "--allow-parallel-runners"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
         priority: lintPriority["golangci-lint"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["golang-package"],
+  },
+  "golangci-lint-fmt": {
+    name: "golangci-lint - Go Linter",
+    operations: {
+      fix: {
+        app: "golangci-lint",
+        args: ["fmt"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
+        priority: fixPriority["golangci-lint-fmt"],
         scope: "per-project",
       },
     },

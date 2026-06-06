@@ -52,6 +52,7 @@
   ],
   "scripts": {
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
+    "build:local": "pnpm run build && cp ./datamitsu.config.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
     "prepack": "pnpm build && clean-pkg-json clean",
@@ -64,7 +65,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.18",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260606.184a65e",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",

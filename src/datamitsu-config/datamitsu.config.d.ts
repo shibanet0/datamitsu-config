@@ -80,6 +80,22 @@ declare global {
   }>;
 
   /**
+   * Optional export. Declares local parent config files to load before this
+   * config, mirroring the `--before-config` CLI flag declaratively.
+   * Only honoured in the auto-discovered git-root config — declaring it in any
+   * other layer (default / `--before-config` / remote / `--config`) is ignored.
+   * Paths are resolved relative to the directory of the git-root config file;
+   * absolute paths are used as-is. No hash is required (local files share the
+   * root config's trust domain). If `--before-config` is passed on the CLI, this
+   * function is not evaluated at all (the flag wins, avoiding double-loading).
+   * @example
+   * function getBeforeConfigs() {
+   *   return [{ path: "./node_modules/@shibanet0/datamitsu-config/datamitsu.config.js" }];
+   * }
+   */
+  function getBeforeConfigs(): Array<{ path: string }>;
+
+  /**
    * Returns the minimum datamitsu version required by this config (semver format).
    * The tool validates this version during config loading and fails early with
    * upgrade instructions if the current version is too old.
@@ -444,6 +460,16 @@ declare global {
        * - "git-root": creates only at the git repository root (runs once)
        */
       scope?: "git-root" | "project";
+
+      /**
+       * Tool name(s) this config file belongs to (must match keys in `tools`).
+       * `datamitsu setup --tools <names>` regenerates only configs whose `tools`
+       * intersect the selected set; all others are left untouched. Omit for
+       * infrastructure files (.gitignore, lefthook.yaml) not tied to a single
+       * tool — those are skipped whenever `--tools` is passed.
+       * @example ["golangci-lint"]
+       */
+      tools?: string[];
     }
 
     /**
