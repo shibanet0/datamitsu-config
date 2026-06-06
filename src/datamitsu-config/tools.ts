@@ -5,6 +5,7 @@ import {
   eslintGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  markdownGlobs,
   oxfmtGlobs,
   oxlintGlobs,
   packageJsonGlobs,
@@ -25,6 +26,7 @@ type Tool =
   | "eslint"
   | "golangci-lint"
   | "hadolint"
+  | "harper-cli"
   | "oxfmt"
   | "oxlint"
   | "pre-commit"
@@ -79,6 +81,7 @@ const _lintPriority: Tool[] = [
   "tsc",
   "tsgo",
   "cspell",
+  "harper-cli",
   "eslint",
   "prettier",
   "oxfmt",
@@ -259,6 +262,19 @@ export const toolsConfig: config.MapOfTools = {
         globs: dockerfileGlobs,
         priority: lintPriority.hadolint,
         scope: "per-file",
+      },
+    },
+  },
+  "harper-cli": {
+    name: "Harper - The Grammar Checker for Developers",
+    operations: {
+      lint: {
+        app: "harper-cli",
+        args: ["lint", "--dialect", "us", "--format", "compact", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        priority: lintPriority["harper-cli"],
+        scope: "repository",
       },
     },
   },

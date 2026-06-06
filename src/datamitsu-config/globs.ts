@@ -18,6 +18,8 @@ export const eslintGlobs: string[] = [
 ];
 
 export const jsonGlobs: string[] = ["**/*.json"];
+
+export const markdownGlobs: string[] = ["**/*.md", "**/*.markdown"];
 export const jsonExcludeGlobs: string[] = ["**/package.json", "**/package-lock.json"];
 
 export const oxlintGlobs: string[] = [
