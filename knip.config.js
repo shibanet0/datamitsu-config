@@ -1,7 +1,7 @@
-import { config } from "./.datamitsu/knip.config.js";
+import { defineConfig } from "./.datamitsu/knip.config.js";
 
-const internalConfig = {
-  ...config,
+export default defineConfig((prev) => ({
+  ...prev,
   ignoreBinaries: ["bin/datamitsu.js"],
   ignoreDependencies: [
     "@e18e/eslint-plugin",
@@ -39,6 +39,4 @@ const internalConfig = {
     "eslint-plugin-unused-imports",
     "@antebudimir/eslint-plugin-vanilla-extract",
   ],
-};
-
-export default internalConfig;
+}));

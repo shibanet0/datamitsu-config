@@ -1,4 +1,6 @@
-import { defineConfig } from "cspell";
+import { defineConfig as defineCspellConfig } from "cspell";
+
+type CSpellConfig = Parameters<typeof defineCspellConfig>[0];
 
 const words: string[] = [
   "aeslint",
@@ -207,7 +209,7 @@ const words: string[] = [
   "GOPATH",
 ];
 
-export const config = defineConfig({
+const baseConfig = defineCspellConfig({
   dictionaries: [
     "en_us",
     "companies",
@@ -263,3 +265,10 @@ export const config = defineConfig({
   version: "0.2",
   words,
 });
+
+export const defineConfig = (
+  overrides?: ((base: CSpellConfig) => CSpellConfig) | CSpellConfig,
+): CSpellConfig =>
+  defineCspellConfig(
+    typeof overrides === "function" ? overrides(baseConfig) : { ...baseConfig, ...overrides },
+  );

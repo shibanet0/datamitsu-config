@@ -67,6 +67,36 @@ Similarly, each file-type concern (linting, formatting) should be handled by **o
 
 When adding new tools, check that no existing tool already covers the same file types and operations.
 
+### JS/TS config tools
+
+When a tool supports a JavaScript/TypeScript config, prefer it over JSON/YAML/TOML, and pick the extension in this order:
+
+1. `.js` (canonical — what `datamitsu init` generates)
+2. `.ts`
+
+Such a tool **must** export a `defineConfig(overrides?)` helper from its `src/apps/<tool>/index.ts`, and the generated config file **must** call it:
+
+```js
+import { defineConfig } from "<.datamitsu/<tool>.config.js>";
+
+export default defineConfig();
+```
+
+This gives users type-checking and autocomplete when adding overrides, even in a plain `.js` file — the same experience as `eslint.config.js` and `prettier.config.js`. See [src/apps/prettier/index.ts](src/apps/prettier/index.ts) and [src/apps/eslint/index.ts](src/apps/eslint/index.ts) for reference implementations.
+
+`defineConfig` accepts either an overrides object (shallow-merged over the base) or a function that receives the base config and returns the final one — the latter lets users extend array/object fields instead of replacing them:
+
+```js
+import { defineConfig } from "<.datamitsu/<tool>.config.js>";
+
+export default defineConfig((base) => ({
+  ...base,
+  words: [...base.words, "datamitsu"],
+}));
+```
+
+For new tools that support js/ts, default to this format (js-first) unless the user explicitly requests another.
+
 ## Shared Formatter Settings
 
 `indentSettings` in [src/datamitsu-config/constants.ts](src/datamitsu-config/constants.ts) is the **single source of truth** for indent width and line width across every formatter (prettier, oxfmt, ruff, typstyle, …). It is one object — `{ indentWidth, lineWidth }` — not a per-language map.

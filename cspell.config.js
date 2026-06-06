@@ -1,9 +1,9 @@
-import { config } from "./.datamitsu/cspell.config.js";
+import { defineConfig } from "./.datamitsu/cspell.config.js";
 
-export default {
-  ...config,
+export default defineConfig((prev) => ({
+  ...prev,
   words: [
-    ...(config.words || []),
+    ...(prev.words || []),
     // Python package names (from blocklist.json)
     "datetimez",
     "errmsg",
@@ -26,4 +26,4 @@ export default {
     "govulncheck",
     "GOPATH",
   ],
-};
+}));

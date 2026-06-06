@@ -499,7 +499,9 @@ export const init: config.MapOfConfigInit = {
   "commitlint.config.js": {
     content: (context) => {
       return [
-        `export { config as default } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
+        "",
+        "export default defineConfig();",
         "",
       ].join("\n");
     },
@@ -526,7 +528,9 @@ export const init: config.MapOfConfigInit = {
   "cspell.config.js": {
     content: (context) => {
       return [
-        `export { config as default } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
+        "",
+        "export default defineConfig();",
         "",
       ].join("\n");
     },
@@ -693,13 +697,13 @@ export default config;
   "knip.config.js": {
     content: (context) => {
       return [
-        `import { config } from "${tools.Path.forImport(
+        `import { defineConfig } from "${tools.Path.forImport(
           tools.Path.join(context.datamitsuDir, "knip.config.js"),
         )}";`,
         "",
-        `const internalConfig = { ...config${
+        `export default defineConfig(${
           env().DATAMITSU_DEV_MODE
-            ? `, ...${JSON.stringify(
+            ? JSON.stringify(
                 {
                   ignoreBinaries: ["bin/datamitsu.js"],
                   ignoreDependencies: [
@@ -740,11 +744,9 @@ export default config;
                 },
                 null,
                 2,
-              )}`
+              )
             : ""
-        } };`,
-        "",
-        "export default internalConfig;",
+        });`,
         "",
       ].join("\n");
     },
