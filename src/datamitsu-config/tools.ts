@@ -39,6 +39,7 @@ type Tool =
   | "tsc"
   | "tsgo"
   | "typstyle"
+  | "vale"
   | "yamlfmt"
   | "yamllint"
   | "yq-json"
@@ -82,6 +83,7 @@ const _lintPriority: Tool[] = [
   "tsgo",
   "cspell",
   "harper-cli",
+  "vale",
   "eslint",
   "prettier",
   "oxfmt",
@@ -520,6 +522,19 @@ export const toolsConfig: config.MapOfTools = {
         globs: typstGlobs,
         priority: lintPriority.typstyle,
         scope: "per-file",
+      },
+    },
+  },
+  vale: {
+    name: "Vale - A Syntax-Aware Linter for Prose",
+    operations: {
+      lint: {
+        app: "vale",
+        args: ["--config", "{root}/.vale.ini", "--output", "line", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        priority: lintPriority.vale,
+        scope: "repository",
       },
     },
   },
