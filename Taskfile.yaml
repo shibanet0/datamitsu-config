@@ -10,7 +10,8 @@ tasks:
       - task: build:inline
       - pnpm exec tsdown
       - task: build:datamitsu-config
-    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
+      - task: docker:generate
+    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config → docker:generate)
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -74,6 +75,13 @@ tasks:
     cmds:
       - node scripts/gen-tsconfig-md.ts
     desc: Regenerate src/datamitsu-config/tsconfig.md.ts from docs/reference/tsconfig.md
+  # ──────────────────────────────────────────────
+  # Docker
+  # ──────────────────────────────────────────────
+  docker:generate:
+    cmds:
+      - node scripts/generate-dockerfiles.ts --offline
+    desc: Regenerate docker/Dockerfile{,.alpine} from the config via devtools dockerfile
   docs:build:
     cmds:
       - pnpm dm exec zensical -- build
@@ -178,7 +186,7 @@ tasks:
   sync:datamitsu-version:
     cmds:
       - node scripts/sync-datamitsu-version.ts
-    desc: Sync @datamitsu/datamitsu version from package.json to Dockerfile and datamitsu.config.ts
+    desc: Sync @datamitsu/datamitsu min version from package.json into datamitsu.config.ts
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────

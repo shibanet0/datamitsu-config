@@ -126,5 +126,6 @@ export default defineConfig((prev) => ({
     "goimports",
     "decorder",
     "importas",
+    "Dockerfiles",
   ],
 }));
