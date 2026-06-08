@@ -35,9 +35,72 @@ const BUILD_ARGS: Record<string, string> = {
   DATAMITSU_INSTALL_TIMEOUT: "1200",
 };
 
-const VARIANTS: { flags: string[]; output: string }[] = [
-  { flags: [], output: "docker/Dockerfile" },
-  { flags: ["--alpine"], output: "docker/Dockerfile.alpine" },
+/**
+ * Per-variant `--force-include`: binary apps the generator drops because the registry has no binary
+ * for the target libc, but which actually run on it (statically-linked tools the registry
+ * under-declares). A glibc-only binary can't exec on musl and vice versa, so the generator excludes
+ * them; list the genuinely-universal ones here to add them back. Triage the generator's "excluded N
+ * app(s)…" warning to populate — keep dynamically-linked or arch-asymmetric tools OUT.
+ */
+const VARIANTS: { flags: string[]; forceInclude: string[]; output: string }[] = [
+  {
+    flags: [],
+    forceInclude: ["just", "tombi", "typos", "typst", "xh"],
+    output: "docker/Dockerfile",
+  },
+  {
+    flags: ["--alpine"],
+    forceInclude: [
+      // "ast-grep",
+      // "bearer",
+      // "checkmake",
+      // "swag",
+      // "vale",
+      "actionlint",
+      "age",
+      "air",
+      "allurectl",
+      "buf",
+      "conftest",
+      "cosign",
+      "crane",
+      "dasel",
+      "editorconfig-checker",
+      "fx",
+      "gcrane",
+      "gitleaks",
+      "golang-migrate",
+      "golangci-lint",
+      "goose",
+      "grype",
+      "hadolint",
+      "jq",
+      "kube-linter",
+      "kubeconform",
+      "lefthook",
+      "osv-scanner",
+      "protoc",
+      "protolint",
+      "scorecard",
+      "shellcheck",
+      "shfmt",
+      "snyk",
+      "sops",
+      "sqlc",
+      "syft",
+      "task",
+      "tflint",
+      "trivy",
+      "trufflehog",
+      "typstyle",
+      "unfuck-ai-comments",
+      "utpm",
+      "vacuum",
+      "yamlfmt",
+      "yq",
+    ],
+    output: "docker/Dockerfile.alpine",
+  },
 ];
 
 const labelArgs = Object.entries(LABELS).flatMap(([key, value]) => ["--label", `${key}=${value}`]);
@@ -47,7 +110,9 @@ const buildArgFlags = Object.entries(BUILD_ARGS).flatMap(([key, value]) => [
 ]);
 const passthrough = process.argv.slice(2);
 
-for (const { flags, output } of VARIANTS) {
+for (const { flags, forceInclude, output } of VARIANTS) {
+  const forceIncludeFlags =
+    forceInclude.length > 0 ? ["--force-include", forceInclude.join(",")] : [];
   await execa(
     "datamitsu",
     [
@@ -58,6 +123,7 @@ for (const { flags, output } of VARIANTS) {
       ...flags,
       ...labelArgs,
       ...buildArgFlags,
+      ...forceIncludeFlags,
       ...passthrough,
     ],
     { preferLocal: true, stdio: "inherit" },

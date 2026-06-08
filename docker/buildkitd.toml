@@ -1,0 +1,6 @@
+# BuildKit config shared by local builds (package.json docker:*) and CI
+# (setup-buildx-action buildkitd-config in release.yml + pr-checks.yml).
+# Caps concurrent build steps so the ~90 install stages don't saturate the network
+# and trip per-tool download timeouts. Raise it on a fast connection.
+[worker.oci]
+max-parallelism = 6

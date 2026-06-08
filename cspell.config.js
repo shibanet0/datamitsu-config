@@ -130,5 +130,7 @@ export default defineConfig((prev) => ({
     "zstd",
     "klauspost",
     "mediatypes",
+    "buildkitd",
+    "buildx",
   ],
 }));
