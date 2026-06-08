@@ -3,6 +3,11 @@ export const runtimeVersions = {
   python: "3.14.5",
 };
 
+// Consumer-facing support floor for `engines.node` — the lowest Node we promise
+// to run on, NOT the dev version (that is runtimeVersions.node / .node-version).
+// 22.12.0 is where require(esm) became unflagged.
+export const NODE_SUPPORT_FLOOR = ">=22.12.0";
+
 interface IndentSetting {
   indentWidth: number;
   lineWidth: number;

@@ -3,7 +3,7 @@ import type { PackageJson } from "type-fest";
 import { name as packageJsonName, version as packageJsonVersion } from "../../package.json";
 import { oxlintConfig } from "../apps/oxlint";
 import { AGENTS_MD, upgradeAgentsReference } from "./agentsUpgrade";
-import { indentSettings, runtimeVersions } from "./constants";
+import { indentSettings, NODE_SUPPORT_FLOOR, runtimeVersions } from "./constants";
 import { env } from "./env";
 import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
@@ -1130,14 +1130,29 @@ export default config;
           ...cleanDependencies(data.devDependencies),
           ...(env().DATAMITSU_DEV_MODE ? {} : { [packageJsonName]: packageJsonVersion }),
         },
-        engines: isRoot
+        devEngines: isRoot
           ? {
-              node: `>=${runtimeVersions.node}`,
-              pnpm: `>=${nodeVersions.pnpm.version}`,
+              packageManager: {
+                name: "pnpm",
+                onFail: "warn",
+                version: `>=${nodeVersions.pnpm.version}`,
+              },
+              runtime: { name: "node", onFail: "warn", version: `>=${runtimeVersions.node}` },
             }
           : undefined,
+        engines: {
+          // Consumer-facing support floor for every package (root + workspace
+          // members), so eslint-plugin-n reads the right floor everywhere and
+          // published members carry a correct contract. NOT the dev version.
+          node: NODE_SUPPORT_FLOOR,
+        },
         optionalDependencies: cleanDependencies(data.optionalDependencies),
-        packageManager: isRoot ? `pnpm@${nodeVersions.pnpm.version}` : undefined,
+        // Dev toolchain (Node + pnpm) declared via devEngines, root-only. pnpm
+        // pins the resolved versions in pnpm-lock.yaml. devEngines.packageManager
+        // is mutually exclusive with the top-level packageManager field, so the
+        // latter is explicitly removed. Node is ALSO pinned in .node-version for
+        // shell version managers (fnm/nvm/asdf) that don't read devEngines.
+        packageManager: undefined,
         peerDependencies: cleanDependencies(data.peerDependencies),
         ...({
           cspell: undefined,
