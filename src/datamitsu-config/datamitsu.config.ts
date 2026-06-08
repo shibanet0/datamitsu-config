@@ -1,6 +1,6 @@
 import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents.md";
 import { mapOfApps } from "./apps";
-import { init, initCommands } from "./cmdInit";
+import { initCommands, setup } from "./cmdSetup";
 import { buildManagedGitleaksToml } from "./gitleaksDefaults";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
@@ -60,7 +60,6 @@ function getConfig(cfg: config.Config): config.Config {
         },
       },
     },
-    init,
     initCommands,
     projectTypes,
     runtimes: {
@@ -80,6 +79,7 @@ function getConfig(cfg: config.Config): config.Config {
           }
         : {}),
     },
+    setup,
     sharedStorage: {
       ...cfg.sharedStorage,
     },

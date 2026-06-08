@@ -14,7 +14,7 @@ import { cleanDependencies } from "./utils/cleanDependencies";
 
 const yamlIgnore: string[] = ["pnpm-lock.yaml"];
 
-const aiTools: config.MapOfConfigInit = {
+const aiTools: config.MapOfConfigSetup = {
   ".cursor/rules": {
     linkTarget: "../AGENTS.md",
     scope: "git-root",
@@ -105,7 +105,7 @@ function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export const init: config.MapOfConfigInit = {
+export const setup: config.MapOfConfigSetup = {
   ".dockerignore": {
     content: (context) => {
       const mergedRules = tools.Ignore.parse(
