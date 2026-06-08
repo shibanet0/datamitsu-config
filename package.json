@@ -61,7 +61,6 @@
     "docker:build:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
     "docker:build:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --config docker/buildkitd.toml --bootstrap",
-    "postinstall": "pnpm build:lib",
     "prepack": "pnpm build && clean-pkg-json clean",
     "postpack": "clean-pkg-json restore",
     "prepare": "pnpm build && pnpm datamitsu init",
