@@ -7,12 +7,17 @@
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
-    "version": "3.2.531"
+    "version": "3.2.530"
   },
   "detect-secrets": {
     "description": "Tool for detecting secrets in the codebase",
     "packageName": "detect-secrets",
     "version": "1.5.0"
+  },
+  "mypy": {
+    "description": "Optional static typing for Python",
+    "packageName": "mypy",
+    "version": "2.1.0"
   },
   "pre-commit": {
     "description": "A framework for managing and maintaining multi-language pre-commit hooks.",

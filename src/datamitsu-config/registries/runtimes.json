@@ -229,8 +229,8 @@
     "mode": "managed",
     "node": {
       "nodeVersion": "26.3.0",
-      "pnpmHash": "de7a5c1bed8301805183a87997fe1720cd5caefb57be838535a4bfc4a1596959",
-      "pnpmVersion": "11.5.1"
+      "pnpmHash": "a282871708f87a47b9cd72182dfdf9ee251c69100b8bac862a3d4f5e2145d8ff",
+      "pnpmVersion": "11.5.0"
     }
   },
   "uv": {
@@ -242,16 +242,16 @@
             "unknown": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "1585f415cade9f061e7f00fe5b00030a79ccfac60c650242ce639ba946138d40",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-x86_64-apple-darwin.tar.gz"
+              "hash": "6c66e41eaf4d15abeda58d3f268161b6e3f742d98390341b174a7cfc1b48841d",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "d8f59c38e8c4168ee468d423cd63184be12fa6995a4283d41ee1a14d003c9453",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-aarch64-apple-darwin.tar.gz"
+              "hash": "2a162f6b90ff3691a2f9cae1622e066a3ce592e110f66670cdcc841324b28226",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-apple-darwin.tar.gz"
             }
           }
         },
@@ -260,28 +260,28 @@
             "glibc": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "7035608168e106375b36d0c818d537a889c51a8625fe7f8f7cad5e62b947c368",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-x86_64-unknown-linux-gnu.tar.gz"
+              "hash": "0017ccecaeb4d431d7f93b583ebff0c5c38e00eb734fcf13d05f72ca419125fe",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "c4c0d0a383413261af5f0f0743e1292f4aafbe907987ed83bd0ac66f0a3d7e20",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "4231a429d4e0f7c1937d8916658c08a7706cd7872afebeb87203a18c2e0dc28e",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "83b13ab184a45b7d9a3b0e4b10eaebd50ad41e66cb16dcce8e60aa7be13ae399",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-aarch64-unknown-linux-gnu.tar.gz"
+              "hash": "de008880a903ac2c5654647dc19a75c0d6652313c977a2bc5ce05e1e3a93429e",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "767629b64cdf078c32e42819db28d5ca868b8dc7e3a879967fadc3e4f7f66be3",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-aarch64-unknown-linux-musl.tar.gz"
+              "hash": "9e5eaf16ffad968fc689f18c2733ace914ed417d4e5572e92d807fd51a90228c",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-unknown-linux-musl.tar.gz"
             }
           }
         },
@@ -290,16 +290,16 @@
             "unknown": {
               "binaryPath": "uv.exe",
               "contentType": "zip",
-              "hash": "1665fc8e37b5d70a134820d6d7891747471a2ac8bc940ee7af0b69fd03b28d61",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-x86_64-pc-windows-msvc.zip"
+              "hash": "35fc29e03e62f3cda769bc12773f3cb70ce305d0d36c0d8bd0c117dd0b3fcd14",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "uv.exe",
               "contentType": "zip",
-              "hash": "5592a990a9d9901fd0d23992d872f2ec3ca91b7bbd3d5f0bb5e6f42b851493d8",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.11.19/uv-aarch64-pc-windows-msvc.zip"
+              "hash": "f4463aa9671c6d153d32f2a9b272389675a711a9bca806c4ab4a3c7559b045c2",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.11.17/uv-aarch64-pc-windows-msvc.zip"
             }
           }
         }

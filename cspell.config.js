@@ -126,5 +126,11 @@ export default defineConfig((prev) => ({
     "goimports",
     "decorder",
     "importas",
+    "Dockerfiles",
+    "zstd",
+    "klauspost",
+    "mediatypes",
+    "buildkitd",
+    "buildx",
   ],
 }));

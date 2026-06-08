@@ -35,11 +35,6 @@
       "repo": "buf",
       "tag": "v1.70.0"
     },
-    "casey": {
-      "owner": "casey",
-      "repo": "just",
-      "tag": "1.51.0"
-    },
     "checkmake": {
       "owner": "checkmake",
       "repo": "checkmake",
@@ -149,6 +144,11 @@
       "owner": "jqlang",
       "repo": "jq",
       "tag": "jq-1.8.1"
+    },
+    "just": {
+      "owner": "casey",
+      "repo": "just",
+      "tag": "1.51.0"
     },
     "kube-linter": {
       "owner": "stackrox",
@@ -359,6 +359,14 @@
               "contentType": "tar.gz",
               "hash": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8",
               "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "actionlint-1.7.12/actionlint",
+              "contentType": "tar.gz",
+              "hash": "325e971b6ba9bfa504672e29be93c24981eeb1c07576d730e9f7c8805afff0c6",
+              "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_arm64.tar.gz"
             }
           }
         },
@@ -665,7 +673,7 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "ebeed1af15bcb145c35c5e51eadc8fe0bdba9311e08fd6abca8c23294929d20b",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Darwin-x86_64.tar.gz"
@@ -673,7 +681,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "9cec23658df093d50f3318580e17f1e309d45b817927f22e9de30f78f3d4d45b",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Darwin-arm64.tar.gz"
@@ -683,7 +691,7 @@
         "freebsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "0dca001e80c8d3ad6107345895dc5055666289324070aad34574e50e53e7e750",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-FreeBSD-x86_64.tar.gz"
@@ -691,7 +699,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "ecac64e235366fff000c1e5b86f883de18f40ab861f0d9487b0d9b77b83c0805",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-FreeBSD-arm64.tar.gz"
@@ -701,7 +709,7 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "18498bdadbdce80792ce08c2c59e0c49f157aa3f5d9b0f9c6e3db795be208b9d",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-x86_64.tar.gz"
@@ -709,7 +717,7 @@
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "ff3c79a6bb44c41a8053ec0d863234cee82378ea4c29ed5292c852dbf829fec0",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-Linux-aarch64.tar.gz"
@@ -719,7 +727,7 @@
         "openbsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "3391959fd97c0776be7dbb179eca7763d3bd71409124eb052b8f44ce4ad65a92",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-OpenBSD-x86_64.tar.gz"
@@ -727,7 +735,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "0bb4d638a23bcb4d8f8942f4dbace5162f88177c6e64aca4171d494192077982",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.70.0/buf-OpenBSD-arm64.tar.gz"
@@ -753,48 +761,6 @@
       },
       "configHash": "08ff33a82fe02f0e5d8a4ed705cbeb0f",
       "description": "The best way of working with Protocol Buffers."
-    },
-    "casey": {
-      "binaries": {
-        "darwin": {
-          "amd64": {
-            "unknown": {
-              "binaryPath": "just",
-              "contentType": "tar.gz",
-              "hash": "d583e45f1f9fcdd26069ad2fe3bb9dea414756d8d0752eb9093974cb5c0246f0",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-apple-darwin.tar.gz"
-            }
-          },
-          "arm64": {
-            "unknown": {
-              "binaryPath": "just",
-              "contentType": "tar.gz",
-              "hash": "61e3f1b8a545ff064b091eab4b6e14f8cc743ff15549be293b1e92f5b1467002",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-apple-darwin.tar.gz"
-            }
-          }
-        },
-        "linux": {
-          "amd64": {
-            "musl": {
-              "binaryPath": "just",
-              "contentType": "tar.gz",
-              "hash": "afab5eb3443123ac68e8cab22de1c866a20783b4c9eee880b00dca89104c2f79",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-loongarch64-unknown-linux-musl.tar.gz"
-            }
-          },
-          "arm64": {
-            "musl": {
-              "binaryPath": "just",
-              "contentType": "tar.gz",
-              "hash": "ed7ec466b77709198fd4afed253dba0270203ba5eb1c006bee2b0139090284f5",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-unknown-linux-musl.tar.gz"
-            }
-          }
-        }
-      },
-      "configHash": "2d359cae5c951e892d24d94e72de37d8",
-      "description": "🤖 Just a command runner"
     },
     "checkmake": {
       "binaries": {
@@ -941,15 +907,15 @@
           "amd64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "0efcd1a282138eefc8d762222dd45b5fe7c0adcee822a7164482480239f2bb92",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-3.0.6-1.x86_64.rpm"
+              "hash": "c956e5dfcac53d52bcf058360d579472f0c1d2d9b69f55209e256fe7783f4c74",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64"
             }
           },
           "arm64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "df8d6ab3d82bd3210c827bbe29f21c15988e0365f57111ced37190119e72ad78",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-3.0.6-1.aarch64.rpm"
+              "hash": "bedac92e8c3729864e13d4a17048007cfafa79d5deca993a43a90ffe018ef2b8",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-arm64"
             }
           }
         },
@@ -1827,13 +1793,73 @@
             "unknown": {
               "contentType": "binary",
               "hash": "23cb60a1354eed6bcc8d9b9735e8c7b388cd1fdcb75726b93bc299ef22dd9334",
-              "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-win64.exe"
+              "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-windows-amd64.exe"
             }
           }
         }
       },
       "configHash": "4f7e0df933daf06c0f03457de96aedb4",
       "description": "Command-line JSON processor"
+    },
+    "just": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "just-1.51.0/just",
+              "contentType": "tar.gz",
+              "hash": "d583e45f1f9fcdd26069ad2fe3bb9dea414756d8d0752eb9093974cb5c0246f0",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "just-1.51.0/just",
+              "contentType": "tar.gz",
+              "hash": "61e3f1b8a545ff064b091eab4b6e14f8cc743ff15549be293b1e92f5b1467002",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "musl": {
+              "binaryPath": "just-1.51.0/just",
+              "contentType": "tar.gz",
+              "hash": "c8f085ca3e885723c341d06243fc291b5abfdc8bbe3b2c076b117de490387b59",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-unknown-linux-musl.tar.gz"
+            }
+          },
+          "arm64": {
+            "musl": {
+              "binaryPath": "just-1.51.0/just",
+              "contentType": "tar.gz",
+              "hash": "ed7ec466b77709198fd4afed253dba0270203ba5eb1c006bee2b0139090284f5",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-unknown-linux-musl.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "just-1.51.0/just.exe",
+              "contentType": "zip",
+              "hash": "09d1138b6845e73f04bff5e26be3f57663bddca25e36fe6241d28a5aa310b64e",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-pc-windows-msvc.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "just-1.51.0/just.exe",
+              "contentType": "zip",
+              "hash": "12bf56b5b3463e20a1dbb61e3d14748efaefb49231223ef465fbec4d442e2d20",
+              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-pc-windows-msvc.zip"
+            }
+          }
+        }
+      },
+      "configHash": "2d359cae5c951e892d24d94e72de37d8",
+      "description": "🤖 Just a command runner"
     },
     "kube-linter": {
       "binaries": {
@@ -2230,6 +2256,14 @@
             "unknown": {
               "binaryPath": "protoc-35.0/protoc",
               "contentType": "zip",
+              "hash": "3580c2d115fccb5b0239960c8f70f8da14787b1973a46b2f39c315ad71c11e01",
+              "url": "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-osx-x86_64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "protoc-35.0/protoc",
+              "contentType": "zip",
               "hash": "45444963204757fd3e2fbe304bc1fdadfb488d8556ff099c4cc06575eab88976",
               "url": "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-osx-aarch_64.zip"
             }
@@ -2237,6 +2271,14 @@
         },
         "linux": {
           "amd64": {
+            "glibc": {
+              "binaryPath": "protoc-35.0/protoc",
+              "contentType": "zip",
+              "hash": "a45cda0989c17dd950db55f6fbe1e5814c50fda08e87aa422980ac1f89dddbbc",
+              "url": "https://github.com/protocolbuffers/protobuf/releases/download/v35.0/protoc-35.0-linux-x86_64.zip"
+            }
+          },
+          "arm64": {
             "glibc": {
               "binaryPath": "protoc-35.0/protoc",
               "contentType": "zip",
@@ -2589,8 +2631,8 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "a0c2b1d4282f762c787691434537da33d2b5506c36f4c12e010f03edabcd1ee0",
-              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.darwin"
+              "hash": "dad79d1b1dea767ca38ffaa50e10330a3e807dd13c853ef9c880567acef4f1ef",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.darwin.amd64"
             }
           },
           "arm64": {
@@ -2605,15 +2647,15 @@
           "amd64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "4654e53fff6d0a1842facd3a0ed5a66a8ab6164004b0ad4ca2d5e2b1c5473b65",
-              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.amd64.exe"
+              "hash": "620a9d7e3352ababeca6908cea24a6e8b14ce89a448ddbd3f94f1ef3398f470a",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.linux.amd64"
             }
           },
           "arm64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "dda6e1778f4248a2faa999735d16e97e80c9de0dae8c1da3f5fb79815bc78f26",
-              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.arm64.exe"
+              "hash": "19576fb1734dbf8fb77eda0cf0f3a2218f99bf4d33b814318e5e10d6babb9820",
+              "url": "https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.linux.arm64"
             }
           }
         }
@@ -3000,8 +3042,8 @@
             "glibc": {
               "binaryPath": "trivy-0.71.0/trivy",
               "contentType": "tar.gz",
-              "hash": "0542001de6a545e39eba2352618628a89d9c43620cbc75cb718619865711bad6",
-              "url": "https://github.com/aquasecurity/trivy/releases/download/v0.71.0/trivy_0.71.0_Linux-32bit.tar.gz"
+              "hash": "30a3d22b23f88c233f1658f562fb477cae3b3e8b4761109d515b7698daf85814",
+              "url": "https://github.com/aquasecurity/trivy/releases/download/v0.71.0/trivy_0.71.0_Linux-64bit.tar.gz"
             }
           },
           "arm64": {
@@ -3500,11 +3542,6 @@
         },
         "linux": {
           "amd64": {
-            "glibc": {
-              "contentType": "binary",
-              "hash": "9373d8789ff814c9cd0c72f3797602f2047586219d63bc8687c3007b168b33a5",
-              "url": "https://github.com/ducaale/xh/releases/download/v0.25.3/xh_0.25.3_amd64.deb"
-            },
             "musl": {
               "binaryPath": "xh-v0.25.3/xh",
               "contentType": "tar.gz",
