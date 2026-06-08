@@ -64,7 +64,7 @@
     "postinstall": "pnpm build:lib",
     "prepack": "pnpm build && clean-pkg-json clean",
     "postpack": "clean-pkg-json restore",
-    "prepare": "pnpm datamitsu init",
+    "prepare": "pnpm build && pnpm datamitsu init",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:update": "vitest run --update",
@@ -72,7 +72,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.0-unstable.20260608.9d8a24c",
+    "@datamitsu/datamitsu": "0.1.0",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
