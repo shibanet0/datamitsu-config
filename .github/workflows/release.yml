@@ -184,8 +184,8 @@ jobs:
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push=true,compression=zstd,compression-level=19,force-compression=true,oci-mediatypes=true
           platforms: linux/amd64,linux/arm64
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
     strategy:
       matrix:

@@ -127,5 +127,8 @@ export default defineConfig((prev) => ({
     "decorder",
     "importas",
     "Dockerfiles",
+    "zstd",
+    "klauspost",
+    "mediatypes",
   ],
 }));

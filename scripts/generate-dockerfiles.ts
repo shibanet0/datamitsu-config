@@ -24,18 +24,42 @@ const LABELS: Record<string, string> = {
   "org.opencontainers.image.vendor": "shibanet0",
 };
 
+/**
+ * Build-time ARGs. The generator emits each as an `ARG`→`ENV` in a `dm-build` stage that every
+ * install stage derives from, so `datamitsu install` inherits it; the final image is built FROM
+ * `dm-base`, so these never leak into the shipped image. Raise the install timeout above the 600s
+ * default so heavy tools (e.g. snyk) don't time out under parallel download contention. Overridable
+ * at build time via `docker build --build-arg DATAMITSU_INSTALL_TIMEOUT=…`.
+ */
+const BUILD_ARGS: Record<string, string> = {
+  DATAMITSU_INSTALL_TIMEOUT: "1200",
+};
+
 const VARIANTS: { flags: string[]; output: string }[] = [
   { flags: [], output: "docker/Dockerfile" },
   { flags: ["--alpine"], output: "docker/Dockerfile.alpine" },
 ];
 
 const labelArgs = Object.entries(LABELS).flatMap(([key, value]) => ["--label", `${key}=${value}`]);
+const buildArgFlags = Object.entries(BUILD_ARGS).flatMap(([key, value]) => [
+  "--build-arg",
+  `${key}=${value}`,
+]);
 const passthrough = process.argv.slice(2);
 
 for (const { flags, output } of VARIANTS) {
   await execa(
     "datamitsu",
-    ["devtools", "dockerfile", "--output", output, ...flags, ...labelArgs, ...passthrough],
+    [
+      "devtools",
+      "dockerfile",
+      "--output",
+      output,
+      ...flags,
+      ...labelArgs,
+      ...buildArgFlags,
+      ...passthrough,
+    ],
     { preferLocal: true, stdio: "inherit" },
   );
   console.log(`Generated ${output}`);
