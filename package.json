@@ -165,15 +165,11 @@
     "unrun": "0.3.0",
     "vitest": "4.1.7"
   },
+  "packageManager": "pnpm@11.5.0",
   "engines": {
     "node": ">=22.12.0"
   },
   "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": ">=11.5.0",
-      "onFail": "warn"
-    },
     "runtime": {
       "name": "node",
       "onFail": "warn",

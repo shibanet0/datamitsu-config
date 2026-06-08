@@ -1132,11 +1132,10 @@ export default config;
         },
         devEngines: isRoot
           ? {
-              packageManager: {
-                name: "pnpm",
-                onFail: "warn",
-                version: `>=${nodeVersions.pnpm.version}`,
-              },
+              // Only the runtime here. devEngines.packageManager is intentionally
+              // NOT used: it is mutually exclusive with the top-level
+              // packageManager field, and tooling that resolves pnpm (Corepack,
+              // pnpm/action-setup in CI) reads packageManager, not devEngines.
               runtime: { name: "node", onFail: "warn", version: `>=${runtimeVersions.node}` },
             }
           : undefined,
@@ -1147,12 +1146,10 @@ export default config;
           node: NODE_SUPPORT_FLOOR,
         },
         optionalDependencies: cleanDependencies(data.optionalDependencies),
-        // Dev toolchain (Node + pnpm) declared via devEngines, root-only. pnpm
-        // pins the resolved versions in pnpm-lock.yaml. devEngines.packageManager
-        // is mutually exclusive with the top-level packageManager field, so the
-        // latter is explicitly removed. Node is ALSO pinned in .node-version for
-        // shell version managers (fnm/nvm/asdf) that don't read devEngines.
-        packageManager: undefined,
+        // pnpm version lives in packageManager (root-only): Corepack and
+        // pnpm/action-setup read this field, not devEngines.packageManager.
+        // Removing it breaks CI ("No pnpm version specified").
+        packageManager: isRoot ? `pnpm@${nodeVersions.pnpm.version}` : undefined,
         peerDependencies: cleanDependencies(data.peerDependencies),
         ...({
           cspell: undefined,
