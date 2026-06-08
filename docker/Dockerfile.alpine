@@ -305,10 +305,6 @@ FROM dm-build AS app-shfmt
 COPY --link --from=config-split /slices/app-shfmt.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install shfmt
 
-FROM dm-build AS app-snyk
-COPY --link --from=config-split /slices/app-snyk.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install snyk
-
 FROM dm-build AS app-sops
 COPY --link --from=config-split /slices/app-sops.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sops
@@ -348,10 +344,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typos
 FROM dm-build AS app-typst
 COPY --link --from=config-split /slices/app-typst.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typst
-
-FROM dm-build AS app-typstyle
-COPY --link --from=config-split /slices/app-typstyle.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typstyle
 
 FROM dm-build AS app-unfuck-ai-comments
 COPY --link --from=config-split /slices/app-unfuck-ai-comments.js /opt/datamitsu-config/datamitsu.config.js
@@ -460,7 +452,6 @@ COPY --link --from=app-ruff /dm/store/.bin/ruff /dm/store/.bin/ruff
 COPY --link --from=app-scorecard /dm/store/.bin/scorecard /dm/store/.bin/scorecard
 COPY --link --from=app-shellcheck /dm/store/.bin/shellcheck /dm/store/.bin/shellcheck
 COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
-COPY --link --from=app-snyk /dm/store/.bin/snyk /dm/store/.bin/snyk
 COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
 COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
@@ -471,7 +462,6 @@ COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
 COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
-COPY --link --from=app-typstyle /dm/store/.bin/typstyle /dm/store/.bin/typstyle
 COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments
 COPY --link --from=app-vacuum /dm/store/.bin/vacuum /dm/store/.bin/vacuum
 COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh
