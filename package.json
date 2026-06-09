@@ -55,7 +55,7 @@
     "build:local": "pnpm run build && cp ./datamitsu.config.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
-    "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:amd64",
+    "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
     "docker:build:alpine:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-amd64 --load .",
     "docker:build:alpine:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-arm64 --load .",
     "docker:build:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.1.0",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260609.baa406b",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
