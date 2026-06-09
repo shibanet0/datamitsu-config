@@ -108,27 +108,6 @@ const lintPriority = toPriorityMap(_lintPriority);
 const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 export const toolsConfig: config.MapOfTools = {
-  ...(isCI && {
-    trufflehog: {
-      name: "trufflehog",
-      operations: {
-        lint: {
-          app: "trufflehog",
-          args: [
-            "filesystem",
-            "{root}",
-            "--only-verified",
-            "--fail",
-            "--no-update",
-            "--exclude-paths",
-            "{root}/.trufflehog-exclude-paths.txt",
-          ],
-          globs: ["**/*"],
-          scope: "repository",
-        },
-      },
-    },
-  }),
   cspell: {
     name: "CSpell - A Spelling Checker for Code!",
     operations: {
@@ -303,6 +282,18 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+  knip: {
+    name: "Knip - Find unused files, dependencies, and exports",
+    operations: {
+      lint: {
+        app: "knip",
+        args: ["--config", "{root}/knip.config.js"],
+        globs: [],
+        scope: "repository",
+      },
+    },
+    projectTypes: ["npm-package", "typescript-project"],
+  },
   oxfmt: {
     name: "oxfmt - The JavaScript Oxidation Compiler Formatter",
     operations: {
@@ -359,18 +350,6 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["pre-commit-project"],
   },
-  // knip: {
-  //   name: "Knip",
-  //   operations: {
-  //     lint: {
-  //       args: ["--config", tools.Path.join(facts().gitRoot, "knip.config.js")],
-  //       app: "knip",
-  //       globs: [],
-  //       mode: "whole-project",
-  //     },
-  //   },
-  //   projectTypes: ["npm-package","typescript-project"],
-  // },
   prettier: {
     name: "Prettier - Code Formatter",
     operations: {
@@ -486,6 +465,27 @@ export const toolsConfig: config.MapOfTools = {
         scope: "repository",
       },
     },
+  },
+  trufflehog: {
+    name: "trufflehog",
+    operations: {
+      lint: {
+        app: "trufflehog",
+        args: [
+          "filesystem",
+          "{root}",
+          "--only-verified",
+          "--fail",
+          "--no-update",
+          "--exclude-paths",
+          "{root}/.trufflehog-exclude-paths.txt",
+        ],
+        globs: ["**/*"],
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
   },
   tsc: {
     name: "Tsc",

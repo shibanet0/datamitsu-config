@@ -219,6 +219,7 @@ export const setup: config.MapOfConfigSetup = {
       return INI.stringify(data);
     },
     scope: "git-root",
+    tools: ["editorconfig-checker"],
   },
   ".editorconfig-checker.json": {
     content: (context) => {
@@ -238,6 +239,7 @@ export const setup: config.MapOfConfigSetup = {
       );
     },
     scope: "git-root",
+    tools: ["editorconfig-checker"],
   },
   ".gitignore": {
     content: (context) => {
@@ -280,6 +282,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: ["gitleaks.toml"],
     scope: "git-root",
+    tools: ["gitleaks"],
   },
   ".golangci.yaml": {
     content: (context) => {
@@ -504,6 +507,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"],
     projectTypes: ["golang-package"],
+    tools: ["golangci-lint", "golangci-lint-fmt"],
   },
   ".node-version": {
     content: () => {
@@ -557,6 +561,7 @@ export const setup: config.MapOfConfigSetup = {
       );
     },
     projectTypes: ["npm-package"],
+    tools: ["oxlint"],
   },
   ".syncpackrc.json": {
     content: () => {
@@ -601,6 +606,7 @@ export const setup: config.MapOfConfigSetup = {
     ],
     projectTypes: ["npm-package"],
     scope: "git-root",
+    tools: ["syncpack"],
   },
   ".tombi.toml": {
     content: (context) => {
@@ -613,6 +619,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: ["tombi.toml", ".tombi.toml"],
     scope: "git-root",
+    tools: ["tombi"],
   },
   ".trufflehog-exclude-paths.txt": {
     content: (context) => {
@@ -638,6 +645,7 @@ export const setup: config.MapOfConfigSetup = {
       return userContent.length > 0 ? `${managedBlock}\n\n${userContent}\n` : `${managedBlock}\n`;
     },
     scope: "git-root",
+    tools: ["trufflehog"],
   },
   ".vale.ini": {
     // https://vale.sh/docs/vale-ini
@@ -669,6 +677,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: ["_vale.ini", "vale.ini"],
     scope: "git-root",
+    tools: ["vale"],
   },
   ".vscode/extensions.json": {
     content: vscodeExtensions,
@@ -708,6 +717,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: [".yamlfmt", "yamlfmt.yml", "yamlfmt.yaml", ".yamlfmt.yml"],
     scope: "git-root",
+    tools: ["yamlfmt"],
   },
   ".yamllint.yaml": {
     content: (context) => {
@@ -741,6 +751,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     otherFileNameList: [".yamllint", ".yamllint.yml"],
     scope: "git-root",
+    tools: ["yamllint"],
   },
   "commitlint.config.js": {
     content: (context) => {
@@ -814,6 +825,7 @@ export const setup: config.MapOfConfigSetup = {
       ".cspell.config.toml",
     ],
     scope: "git-root",
+    tools: ["cspell"],
   },
   // delete-only configuration - removes deprecated config files without creating new ones
   "deprecated-configs": {
@@ -909,6 +921,7 @@ export default config;
       ".eslintrc.json",
     ],
     projectTypes: ["npm-package"],
+    tools: ["eslint"],
   },
   // 		return (
   // 			JSON.stringify(
@@ -939,6 +952,7 @@ export default config;
       ".hadolint/hadolint.yaml",
     ],
     scope: "git-root",
+    tools: ["hadolint"],
   },
   "knip.config.js": {
     content: (context) => {
@@ -1008,6 +1022,7 @@ export default config;
     ],
     projectTypes: ["npm-package"],
     scope: "git-root",
+    tools: ["knip"],
   },
   "lefthook.yaml": {
     content: (context) => {
@@ -1089,6 +1104,7 @@ export default config;
       "oxfmt.config.cts",
     ],
     scope: "git-root",
+    tools: ["oxfmt"],
   },
   "package.json": {
     content: ({ isRoot, originalContent }) => {
@@ -1249,6 +1265,7 @@ export default config;
       ".prettierrc.toml",
     ],
     projectTypes: ["npm-package"],
+    tools: ["prettier"],
   },
   "pyproject.toml": {
     content: (context) => {

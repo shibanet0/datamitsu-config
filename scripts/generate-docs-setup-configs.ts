@@ -8,6 +8,7 @@ export interface ConfigSetupData {
   otherFileNameList?: string[];
   projectTypes?: string[];
   scope?: "git-root" | "project";
+  tools?: string[];
 }
 
 export interface ConfigShowOutput {
@@ -21,6 +22,7 @@ export interface SetupConfigDocInfo {
   otherFileNameList: string[];
   projectTypes: string[];
   scope: string;
+  tools: string[];
 }
 
 export function executeConfigShow(): string {
@@ -31,20 +33,21 @@ export function executeConfigShow(): string {
   });
 }
 
-export function extractInitConfigsInfo(config: ConfigShowOutput): SetupConfigDocInfo[] {
+export function extractSetupConfigsInfo(config: ConfigShowOutput): SetupConfigDocInfo[] {
   return Object.entries(config.setup)
-    .map(([name, initConfig]) => ({
-      deleteOnly: initConfig.deleteOnly ?? false,
-      linkTarget: initConfig.linkTarget ?? "",
+    .map(([name, setupConfig]) => ({
+      deleteOnly: setupConfig.deleteOnly ?? false,
+      linkTarget: setupConfig.linkTarget ?? "",
       name,
-      otherFileNameList: initConfig.otherFileNameList ?? [],
-      projectTypes: initConfig.projectTypes ?? [],
-      scope: initConfig.scope ?? "project",
+      otherFileNameList: setupConfig.otherFileNameList ?? [],
+      projectTypes: setupConfig.projectTypes ?? [],
+      scope: setupConfig.scope ?? "project",
+      tools: setupConfig.tools ?? [],
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export function generateInitConfigsMarkdown(configs: SetupConfigDocInfo[]): string {
+export function generateSetupConfigsMarkdown(configs: SetupConfigDocInfo[]): string {
   const lines = [
     "# Setup Configurations",
     "",
@@ -64,11 +67,14 @@ export function generateInitConfigsMarkdown(configs: SetupConfigDocInfo[]): stri
     "",
     "## Setup Configs Reference",
     "",
-    generateInitConfigsTable(configs),
+    generateSetupConfigsTable(configs),
     "",
     "## Field Descriptions",
     "",
     "- **File**: The filename or path that will be created or managed",
+    "- **Tools**: The tool(s) this config belongs to. `dm setup --tools <name>` writes",
+    "  only configs whose Tools include a selected name; configs with no Tools (—) are",
+    "  infrastructure — always written by a plain `dm setup`, skipped under `--tools`",
     "- **Scope**: Where the file is created:",
     "  - `git-root`: Created at the repository root",
     "  - `project`: Created in each project directory (for monorepos)",
@@ -94,11 +100,11 @@ export function generateInitConfigsMarkdown(configs: SetupConfigDocInfo[]): stri
 }
 
 export async function main(): Promise<void> {
-  const outputPath = "docs/reference/init-configs.md";
+  const outputPath = "docs/reference/setup-configs.md";
   const jsonStr = executeConfigShow();
   const config = parseConfigJson(jsonStr);
-  const configs = extractInitConfigsInfo(config);
-  const markdown = generateInitConfigsMarkdown(configs);
+  const configs = extractSetupConfigsInfo(config);
+  const markdown = generateSetupConfigsMarkdown(configs);
 
   const result = await writeAndFix({
     content: markdown,
@@ -132,19 +138,28 @@ function formatFileList(files: string[]): string {
   return files.map((f) => `\`${f}\``).join("<br>");
 }
 
-function generateInitConfigsTable(configs: SetupConfigDocInfo[]): string {
-  const header = "| File | Scope | Project Types | Link Target | Delete Only | Also Deletes |";
-  const separator = "| --- | --- | --- | --- | --- | --- |";
+function formatToolList(toolNames: string[]): string {
+  if (toolNames.length === 0) {
+    return "—";
+  }
+  return toolNames.map((t) => `\`${t}\``).join(", ");
+}
+
+function generateSetupConfigsTable(configs: SetupConfigDocInfo[]): string {
+  const header =
+    "| File | Tools | Scope | Project Types | Link Target | Delete Only | Also Deletes |";
+  const separator = "| --- | --- | --- | --- | --- | --- | --- |";
 
   const rows = configs.map((c) => {
     const file = `\`${c.name}\``;
+    const toolsList = formatToolList(c.tools);
     const scope = c.scope;
     const projectTypes = c.projectTypes.length > 0 ? c.projectTypes.join(", ") : "all";
     const linkTarget = c.linkTarget ? `\`${c.linkTarget}\`` : "—";
     const alsoDeletes = formatFileList(c.otherFileNameList);
     const deleteOnly = c.deleteOnly ? "✓" : "";
 
-    return `| ${file} | ${scope} | ${projectTypes} | ${linkTarget} | ${deleteOnly} | ${alsoDeletes} |`;
+    return `| ${file} | ${toolsList} | ${scope} | ${projectTypes} | ${linkTarget} | ${deleteOnly} | ${alsoDeletes} |`;
   });
 
   return [header, separator, ...rows].join("\n");
@@ -152,7 +167,7 @@ function generateInitConfigsTable(configs: SetupConfigDocInfo[]): string {
 
 const isDirectRun =
   import.meta.url === `file://${process.argv[1]}` ||
-  process.argv[1]?.endsWith("/generate-docs-init-configs.ts");
+  process.argv[1]?.endsWith("/generate-docs-setup-configs.ts");
 
 if (isDirectRun) {
   try {

@@ -1,3 +1,8 @@
+# Minimum release age (minutes) for `pull-*` registry updates: a new tool release
+# is not adopted until it is at least this old. 10080 = 7 days — datamitsu's own
+# default, pinned here so the policy is explicit and independent of that default.
+env:
+  DATAMITSU_MIN_RELEASE_AGE: "10080"
 tasks:
   # ──────────────────────────────────────────────
   # Build
@@ -98,20 +103,20 @@ tasks:
       - docs:generate:apps
       - docs:generate:tools
       - docs:generate:project-types
-      - docs:generate:init-configs
+      - docs:generate:setup-configs
     desc: Generate all documentation
   docs:generate:apps:
     cmds:
       - node scripts/generate-docs-apps.ts
     desc: Generate docs/reference/apps.md from config
-  docs:generate:init-configs:
-    cmds:
-      - node scripts/generate-docs-init-configs.ts
-    desc: Generate docs/reference/init-configs.md from init config
   docs:generate:project-types:
     cmds:
       - node scripts/generate-docs-project-types.ts
     desc: Generate docs/reference/project-types.md from project config
+  docs:generate:setup-configs:
+    cmds:
+      - node scripts/generate-docs-setup-configs.ts
+    desc: Generate docs/reference/setup-configs.md from setup config
   docs:generate:tools:
     cmds:
       - node scripts/generate-docs-tools.ts
