@@ -45,7 +45,13 @@ const BUILD_ARGS: Record<string, string> = {
 const VARIANTS: { flags: string[]; forceInclude: string[]; output: string }[] = [
   {
     flags: [],
-    forceInclude: ["just", "tombi", "typos", "typst", "xh"],
+    forceInclude: [
+      // "tombi"
+      "just",
+      "typos",
+      "typst",
+      "xh",
+    ],
     output: "docker/Dockerfile",
   },
   {
