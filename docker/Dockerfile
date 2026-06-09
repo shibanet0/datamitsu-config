@@ -345,10 +345,6 @@ FROM dm-build AS app-tflint
 COPY --link --from=config-split /slices/app-tflint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tflint
 
-FROM dm-build AS app-tombi
-COPY --link --from=config-split /slices/app-tombi.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tombi
-
 FROM dm-build AS app-trivy
 COPY --link --from=config-split /slices/app-trivy.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trivy
@@ -494,7 +490,6 @@ COPY --link --from=app-swag /dm/store/.bin/swag /dm/store/.bin/swag
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
 COPY --link --from=app-task /dm/store/.bin/task /dm/store/.bin/task
 COPY --link --from=app-tflint /dm/store/.bin/tflint /dm/store/.bin/tflint
-COPY --link --from=app-tombi /dm/store/.bin/tombi /dm/store/.bin/tombi
 COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
 COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
