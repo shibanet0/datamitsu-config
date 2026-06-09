@@ -2978,21 +2978,15 @@
         "linux": {
           "amd64": {
             "musl": {
-              "binaryPath": "tombi-1.1.1/tombi",
+              "binaryPath": "tombi-cli-1.1.1-x86_64-unknown-linux-musl/tombi",
               "contentType": "tar.gz",
               "hash": "6b01a72fbf67eb158a2efc72f7081756d87e2397054e0faf4de4b36478813342",
               "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
-            "glibc": {
-              "binaryPath": "tombi-1.1.1/tombi",
-              "contentType": "tar.gz",
-              "hash": "e5b9d2cd82939ac9bf58e46962859620d59eee0f4371a54c238bb84792c76306",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-arm-unknown-linux-gnueabihf.tar.gz"
-            },
             "musl": {
-              "binaryPath": "tombi-1.1.1/tombi",
+              "binaryPath": "tombi-cli-1.1.1-aarch64-unknown-linux-musl/tombi",
               "contentType": "tar.gz",
               "hash": "990aa9d963cb38aaa3cb327cca07420d3af601322eff3a6fe6ab4cdc3acc776a",
               "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-aarch64-unknown-linux-musl.tar.gz"
