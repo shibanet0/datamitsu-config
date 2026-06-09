@@ -181,8 +181,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           labels: ${{ steps.meta.outputs.labels }}
