@@ -300,6 +300,61 @@ jobs:
           NPM_TAG="${{ steps.npm-tag.outputs.tag }}"
           echo "Publishing with tag: $NPM_TAG"
           npm publish --access public --provenance --tag $NPM_TAG
+  publish-oci-bundle:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.publish-docker.result == 'success'
+    name: Publish OCI Bundle
+    needs:
+      - build
+      - determine-release-type
+      - generate-unstable-version
+      - publish-docker
+      - validate-stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: release-artifacts
+          path: .
+      - id: image-name
+        name: Determine image name
+        run: |
+          IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
+          if [[ "$IS_STABLE" == "true" ]]; then
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> $GITHUB_OUTPUT
+            echo "tag=${{ needs.validate-stable.outputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> $GITHUB_OUTPUT
+            echo "tag=${{ needs.generate-unstable-version.outputs.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: bundle
+        name: Annotate manifests and push the bundle index
+        run: |
+          node scripts/oci-bundle-postprocess.ts \
+            --image "${{ steps.image-name.outputs.name }}" \
+            --tag "${{ steps.image-name.outputs.tag }}" \
+            --bundle-tag "bundle-${{ steps.image-name.outputs.tag }}"
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Smoke test - seed the store from the bundle without docker
+        run: |
+          export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
+          pnpm exec datamitsu store seed "${{ steps.bundle.outputs.bundle_ref }}" \
+            --apps golangci-lint,lefthook
+          echo "Seeded. Running a seeded tool fully offline:"
+          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec lefthook -- version
   validate-stable:
     if: |
       always() &&
