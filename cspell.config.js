@@ -142,5 +142,7 @@ export default defineConfig((prev) => ({
     "skopeo",
     "cdef",
     "noci",
+    "dockerhub",
+    "endgroup",
   ],
 }));
