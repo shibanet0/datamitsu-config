@@ -6,6 +6,7 @@ import {
   helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  makefileGlobs,
   markdownGlobs,
   oxfmtGlobs,
   oxlintGlobs,
@@ -21,6 +22,7 @@ import {
 } from "./globs";
 
 type Tool =
+  | "checkmake"
   | "cspell"
   | "dotenv-linter"
   | "editorconfig-checker"
@@ -111,6 +113,7 @@ const _lintPriority: Tool[] = [
   "shfmt",
   "shellcheck",
   "hadolint",
+  "checkmake",
   "helm",
   "toml",
   "tflint",
@@ -125,6 +128,18 @@ const lintPriority = toPriorityMap(_lintPriority);
 const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 export const toolsConfig: config.MapOfTools = {
+  checkmake: {
+    name: "checkmake - Makefile Linter",
+    operations: {
+      lint: {
+        app: "checkmake",
+        args: ["{file}"],
+        globs: makefileGlobs,
+        priority: lintPriority.checkmake,
+        scope: "per-file",
+      },
+    },
+  },
   cspell: {
     name: "CSpell - A Spelling Checker for Code!",
     operations: {

@@ -27,6 +27,7 @@ describe("tools", () => {
   describe("toolsConfig", () => {
     it("should define all expected tools", () => {
       const expectedTools = [
+        "checkmake",
         "cspell",
         "dotenv-linter",
         "editorconfig-checker",
