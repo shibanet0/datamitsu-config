@@ -13,6 +13,7 @@ export const vscodeExtensions: (context: config.ConfigContext) => string = (cont
       "foxundermoon.shell-format",
       "github.vscode-github-actions",
       "GitHub.vscode-pull-request-github",
+      "golang.Go",
       "hashicorp.terraform",
       "hediet.vscode-drawio",
       "jock.svg",
@@ -1506,6 +1507,14 @@ export const vscodeSettings: (context: config.ConfigContext) => string = (contex
         "explorer.fileNesting.expand": false,
         "explorer.fileNesting.patterns": explorer_fileNesting_patterns,
 
+        "go.alternateTools": {
+          customFormatter: "golangci-lint-v2",
+        },
+
+        "go.formatFlags": ["fmt", "--stdin"],
+        "go.formatTool": "custom",
+        "go.lintFlags": ["--path-mode=abs", "--fast-only"],
+        "go.lintTool": "golangci-lint-v2",
         "search.exclude": {
           "**/*.snap": true,
           "**/*.svg": true,

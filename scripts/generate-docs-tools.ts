@@ -32,6 +32,7 @@ export interface ToolOperation {
 export function executeConfigShow(): string {
   return execSync("pnpm --silent dm config show", {
     encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
     stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
     timeout: 30_000,
   });

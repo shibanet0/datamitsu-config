@@ -1,9 +1,8 @@
 import removeMd from "remove-markdown";
 
 /**
- * Sanitizes markdown descriptions for use in markdown tables.
- * Uses remove-markdown package to strip formatting, then post-processes
- * to handle table-breaking characters.
+ * Sanitizes markdown descriptions for use in markdown tables. Uses remove-markdown package to strip
+ * formatting, then post-processes to handle table-breaking characters.
  */
 export function sanitizeDescription(description: string | undefined, maxLength = 200): string {
   if (!description || description.trim() === "") {

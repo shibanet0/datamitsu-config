@@ -139,22 +139,12 @@ jobs:
         with:
           name: release-artifacts
           path: .
-      - name: Sync datamitsu version to Dockerfile
-        run: |
-          VERSION=$(node -e "console.log(require('./package.json').dependencies['@datamitsu/datamitsu'])")
-          echo "Datamitsu version: $VERSION"
-          if [[ "$VERSION" == 0.0.0-unstable.* ]]; then
-            echo "Unstable version — skipping Dockerfile sync"
-            exit 0
-          fi
-          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}|" docker/Dockerfile
-          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}-alpine|" docker/Dockerfile.alpine
-          echo "Updated Dockerfile versions to ${VERSION}"
-          grep "^FROM" docker/Dockerfile docker/Dockerfile.alpine
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          buildkitd-config: docker/buildkitd.toml
       - name: Login to GHCR
         uses: docker/login-action@v4
         with:
@@ -191,13 +181,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push=true,compression=zstd,compression-level=19,force-compression=true,oci-mediatypes=true
           platforms: linux/amd64,linux/arm64
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
     strategy:
       matrix:
@@ -312,6 +300,61 @@ jobs:
           NPM_TAG="${{ steps.npm-tag.outputs.tag }}"
           echo "Publishing with tag: $NPM_TAG"
           npm publish --access public --provenance --tag $NPM_TAG
+  publish-oci-bundle:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.publish-docker.result == 'success'
+    name: Publish OCI Bundle
+    needs:
+      - build
+      - determine-release-type
+      - generate-unstable-version
+      - publish-docker
+      - validate-stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: release-artifacts
+          path: .
+      - id: image-name
+        name: Determine image name
+        run: |
+          IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
+          if [[ "$IS_STABLE" == "true" ]]; then
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> $GITHUB_OUTPUT
+            echo "tag=${{ needs.validate-stable.outputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> $GITHUB_OUTPUT
+            echo "tag=${{ needs.generate-unstable-version.outputs.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: bundle
+        name: Annotate manifests and push the bundle index
+        run: |
+          node scripts/oci-bundle-postprocess.ts \
+            --image "${{ steps.image-name.outputs.name }}" \
+            --tag "${{ steps.image-name.outputs.tag }}" \
+            --bundle-tag "bundle-${{ steps.image-name.outputs.tag }}"
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Smoke test - seed the store from the bundle without docker
+        run: |
+          export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
+          pnpm exec datamitsu store seed "${{ steps.bundle.outputs.bundle_ref }}" \
+            --apps golangci-lint,lefthook
+          echo "Seeded. Running a seeded tool fully offline:"
+          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec lefthook -- version
   validate-stable:
     if: |
       always() &&

@@ -4,11 +4,13 @@ import { mapOfApps } from "../apps";
 import { env } from "../env";
 
 const listOfAppsDependencies = Object.entries(mapOfApps)
-  .filter(([_, el]) => typeof el.fnm === "object")
+  .filter(([_, el]) => typeof el.node === "object")
   .map(([appName, el]) => {
     return {
       appName,
-      deps: [el.fnm?.packageName || "", ...Object.keys(el.fnm?.dependencies || {})].filter(Boolean),
+      deps: [el.node?.packageName || "", ...Object.keys(el.node?.dependencies || {})].filter(
+        Boolean,
+      ),
     };
   });
 

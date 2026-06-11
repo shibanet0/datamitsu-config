@@ -17,10 +17,12 @@
     },
     "./package.json": "./package.json",
     "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
     "./tsconfig/library.json": "./tsconfig/library.json",
     "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
     "./tsconfig/react-library.json": "./tsconfig/react-library.json",
     "./tsconfig/service.json": "./tsconfig/service.json",
+    "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
     "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
     "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
     "./type-fest": {
@@ -50,12 +52,18 @@
   ],
   "scripts": {
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
+    "build:local": "pnpm run build && cp ./datamitsu.config.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
-    "postinstall": "pnpm build",
+    "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
+    "docker:build:alpine:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-amd64 --load .",
+    "docker:build:alpine:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-arm64 --load .",
+    "docker:build:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
+    "docker:build:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
+    "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
     "prepack": "pnpm build && clean-pkg-json clean",
     "postpack": "clean-pkg-json restore",
-    "prepare": "pnpm datamitsu init",
+    "prepare": "pnpm build && pnpm datamitsu init",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:update": "vitest run --update",
@@ -63,7 +71,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.11",
+    "@datamitsu/datamitsu": "0.1.2",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
@@ -144,6 +152,7 @@
     "globals": "17.3.0",
     "json-schema-to-typescript": "15.0.4",
     "knip": "6.14.1",
+    "oxfmt": "0.52.0",
     "oxlint": "1.58.0",
     "prettier": "3.8.3",
     "prettier-plugin-embed": "0.5.1",
@@ -155,9 +164,15 @@
     "unrun": "0.3.0",
     "vitest": "4.1.7"
   },
-  "packageManager": "pnpm@11.2.2",
+  "packageManager": "pnpm@11.5.0",
   "engines": {
-    "node": ">=26.2.0",
-    "pnpm": ">=11.2.2"
+    "node": ">=22.12.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "warn",
+      "version": ">=26.3.0"
+    }
   }
 }

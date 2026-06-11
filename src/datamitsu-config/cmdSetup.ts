@@ -3,18 +3,18 @@ import type { PackageJson } from "type-fest";
 import { name as packageJsonName, version as packageJsonVersion } from "../../package.json";
 import { oxlintConfig } from "../apps/oxlint";
 import { AGENTS_MD, upgradeAgentsReference } from "./agentsUpgrade";
-import { runtimeVersions } from "./constants";
+import { indentSettings, NODE_SUPPORT_FLOOR, runtimeVersions } from "./constants";
 import { env } from "./env";
 import { filterIgnore, ignoreGroups } from "./ignore";
 import { vscodeExtensions, vscodeSettings } from "./int-config/vscode";
-import fnmVersions from "./registries/fnmVersions.json";
+import nodeVersions from "./registries/nodeVersions.json";
 import { REMOVED_SKILLS, SKILLS } from "./skills";
-import { safeJsonParse } from "./utils";
+import { safeJsonParse, withTrailingNewline } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
 
 const yamlIgnore: string[] = ["pnpm-lock.yaml"];
 
-const aiTools: config.MapOfConfigInit = {
+const aiTools: config.MapOfConfigSetup = {
   ".cursor/rules": {
     linkTarget: "../AGENTS.md",
     scope: "git-root",
@@ -37,11 +37,11 @@ const aiTools: config.MapOfConfigInit = {
       // fall back to originalContent (raw file from disk)
       const existing = context.existingContent ?? context.originalContent;
       if (existing) {
-        return upgradeAgentsReference(existing);
+        return withTrailingNewline(upgradeAgentsReference(existing));
       }
 
       // Fallback for new files (no existing content)
-      return AGENTS_MD;
+      return withTrailingNewline(AGENTS_MD);
     },
     scope: "git-root",
   },
@@ -59,7 +59,7 @@ const aiTools: config.MapOfConfigInit = {
     SKILLS.map((s) => [
       `.claude/skills/${s.name}/SKILL.md`,
       {
-        content: () => s.adapters.claude,
+        content: () => withTrailingNewline(s.adapters.claude),
         scope: "git-root" as const,
       },
     ]),
@@ -70,7 +70,7 @@ const aiTools: config.MapOfConfigInit = {
     SKILLS.map((s) => [
       `.codex/prompts/${s.name}.md`,
       {
-        content: () => s.adapters.codex,
+        content: () => withTrailingNewline(s.adapters.codex),
         scope: "git-root" as const,
       },
     ]),
@@ -105,7 +105,7 @@ function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export const init: config.MapOfConfigInit = {
+export const setup: config.MapOfConfigSetup = {
   ".datamitsu/scripts/check-empty-files.sh": {
     content: () => {
       return [
@@ -221,7 +221,7 @@ export const init: config.MapOfConfigInit = {
           properties: {
             charset: "utf8",
             end_of_line: "lf",
-            indent_size: "2",
+            indent_size: String(indentSettings.indentWidth),
             insert_final_newline: "true",
             trim_trailing_whitespace: "true",
             ...existing["*"],
@@ -265,11 +265,19 @@ export const init: config.MapOfConfigInit = {
         // },
         {
           name: "GNUmakefile",
-          properties: { indent_size: "2", indent_style: "tab", ...existing["GNUmakefile"] },
+          properties: {
+            indent_size: String(indentSettings.indentWidth),
+            indent_style: "tab",
+            ...existing["GNUmakefile"],
+          },
         },
         {
           name: "Makefile",
-          properties: { indent_size: "2", indent_style: "tab", ...existing["Makefile"] },
+          properties: {
+            indent_size: String(indentSettings.indentWidth),
+            indent_style: "tab",
+            ...existing["Makefile"],
+          },
         },
         // {
         //   name: "COMMIT_EDITMSG",
@@ -288,6 +296,7 @@ export const init: config.MapOfConfigInit = {
       return INI.stringify(data);
     },
     scope: "git-root",
+    tools: ["editorconfig-checker"],
   },
   ".editorconfig-checker.json": {
     content: (context) => {
@@ -307,6 +316,7 @@ export const init: config.MapOfConfigInit = {
       );
     },
     scope: "git-root",
+    tools: ["editorconfig-checker"],
   },
   ".gitignore": {
     content: (context) => {
@@ -345,19 +355,237 @@ export const init: config.MapOfConfigInit = {
           path: MANAGED_EXTEND_PATH,
         },
         title,
+        useDefault: undefined,
       });
     },
     otherFileNameList: ["gitleaks.toml"],
     scope: "git-root",
+    tools: ["gitleaks"],
   },
   ".golangci.yaml": {
     content: (context) => {
-      const previousConfig = YAML.parse(context.originalContent || "");
+      const previous = YAML.parse(context.originalContent || "") ?? {};
+      const prevLinters = previous.linters ?? {};
+      const prevSettings = prevLinters.settings ?? {};
+      const prevExclusions = prevLinters.exclusions ?? {};
 
-      return YAML.stringify({ ...previousConfig, version: "2" });
+      // Linter selection ported from the datamitsu core .golangci.yaml (golangci-lint v2).
+      // Core-specific logic is intentionally NOT brought into this shared baseline:
+      // depguard (xxh3/hashutil deny), forbidigo (os.Getenv policy), the gosec
+      // file-manager excludes and the wrapcheck datamitsu-module glob all live in the
+      // core repo's own config layer. Add such project-specific rules per project.
+      const baselineEnable = [
+        "asciicheck",
+        "asasalint",
+        "arangolint",
+        "bidichk",
+        "bodyclose",
+        "canonicalheader",
+        "clickhouselint",
+        "containedctx",
+        "contextcheck",
+        "copyloopvar",
+        "decorder",
+        "dogsled",
+        "dupword",
+        "durationcheck",
+        "embeddedstructfieldcheck",
+        "errcheck",
+        "errchkjson",
+        "errname",
+        "errorlint",
+        "exhaustive",
+        "exptostd",
+        "fatcontext",
+        "forcetypeassert",
+        "funcorder",
+        "gocheckcompilerdirectives",
+        "gochecksumtype",
+        "gocritic",
+        "gocyclo",
+        "godoclint",
+        "gomoddirectives",
+        "gomodguard_v2",
+        "goprintffuncname",
+        "gosec",
+        "govet",
+        "ginkgolinter",
+        "grouper",
+        "iface",
+        "importas",
+        "inamedparam",
+        "ineffassign",
+        "interfacebloat",
+        "intrange",
+        "iotamixing",
+        "loggercheck",
+        "makezero",
+        "mirror",
+        "misspell",
+        "modernize",
+        "musttag",
+        "nakedret",
+        "nilerr",
+        "nilnesserr",
+        "nilnil",
+        "noctx",
+        "nolintlint",
+        "nosprintfhostport",
+        "perfsprint",
+        "prealloc",
+        "predeclared",
+        "promlinter",
+        "protogetter",
+        "reassign",
+        "recvcheck",
+        "revive",
+        "rowserrcheck",
+        "sloglint",
+        "spancheck",
+        "sqlclosecheck",
+        "staticcheck",
+        "tagalign",
+        "testableexamples",
+        "testifylint",
+        "thelper",
+        "tparallel",
+        "unconvert",
+        "unparam",
+        "unqueryvet",
+        "unused",
+        "usestdlibvars",
+        "usetesting",
+        "wastedassign",
+        "whitespace",
+        "wrapcheck",
+        "zerologlint",
+      ];
+      const baselineDisable = [
+        "cyclop",
+        "dupl",
+        "err113",
+        "exhaustruct",
+        "funlen",
+        "gochecknoglobals",
+        "gochecknoinits",
+        "gocognit",
+        "goconst",
+        "godot",
+        "godox",
+        "goheader",
+        "gosmopolitan",
+        "ireturn",
+        "lll",
+        "maintidx",
+        "mnd",
+        "nestif",
+        "nlreturn",
+        "noinlineerr",
+        "nonamedreturns",
+        "paralleltest",
+        "tagliatelle",
+        "testpackage",
+        "varnamelen",
+        "wsl_v5",
+      ];
+
+      // Lay the project's existing config and the baseline on top of each other, then
+      // resolve mutual exclusion so a linter is never both enabled and disabled — the
+      // managed baseline is authoritative on the linters it has an opinion about.
+      const enable = new Set([...(prevLinters.enable ?? []), ...baselineEnable]);
+      const disable = new Set([...(prevLinters.disable ?? []), ...baselineDisable]);
+      for (const name of baselineEnable) {
+        disable.delete(name);
+      }
+      for (const name of baselineDisable) {
+        enable.delete(name);
+      }
+      for (const name of enable) {
+        disable.delete(name);
+      }
+
+      // Generic test-file exclusions ported from core. The forbidigo / internal-env
+      // exclusions are dropped along with forbidigo itself.
+      const baselineExclusionRules = [
+        { linters: ["noctx", "errchkjson", "forcetypeassert", "dogsled"], path: "_test\\.go" },
+        { linters: ["gocyclo", "unparam"], path: "_test\\.go" },
+        { linters: ["gosec"], path: "_test\\.go" },
+        { linters: ["wrapcheck"], path: "_test\\.go" },
+      ];
+      const seenRules = new Set();
+      const exclusionRules = [...(prevExclusions.rules ?? []), ...baselineExclusionRules].filter(
+        (rule) => {
+          const key = JSON.stringify(rule);
+          if (seenRules.has(key)) {
+            return false;
+          }
+          seenRules.add(key);
+          return true;
+        },
+      );
+
+      // Generic revive ruleset (golangci's conventional default minus unused-parameter,
+      // which overlaps the unparam linter). A project's own revive settings win via the
+      // prevSettings spread below.
+      const reviveRules = [
+        "blank-imports",
+        "context-as-argument",
+        "context-keys-type",
+        "dot-imports",
+        "empty-block",
+        "error-naming",
+        "error-return",
+        "error-strings",
+        "errorf",
+        "exported",
+        "increment-decrement",
+        "indent-error-flow",
+        "package-comments",
+        "range",
+        "receiver-naming",
+        "redefines-builtin-id",
+        "superfluous-else",
+        "time-naming",
+        "unexported-return",
+        "unreachable-code",
+        "var-declaration",
+        "var-naming",
+      ].map((name) => ({ name }));
+
+      return YAML.stringify({
+        ...previous,
+        formatters: {
+          ...previous.formatters,
+          enable: [
+            ...new Set([
+              ...(previous.formatters?.enable ?? []),
+              "gofmt",
+              "gofumpt",
+              "goimports",
+              "swaggo",
+            ]),
+          ],
+        },
+        linters: {
+          ...prevLinters,
+          disable: [...disable].sort(),
+          enable: [...enable].sort(),
+          exclusions: {
+            ...prevExclusions,
+            rules: exclusionRules,
+          },
+          settings: {
+            gocyclo: { "min-complexity": 20 },
+            revive: { rules: reviveRules },
+            ...prevSettings,
+          },
+        },
+        version: "2",
+      });
     },
     otherFileNameList: [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"],
     projectTypes: ["golang-package"],
+    tools: ["golangci-lint", "golangci-lint-fmt"],
   },
   ".node-version": {
     content: () => {
@@ -411,6 +639,7 @@ export const init: config.MapOfConfigInit = {
       );
     },
     projectTypes: ["npm-package"],
+    tools: ["oxlint"],
   },
   ".syncpackrc.json": {
     content: () => {
@@ -455,6 +684,7 @@ export const init: config.MapOfConfigInit = {
     ],
     projectTypes: ["npm-package"],
     scope: "git-root",
+    tools: ["syncpack"],
   },
   ".tflint.hcl": {
     content: (context) => {
@@ -497,6 +727,7 @@ export const init: config.MapOfConfigInit = {
     },
     otherFileNameList: ["tombi.toml", ".tombi.toml"],
     scope: "git-root",
+    tools: ["tombi"],
   },
   ".trufflehog-exclude-paths.txt": {
     content: (context) => {
@@ -522,6 +753,39 @@ export const init: config.MapOfConfigInit = {
       return userContent.length > 0 ? `${managedBlock}\n\n${userContent}\n` : `${managedBlock}\n`;
     },
     scope: "git-root",
+    tools: ["trufflehog"],
+  },
+  ".vale.ini": {
+    // https://vale.sh/docs/vale-ini
+    // Built-in "Vale" style only (Vale.Spelling/Repetition/Terms) — no `vale sync`,
+    // no StylesPath, no network. Keeps Vale deterministic and offline like the rest
+    // of datamitsu. Add Packages/BasedOnStyles overrides per-project if richer styles
+    // are wanted.
+    content: (context) => {
+      const existing = INI.toRecord(INI.parse(context.originalContent || ""));
+
+      const data: INI.SectionEntry[] = [
+        {
+          name: "DEFAULT",
+          properties: {
+            MinAlertLevel: "suggestion",
+            ...existing["DEFAULT"],
+          },
+        },
+        {
+          name: "*.{md,markdown}",
+          properties: {
+            BasedOnStyles: "Vale",
+            ...existing["*.{md,markdown}"],
+          },
+        },
+      ];
+
+      return INI.stringify(data);
+    },
+    otherFileNameList: ["_vale.ini", "vale.ini"],
+    scope: "git-root",
+    tools: ["vale"],
   },
   ".vscode/extensions.json": {
     content: vscodeExtensions,
@@ -538,11 +802,11 @@ export const init: config.MapOfConfigInit = {
       const formatter = Object.fromEntries(
         Object.entries({
           ...data?.formatter,
-          array_indent: 2,
+          array_indent: indentSettings.indentWidth,
           eof_newline: true,
           force_array_style: "block",
           force_quote_style: "double",
-          indent: 2,
+          indent: indentSettings.indentWidth,
           line_ending: "lf",
           pad_line_comments: 1,
           retain_line_breaks_single: false,
@@ -561,6 +825,7 @@ export const init: config.MapOfConfigInit = {
     },
     otherFileNameList: [".yamlfmt", "yamlfmt.yml", "yamlfmt.yaml", ".yamlfmt.yml"],
     scope: "git-root",
+    tools: ["yamlfmt"],
   },
   ".yamllint.yaml": {
     content: (context) => {
@@ -574,7 +839,7 @@ export const init: config.MapOfConfigInit = {
           "document-end": "disable",
           "document-start": "disable",
           "empty-lines": { max: 1 },
-          indentation: { "indent-sequences": true, spaces: 2 },
+          indentation: { "indent-sequences": true, spaces: indentSettings.indentWidth },
           "key-ordering": "disable",
           "line-length": "disable",
           truthy: { "check-keys": false, level: "error" },
@@ -594,11 +859,14 @@ export const init: config.MapOfConfigInit = {
     },
     otherFileNameList: [".yamllint", ".yamllint.yml"],
     scope: "git-root",
+    tools: ["yamllint"],
   },
   "commitlint.config.js": {
     content: (context) => {
       return [
-        `export { config as default } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
+        "",
+        "export default defineConfig();",
         "",
       ].join("\n");
     },
@@ -625,7 +893,9 @@ export const init: config.MapOfConfigInit = {
   "cspell.config.js": {
     content: (context) => {
       return [
-        `export { config as default } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
+        "",
+        "export default defineConfig();",
         "",
       ].join("\n");
     },
@@ -663,6 +933,7 @@ export const init: config.MapOfConfigInit = {
       ".cspell.config.toml",
     ],
     scope: "git-root",
+    tools: ["cspell"],
   },
   // delete-only configuration - removes deprecated config files without creating new ones
   "deprecated-configs": {
@@ -758,6 +1029,7 @@ export default config;
       ".eslintrc.json",
     ],
     projectTypes: ["npm-package"],
+    tools: ["eslint"],
   },
   // 		return (
   // 			JSON.stringify(
@@ -788,17 +1060,18 @@ export default config;
       ".hadolint/hadolint.yaml",
     ],
     scope: "git-root",
+    tools: ["hadolint"],
   },
   "knip.config.js": {
     content: (context) => {
       return [
-        `import { config } from "${tools.Path.forImport(
+        `import { defineConfig } from "${tools.Path.forImport(
           tools.Path.join(context.datamitsuDir, "knip.config.js"),
         )}";`,
         "",
-        `const internalConfig = { ...config${
+        `export default defineConfig(${
           env().DATAMITSU_DEV_MODE
-            ? `, ...${JSON.stringify(
+            ? JSON.stringify(
                 {
                   ignoreBinaries: ["bin/datamitsu.js"],
                   ignoreDependencies: [
@@ -839,11 +1112,9 @@ export default config;
                 },
                 null,
                 2,
-              )}`
+              )
             : ""
-        } };`,
-        "",
-        "export default internalConfig;",
+        });`,
         "",
       ].join("\n");
     },
@@ -859,6 +1130,7 @@ export default config;
     ],
     projectTypes: ["npm-package"],
     scope: "git-root",
+    tools: ["knip"],
   },
   "lefthook.yaml": {
     content: (context) => {
@@ -917,7 +1189,31 @@ export default config;
     ],
     scope: "git-root",
   },
-
+  "oxfmt.config.ts": {
+    content: (context) => {
+      return [
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "oxfmt.config.js"))}";`,
+        "",
+        `const config = defineConfig();`,
+        "",
+        "export default config;",
+        "",
+      ].join("\n");
+    },
+    otherFileNameList: [
+      ".oxfmtrc",
+      ".oxfmtrc.json",
+      ".oxfmtrc.jsonc",
+      "oxfmt.config.js",
+      "oxfmt.config.mjs",
+      "oxfmt.config.cjs",
+      "oxfmt.config.ts",
+      "oxfmt.config.mts",
+      "oxfmt.config.cts",
+    ],
+    scope: "git-root",
+    tools: ["oxfmt"],
+  },
   "package.json": {
     content: ({ isRoot, originalContent }) => {
       const data = JSON.parse(originalContent || "{}") as PackageJson;
@@ -958,14 +1254,26 @@ export default config;
           ...cleanDependencies(data.devDependencies),
           ...(env().DATAMITSU_DEV_MODE ? {} : { [packageJsonName]: packageJsonVersion }),
         },
-        engines: isRoot
+        devEngines: isRoot
           ? {
-              node: `>=${runtimeVersions.node}`,
-              pnpm: `>=${fnmVersions.pnpm.version}`,
+              // Only the runtime here. devEngines.packageManager is intentionally
+              // NOT used: it is mutually exclusive with the top-level
+              // packageManager field, and tooling that resolves pnpm (Corepack,
+              // pnpm/action-setup in CI) reads packageManager, not devEngines.
+              runtime: { name: "node", onFail: "warn", version: `>=${runtimeVersions.node}` },
             }
           : undefined,
+        engines: {
+          // Consumer-facing support floor for every package (root + workspace
+          // members), so eslint-plugin-n reads the right floor everywhere and
+          // published members carry a correct contract. NOT the dev version.
+          node: NODE_SUPPORT_FLOOR,
+        },
         optionalDependencies: cleanDependencies(data.optionalDependencies),
-        packageManager: isRoot ? `pnpm@${fnmVersions.pnpm.version}` : undefined,
+        // pnpm version lives in packageManager (root-only): Corepack and
+        // pnpm/action-setup read this field, not devEngines.packageManager.
+        // Removing it breaks CI ("No pnpm version specified").
+        packageManager: isRoot ? `pnpm@${nodeVersions.pnpm.version}` : undefined,
         peerDependencies: cleanDependencies(data.peerDependencies),
         ...({
           cspell: undefined,
@@ -985,22 +1293,41 @@ export default config;
     content: (context) => {
       // https://github.com/pnpm/plugin-better-defaults
       const existing = YAML.parse(context.originalContent || "");
+      const base = {
+        ...pnpmWorkspaceDefaults,
+        ...existing,
+      };
+
+      const allowBuilds = {
+        ...base?.allowBuilds,
+      };
+
+      delete allowBuilds["@shibanet0/datamitsu-config"];
 
       const config = {
-        ...existing,
+        ...base,
+        allowBuilds,
         audit: true,
         auditLevel: "high",
         autoInstallPeers: true,
+        dedupeDirectDeps: true,
+        dedupePeerDependents: true,
         enableGlobalVirtualStore: true,
         enablePrePostScripts: false,
+        engineStrict: true,
         hoistPattern: [],
         ignorePatchFailures: false,
         optimisticRepeatInstall: true,
+        packageManagerStrict: true,
+        packageManagerStrictVersion: true,
         resolutionMode: "lowest-direct",
         savePrefix: "",
         strictSsl: true,
+        trustLockfile: true,
         unsafePerm: false,
+        updateNotifier: false,
         verifyDepsBeforeRun: "install",
+        verifyStoreIntegrity: true,
       };
 
       if (config.hoistPattern?.length === 1 && config.hoistPattern[0] === "*") {
@@ -1014,9 +1341,6 @@ export default config;
     projectTypes: ["pnpm-package"],
     scope: "git-root",
   },
-  // 		return INI.stringify(data);
-  // 	},
-  // },
   "prettier.config.js": {
     content: (context) => {
       return [
@@ -1049,6 +1373,7 @@ export default config;
       ".prettierrc.toml",
     ],
     projectTypes: ["npm-package"],
+    tools: ["prettier"],
   },
   "pyproject.toml": {
     content: (context) => {

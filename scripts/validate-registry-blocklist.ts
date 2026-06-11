@@ -3,8 +3,9 @@ import path from "node:path";
 
 export interface Blocklist {
   external: Record<string, BlocklistEntry>;
-  fnm: Record<string, BlocklistEntry>;
   github: Record<string, BlocklistEntry>;
+  go: Record<string, BlocklistEntry>;
+  node: Record<string, BlocklistEntry>;
   runtimes: Record<string, BlocklistEntry>;
   uv: Record<string, BlocklistEntry>;
 }
@@ -67,7 +68,7 @@ export async function loadBlocklist(blocklistPath: string): Promise<Blocklist> {
   const blocklist = data as Blocklist;
 
   // Validate structure
-  const requiredKeys = ["external", "fnm", "uv", "github", "runtimes"];
+  const requiredKeys = ["external", "node", "uv", "github", "runtimes"];
   for (const key of requiredKeys) {
     if (!(key in blocklist)) {
       throw new Error(`Invalid blocklist format: missing '${key}' section`);
@@ -89,15 +90,15 @@ export async function main(): Promise<void> {
 
   const allErrors: ValidationError[] = [];
 
-  // Validate fnmVersions.json
+  // Validate nodeVersions.json
   try {
-    const fnmPath = path.join(registriesDir, "fnmVersions.json");
-    const fnmContent = await fsPromise.readFile(fnmPath, "utf8");
-    const fnmRegistry = JSON.parse(fnmContent) as Record<string, any>;
-    const fnmErrors = validateFnmRegistry(fnmRegistry, blocklist.fnm);
-    allErrors.push(...fnmErrors);
+    const nodePath = path.join(registriesDir, "nodeVersions.json");
+    const nodeContent = await fsPromise.readFile(nodePath, "utf8");
+    const nodeRegistry = JSON.parse(nodeContent) as Record<string, any>;
+    const nodeErrors = validateNodeRegistry(nodeRegistry, blocklist.node);
+    allErrors.push(...nodeErrors);
   } catch (error) {
-    console.error("Error validating fnmVersions.json:", error);
+    console.error("Error validating nodeVersions.json:", error);
     process.exit(1);
   }
 
@@ -165,8 +166,7 @@ export async function main(): Promise<void> {
 }
 
 /**
- * Validate external apps registry against blocklist
- * Checks both 'apps' and 'binaries' sections
+ * Validate external apps registry against blocklist Checks both 'apps' and 'binaries' sections
  */
 export function validateExternalRegistry(
   registry: { apps?: Record<string, any>; binaries?: Record<string, any> },
@@ -212,35 +212,7 @@ export function validateExternalRegistry(
 }
 
 /**
- * Validate fnm (NPM) registry against blocklist
- */
-export function validateFnmRegistry(
-  registry: Record<string, any>,
-  blocklist: Record<string, BlocklistEntry>,
-): ValidationError[] {
-  const errors: ValidationError[] = [];
-
-  for (const packageName of Object.keys(registry)) {
-    const normalizedName = packageName.toLowerCase();
-
-    for (const [blockedName, entry] of Object.entries(blocklist)) {
-      if (normalizedName === blockedName.toLowerCase()) {
-        errors.push({
-          packageName,
-          reason: entry.reason,
-          registry: "fnm",
-          replacement: entry.replacement,
-        });
-      }
-    }
-  }
-
-  return errors;
-}
-
-/**
- * Validate GitHub apps registry against blocklist
- * Checks both 'apps' and 'binaries' sections
+ * Validate GitHub apps registry against blocklist Checks both 'apps' and 'binaries' sections
  */
 export function validateGithubRegistry(
   registry: { apps?: Record<string, any>; binaries?: Record<string, any> },
@@ -280,6 +252,33 @@ export function validateGithubRegistry(
             replacement: entry.replacement,
           });
         }
+      }
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate node (NPM) registry against blocklist
+ */
+export function validateNodeRegistry(
+  registry: Record<string, any>,
+  blocklist: Record<string, BlocklistEntry>,
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  for (const packageName of Object.keys(registry)) {
+    const normalizedName = packageName.toLowerCase();
+
+    for (const [blockedName, entry] of Object.entries(blocklist)) {
+      if (normalizedName === blockedName.toLowerCase()) {
+        errors.push({
+          packageName,
+          reason: entry.reason,
+          registry: "node",
+          replacement: entry.replacement,
+        });
       }
     }
   }

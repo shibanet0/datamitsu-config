@@ -17,6 +17,15 @@ jobs:
             require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
           echo "PR version: $PR_VERSION"
+      - name: Verify generated Dockerfiles are committed
+        run: |
+          node scripts/generate-dockerfiles.ts --offline
+          # Untracked oci maps would slip past `git diff`, hence the add -N.
+          git add -N docker/
+          git diff --exit-code -- docker/ || {
+            echo "::error::docker/ generated files are stale — run 'pnpm exec task -- docker:generate' and commit."
+            exit 1
+          }
       - name: Run tests
         run: pnpm test
       - name: Run lint
@@ -59,22 +68,12 @@ jobs:
         with:
           name: pr-artifacts
           path: .
-      - name: Sync datamitsu version to Dockerfile
-        run: |
-          VERSION=$(node -e "console.log(require('./package.json').dependencies['@datamitsu/datamitsu'])")
-          echo "Datamitsu version: $VERSION"
-          if [[ "$VERSION" == 0.0.0-unstable.* ]]; then
-            echo "Unstable version — skipping Dockerfile sync"
-            exit 0
-          fi
-          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}|" docker/Dockerfile
-          sed -i "s|FROM ghcr.io/datamitsu/datamitsu:[^ ]*|FROM ghcr.io/datamitsu/datamitsu:${VERSION}-alpine|" docker/Dockerfile.alpine
-          echo "Updated Dockerfile versions to ${VERSION}"
-          grep "^FROM" docker/Dockerfile docker/Dockerfile.alpine
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          buildkitd-config: docker/buildkitd.toml
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v7
         with:

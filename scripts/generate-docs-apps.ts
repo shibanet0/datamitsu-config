@@ -8,13 +8,17 @@ export interface AppConfig {
     binaries?: BinaryPlatforms;
   };
   description: string | undefined;
-  fnm?: {
+  go?: {
     packageName?: string;
     version?: string;
   };
   jvm?: {
     jarHash?: string;
     jarUrl?: string;
+    version?: string;
+  };
+  node?: {
+    packageName?: string;
     version?: string;
   };
   uv?: {
@@ -134,6 +138,7 @@ export function categorizeApps(apps: AppInfo[]): Map<string, AppInfo[]> {
 export function executeConfigShow(): string {
   return execSync("pnpm --silent datamitsu config show", {
     encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
     stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
     timeout: 30_000,
   });
@@ -151,8 +156,10 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
 
   if (app.binary) {
     repository = extractRepositoryFromBinary(app);
-  } else if (app.fnm) {
-    repository = extractRepositoryFromFnm(app);
+  } else if (app.node) {
+    repository = extractRepositoryFromNode(app);
+  } else if (app.go) {
+    repository = extractRepositoryFromGo(app);
   } else if (app.uv) {
     repository = extractRepositoryFromUv(app);
   } else if (app.jvm) {
@@ -266,11 +273,14 @@ export function parseConfigJson(jsonStr: string): ConfigShowOutput {
 }
 
 function detectRuntime(app: AppConfig): string {
-  if (app.fnm) {
+  if (app.node) {
     return "node";
   }
   if (app.uv) {
     return "python";
+  }
+  if (app.go) {
+    return "go";
   }
   if (app.binary) {
     return "binary";
@@ -300,12 +310,12 @@ function extractRepositoryFromBinary(app: AppConfig): string | undefined {
   return undefined;
 }
 
-function extractRepositoryFromFnm(app: AppConfig): string | undefined {
-  const packageName = app.fnm?.packageName;
+function extractRepositoryFromGo(app: AppConfig): string | undefined {
+  const packageName = app.go?.packageName;
   if (!packageName) {
     return undefined;
   }
-  return `https://www.npmjs.com/package/${packageName}`;
+  return `https://pkg.go.dev/${packageName}`;
 }
 
 function extractRepositoryFromJvm(app: AppConfig): string | undefined {
@@ -314,6 +324,14 @@ function extractRepositoryFromJvm(app: AppConfig): string | undefined {
     return undefined;
   }
   return jarUrl;
+}
+
+function extractRepositoryFromNode(app: AppConfig): string | undefined {
+  const packageName = app.node?.packageName;
+  if (!packageName) {
+    return undefined;
+  }
+  return `https://www.npmjs.com/package/${packageName}`;
 }
 
 function extractRepositoryFromUv(app: AppConfig): string | undefined {

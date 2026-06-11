@@ -4,6 +4,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "display": "Backend service",
+  "display": "Backend service (Node.js)",
   "extends": "./base.json"
 }

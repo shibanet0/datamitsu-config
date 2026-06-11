@@ -7,12 +7,17 @@
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
-    "version": "3.2.529"
+    "version": "3.2.530"
   },
   "detect-secrets": {
     "description": "Tool for detecting secrets in the codebase",
     "packageName": "detect-secrets",
     "version": "1.5.0"
+  },
+  "mypy": {
+    "description": "Optional static typing for Python",
+    "packageName": "mypy",
+    "version": "2.1.0"
   },
   "pre-commit": {
     "description": "A framework for managing and maintaining multi-language pre-commit hooks.",
@@ -22,7 +27,7 @@
   "semgrep": {
     "description": "Lightweight static analysis for many languages. Find bug variants with patterns that look like source code.",
     "packageName": "semgrep",
-    "version": "1.163.0"
+    "version": "1.164.0"
   },
   "sqlfluff": {
     "description": "The SQL Linter for Humans",

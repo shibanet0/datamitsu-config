@@ -62,6 +62,40 @@ declare global {
   function getConfig(config: config.Config): config.Config;
 
   /**
+   * Recommended pnpm 11 workspace security defaults, injected by the Go engine.
+   * Read this object to publish or extend the defaults — see
+   * `sharedStorage["pnpm-workspace-defaults"]` for the canonical YAML output.
+   */
+  const pnpmWorkspaceDefaults: Record<string, unknown>;
+
+  /**
+   * Bounded config-evaluation input surface, injected (frozen) by the Go engine.
+   * Only fields explicitly allowlisted here may be used in config JS decisions.
+   * Unlike `pnpmWorkspaceDefaults` (a published recommendation), every field here
+   * is a genuine config evaluation input. Adding a field requires updating
+   * fingerprinting, cache invalidation, explain/debug output, and documentation.
+   */
+  const datamitsuConfigInputs: Readonly<{
+    minimumReleaseAgeMinutes: number;
+  }>;
+
+  /**
+   * Optional export. Declares local parent config files to load before this
+   * config, mirroring the `--before-config` CLI flag declaratively.
+   * Only honoured in the auto-discovered git-root config — declaring it in any
+   * other layer (default / `--before-config` / remote / `--config`) is ignored.
+   * Paths are resolved relative to the directory of the git-root config file;
+   * absolute paths are used as-is. No hash is required (local files share the
+   * root config's trust domain). If `--before-config` is passed on the CLI, this
+   * function is not evaluated at all (the flag wins, avoiding double-loading).
+   * @example
+   * function getBeforeConfigs() {
+   *   return [{ path: "./node_modules/@shibanet0/datamitsu-config/datamitsu.config.js" }];
+   * }
+   */
+  function getBeforeConfigs(): Array<{ path: string }>;
+
+  /**
    * Returns the minimum datamitsu version required by this config (semver format).
    * The tool validates this version during config loading and fails early with
    * upgrade instructions if the current version is too old.
@@ -275,14 +309,25 @@ declare global {
       ignoreRules?: string[];
 
       /**
-       * Config file initialization
-       */
-      init?: MapOfConfigInit;
-
-      /**
        * Init commands to run after setup
        */
       initCommands?: MapOfInitCommands;
+
+      /**
+       * OCI bundle that seeds the tool store (pull without docker).
+       * Chains as a scalar: the last config layer that set or spread it wins;
+       * a layer that rebuilds its output without `{...input}` silently drops
+       * it. Reset with `oci: undefined` or `oci: null`.
+       * @example
+       * return {
+       *   ...input,
+       *   oci: {
+       *     ref: "ghcr.io/owner/tool-store",
+       *     digest: "sha256:0123…cdef",
+       *   },
+       * };
+       */
+      oci?: OCIRef;
 
       /**
        * Project type definitions
@@ -295,12 +340,33 @@ declare global {
       runtimes?: BinManager.MapOfRuntimes;
 
       /**
+       * Config-file setup (managed files written by dm setup)
+       */
+      setup?: MapOfConfigSetup;
+
+      /**
        * Arbitrary key-value storage that flows through the config chain.
        * Any config layer can read/write values via input.sharedStorage.
        * Useful for passing data between config layers that doesn't fit
        * the typed config structure.
+       *
+       * Well-known keys published by the default config:
+       * - `"datamitsu-agent-prompt"`: Markdown guide for AI agents working in
+       *   datamitsu-managed repos.
+       * - `"pnpm-workspace-defaults"`: YAML string of the recommended pnpm 11
+       *   workspace security defaults. Parse with `YAML.parse()`, extend with
+       *   org/repo-specific settings, and write into a project repo via a Bundle
+       *   to produce a secure `pnpm-workspace.yaml`. Separate from the auto-merge
+       *   applied to `App.files["pnpm-workspace.yaml"]` for node apps. See the
+       *   Supply Chain Security guide for the full key list and rationale.
+       *
        * @example
        * return { ...input, sharedStorage: { ...input.sharedStorage, "my-key": "my-value" } };
+       *
+       * @example
+       * // Read pnpm-workspace-defaults and extend for a repo bundle
+       * const defaults = YAML.parse(input.sharedStorage?.["pnpm-workspace-defaults"] ?? "{}");
+       * const repoConfig = { ...defaults, packages: ["packages/*"], allowBuilds: { esbuild: true } };
        */
       sharedStorage?: Record<string, string>;
 
@@ -365,9 +431,9 @@ declare global {
     // ========================================
 
     /**
-     * Configuration file initialization (enhanced from existing)
+     * Configuration file setup (managed files written by dm setup)
      */
-    interface ConfigInit {
+    interface ConfigSetup {
       /**
        * Function that generates file content
        * Receives context about the project including existing file content if present
@@ -410,6 +476,16 @@ declare global {
        * - "git-root": creates only at the git repository root (runs once)
        */
       scope?: "git-root" | "project";
+
+      /**
+       * Tool name(s) this config file belongs to (must match keys in `tools`).
+       * `datamitsu setup --tools <names>` regenerates only configs whose `tools`
+       * intersect the selected set; all others are left untouched. Omit for
+       * infrastructure files (.gitignore, lefthook.yaml) not tied to a single
+       * tool — those are skipped whenever `--tools` is passed.
+       * @example ["golangci-lint"]
+       */
+      tools?: string[];
     }
 
     /**
@@ -444,7 +520,7 @@ declare global {
     }
 
     /**
-     * Map of configuration init with mainFilename as key
+     * Map of configuration setup with mainFilename as key
      * @example
      * {
      *   ".gitignore": { content: () => "..." },
@@ -452,21 +528,64 @@ declare global {
      *   ".vscode/settings.json": { content: () => "..." }
      * }
      */
-    type MapOfConfigInit = Record<string, ConfigInit>;
-
-    // ========================================
-    // Init Commands
-    // ========================================
+    type MapOfConfigSetup = Record<string, ConfigSetup>;
 
     type MapOfInitCommands = Record<string, InitCommand>;
 
     type MapOfProjectTypes = Record<string, ProjectType>;
 
     // ========================================
-    // Config File Management (ENHANCED)
+    // Init Commands
     // ========================================
 
     type MapOfTools = Record<string, Tool>;
+
+    /**
+     * OCI bundle declaration: the registry repository plus the mandatory
+     * sha256 digest pinning the bundle content. The bundle is a cache seed,
+     * not a trust boundary — binaries and JARs unpacked from it are
+     * re-verified against the published SHA-256 hashes from the config.
+     */
+    interface OCIRef {
+      /**
+       * Bundle index/manifest digest, "sha256:" followed by 64 lowercase hex
+       * characters. Mandatory — a tag alone never pins content.
+       */
+      digest: string;
+
+      /**
+       * Full repository reference including the registry host
+       * (e.g. "ghcr.io/owner/repo"). No default host; tags and digests are
+       * not allowed inside the ref.
+       */
+      ref: string;
+
+      /**
+       * Optional sigstore keyless identity pin of the bundle publisher.
+       * When set, pull verifies the bundle signature before layout and
+       * fails hard on mismatch.
+       */
+      signer?: OCISigner;
+    }
+
+    // ========================================
+    // Config File Management (ENHANCED)
+    // ========================================
+
+    /**
+     * Sigstore keyless publisher identity.
+     */
+    interface OCISigner {
+      /**
+       * Certificate identity, e.g. a GitHub Actions workflow ref.
+       */
+      identity: string;
+
+      /**
+       * OIDC issuer URL, e.g. "https://token.actions.githubusercontent.com".
+       */
+      issuer: string;
+    }
 
     /**
      * Operation type
@@ -517,6 +636,22 @@ declare global {
        * @example ["npm-package", "typescript-project"]
        */
       projectTypes?: string[];
+
+      /**
+       * When true, the tool is reported as skipped and is never planned or run.
+       * Prefer this over conditionally omitting the tool from config: an omitted
+       * tool is invisible, whereas a skipped one is shown in the report with its
+       * reason.
+       * @example skip: !facts().env.CI
+       */
+      skip?: boolean;
+
+      /**
+       * Optional human-readable reason shown in the skipped report when `skip` is
+       * true. Empty falls back to a generic "disabled in config" label.
+       * @example skipReason: "runs in CI only"
+       */
+      skipReason?: string;
     }
 
     /**
@@ -654,13 +789,51 @@ declare global {
        * Human-readable description of the app, shown in exec listing.
        */
       description?: string;
+      /**
+       * Custom environment variables for this app, applied to all app kinds
+       * (binary, uv, node, jvm, go, shell). Injected both at install time
+       * (uv/node/go dependency install) and at run time (every app type).
+       *
+       * Values support placeholder expansion (done in Go, never written into
+       * the committed config):
+       * - `${STORE}` → the shared datamitsu store path (cleaned by
+       *   `datamitsu store clear`).
+       * - `${APP_DIR}` → this app's install directory (per-app, config-hashed).
+       *
+       * Precedence: any key already set by datamitsu or the runtime wins, so a
+       * user config can never relocate the pnpm store, uv cache, GOPATH, etc.
+       *
+       * @example
+       * // Redirect playwright to download browsers into the datamitsu store
+       * env: { PLAYWRIGHT_BROWSERS_PATH: "${STORE}/.playwright/browsers" }
+       */
+      env?: Record<string, string>;
+      /**
+       * Static file contents to write into the app's install directory before
+       * the package manager runs. Keys are filenames; values are file contents.
+       *
+       * Special handling for `pnpm-workspace.yaml` on node apps: the entry is
+       * NOT written verbatim. Instead, the installer parses it and shallow-merges
+       * it on top of the recommended pnpm 11 workspace security defaults, then
+       * writes the merged result. User keys override defaults for the same
+       * top-level key. Use this to add `allowBuilds` for packages that need build
+       * scripts (e.g., puppeteer) without losing the security defaults. See the
+       * Supply Chain Security guide for the full default key list and rationale.
+       *
+       * @example
+       * // Allow puppeteer build scripts; defaults still apply
+       * files: {
+       *   "pnpm-workspace.yaml": YAML.stringify({ allowBuilds: { puppeteer: true } }),
+       * }
+       */
       files?: Record<string, string>;
-      fnm?: AppConfigFNM;
+      go?: AppConfigGo;
       jvm?: AppConfigJVM;
       /**
        * Symlinks to create in .datamitsu/ directory, mapping link name to relative path in install directory.
        */
       links?: Record<string, string>;
+      node?: AppConfigNode;
       required?: boolean;
       shell?: AppConfigShell;
       uv?: AppConfigUV;
@@ -681,19 +854,26 @@ declare global {
       version?: string;
     }
 
-    interface AppConfigFNM {
-      binPath: string;
-      dependencies?: Record<string, string>;
+    interface AppConfigGo {
       /**
        * Lock file content for reproducible installs.
-       * Required for all FNM apps. Validation fails if omitted.
+       * Required for all Go apps. Validation fails if omitted.
+       * Stores a JSON wrapper `{"mod":"<go.mod>","sum":"<go.sum>"}` so that
+       * `go build -mod=readonly` fails on any go.sum mismatch (supply chain protection).
        * When prefixed with "br:", the content is brotli-compressed and base64-encoded.
-       * Plain text is also accepted for backward compatibility.
        * Generate via: datamitsu config lockfile <appName>
        */
       lockFile: string;
+      /**
+       * Go package import path to build.
+       * @example "golang.org/x/vuln/cmd/govulncheck"
+       */
       packageName: string;
       runtime?: string;
+      /**
+       * Module version to pin (Go module query).
+       * @example "v1.3.0"
+       */
       version: string;
     }
 
@@ -708,9 +888,24 @@ declare global {
       version: string;
     }
 
+    interface AppConfigNode {
+      binPath: string;
+      dependencies?: Record<string, string>;
+      /**
+       * Lock file content for reproducible installs.
+       * Required for all node apps. Validation fails if omitted.
+       * When prefixed with "br:", the content is brotli-compressed and base64-encoded.
+       * Plain text is also accepted for backward compatibility.
+       * Generate via: datamitsu config lockfile <appName>
+       */
+      lockFile: string;
+      packageName: string;
+      runtime?: string;
+      version: string;
+    }
+
     interface AppConfigShell {
       args?: string[];
-      env?: Record<string, string>;
       name: string;
     }
 
@@ -846,10 +1041,10 @@ declare global {
 
     interface RuntimeConfig {
       /**
-       * FNM-specific runtime configuration (nodeVersion, pnpmVersion).
-       * Required when kind is "fnm".
+       * Go-specific runtime configuration (goVersion).
+       * Required when kind is "go".
        */
-      fnm?: RuntimeConfigFNM;
+      go?: RuntimeConfigGo;
       /**
        * JVM-specific runtime configuration (javaVersion).
        * Required when kind is "jvm".
@@ -858,6 +1053,12 @@ declare global {
       kind: RuntimeKind;
       managed?: RuntimeConfigManaged;
       mode: RuntimeMode;
+      /**
+       * Node-specific runtime configuration (nodeVersion, pnpmVersion, pnpmHash).
+       * Required when kind is "node". Node is acquired as a direct, hash-pinned
+       * archive (url + hash), like the jvm runtime.
+       */
+      node?: RuntimeConfigNode;
       system?: RuntimeConfigSystem;
       /**
        * UV-specific runtime configuration (pythonVersion).
@@ -866,14 +1067,12 @@ declare global {
       uv?: RuntimeConfigUV;
     }
 
-    interface RuntimeConfigFNM {
-      nodeVersion: string;
+    interface RuntimeConfigGo {
       /**
-       * SHA-256 hash of the PNPM tarball for integrity verification.
-       * Required per security policy: all downloads must have a pinned hash.
+       * Go SDK version to build with.
+       * @example "1.22.3"
        */
-      pnpmHash: string;
-      pnpmVersion: string;
+      goVersion: string;
     }
 
     interface RuntimeConfigJVM {
@@ -882,6 +1081,16 @@ declare global {
 
     interface RuntimeConfigManaged {
       binaries: MapOfBinaries;
+    }
+
+    interface RuntimeConfigNode {
+      nodeVersion: string;
+      /**
+       * SHA-256 hash of the PNPM tarball for integrity verification.
+       * Required per security policy: all downloads must have a pinned hash.
+       */
+      pnpmHash: string;
+      pnpmVersion: string;
     }
 
     interface RuntimeConfigSystem {
@@ -896,7 +1105,7 @@ declare global {
       pythonVersion?: string;
     }
 
-    type RuntimeKind = "fnm" | "jvm" | "uv";
+    type RuntimeKind = "go" | "jvm" | "node" | "uv";
 
     type RuntimeMode = "managed" | "system";
   }

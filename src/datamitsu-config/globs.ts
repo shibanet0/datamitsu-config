@@ -18,6 +18,8 @@ export const eslintGlobs: string[] = [
 ];
 
 export const jsonGlobs: string[] = ["**/*.json"];
+
+export const markdownGlobs: string[] = ["**/*.md", "**/*.markdown"];
 export const jsonExcludeGlobs: string[] = ["**/package.json", "**/package-lock.json"];
 
 export const oxlintGlobs: string[] = [
@@ -32,6 +34,36 @@ export const oxlintGlobs: string[] = [
   "**/*.vue",
   "**/*.astro",
   "**/*.svelte",
+];
+
+// oxfmt formats by file type, independent of project type. Covers the languages
+// oxfmt supports out of the box (https://oxc.rs/compatibility.html). Svelte and
+// Astro are intentionally omitted — they require extra deps/plugins to format.
+export const oxfmtGlobs: string[] = [
+  "**/*.js",
+  "**/*.jsx",
+  "**/*.mjs",
+  "**/*.cjs",
+  "**/*.ts",
+  "**/*.tsx",
+  "**/*.mts",
+  "**/*.cts",
+  "**/*.d.ts",
+  "**/*.json",
+  "**/*.jsonc",
+  "**/*.json5",
+  "**/*.css",
+  "**/*.scss",
+  "**/*.less",
+  "**/*.html",
+  "**/*.vue",
+  "**/*.graphql",
+  "**/*.gql",
+  "**/*.md",
+  "**/*.mdx",
+  "**/*.yaml",
+  "**/*.yml",
+  "**/*.toml",
 ];
 
 export const packageJsonGlobs: string[] = ["**/package.json"];

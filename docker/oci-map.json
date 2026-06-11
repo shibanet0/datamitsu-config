@@ -1,0 +1,532 @@
+{
+  "version": 1,
+  "storeRoot": "/dm/store",
+  "layers": [
+    {
+      "subtree": ".runtimes/jvm",
+      "kind": "runtime",
+      "app": "jvm"
+    },
+    {
+      "subtree": ".runtimes/node",
+      "kind": "runtime",
+      "app": "node"
+    },
+    {
+      "subtree": ".runtimes/uv",
+      "kind": "runtime",
+      "app": "uv"
+    },
+    {
+      "subtree": ".apps/uv/bandit",
+      "kind": "app",
+      "app": "bandit"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/uv/checkov",
+      "kind": "app",
+      "app": "checkov"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/node/commitlint",
+      "kind": "app",
+      "app": "commitlint"
+    },
+    {
+      "subtree": ".apps/node/conventional-changelog",
+      "kind": "app",
+      "app": "conventional-changelog"
+    },
+    {
+      "subtree": ".apps/node/cspell",
+      "kind": "app",
+      "app": "cspell"
+    },
+    {
+      "subtree": ".apps/uv/detect-secrets",
+      "kind": "app",
+      "app": "detect-secrets"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/node/eslint",
+      "kind": "app",
+      "app": "eslint"
+    },
+    {
+      "subtree": ".apps/go/govulncheck",
+      "kind": "app",
+      "app": "govulncheck"
+    },
+    {
+      "subtree": ".apps/node/knip",
+      "kind": "app",
+      "app": "knip"
+    },
+    {
+      "subtree": ".apps/jvm/ktfmt",
+      "kind": "app",
+      "app": "ktfmt"
+    },
+    {
+      "subtree": ".apps/jvm/ktlint",
+      "kind": "app",
+      "app": "ktlint"
+    },
+    {
+      "subtree": ".apps/node/markdown-link-check",
+      "kind": "app",
+      "app": "markdown-link-check"
+    },
+    {
+      "subtree": ".apps/node/markdownlint-cli2",
+      "kind": "app",
+      "app": "markdownlint-cli2"
+    },
+    {
+      "subtree": ".apps/node/mmdc",
+      "kind": "app",
+      "app": "mmdc"
+    },
+    {
+      "subtree": ".apps/uv/mypy",
+      "kind": "app",
+      "app": "mypy"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/jvm/openapi-generator",
+      "kind": "app",
+      "app": "openapi-generator"
+    },
+    {
+      "subtree": ".apps/node/oxfmt",
+      "kind": "app",
+      "app": "oxfmt"
+    },
+    {
+      "subtree": ".apps/node/oxlint",
+      "kind": "app",
+      "app": "oxlint"
+    },
+    {
+      "subtree": ".apps/node/pnpm",
+      "kind": "app",
+      "app": "pnpm"
+    },
+    {
+      "subtree": ".apps/uv/pre-commit",
+      "kind": "app",
+      "app": "pre-commit"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/node/prettier",
+      "kind": "app",
+      "app": "prettier"
+    },
+    {
+      "subtree": ".apps/node/quicktype",
+      "kind": "app",
+      "app": "quicktype"
+    },
+    {
+      "subtree": ".apps/uv/semgrep",
+      "kind": "app",
+      "app": "semgrep"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/node/slidev",
+      "kind": "app",
+      "app": "slidev"
+    },
+    {
+      "subtree": ".apps/node/sort-package-json",
+      "kind": "app",
+      "app": "sort-package-json"
+    },
+    {
+      "subtree": ".apps/node/spectral",
+      "kind": "app",
+      "app": "spectral"
+    },
+    {
+      "subtree": ".apps/uv/sqlfluff",
+      "kind": "app",
+      "app": "sqlfluff"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/node/syncpack",
+      "kind": "app",
+      "app": "syncpack"
+    },
+    {
+      "subtree": ".apps/node/tsc",
+      "kind": "app",
+      "app": "tsc"
+    },
+    {
+      "subtree": ".apps/node/tsgo",
+      "kind": "app",
+      "app": "tsgo"
+    },
+    {
+      "subtree": ".apps/uv/yamllint",
+      "kind": "app",
+      "app": "yamllint"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/uv/zensical",
+      "kind": "app",
+      "app": "zensical"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
+      "subtree": ".bin/actionlint",
+      "kind": "binary",
+      "app": "actionlint"
+    },
+    {
+      "subtree": ".bin/age",
+      "kind": "binary",
+      "app": "age"
+    },
+    {
+      "subtree": ".bin/air",
+      "kind": "binary",
+      "app": "air"
+    },
+    {
+      "subtree": ".bin/allurectl",
+      "kind": "binary",
+      "app": "allurectl"
+    },
+    {
+      "subtree": ".bin/ast-grep",
+      "kind": "binary",
+      "app": "ast-grep"
+    },
+    {
+      "subtree": ".bin/bearer",
+      "kind": "binary",
+      "app": "bearer"
+    },
+    {
+      "subtree": ".bin/buf",
+      "kind": "binary",
+      "app": "buf"
+    },
+    {
+      "subtree": ".bin/checkmake",
+      "kind": "binary",
+      "app": "checkmake"
+    },
+    {
+      "subtree": ".bin/conftest",
+      "kind": "binary",
+      "app": "conftest"
+    },
+    {
+      "subtree": ".bin/cosign",
+      "kind": "binary",
+      "app": "cosign"
+    },
+    {
+      "subtree": ".bin/crane",
+      "kind": "binary",
+      "app": "crane"
+    },
+    {
+      "subtree": ".bin/dasel",
+      "kind": "binary",
+      "app": "dasel"
+    },
+    {
+      "subtree": ".bin/dotenv-linter",
+      "kind": "binary",
+      "app": "dotenv-linter"
+    },
+    {
+      "subtree": ".bin/editorconfig-checker",
+      "kind": "binary",
+      "app": "editorconfig-checker"
+    },
+    {
+      "subtree": ".bin/fx",
+      "kind": "binary",
+      "app": "fx"
+    },
+    {
+      "subtree": ".bin/gcrane",
+      "kind": "binary",
+      "app": "gcrane"
+    },
+    {
+      "subtree": ".bin/git-cliff",
+      "kind": "binary",
+      "app": "git-cliff"
+    },
+    {
+      "subtree": ".bin/gitleaks",
+      "kind": "binary",
+      "app": "gitleaks"
+    },
+    {
+      "subtree": ".bin/golang-migrate",
+      "kind": "binary",
+      "app": "golang-migrate"
+    },
+    {
+      "subtree": ".bin/golangci-lint",
+      "kind": "binary",
+      "app": "golangci-lint"
+    },
+    {
+      "subtree": ".bin/goose",
+      "kind": "binary",
+      "app": "goose"
+    },
+    {
+      "subtree": ".bin/grype",
+      "kind": "binary",
+      "app": "grype"
+    },
+    {
+      "subtree": ".bin/hadolint",
+      "kind": "binary",
+      "app": "hadolint"
+    },
+    {
+      "subtree": ".bin/harper-cli",
+      "kind": "binary",
+      "app": "harper-cli"
+    },
+    {
+      "subtree": ".bin/helm",
+      "kind": "binary",
+      "app": "helm"
+    },
+    {
+      "subtree": ".bin/jq",
+      "kind": "binary",
+      "app": "jq"
+    },
+    {
+      "subtree": ".bin/just",
+      "kind": "binary",
+      "app": "just"
+    },
+    {
+      "subtree": ".bin/kube-linter",
+      "kind": "binary",
+      "app": "kube-linter"
+    },
+    {
+      "subtree": ".bin/kubeconform",
+      "kind": "binary",
+      "app": "kubeconform"
+    },
+    {
+      "subtree": ".bin/kubectl",
+      "kind": "binary",
+      "app": "kubectl"
+    },
+    {
+      "subtree": ".bin/lefthook",
+      "kind": "binary",
+      "app": "lefthook"
+    },
+    {
+      "subtree": ".bin/lychee",
+      "kind": "binary",
+      "app": "lychee"
+    },
+    {
+      "subtree": ".bin/osv-scanner",
+      "kind": "binary",
+      "app": "osv-scanner"
+    },
+    {
+      "subtree": ".bin/oxipng",
+      "kind": "binary",
+      "app": "oxipng"
+    },
+    {
+      "subtree": ".bin/protoc",
+      "kind": "binary",
+      "app": "protoc"
+    },
+    {
+      "subtree": ".bin/protolint",
+      "kind": "binary",
+      "app": "protolint"
+    },
+    {
+      "subtree": ".bin/ruff",
+      "kind": "binary",
+      "app": "ruff"
+    },
+    {
+      "subtree": ".bin/scorecard",
+      "kind": "binary",
+      "app": "scorecard"
+    },
+    {
+      "subtree": ".bin/shellcheck",
+      "kind": "binary",
+      "app": "shellcheck"
+    },
+    {
+      "subtree": ".bin/shfmt",
+      "kind": "binary",
+      "app": "shfmt"
+    },
+    {
+      "subtree": ".bin/snyk",
+      "kind": "binary",
+      "app": "snyk"
+    },
+    {
+      "subtree": ".bin/sops",
+      "kind": "binary",
+      "app": "sops"
+    },
+    {
+      "subtree": ".bin/sqlc",
+      "kind": "binary",
+      "app": "sqlc"
+    },
+    {
+      "subtree": ".bin/swag",
+      "kind": "binary",
+      "app": "swag"
+    },
+    {
+      "subtree": ".bin/syft",
+      "kind": "binary",
+      "app": "syft"
+    },
+    {
+      "subtree": ".bin/task",
+      "kind": "binary",
+      "app": "task"
+    },
+    {
+      "subtree": ".bin/terraform-docs",
+      "kind": "binary",
+      "app": "terraform-docs"
+    },
+    {
+      "subtree": ".bin/terragrunt",
+      "kind": "binary",
+      "app": "terragrunt"
+    },
+    {
+      "subtree": ".bin/tflint",
+      "kind": "binary",
+      "app": "tflint"
+    },
+    {
+      "subtree": ".bin/tfupdate",
+      "kind": "binary",
+      "app": "tfupdate"
+    },
+    {
+      "subtree": ".bin/tofu",
+      "kind": "binary",
+      "app": "tofu"
+    },
+    {
+      "subtree": ".bin/trivy",
+      "kind": "binary",
+      "app": "trivy"
+    },
+    {
+      "subtree": ".bin/trufflehog",
+      "kind": "binary",
+      "app": "trufflehog"
+    },
+    {
+      "subtree": ".bin/typos",
+      "kind": "binary",
+      "app": "typos"
+    },
+    {
+      "subtree": ".bin/typst",
+      "kind": "binary",
+      "app": "typst"
+    },
+    {
+      "subtree": ".bin/typstyle",
+      "kind": "binary",
+      "app": "typstyle"
+    },
+    {
+      "subtree": ".bin/unfuck-ai-comments",
+      "kind": "binary",
+      "app": "unfuck-ai-comments"
+    },
+    {
+      "subtree": ".bin/utpm",
+      "kind": "binary",
+      "app": "utpm"
+    },
+    {
+      "subtree": ".bin/vacuum",
+      "kind": "binary",
+      "app": "vacuum"
+    },
+    {
+      "subtree": ".bin/vale",
+      "kind": "binary",
+      "app": "vale"
+    },
+    {
+      "subtree": ".bin/xh",
+      "kind": "binary",
+      "app": "xh"
+    },
+    {
+      "subtree": ".bin/yamlfmt",
+      "kind": "binary",
+      "app": "yamlfmt"
+    },
+    {
+      "subtree": ".bin/yq",
+      "kind": "binary",
+      "app": "yq"
+    }
+  ]
+}

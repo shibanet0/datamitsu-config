@@ -11,7 +11,7 @@ It generates:
 1. **Apps documentation** (`docs/reference/apps.md`) - List of 81+ managed applications
 2. **Tools documentation** (`docs/reference/tools.md`) - List of 15 configured tools with operations
 3. **Project Types documentation** (`docs/reference/project-types.md`) - List of 8 project type detectors
-4. **Init Configs documentation** (`docs/reference/init-configs.md`) - List of 30 files created by `dm init`
+4. **Setup Configs documentation** (`docs/reference/setup-configs.md`) - List of 30 files created by `dm setup`
 
 ## When to Use This Skill
 
@@ -30,7 +30,7 @@ The skill executes the following steps:
    - Executes `node scripts/generate-docs-apps.ts`
    - Executes `node scripts/generate-docs-tools.ts`
    - Executes `node scripts/generate-docs-project-types.ts`
-   - Executes `node scripts/generate-docs-init-configs.ts`
+   - Executes `node scripts/generate-docs-setup-configs.ts`
    - Runs `pnpm dm fix` to format generated files
 
 2. Shows a git diff of changes to review what was updated
@@ -42,7 +42,7 @@ The skill executes the following steps:
 - `docs/reference/apps.md` - Auto-generated from `pnpm dm config show` (apps field)
 - `docs/reference/tools.md` - Auto-generated from `pnpm dm config show` (tools field)
 - `docs/reference/project-types.md` - Auto-generated from `pnpm dm config show` (projectTypes field)
-- `docs/reference/init-configs.md` - Auto-generated from `pnpm dm config show` (init field)
+- `docs/reference/setup-configs.md` - Auto-generated from `pnpm dm config show` (setup field)
 
 ## Integration
 

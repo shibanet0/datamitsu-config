@@ -1,3 +1,8 @@
+# Minimum release age (minutes) for `pull-*` registry updates: a new tool release
+# is not adopted until it is at least this old. 10080 = 7 days — datamitsu's own
+# default, pinned here so the policy is explicit and independent of that default.
+env:
+  DATAMITSU_MIN_RELEASE_AGE: "10080"
 tasks:
   # ──────────────────────────────────────────────
   # Build
@@ -10,7 +15,8 @@ tasks:
       - task: build:inline
       - pnpm exec tsdown
       - task: build:datamitsu-config
-    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config)
+      - task: docker:generate
+    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config → docker:generate)
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -31,6 +37,7 @@ tasks:
       - task: build:inline:commitlint
       - task: build:inline:knip
       - task: build:inline:cspell
+      - task: build:inline:oxfmt
     desc: Build all inline configs in parallel
   build:inline:commitlint:
     cmds:
@@ -48,6 +55,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
     desc: Build inline knip config
+  build:inline:oxfmt:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun
+    desc: Build inline oxfmt config
   build:inline:prettier:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
@@ -59,7 +70,7 @@ tasks:
   build:lib:datamitsu-types:
     cmds:
       - echo "// prettier-ignore" > src/datamitsu-config/datamitsu.config.d.ts
-      - datamitsu config types >> src/datamitsu-config/datamitsu.config.d.ts
+      - pnpm dm config types >> src/datamitsu-config/datamitsu.config.d.ts
     desc: Generate datamitsu.config.d.ts type file
   build:skills:
     cmds:
@@ -69,6 +80,13 @@ tasks:
     cmds:
       - node scripts/gen-tsconfig-md.ts
     desc: Regenerate src/datamitsu-config/tsconfig.md.ts from docs/reference/tsconfig.md
+  # ──────────────────────────────────────────────
+  # Docker
+  # ──────────────────────────────────────────────
+  docker:generate:
+    cmds:
+      - node scripts/generate-dockerfiles.ts --offline
+    desc: Regenerate docker/Dockerfile{,.alpine} from the config via devtools dockerfile
   docs:build:
     cmds:
       - pnpm dm exec zensical -- build
@@ -85,20 +103,20 @@ tasks:
       - docs:generate:apps
       - docs:generate:tools
       - docs:generate:project-types
-      - docs:generate:init-configs
+      - docs:generate:setup-configs
     desc: Generate all documentation
   docs:generate:apps:
     cmds:
       - node scripts/generate-docs-apps.ts
     desc: Generate docs/reference/apps.md from config
-  docs:generate:init-configs:
-    cmds:
-      - node scripts/generate-docs-init-configs.ts
-    desc: Generate docs/reference/init-configs.md from init config
   docs:generate:project-types:
     cmds:
       - node scripts/generate-docs-project-types.ts
     desc: Generate docs/reference/project-types.md from project config
+  docs:generate:setup-configs:
+    cmds:
+      - node scripts/generate-docs-setup-configs.ts
+    desc: Generate docs/reference/setup-configs.md from setup config
   docs:generate:tools:
     cmds:
       - node scripts/generate-docs-tools.ts
@@ -130,18 +148,6 @@ tasks:
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────
-  pull:fnm:
-    cmds:
-      - pnpm dm devtools pull-fnm ./src/datamitsu-config/registries/fnmVersions.json
-      - node scripts/sync-fnm-versions-to-package-json.ts
-      - pnpm dm fix ./src/datamitsu-config/registries/fnmVersions.json
-    desc: Pull fnm versions (no update)
-  pull:fnm:update:
-    cmds:
-      - pnpm dm devtools pull-fnm --update ./src/datamitsu-config/registries/fnmVersions.json
-      - node scripts/sync-fnm-versions-to-package-json.ts
-      - pnpm dm fix ./src/datamitsu-config/registries/fnmVersions.json
-    desc: Pull fnm versions with update flag
   pull:github:
     cmds:
       - datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
@@ -152,6 +158,21 @@ tasks:
       - datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
       - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry with update flag
+  # ──────────────────────────────────────────────
+  # Pull / registry update
+  # ──────────────────────────────────────────────
+  pull:node:
+    cmds:
+      - pnpm dm devtools pull-node ./src/datamitsu-config/registries/nodeVersions.json
+      - node scripts/sync-node-versions-to-package-json.ts
+      - pnpm dm fix ./src/datamitsu-config/registries/nodeVersions.json
+    desc: Pull node versions (no update)
+  pull:node:update:
+    cmds:
+      - pnpm dm devtools pull-node --update ./src/datamitsu-config/registries/nodeVersions.json
+      - node scripts/sync-node-versions-to-package-json.ts
+      - pnpm dm fix ./src/datamitsu-config/registries/nodeVersions.json
+    desc: Pull node versions with update flag
   pull:runtimes:update:
     cmds:
       - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json
@@ -181,7 +202,7 @@ tasks:
   sync:datamitsu-version:
     cmds:
       - node scripts/sync-datamitsu-version.ts
-    desc: Sync @datamitsu/datamitsu version from package.json to Dockerfile and datamitsu.config.ts
+    desc: Sync @datamitsu/datamitsu min version from package.json into datamitsu.config.ts
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────

@@ -15,9 +15,8 @@ export class MockCryptoBuilder {
   }
 
   /**
-   * Build the mock crypto module
-   * Note: This only mocks randomBytes for deterministic testing
-   * Other crypto functions use the real implementation
+   * Build the mock crypto module Note: This only mocks randomBytes for deterministic testing Other
+   * crypto functions use the real implementation
    */
   build(realCrypto: CryptoModule): Partial<CryptoModule> {
     const getMockRandomBytes = (size: number) => {

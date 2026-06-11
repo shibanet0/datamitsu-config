@@ -5,6 +5,8 @@ import {
   eslintGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  markdownGlobs,
+  oxfmtGlobs,
   oxlintGlobs,
   packageJsonGlobs,
   prettierGlobs,
@@ -23,7 +25,10 @@ type Tool =
   | "editorconfig-checker"
   | "eslint"
   | "golangci-lint"
+  | "golangci-lint-fmt"
   | "hadolint"
+  | "harper-cli"
+  | "oxfmt"
   | "oxlint"
   | "pre-commit"
   | "prettier"
@@ -39,26 +44,64 @@ type Tool =
   | "tflint"
   | "toml"
   | "tsc"
+  | "tsgo"
   | "typstyle"
+  | "vale"
   | "yamlfmt"
   | "yamllint"
   | "yq-json"
   | "yq-properties"
   | "yq-yaml";
 
-const _toolPriority: Tool[] = [
+const toPriorityMap = (list: Tool[]): Record<Tool, number> =>
+  [...new Set<Tool>(list)].reduce<Record<Tool, number>>(
+    (acc, el, i) => {
+      acc[el] = i;
+      return acc;
+    },
+    {} as Record<Tool, number>,
+  );
+
+// Priority order for `fix` operations. Only includes tools that expose a fix.
+const _fixPriority: Tool[] = [
   "syncpack",
   "oxlint",
-  "tsc",
-  "cspell",
   "yq-json",
   "yq-properties",
   "eslint",
   "prettier",
+  "oxfmt",
   "sort-package-json",
   "golangci-lint",
   "ruff",
   "ruff-format",
+  "typstyle",
+  "dotenv-linter",
+  "shfmt",
+  "toml",
+  "terraform-fmt",
+  "terragrunt-fmt",
+  "terraform-docs",
+  "yq-yaml",
+  "yamlfmt",
+  "pre-commit",
+];
+
+// Priority order for `lint` operations. Only includes tools that expose a lint.
+const _lintPriority: Tool[] = [
+  "syncpack",
+  "oxlint",
+  "tsc",
+  "tsgo",
+  "cspell",
+  "harper-cli",
+  "vale",
+  "eslint",
+  "prettier",
+  "oxfmt",
+  "sort-package-json",
+  "golangci-lint",
+  "golangci-lint-fmt",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -68,45 +111,16 @@ const _toolPriority: Tool[] = [
   "toml",
   "tflint",
   "terraform-fmt",
-  "terragrunt-fmt",
-  "terraform-docs",
-  "yq-yaml",
   "yamlfmt",
   "yamllint",
-  "pre-commit",
 ];
-const toolPriority = [...new Set<Tool>(_toolPriority)].reduce<Record<Tool, number>>(
-  (acc, el, i) => {
-    acc[el] = i;
-    return acc;
-  },
-  {} as Record<Tool, number>,
-);
+
+const fixPriority = toPriorityMap(_fixPriority);
+const lintPriority = toPriorityMap(_lintPriority);
 
 const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 export const toolsConfig: config.MapOfTools = {
-  ...(isCI && {
-    trufflehog: {
-      name: "trufflehog",
-      operations: {
-        lint: {
-          app: "trufflehog",
-          args: [
-            "filesystem",
-            "{root}",
-            "--only-verified",
-            "--fail",
-            "--no-update",
-            "--exclude-paths",
-            "{root}/.trufflehog-exclude-paths.txt",
-          ],
-          globs: ["**/*"],
-          scope: "repository",
-        },
-      },
-    },
-  }),
   cspell: {
     name: "CSpell - A Spelling Checker for Code!",
     operations: {
@@ -125,7 +139,7 @@ export const toolsConfig: config.MapOfTools = {
           "{files}",
         ],
         globs: ["**/*"],
-        priority: toolPriority.cspell,
+        priority: lintPriority.cspell,
         scope: "per-project",
       },
     },
@@ -138,7 +152,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["fix", "{files}"],
         batch: true,
         globs: dotenvLinterGlobs,
-        priority: toolPriority["dotenv-linter"],
+        priority: fixPriority["dotenv-linter"],
         scope: "per-file",
       },
       lint: {
@@ -146,7 +160,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["check", "{files}"],
         batch: true,
         globs: dotenvLinterGlobs,
-        priority: toolPriority["dotenv-linter"],
+        priority: lintPriority["dotenv-linter"],
         scope: "per-file",
       },
     },
@@ -158,7 +172,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "editorconfig-checker",
         args: ["-config", ".editorconfig-checker.json"],
         globs: ["**/*"],
-        priority: toolPriority["editorconfig-checker"],
+        priority: lintPriority["editorconfig-checker"],
         scope: "repository",
       },
     },
@@ -171,7 +185,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.js", "{files}"],
         batch: true,
         globs: eslintGlobs,
-        priority: toolPriority.eslint,
+        priority: fixPriority.eslint,
         scope: "per-project",
       },
       lint: {
@@ -179,7 +193,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--quiet", "-c", "{cwd}/eslint.config.js", "{files}"],
         batch: true,
         globs: eslintGlobs,
-        priority: toolPriority.eslint,
+        priority: lintPriority.eslint,
         scope: "per-project",
       },
     },
@@ -222,14 +236,35 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "golangci-lint",
-        args: ["run", "--fix"],
-        priority: toolPriority["golangci-lint"],
+        args: ["run", "--fix", "--allow-parallel-runners"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
+        priority: fixPriority["golangci-lint"],
         scope: "per-project",
       },
       lint: {
         app: "golangci-lint",
-        args: ["run"],
-        priority: toolPriority["golangci-lint"],
+        args: ["run", "--allow-parallel-runners"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
+        priority: lintPriority["golangci-lint"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["golang-package"],
+  },
+  "golangci-lint-fmt": {
+    name: "golangci-lint - Go Linter",
+    operations: {
+      fix: {
+        app: "golangci-lint",
+        args: ["fmt"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
+        priority: fixPriority["golangci-lint-fmt"],
         scope: "per-project",
       },
     },
@@ -242,8 +277,54 @@ export const toolsConfig: config.MapOfTools = {
         app: "hadolint",
         args: ["-c", "{root}/hadolint.yaml", "--verbose", "{file}"],
         globs: dockerfileGlobs,
-        priority: toolPriority.hadolint,
+        priority: lintPriority.hadolint,
         scope: "per-file",
+      },
+    },
+  },
+  "harper-cli": {
+    name: "Harper - The Grammar Checker for Developers",
+    operations: {
+      lint: {
+        app: "harper-cli",
+        args: ["lint", "--dialect", "us", "--format", "compact", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        priority: lintPriority["harper-cli"],
+        scope: "repository",
+      },
+    },
+  },
+  knip: {
+    name: "Knip - Find unused files, dependencies, and exports",
+    operations: {
+      lint: {
+        app: "knip",
+        args: ["--config", "{root}/knip.config.js"],
+        globs: [],
+        scope: "repository",
+      },
+    },
+    projectTypes: ["npm-package", "typescript-project"],
+  },
+  oxfmt: {
+    name: "oxfmt - The JavaScript Oxidation Compiler Formatter",
+    operations: {
+      fix: {
+        app: "oxfmt",
+        args: ["--write", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        batch: true,
+        globs: oxfmtGlobs,
+        priority: fixPriority.oxfmt,
+        scope: "repository",
+      },
+      lint: {
+        app: "oxfmt",
+        args: ["--check", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        batch: true,
+        globs: oxfmtGlobs,
+        priority: lintPriority.oxfmt,
+        scope: "repository",
       },
     },
   },
@@ -255,7 +336,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "--fix", "{files}"],
         batch: true,
         globs: oxlintGlobs,
-        priority: toolPriority.oxlint,
+        priority: fixPriority.oxlint,
         scope: "per-project",
       },
       lint: {
@@ -263,7 +344,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "{files}"],
         batch: true,
         globs: oxlintGlobs,
-        priority: toolPriority.oxlint,
+        priority: lintPriority.oxlint,
         scope: "per-project",
       },
     },
@@ -276,7 +357,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "pre-commit",
         args: ["run", "--all-files", "--color=always"],
         globs: ["**/*"],
-        priority: toolPriority["pre-commit"],
+        priority: fixPriority["pre-commit"],
         scope: "repository",
       },
     },
@@ -290,7 +371,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["-u", "--write", "--config", "{cwd}/prettier.config.js", "{files}"],
         batch: true,
         globs: prettierGlobs,
-        priority: toolPriority.prettier,
+        priority: fixPriority.prettier,
         scope: "per-project",
       },
       lint: {
@@ -298,7 +379,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["-u", "--check", "--config", "{cwd}/prettier.config.js", "{files}"],
         batch: true,
         globs: prettierGlobs,
-        priority: toolPriority.prettier,
+        priority: lintPriority.prettier,
         scope: "per-project",
       },
     },
@@ -312,7 +393,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["check", "--fix", "--quiet", "{files}"],
         batch: true,
         globs: ["**/*.py", "**/*.pyi"],
-        priority: toolPriority.ruff,
+        priority: fixPriority.ruff,
         scope: "per-project",
       },
       lint: {
@@ -320,7 +401,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["check", "--quiet", "{files}"],
         batch: true,
         globs: ["**/*.py", "**/*.pyi"],
-        priority: toolPriority.ruff,
+        priority: lintPriority.ruff,
         scope: "per-project",
       },
     },
@@ -334,7 +415,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["format", "--quiet", "{files}"],
         batch: true,
         globs: ["**/*.py", "**/*.pyi"],
-        priority: toolPriority["ruff-format"],
+        priority: fixPriority["ruff-format"],
         scope: "per-project",
       },
       lint: {
@@ -342,7 +423,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["format", "--check", "--quiet", "{files}"],
         batch: true,
         globs: ["**/*.py", "**/*.pyi"],
-        priority: toolPriority["ruff-format"],
+        priority: lintPriority["ruff-format"],
         scope: "per-project",
       },
     },
@@ -355,7 +436,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "shellcheck",
         args: ["-x", "{file}"],
         globs: shellGlobs,
-        priority: toolPriority.shellcheck,
+        priority: lintPriority.shellcheck,
         scope: "per-file",
       },
     },
@@ -365,16 +446,16 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "shfmt",
-        args: ["-w", "-i", "2", "-ci", "-sr", "{file}"],
+        args: ["-w", "-i", String(indentSettings.indentWidth), "-ci", "-sr", "{file}"],
         globs: shellGlobs,
-        priority: toolPriority.shfmt,
+        priority: fixPriority.shfmt,
         scope: "per-file",
       },
       lint: {
         app: "shfmt",
-        args: ["-d", "-i", "2", "-ci", "-sr", "{file}"],
+        args: ["-d", "-i", String(indentSettings.indentWidth), "-ci", "-sr", "{file}"],
         globs: shellGlobs,
-        priority: toolPriority.shfmt,
+        priority: lintPriority.shfmt,
         scope: "per-file",
       },
     },
@@ -387,7 +468,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--quiet"],
         batch: false,
         globs: packageJsonGlobs,
-        priority: toolPriority["sort-package-json"],
+        priority: fixPriority["sort-package-json"],
         scope: "per-file",
       },
       lint: {
@@ -395,7 +476,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--check", "--quiet"],
         batch: false,
         globs: packageJsonGlobs,
-        priority: toolPriority["sort-package-json"],
+        priority: lintPriority["sort-package-json"],
         scope: "per-file",
       },
     },
@@ -408,14 +489,14 @@ export const toolsConfig: config.MapOfTools = {
         app: "syncpack",
         args: ["fix", "--config", "{root}/.syncpackrc.json"],
         globs: packageJsonGlobs,
-        priority: toolPriority.syncpack,
+        priority: fixPriority.syncpack,
         scope: "repository",
       },
       lint: {
         app: "syncpack",
         args: ["lint", "--config", "{root}/.syncpackrc.json"],
         globs: packageJsonGlobs,
-        priority: toolPriority.syncpack,
+        priority: lintPriority.syncpack,
         scope: "repository",
       },
     },
@@ -436,7 +517,7 @@ export const toolsConfig: config.MapOfTools = {
           "{cwd}",
         ],
         globs: ["**/*.tf"],
-        priority: toolPriority["terraform-docs"],
+        priority: fixPriority["terraform-docs"],
         scope: "per-project",
       },
     },
@@ -449,7 +530,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "terragrunt",
         args: ["hclfmt"],
         globs: ["**/*.hcl"],
-        priority: toolPriority["terragrunt-fmt"],
+        priority: fixPriority["terragrunt-fmt"],
         scope: "repository",
       },
     },
@@ -469,7 +550,7 @@ export const toolsConfig: config.MapOfTools = {
           "--call-module-type=none",
         ],
         globs: ["**/*.tf"],
-        priority: toolPriority.tflint,
+        priority: lintPriority.tflint,
         scope: "per-project",
       },
     },
@@ -494,14 +575,14 @@ export const toolsConfig: config.MapOfTools = {
         app: "tofu",
         args: ["fmt", "-recursive", "{cwd}"],
         globs: ["**/*.tf", "**/*.tfvars"],
-        priority: toolPriority["terraform-fmt"],
+        priority: fixPriority["terraform-fmt"],
         scope: "per-project",
       },
       lint: {
         app: "tofu",
         args: ["fmt", "-check", "-recursive", "-diff", "{cwd}"],
         globs: ["**/*.tf", "**/*.tfvars"],
-        priority: toolPriority["terraform-fmt"],
+        priority: lintPriority["terraform-fmt"],
         scope: "per-project",
       },
     },
@@ -515,7 +596,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["format", "--quiet", "--no-cache", "--offline", "{files}"],
         batch: true,
         globs: tomlGlobs,
-        priority: toolPriority.toml,
+        priority: fixPriority.toml,
         scope: "repository",
       },
       lint: {
@@ -523,10 +604,31 @@ export const toolsConfig: config.MapOfTools = {
         args: ["lint", "--quiet", "--no-cache", "--offline", "{files}"],
         batch: true,
         globs: tomlGlobs,
-        priority: toolPriority.toml,
+        priority: lintPriority.toml,
         scope: "repository",
       },
     },
+  },
+  trufflehog: {
+    name: "trufflehog",
+    operations: {
+      lint: {
+        app: "trufflehog",
+        args: [
+          "filesystem",
+          "{root}",
+          "--only-verified",
+          "--fail",
+          "--no-update",
+          "--exclude-paths",
+          "{root}/.trufflehog-exclude-paths.txt",
+        ],
+        globs: ["**/*"],
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
   },
   tsc: {
     name: "Tsc",
@@ -535,7 +637,20 @@ export const toolsConfig: config.MapOfTools = {
         app: "tsc",
         args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
         globs: typescriptGlobs,
-        priority: toolPriority.tsc,
+        priority: lintPriority.tsc,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["typescript-project"],
+  },
+  tsgo: {
+    name: "tsgo",
+    operations: {
+      lint: {
+        app: "tsgo",
+        args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
+        globs: typescriptGlobs,
+        priority: lintPriority.tsgo,
         scope: "per-project",
       },
     },
@@ -548,31 +663,44 @@ export const toolsConfig: config.MapOfTools = {
         app: "typstyle",
         args: [
           "-l",
-          String(indentSettings.typ?.lineWidth),
+          String(indentSettings.lineWidth),
           "-t",
-          String(indentSettings.typ?.indentWidth),
+          String(indentSettings.indentWidth),
           "-v",
           "--inplace",
           "{file}",
         ],
         globs: typstGlobs,
-        priority: toolPriority.typstyle,
+        priority: fixPriority.typstyle,
         scope: "per-file",
       },
       lint: {
         app: "typstyle",
         args: [
           "-l",
-          String(indentSettings.typ?.lineWidth),
+          String(indentSettings.lineWidth),
           "-t",
-          String(indentSettings.typ?.indentWidth),
+          String(indentSettings.indentWidth),
           "-v",
           "--check",
           "{file}",
         ],
         globs: typstGlobs,
-        priority: toolPriority.typstyle,
+        priority: lintPriority.typstyle,
         scope: "per-file",
+      },
+    },
+  },
+  vale: {
+    name: "Vale - A Syntax-Aware Linter for Prose",
+    operations: {
+      lint: {
+        app: "vale",
+        args: ["--config", "{root}/.vale.ini", "--output", "line", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        priority: lintPriority.vale,
+        scope: "repository",
       },
     },
   },
@@ -585,7 +713,7 @@ export const toolsConfig: config.MapOfTools = {
         batch: true,
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
-        priority: toolPriority.yamlfmt,
+        priority: fixPriority.yamlfmt,
         scope: "repository",
       },
       lint: {
@@ -594,7 +722,7 @@ export const toolsConfig: config.MapOfTools = {
         batch: true,
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
-        priority: toolPriority.yamlfmt,
+        priority: lintPriority.yamlfmt,
         scope: "repository",
       },
     },
@@ -608,7 +736,7 @@ export const toolsConfig: config.MapOfTools = {
         batch: true,
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
-        priority: toolPriority.yamllint,
+        priority: lintPriority.yamllint,
         scope: "repository",
       },
     },
@@ -621,7 +749,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["-i", "-p", "json", "-o", "json", "sort_keys(..)", "{file}"],
         excludeGlobs: jsonExcludeGlobs,
         globs: jsonGlobs,
-        priority: toolPriority["yq-json"],
+        priority: fixPriority["yq-json"],
         scope: "per-file",
       },
     },
@@ -633,7 +761,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "yq",
         args: ["-i", "-p", "props", "-o", "props", "sort_keys(..)", "{file}"],
         globs: propertiesGlobs,
-        priority: toolPriority["yq-properties"],
+        priority: fixPriority["yq-properties"],
         scope: "per-file",
       },
     },
@@ -646,7 +774,7 @@ export const toolsConfig: config.MapOfTools = {
         args: ["-i", "sort_keys(..)", "{file}"],
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
-        priority: toolPriority["yq-yaml"],
+        priority: fixPriority["yq-yaml"],
         scope: "per-file",
       },
     },
