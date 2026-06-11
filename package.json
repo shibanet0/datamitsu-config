@@ -46,6 +46,7 @@
   "files": [
     "datamitsu.config.js",
     "datamitsu.config.oci-ghcr.js",
+    "datamitsu.config.oci-dockerhub.js",
     "datamitsu.config.d.ts",
     "tsconfig/**",
     "dist/**",

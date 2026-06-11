@@ -2,18 +2,19 @@
 
 Every release of this package also publishes its full tool store as an [OCI bundle](https://datamitsu.com/docs/guides/oci-bundles): a digest-pinned image on `ghcr.io` whose layers datamitsu can pull directly — no docker required. With seeding enabled, tools arrive as pre-installed store layers instead of being downloaded and built one by one, and a seeded store works fully offline.
 
-Seeding is **opt-in**. The package ships two otherwise identical configs:
+Seeding is **opt-in**. The package ships three otherwise identical configs:
 
-| File                           | `oci` pin                                                           | Use                                                 |
-| ------------------------------ | ------------------------------------------------------------------- | --------------------------------------------------- |
-| `datamitsu.config.js`          | none                                                                | the default — tools download directly from upstream |
-| `datamitsu.config.oci-ghcr.js` | `ghcr.io/shibanet0/datamitsu-config@sha256:…` of this exact release | opt-in bundle seeding                               |
+| File                                | `oci` pin                                                                   | Use                                                 |
+| ----------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------- |
+| `datamitsu.config.js`               | none                                                                        | the default — tools download directly from upstream |
+| `datamitsu.config.oci-ghcr.js`      | `ghcr.io/shibanet0/datamitsu-config@sha256:…` of this exact release         | opt-in bundle seeding from GHCR                     |
+| `datamitsu.config.oci-dockerhub.js` | `index.docker.io/shibanet0/datamitsu-config@sha256:…` — the **same** digest | opt-in bundle seeding from the Docker Hub mirror    |
 
-The digest is coupled to the release it ships with: the bundle, the config, and the pin always come from the same build, so store paths match exactly.
+The digest is coupled to the release it ships with: the bundle, the config, and the pin always come from the same build, so store paths match exactly. The Docker Hub mirror is copied **by digest** from GHCR (stable releases only), so the two variants differ in nothing but the registry host — pick whichever your network reaches faster. The Docker Hub ref uses `index.docker.io` (the registry API host) rather than the `docker.io` alias, which only the docker CLI understands.
 
 ## Enabling
 
-Point your project config at the `oci-ghcr` variant instead of the default:
+Point your project config at the `oci-ghcr` variant (or `oci-dockerhub`) instead of the default:
 
 ```ts title="datamitsu.config.ts"
 function getBeforeConfigs() {
