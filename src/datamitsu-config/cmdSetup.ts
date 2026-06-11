@@ -278,6 +278,7 @@ export const setup: config.MapOfConfigSetup = {
           path: MANAGED_EXTEND_PATH,
         },
         title,
+        useDefault: undefined,
       });
     },
     otherFileNameList: ["gitleaks.toml"],
