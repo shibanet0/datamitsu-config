@@ -1,4 +1,4 @@
-**/*: vale, harper-cli, knip, typos, lychee, grype, trivy, osv-scanner, bearer
+**/*: vale, harper-cli, knip, typos, lychee, grype, trivy, osv-scanner, bearer, actionlint
 # Generated layer→subtree maps (devtools dockerfile --emit-oci-map): raw
 # generator output must stay byte-stable for the Dockerfile drift gate.
 docker/oci-map*.json: *
