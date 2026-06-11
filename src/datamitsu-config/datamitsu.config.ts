@@ -2,6 +2,7 @@ import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents
 import { mapOfApps } from "./apps";
 import { initCommands, setup } from "./cmdSetup";
 import { buildManagedGitleaksToml } from "./gitleaksDefaults";
+import { ociBundle } from "./oci";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
 import { SKILLS } from "./skills";
@@ -79,6 +80,10 @@ function getConfig(cfg: config.Config): config.Config {
           }
         : {}),
     },
+    // Release builds carry the OCI bundle pin (see ./oci.ts); consumers'
+    // datamitsu then seeds the tool store from the bundle on demand instead
+    // of downloading every tool individually.
+    ...(ociBundle ? { oci: ociBundle } : {}),
     setup,
     sharedStorage: {
       ...cfg.sharedStorage,
