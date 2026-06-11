@@ -862,7 +862,7 @@ export const setup: config.MapOfConfigSetup = {
     scope: "git-root",
     tools: ["yamllint"],
   },
-  "commitlint.config.js": {
+  "commitlint.config.mjs": {
     content: (context) => {
       return [
         `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
@@ -891,7 +891,7 @@ export const setup: config.MapOfConfigSetup = {
     ],
     scope: "git-root",
   },
-  "cspell.config.js": {
+  "cspell.config.mjs": {
     content: (context) => {
       return [
         `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
@@ -958,7 +958,7 @@ export const setup: config.MapOfConfigSetup = {
       "taplo.toml",
     ],
   },
-  "eslint.config.js": {
+  "eslint.config.mjs": {
     content: (context) => {
       if (env().DATAMITSU_DEV_MODE) {
         return `import { join } from "node:path";
@@ -1342,7 +1342,7 @@ export default config;
     projectTypes: ["pnpm-package"],
     scope: "git-root",
   },
-  "prettier.config.js": {
+  "prettier.config.mjs": {
     content: (context) => {
       return [
         `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "prettier.config.js"))}";`,
