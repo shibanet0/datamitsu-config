@@ -1,18 +1,19 @@
 /**
- * OCI bundle pin for the published config.
+ * OCI bundle pin slot.
  *
- * The bundle digest only exists AFTER the release workflow has built and pushed the docker images,
- * but the config ships INSIDE those images and on npm from the same workflow — so the pin cannot
- * live in the source. Instead the release publish steps run scripts/inject-oci-pin.ts, which
- * replaces the placeholder below in the BUILT datamitsu.config.js with the freshly published bundle
- * reference.
+ * The DEFAULT published config never carries a pin: the placeholder below parses to `undefined`, so
+ * no `oci` key is emitted and store seeding stays opt-in. At release time scripts/inject-oci-pin.ts
+ * produces the SEPARATE `datamitsu.config.oci-ghcr.js` variant — a copy of the built default with
+ * the placeholder replaced by the freshly published ghcr.io bundle reference. Consumers enable
+ * seeding by pointing getBeforeConfigs() at that variant (see docs/get-started/oci-bundle.md), and
+ * can override the `oci` key in their own config layer (e.g. to pull through a corporate registry
+ * mirror — the digest stays the same, so verification is unaffected).
  *
- * Everywhere else the placeholder survives and parses to `undefined`, so no `oci` key is emitted:
- * local builds, PR builds, and — deliberately — the config baked into the docker images themselves
- * (a bundle must not self-reference, and containers already carry the full store).
+ * The config baked into the docker images keeps the placeholder too: a bundle must not
+ * self-reference, and containers already carry the full store.
  */
 
-// Replaced by scripts/inject-oci-pin.ts at publish time with a JSON string
+// Replaced by scripts/inject-oci-pin.ts in the oci variant with a JSON string
 // literal like {"digest":"sha256:…","ref":"ghcr.io/…"}.
 const OCI_BUNDLE_PIN = "__DATAMITSU_OCI_BUNDLE_PIN__";
 

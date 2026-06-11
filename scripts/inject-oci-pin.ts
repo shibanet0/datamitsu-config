@@ -1,13 +1,13 @@
 /**
- * Pins the freshly published OCI bundle into the built datamitsu.config.js.
+ * Pins the freshly published OCI bundle into the opt-in config variant.
  *
  * Run by the release publish steps AFTER scripts/oci-bundle-postprocess.ts produced the bundle
  * digest: replaces the `__DATAMITSU_OCI_BUNDLE_PIN__` placeholder (see src/datamitsu-config/oci.ts)
- * with the JSON bundle reference, so every consumer of the published config gets store seeding from
- * the bundle automatically.
+ * in a COPY of the built config, producing `datamitsu.config.oci-ghcr.js`. The default
+ * `datamitsu.config.js` is published untouched — seeding stays opt-in.
  *
  * Usage: node scripts/inject-oci-pin.ts --ref ghcr.io/owner/repo --digest sha256:… [--file
- * datamitsu.config.js]
+ * datamitsu.config.oci-ghcr.js]
  */
 
 import { readFile, writeFile } from "node:fs/promises";
@@ -25,7 +25,7 @@ const get = (flag: string): string | undefined => {
 
 const ref = get("--ref");
 const digest = get("--digest");
-const file = get("--file") ?? "datamitsu.config.js";
+const file = get("--file") ?? "datamitsu.config.oci-ghcr.js";
 
 if (!ref || !digest) {
   console.error("Required: --ref <host/repo> --digest <sha256:...>");

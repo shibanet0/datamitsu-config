@@ -133,6 +133,7 @@ dist-datamitsu-config/
 **/e2e/screenshots/
 **/e2e/videos/
 datamitsu.config.js
+datamitsu.config.oci-ghcr.js
 oxlint_configuration_schema.json
 
 # ralphex progress logs

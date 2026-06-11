@@ -45,6 +45,7 @@
   },
   "files": [
     "datamitsu.config.js",
+    "datamitsu.config.oci-ghcr.js",
     "datamitsu.config.d.ts",
     "tsconfig/**",
     "dist/**",

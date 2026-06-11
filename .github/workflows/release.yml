@@ -219,8 +219,9 @@ jobs:
         with:
           name: release-artifacts
           path: .
-      - name: Pin the OCI bundle into the published config
+      - name: Produce the opt-in OCI config variant
         run: |
+          cp datamitsu.config.js datamitsu.config.oci-ghcr.js
           node scripts/inject-oci-pin.ts \
             --ref "${{ needs.publish-oci-bundle.outputs.bundle_image }}" \
             --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}"
@@ -252,6 +253,7 @@ jobs:
           draft: false
           files: |
             datamitsu.config.js
+            datamitsu.config.oci-ghcr.js
             dist-datamitsu-config/datamitsu.config.d.ts
           name: Release ${{ needs.validate-stable.outputs.version }}
           prerelease: ${{ contains(needs.validate-stable.outputs.version, '-rc.') || contains(needs.validate-stable.outputs.version, '-alpha.') }}
@@ -304,8 +306,9 @@ jobs:
             echo "tag=unstable" >> $GITHUB_OUTPUT
             echo "npm tag: unstable"
           fi
-      - name: Pin the OCI bundle into the published config
+      - name: Produce the opt-in OCI config variant
         run: |
+          cp datamitsu.config.js datamitsu.config.oci-ghcr.js
           node scripts/inject-oci-pin.ts \
             --ref "${{ needs.publish-oci-bundle.outputs.bundle_image }}" \
             --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}"

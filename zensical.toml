@@ -66,6 +66,9 @@ Home = "index.md"
 "Getting Started" = "get-started/usage.md"
 
 [[project.nav]]
+"OCI Bundle Seeding" = "get-started/oci-bundle.md"
+
+[[project.nav]]
 Reference = [
   { Apps = "reference/apps.md" },
   { Tools = "reference/tools.md" },
