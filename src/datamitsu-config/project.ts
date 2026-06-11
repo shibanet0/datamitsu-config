@@ -5,6 +5,10 @@ export const projectTypes: config.MapOfProjectTypes = {
     description: "Go module",
     markers: ["**/go.mod"],
   },
+  "helm-chart": {
+    description: "Helm chart",
+    markers: ["**/Chart.yaml"],
+  },
   "npm-package": {
     description: "Node.js/npm project",
     markers: ["**/package.json"],

@@ -3,6 +3,7 @@ import {
   dockerfileGlobs,
   dotenvLinterGlobs,
   eslintGlobs,
+  helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
   markdownGlobs,
@@ -28,6 +29,7 @@ type Tool =
   | "golangci-lint-fmt"
   | "hadolint"
   | "harper-cli"
+  | "helm"
   | "oxfmt"
   | "oxlint"
   | "pre-commit"
@@ -108,6 +110,7 @@ const _lintPriority: Tool[] = [
   "shfmt",
   "shellcheck",
   "hadolint",
+  "helm",
   "toml",
   "tflint",
   "terraform-fmt",
@@ -294,6 +297,19 @@ export const toolsConfig: config.MapOfTools = {
         scope: "repository",
       },
     },
+  },
+  helm: {
+    name: "Helm - The Kubernetes Package Manager",
+    operations: {
+      lint: {
+        app: "helm",
+        args: ["lint", "{cwd}"],
+        globs: helmGlobs,
+        priority: lintPriority.helm,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["helm-chart"],
   },
   knip: {
     name: "Knip - Find unused files, dependencies, and exports",

@@ -17,6 +17,15 @@ export const eslintGlobs: string[] = [
   "**/*.json5",
 ];
 
+// Files whose edits should re-trigger `helm lint` for the enclosing chart.
+export const helmGlobs: string[] = [
+  "**/Chart.yaml",
+  "**/values.yaml",
+  "**/templates/**/*.yaml",
+  "**/templates/**/*.yml",
+  "**/templates/**/*.tpl",
+];
+
 export const jsonGlobs: string[] = ["**/*.json"];
 
 export const markdownGlobs: string[] = ["**/*.md", "**/*.markdown"];

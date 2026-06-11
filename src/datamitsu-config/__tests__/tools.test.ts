@@ -33,6 +33,7 @@ describe("tools", () => {
         "eslint",
         "golangci-lint",
         "hadolint",
+        "helm",
         "oxlint",
         "pre-commit",
         "prettier",
