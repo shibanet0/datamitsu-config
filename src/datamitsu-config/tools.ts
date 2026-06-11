@@ -81,6 +81,7 @@ const _fixPriority: Tool[] = [
   "dotenv-linter",
   "shfmt",
   "toml",
+  "tflint",
   "terraform-fmt",
   "terragrunt-fmt",
   "terraform-docs",
@@ -555,6 +556,21 @@ export const toolsConfig: config.MapOfTools = {
   tflint: {
     name: "TFLint - Terraform Linter",
     operations: {
+      fix: {
+        app: "tflint",
+        args: [
+          "--fix",
+          "--recursive",
+          "--config",
+          "{root}/.tflint.hcl",
+          "--color",
+          "--minimum-failure-severity=notice",
+          "--call-module-type=none",
+        ],
+        globs: ["**/*.tf"],
+        priority: fixPriority.tflint,
+        scope: "per-project",
+      },
       lint: {
         app: "tflint",
         args: [

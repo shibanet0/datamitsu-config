@@ -715,6 +715,7 @@ export const setup: config.MapOfConfigSetup = {
     },
     projectTypes: ["terraform-project"],
     scope: "git-root",
+    tools: ["tflint"],
   },
   ".tombi.toml": {
     content: (context) => {
