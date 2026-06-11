@@ -12,13 +12,14 @@ Do not edit manually. To update, run: `pnpm dm exec task -- docs:generate`
 Project types define how datamitsu detects different kinds of projects in your repository.
 Each type has marker files or patterns that datamitsu uses for automatic detection.
 
-This configuration includes **10 project types**.
+This configuration includes **11 project types**.
 
 ## Project Types Reference
 
 | Project Type           | Description                        | Marker Files              |
 | ---------------------- | ---------------------------------- | ------------------------- |
 | **golang-package**     | Go module                          | `**/go.mod`               |
+| **helm-chart**         | Helm chart                         | `**/Chart.yaml`           |
 | **npm-package**        | Node.js/npm project                | `**/package.json`         |
 | **pnpm-package**       | pnpm project                       | `pnpm-lock.yaml`          |
 | **pre-commit-project** | Project using pre-commit framework | `.pre-commit-config.yaml` |
