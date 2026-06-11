@@ -42,7 +42,7 @@ const BUILD_ARGS: Record<string, string> = {
  * them; list the genuinely-universal ones here to add them back. Triage the generator's "excluded N
  * app(s)…" warning to populate — keep dynamically-linked or arch-asymmetric tools OUT.
  */
-const VARIANTS: { flags: string[]; forceInclude: string[]; output: string }[] = [
+const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; output: string }[] = [
   {
     flags: [],
     forceInclude: [
@@ -52,6 +52,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; output: string }[] = 
       "typst",
       "xh",
     ],
+    ociMap: "docker/oci-map.json",
     output: "docker/Dockerfile",
   },
   {
@@ -105,6 +106,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; output: string }[] = 
       "yamlfmt",
       "yq",
     ],
+    ociMap: "docker/oci-map.alpine.json",
     output: "docker/Dockerfile.alpine",
   },
 ];
@@ -116,7 +118,7 @@ const buildArgFlags = Object.entries(BUILD_ARGS).flatMap(([key, value]) => [
 ]);
 const passthrough = process.argv.slice(2);
 
-for (const { flags, forceInclude, output } of VARIANTS) {
+for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
   const forceIncludeFlags =
     forceInclude.length > 0 ? ["--force-include", forceInclude.join(",")] : [];
   await execa(
@@ -126,6 +128,10 @@ for (const { flags, forceInclude, output } of VARIANTS) {
       "dockerfile",
       "--output",
       output,
+      // Layer→subtree map consumed by scripts/oci-bundle-postprocess.ts to
+      // annotate the pushed image manifests and assemble the OCI bundle index.
+      "--emit-oci-map",
+      ociMap,
       ...flags,
       ...labelArgs,
       ...buildArgFlags,
@@ -134,5 +140,5 @@ for (const { flags, forceInclude, output } of VARIANTS) {
     ],
     { preferLocal: true, stdio: "inherit" },
   );
-  console.log(`Generated ${output}`);
+  console.log(`Generated ${output} + ${ociMap}`);
 }

@@ -20,8 +20,10 @@ jobs:
       - name: Verify generated Dockerfiles are committed
         run: |
           node scripts/generate-dockerfiles.ts --offline
-          git diff --exit-code -- docker/Dockerfile docker/Dockerfile.alpine || {
-            echo "::error::docker/Dockerfile(.alpine) are stale — run 'pnpm exec task -- docker:generate' and commit."
+          # Untracked oci maps would slip past `git diff`, hence the add -N.
+          git add -N docker/
+          git diff --exit-code -- docker/ || {
+            echo "::error::docker/ generated files are stale — run 'pnpm exec task -- docker:generate' and commit."
             exit 1
           }
       - name: Run tests

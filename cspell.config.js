@@ -132,5 +132,9 @@ export default defineConfig((prev) => ({
     "mediatypes",
     "buildkitd",
     "buildx",
+    "ustar",
+    "typeflag",
+    "cdef",
+    "noci",
   ],
 }));

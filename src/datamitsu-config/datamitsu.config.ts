@@ -92,7 +92,7 @@ function getConfig(cfg: config.Config): config.Config {
 globalThis.getConfig = getConfig;
 
 const getMinVersion = (): string => {
-  return "0.1.1";
+  return "0.1.2";
 };
 
 globalThis.getMinVersion = getMinVersion;
