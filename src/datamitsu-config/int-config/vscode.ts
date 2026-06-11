@@ -666,6 +666,7 @@ export const vscodeSettings: (context: config.ConfigContext) => string = (contex
       ".pnp.*",
       ".pnpm*",
       ".prettier*",
+      ".oxfmt.config.ts",
       ".pylintrc",
       ".release-please*.json",
       ".releaserc*",
