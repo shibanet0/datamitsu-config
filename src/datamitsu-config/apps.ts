@@ -306,6 +306,7 @@ export const mapOfApps: BinManager.MapOfApps = {
         },
       }),
     },
+    lazy: true,
     // Stable .datamitsu/ symlink to the bundled theme so decks can reference it
     // by path (`theme: ./.datamitsu/slidev-theme-default`); slidev otherwise
     // resolves themes from the deck dir, which has no node_modules.
