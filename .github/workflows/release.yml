@@ -197,6 +197,7 @@ jobs:
       always() &&
       !cancelled() &&
       needs.build.result == 'success' &&
+      needs.publish-oci-bundle.result == 'success' &&
       needs.determine-release-type.outputs.is_stable == 'true'
     name: Publish to GitHub Releases
     needs:
@@ -204,17 +205,25 @@ jobs:
       - determine-release-type
       - validate-stable
       - generate-unstable-version
+      - publish-oci-bundle
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: release-artifacts
           path: .
+      - name: Pin the OCI bundle into the published config
+        run: |
+          node scripts/inject-oci-pin.ts \
+            --ref "${{ needs.publish-oci-bundle.outputs.bundle_image }}" \
+            --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}"
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Create GitHub Release
@@ -251,13 +260,15 @@ jobs:
     if: |
       always() &&
       !cancelled() &&
-      needs.build.result == 'success'
+      needs.build.result == 'success' &&
+      needs.publish-oci-bundle.result == 'success'
     name: Publish to npm
     needs:
       - build
       - determine-release-type
       - validate-stable
       - generate-unstable-version
+      - publish-oci-bundle
     permissions:
       contents: read
       id-token: write
@@ -293,6 +304,11 @@ jobs:
             echo "tag=unstable" >> $GITHUB_OUTPUT
             echo "npm tag: unstable"
           fi
+      - name: Pin the OCI bundle into the published config
+        run: |
+          node scripts/inject-oci-pin.ts \
+            --ref "${{ needs.publish-oci-bundle.outputs.bundle_image }}" \
+            --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}"
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Publish to npm
@@ -312,6 +328,9 @@ jobs:
       - generate-unstable-version
       - publish-docker
       - validate-stable
+    outputs:
+      bundle_digest: ${{ steps.bundle.outputs.bundle_digest }}
+      bundle_image: ${{ steps.image-name.outputs.name }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
