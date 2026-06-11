@@ -250,10 +250,30 @@
       "repo": "task",
       "tag": "v3.51.1"
     },
+    "terraform-docs": {
+      "owner": "terraform-docs",
+      "repo": "terraform-docs",
+      "tag": "v0.24.0"
+    },
+    "terragrunt": {
+      "owner": "gruntwork-io",
+      "repo": "terragrunt",
+      "tag": "v1.0.5"
+    },
     "tflint": {
       "owner": "terraform-linters",
       "repo": "tflint",
       "tag": "v0.63.1"
+    },
+    "tfupdate": {
+      "owner": "minamijoyo",
+      "repo": "tfupdate",
+      "tag": "v0.9.4"
+    },
+    "tofu": {
+      "owner": "opentofu",
+      "repo": "opentofu",
+      "tag": "v1.12.0"
     },
     "tombi": {
       "owner": "tombi-toml",
@@ -2903,6 +2923,134 @@
       "configHash": "9e43a5259e94839aa525f29049a648f2",
       "description": "A fast, cross-platform build tool inspired by Make, designed for modern workflows."
     },
+    "terraform-docs": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "3c3f7f18f908457fd1209cbe341418f7f6bae78c08126cfbe8de0d1b06aa8781",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-darwin-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "f6b114f4b032f3f9202ab6c23bfd28c3c8e68aeeb8a8f12fc118bf2073081d71",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-darwin-arm64.tar.gz"
+            }
+          }
+        },
+        "freebsd": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "8c79a973f03a14681494e96a1c3d77c9c3fb0751db818b4548d0c5456befe9fa",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-freebsd-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "206a1bf4aede19703c0e4f3dbc3c8abd5b3e006038a69a136090166e539e2333",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-freebsd-arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "9005daf969de0b50134493a2c00078b49f5f5b39d021cda7c89bf4d4f3d776d3",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs",
+              "contentType": "tar.gz",
+              "hash": "d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs.exe",
+              "contentType": "zip",
+              "hash": "afc02cbdf63726d3e5fb26a077ca1f24acd4820d7e44c21b03a3e030f9266490",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-windows-amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "terraform-docs-v0.24.0/terraform-docs.exe",
+              "contentType": "zip",
+              "hash": "1168c12929531ac9132c97fff794ef531ebb2a5b54c41870b9e19911950b6fd4",
+              "url": "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-windows-arm64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "2fbb0ac30253bd31f794c31691269fff"
+    },
+    "terragrunt": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "terragrunt_darwin_amd64",
+              "contentType": "tar.gz",
+              "hash": "a46ded9782f2891faf27ee5e3229369f29f4097128660eadd5e9955638423eee",
+              "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.5/terragrunt_darwin_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "terragrunt_darwin_arm64",
+              "contentType": "tar.gz",
+              "hash": "917e1067baf39d9b7cf5702a6ae37b0f617e7296b8743a037f0711fced493a3b",
+              "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.5/terragrunt_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "terragrunt_linux_amd64",
+              "contentType": "tar.gz",
+              "hash": "d6bb6d5706c2098c1e6f5825800f7d1338cf6e60d94801841374347ed28fe035",
+              "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.5/terragrunt_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "terragrunt_linux_arm64",
+              "contentType": "tar.gz",
+              "hash": "4898f5892c48bfe4032d7e1c166faea98b6319e6d6696c8422450b524692ee4c",
+              "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.5/terragrunt_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "f6d8ae6bfc13c56a9784db8fc85db8baf98d225d0e509f3f14e7cf3b670039e7",
+              "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.0.5/terragrunt_windows_amd64.exe"
+            }
+          }
+        }
+      },
+      "configHash": "9a56bcd768fb7886a04a4c6e87824563",
+      "description": "Terragrunt is a flexible orchestration tool that allows Infrastructure as Code written in OpenTofu/Terraform to scale."
+    },
     "tflint": {
       "binaries": {
         "darwin": {
@@ -2954,6 +3102,136 @@
       },
       "configHash": "d6d7730806719ccee31c7b96d4a2b240",
       "description": "A Pluggable Terraform Linter"
+    },
+    "tfupdate": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate",
+              "contentType": "tar.gz",
+              "hash": "b157e3ab5f3d87a6f78ab7c6cb10fdbb654e4633bf6f59c0f15ccd1f25661532",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_darwin_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate",
+              "contentType": "tar.gz",
+              "hash": "7cbeaec38fff75b6e7904f7dc09509bc3e96b08183f4460a0b5415d589ba423c",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate",
+              "contentType": "tar.gz",
+              "hash": "fbaecf2d6b4180792239076f917c35d12a8a67c7b223b8e9a36ab3852d4913e3",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate",
+              "contentType": "tar.gz",
+              "hash": "0d2d0928430e88d62378bc416134f75181c1046285d6b7d1e5f3cf6e2e8d795d",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate.exe",
+              "contentType": "tar.gz",
+              "hash": "5f58fc13b13d949565e5f761ecf7d8fa33d68e8333eb14b3972e60220b772149",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_windows_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "tfupdate-0.9.4/tfupdate.exe",
+              "contentType": "tar.gz",
+              "hash": "c9fd99679f54e6743f0e0f34e8e3ad089f2ef79076175c703e56586417d4bb86",
+              "url": "https://github.com/minamijoyo/tfupdate/releases/download/v0.9.4/tfupdate_0.9.4_windows_arm64.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "d8fdcdee8b76ec30220cb1305b4c2182"
+    },
+    "tofu": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "472a9b14bd9fc617b58dd00cf39411f64bd6fff6474d968a7ce041f33e991e72",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_darwin_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "9ad35307131102371d770cfc1a9806225fd5040acf1a3d3d8c3b5ad5418cd454",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "freebsd": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "ce2bf02629f57bb0e22ab461e28f2e7484c91bec8a547c63f8ce092d05da201f",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_freebsd_amd64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "5fe1da79e7779538a13713809e83abe1238b95a7abd43ecffc6161af10b0ddf7",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "2c7f48f95678cf75bbe34b66eeee35de75e6ee46e2ec4b55f80a0d93445f47d8",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "openbsd": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tofu-1.12.0/tofu",
+              "contentType": "tar.gz",
+              "hash": "9425c0b66cc7eae18f37a9369ef94fc420afd582713c9eae8eb00d9bb98c2625",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_openbsd_amd64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "tofu-1.12.0/tofu.exe",
+              "contentType": "tar.gz",
+              "hash": "5900eb95e934c4cebb22a487cfa372710dd1f0234400c1c16c0db63b8485e6ce",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_windows_amd64.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "e73e34c4c164a4493125ef2eda47f4c3"
     },
     "tombi": {
       "binaries": {

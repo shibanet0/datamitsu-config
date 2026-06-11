@@ -75,6 +75,11 @@
       "app": "knip"
     },
     {
+      "subtree": ".apps/jvm/ktfmt",
+      "kind": "app",
+      "app": "ktfmt"
+    },
+    {
       "subtree": ".apps/jvm/ktlint",
       "kind": "app",
       "app": "ktlint"
@@ -329,6 +334,11 @@
       "app": "harper-cli"
     },
     {
+      "subtree": ".bin/helm",
+      "kind": "binary",
+      "app": "helm"
+    },
+    {
       "subtree": ".bin/jq",
       "kind": "binary",
       "app": "jq"
@@ -347,6 +357,11 @@
       "subtree": ".bin/kubeconform",
       "kind": "binary",
       "app": "kubeconform"
+    },
+    {
+      "subtree": ".bin/kubectl",
+      "kind": "binary",
+      "app": "kubectl"
     },
     {
       "subtree": ".bin/lefthook",
@@ -429,9 +444,29 @@
       "app": "task"
     },
     {
+      "subtree": ".bin/terraform-docs",
+      "kind": "binary",
+      "app": "terraform-docs"
+    },
+    {
+      "subtree": ".bin/terragrunt",
+      "kind": "binary",
+      "app": "terragrunt"
+    },
+    {
       "subtree": ".bin/tflint",
       "kind": "binary",
       "app": "tflint"
+    },
+    {
+      "subtree": ".bin/tfupdate",
+      "kind": "binary",
+      "app": "tfupdate"
+    },
+    {
+      "subtree": ".bin/tofu",
+      "kind": "binary",
+      "app": "tofu"
     },
     {
       "subtree": ".bin/trivy",

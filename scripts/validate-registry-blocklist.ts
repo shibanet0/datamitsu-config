@@ -2,6 +2,7 @@ import fsPromise from "node:fs/promises";
 import path from "node:path";
 
 export interface Blocklist {
+  external: Record<string, BlocklistEntry>;
   github: Record<string, BlocklistEntry>;
   go: Record<string, BlocklistEntry>;
   node: Record<string, BlocklistEntry>;
@@ -67,7 +68,7 @@ export async function loadBlocklist(blocklistPath: string): Promise<Blocklist> {
   const blocklist = data as Blocklist;
 
   // Validate structure
-  const requiredKeys = ["node", "uv", "github", "runtimes"];
+  const requiredKeys = ["external", "node", "uv", "github", "runtimes"];
   for (const key of requiredKeys) {
     if (!(key in blocklist)) {
       throw new Error(`Invalid blocklist format: missing '${key}' section`);
@@ -128,6 +129,21 @@ export async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Validate externalApps.json
+  try {
+    const externalPath = path.join(registriesDir, "externalApps.json");
+    const externalContent = await fsPromise.readFile(externalPath, "utf8");
+    const externalRegistry = JSON.parse(externalContent) as {
+      apps?: Record<string, any>;
+      binaries?: Record<string, any>;
+    };
+    const externalErrors = validateExternalRegistry(externalRegistry, blocklist.external);
+    allErrors.push(...externalErrors);
+  } catch (error) {
+    console.error("Error validating externalApps.json:", error);
+    process.exit(1);
+  }
+
   // Validate runtimes.json
   try {
     const runtimesPath = path.join(registriesDir, "runtimes.json");
@@ -147,6 +163,52 @@ export async function main(): Promise<void> {
   }
 
   console.log("✅ Blocklist validation passed - no blocked packages found");
+}
+
+/**
+ * Validate external apps registry against blocklist Checks both 'apps' and 'binaries' sections
+ */
+export function validateExternalRegistry(
+  registry: { apps?: Record<string, any>; binaries?: Record<string, any> },
+  blocklist: Record<string, BlocklistEntry>,
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  if (registry.apps && typeof registry.apps === "object") {
+    for (const appName of Object.keys(registry.apps)) {
+      const normalizedName = appName.toLowerCase();
+
+      for (const [blockedName, entry] of Object.entries(blocklist)) {
+        if (normalizedName === blockedName.toLowerCase()) {
+          errors.push({
+            packageName: appName,
+            reason: entry.reason,
+            registry: "external/apps",
+            replacement: entry.replacement,
+          });
+        }
+      }
+    }
+  }
+
+  if (registry.binaries && typeof registry.binaries === "object") {
+    for (const binaryName of Object.keys(registry.binaries)) {
+      const normalizedName = binaryName.toLowerCase();
+
+      for (const [blockedName, entry] of Object.entries(blocklist)) {
+        if (normalizedName === blockedName.toLowerCase()) {
+          errors.push({
+            packageName: binaryName,
+            reason: entry.reason,
+            registry: "external/binaries",
+            replacement: entry.replacement,
+          });
+        }
+      }
+    }
+  }
+
+  return errors;
 }
 
 /**

@@ -1,3 +1,8 @@
+export const actionlintGlobs: string[] = [
+  "**/.github/workflows/*.yml",
+  "**/.github/workflows/*.yaml",
+];
+
 export const dockerfileGlobs: string[] = ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"];
 
 export const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
@@ -17,7 +22,18 @@ export const eslintGlobs: string[] = [
   "**/*.json5",
 ];
 
+// Files whose edits should re-trigger `helm lint` for the enclosing chart.
+export const helmGlobs: string[] = [
+  "**/Chart.yaml",
+  "**/values.yaml",
+  "**/templates/**/*.yaml",
+  "**/templates/**/*.yml",
+  "**/templates/**/*.tpl",
+];
+
 export const jsonGlobs: string[] = ["**/*.json"];
+
+export const makefileGlobs: string[] = ["**/Makefile", "**/GNUmakefile", "**/*.mk"];
 
 export const markdownGlobs: string[] = ["**/*.md", "**/*.markdown"];
 export const jsonExcludeGlobs: string[] = ["**/package.json", "**/package-lock.json"];
@@ -71,6 +87,8 @@ export const packageJsonGlobs: string[] = ["**/package.json"];
 export const prettierGlobs: string[] = [...eslintGlobs, "**/*.d.ts", "**/*.md"];
 
 export const propertiesGlobs: string[] = ["**/*.properties"];
+
+export const protoGlobs: string[] = ["**/*.proto"];
 
 export const shellGlobs: string[] = ["**/*.sh", "**/*.bash"];
 

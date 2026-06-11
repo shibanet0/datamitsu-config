@@ -58,21 +58,19 @@ export function upgradeAgentsReference(content: string): string {
   for (const pattern of Object.values(AGENTS_REFERENCE_PATTERNS)) {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (!line) {
-        continue;
-      }
+      if (line) {
+        const trimmed = line.trim();
 
-      const trimmed = line.trim();
+        // Check if this line matches any old pattern
+        if (pattern.oldPatterns.some((oldPattern) => trimmed === oldPattern)) {
+          lines[i] = pattern.canonical;
+          return lines.join("\n");
+        }
 
-      // Check if this line matches any old pattern
-      if (pattern.oldPatterns.some((oldPattern) => trimmed === oldPattern)) {
-        lines[i] = pattern.canonical;
-        return lines.join("\n");
-      }
-
-      // If line already matches canonical, no upgrade needed
-      if (trimmed === pattern.canonical) {
-        return content;
+        // If line already matches canonical, no upgrade needed
+        if (trimmed === pattern.canonical) {
+          return content;
+        }
       }
     }
   }

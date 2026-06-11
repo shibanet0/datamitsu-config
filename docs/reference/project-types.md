@@ -12,18 +12,20 @@ Do not edit manually. To update, run: `pnpm dm exec task -- docs:generate`
 Project types define how datamitsu detects different kinds of projects in your repository.
 Each type has marker files or patterns that datamitsu uses for automatic detection.
 
-This configuration includes **9 project types**.
+This configuration includes **11 project types**.
 
 ## Project Types Reference
 
 | Project Type           | Description                        | Marker Files              |
 | ---------------------- | ---------------------------------- | ------------------------- |
 | **golang-package**     | Go module                          | `**/go.mod`               |
+| **helm-chart**         | Helm chart                         | `**/Chart.yaml`           |
 | **npm-package**        | Node.js/npm project                | `**/package.json`         |
 | **pnpm-package**       | pnpm project                       | `pnpm-lock.yaml`          |
 | **pre-commit-project** | Project using pre-commit framework | `.pre-commit-config.yaml` |
 | **python-package**     | Python project                     | `**/pyproject.toml`       |
 | **terraform-project**  | Terraform infrastructure           | `**/*.tf`                 |
+| **terragrunt-project** | Terragrunt infrastructure          | `**/terragrunt.hcl`       |
 | **turbo-package**      | turbo project                      | `turbo.json`              |
 | **typescript-project** | TypeScript project                 | `**/tsconfig.json`        |
 | **typst-project**      | Typst document                     | `**/*.typ`                |

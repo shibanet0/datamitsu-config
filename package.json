@@ -15,6 +15,7 @@
       "types": "./dist/datamitsu-api/index.d.ts",
       "default": "./dist/datamitsu-api/index.js"
     },
+    "./package.json": "./package.json",
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
     "./tsconfig/library.json": "./tsconfig/library.json",
@@ -24,7 +25,6 @@
     "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
     "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
     "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
-    "./package.json": "./package.json",
     "./type-fest": {
       "import": {
         "types": "./dist/type-fest/index.d.ts"

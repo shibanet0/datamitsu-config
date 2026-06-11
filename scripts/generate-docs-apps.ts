@@ -138,6 +138,7 @@ export function categorizeApps(apps: AppInfo[]): Map<string, AppInfo[]> {
 export function executeConfigShow(): string {
   return execSync("pnpm --silent datamitsu config show", {
     encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
     stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
     timeout: 30_000,
   });
@@ -299,11 +300,7 @@ function extractRepositoryFromBinary(app: AppConfig): string | undefined {
   for (const os of Object.values(binaries)) {
     for (const arch of Object.values(os)) {
       for (const variant of Object.values(arch)) {
-        const url = variant.url;
-        if (!url) {
-          continue;
-        }
-        const match = url.match(/github\.com\/([^/]+\/[^/]+)/);
+        const match = variant.url?.match(/github\.com\/([^/]+\/[^/]+)/);
         if (match) {
           return `https://github.com/${match[1]}`;
         }

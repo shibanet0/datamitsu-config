@@ -7,6 +7,10 @@ import { prettierApp } from "./apps/prettier";
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
 import {
+  apps as externalAppsJSON,
+  binaries as externalBinariesJSON,
+} from "./registries/externalApps.json";
+import {
   apps as githubAppsJSON,
   binaries as githubBinariesJSON,
 } from "./registries/githubApps.json";
@@ -35,9 +39,18 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
     }
 
     if (
-      ["cosign", "crane", "dasel", "gcrane", "kube-linter", "scorecard", "sqlc", "vacuum"].includes(
-        key,
-      )
+      [
+        "cosign",
+        "crane",
+        "dasel",
+        "gcrane",
+        "kube-linter",
+        "scorecard",
+        "sqlc",
+        "terraform-docs",
+        "tofu",
+        "vacuum",
+      ].includes(key)
     ) {
       acc[key].versionCheck = { args: ["version"] };
     }
@@ -47,8 +60,30 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
   {},
 );
 
+const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapOfApps>(
+  (acc, [key, el]) => {
+    const binaries = el.binaries as unknown as BinManager.MapOfBinaries;
+    const app = externalAppsJSON[key as keyof typeof externalAppsJSON];
+
+    acc[key] = {
+      binary: {
+        binaries,
+        version: app.version,
+      },
+      description: (el as any).description ?? undefined,
+    };
+
+    if (app.versionCheck) {
+      acc[key].versionCheck = app.versionCheck;
+    }
+
+    return acc;
+  },
+  {},
+);
 export const mapOfApps: BinManager.MapOfApps = {
   ...githubApps,
+  ...externalApps,
   bandit: {
     description: uvVersions.bandit.description,
     uv: {
@@ -100,8 +135,18 @@ export const mapOfApps: BinManager.MapOfApps = {
     },
   },
   knip: knipApp,
+  ktfmt: {
+    description:
+      "A program that reformats Kotlin source code to comply with the common community standard for Kotlin code conventions.",
+    jvm: {
+      jarHash: "f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
+      jarUrl:
+        "https://github.com/facebook/ktfmt/releases/download/v0.62/ktfmt-0.62-with-dependencies.jar",
+      version: "v0.62",
+    },
+  },
   ktlint: {
-    description: `An anti-bikeshedding Kotlin linter with built-in formatter`,
+    description: "An anti-bikeshedding Kotlin linter with built-in formatter",
     jvm: {
       jarHash: "a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
       jarUrl: "https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint",

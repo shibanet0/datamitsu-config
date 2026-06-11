@@ -36,10 +36,9 @@ describe("Taskfile.yaml docs tasks", () => {
     for (const match of taskMatches) {
       const taskName = match[1]!;
       const taskBody = match[2]!;
-      if (["tasks", "version"].includes(taskName)) {
-        continue;
+      if (!["tasks", "version"].includes(taskName)) {
+        expect(taskBody, `Task '${taskName}' should have a desc field`).toContain("desc:");
       }
-      expect(taskBody, `Task '${taskName}' should have a desc field`).toContain("desc:");
     }
   });
 });

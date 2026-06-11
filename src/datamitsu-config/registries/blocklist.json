@@ -1,4 +1,5 @@
 {
+  "external": {},
   "github": {
     "taplo": {
       "reason": "Replaced by Tombi (TOML toolkit). Use native Tombi binary instead",

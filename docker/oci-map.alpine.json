@@ -75,6 +75,11 @@
       "app": "knip"
     },
     {
+      "subtree": ".apps/jvm/ktfmt",
+      "kind": "app",
+      "app": "ktfmt"
+    },
+    {
       "subtree": ".apps/jvm/ktlint",
       "kind": "app",
       "app": "ktlint"

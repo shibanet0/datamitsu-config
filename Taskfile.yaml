@@ -70,7 +70,7 @@ tasks:
   build:lib:datamitsu-types:
     cmds:
       - echo "// prettier-ignore" > src/datamitsu-config/datamitsu.config.d.ts
-      - datamitsu config types >> src/datamitsu-config/datamitsu.config.d.ts
+      - pnpm dm config types >> src/datamitsu-config/datamitsu.config.d.ts
     desc: Generate datamitsu.config.d.ts type file
   build:skills:
     cmds:
@@ -137,6 +137,17 @@ tasks:
       - node scripts/oxlint-sync-schema.ts
       - task: oxlint:codegen
     desc: Sync oxlint schema from node_modules and regenerate types
+  pull:external:
+    cmds:
+      - node scripts/pull-external-apps.ts ./src/datamitsu-config/registries/externalApps.json
+    desc: Pull external app registry (verify hashes only)
+  pull:external:update:
+    cmds:
+      - node scripts/pull-external-apps.ts --update ./src/datamitsu-config/registries/externalApps.json
+    desc: Pull external app registry with update flag
+  # ──────────────────────────────────────────────
+  # Pull / registry update
+  # ──────────────────────────────────────────────
   pull:github:
     cmds:
       - datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
