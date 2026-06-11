@@ -144,5 +144,6 @@ export default defineConfig((prev) => ({
     "noci",
     "dockerhub",
     "endgroup",
+    "chgrp",
   ],
 }));
