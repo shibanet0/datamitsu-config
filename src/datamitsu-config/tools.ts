@@ -1,5 +1,6 @@
 import { indentSettings } from "./constants";
 import {
+  actionlintGlobs,
   dockerfileGlobs,
   dotenvLinterGlobs,
   eslintGlobs,
@@ -13,6 +14,7 @@ import {
   packageJsonGlobs,
   prettierGlobs,
   propertiesGlobs,
+  protoGlobs,
   shellGlobs,
   tomlGlobs,
   typescriptGlobs,
@@ -22,6 +24,8 @@ import {
 } from "./globs";
 
 type Tool =
+  | "actionlint"
+  | "bearer"
   | "checkmake"
   | "cspell"
   | "dotenv-linter"
@@ -29,13 +33,17 @@ type Tool =
   | "eslint"
   | "golangci-lint"
   | "golangci-lint-fmt"
+  | "grype"
   | "hadolint"
   | "harper-cli"
   | "helm"
+  | "lychee"
+  | "osv-scanner"
   | "oxfmt"
   | "oxlint"
   | "pre-commit"
   | "prettier"
+  | "protolint"
   | "ruff"
   | "ruff-format"
   | "shellcheck"
@@ -47,8 +55,10 @@ type Tool =
   | "terragrunt-fmt"
   | "tflint"
   | "toml"
+  | "trivy"
   | "tsc"
   | "tsgo"
+  | "typos"
   | "typstyle"
   | "vale"
   | "yamlfmt"
@@ -68,8 +78,10 @@ const toPriorityMap = (list: Tool[]): Record<Tool, number> =>
 
 // Priority order for `fix` operations. Only includes tools that expose a fix.
 const _fixPriority: Tool[] = [
+  "typos",
   "syncpack",
   "oxlint",
+  "protolint",
   "yq-json",
   "yq-properties",
   "eslint",
@@ -94,8 +106,11 @@ const _fixPriority: Tool[] = [
 
 // Priority order for `lint` operations. Only includes tools that expose a lint.
 const _lintPriority: Tool[] = [
+  "typos",
   "syncpack",
   "oxlint",
+  "protolint",
+  "actionlint",
   "tsc",
   "tsgo",
   "cspell",
@@ -120,6 +135,11 @@ const _lintPriority: Tool[] = [
   "terraform-fmt",
   "yamlfmt",
   "yamllint",
+  "lychee",
+  "grype",
+  "trivy",
+  "osv-scanner",
+  "bearer",
 ];
 
 const fixPriority = toPriorityMap(_fixPriority);
@@ -128,6 +148,32 @@ const lintPriority = toPriorityMap(_lintPriority);
 const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 export const toolsConfig: config.MapOfTools = {
+  actionlint: {
+    name: "actionlint - GitHub Actions Workflow Linter",
+    operations: {
+      lint: {
+        app: "actionlint",
+        args: ["-color", "{file}"],
+        globs: actionlintGlobs,
+        priority: lintPriority.actionlint,
+        scope: "per-file",
+      },
+    },
+  },
+  bearer: {
+    name: "Bearer - Static Application Security Testing",
+    operations: {
+      lint: {
+        app: "bearer",
+        args: ["scan", "--exit-code", "1", "{root}"],
+        globs: ["**/*"],
+        priority: lintPriority.bearer,
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
+  },
   checkmake: {
     name: "checkmake - Makefile Linter",
     operations: {
@@ -289,6 +335,20 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["golang-package"],
   },
+  grype: {
+    name: "Grype - Vulnerability Scanner",
+    operations: {
+      lint: {
+        app: "grype",
+        args: ["dir:{root}", "--fail-on", "high"],
+        globs: ["**/*"],
+        priority: lintPriority.grype,
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
+  },
   hadolint: {
     name: "hadolint - Dockerfile Linter",
     operations: {
@@ -338,6 +398,35 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  lychee: {
+    name: "lychee - Link Checker",
+    operations: {
+      lint: {
+        app: "lychee",
+        args: ["--no-progress", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        priority: lintPriority.lychee,
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only (network access)",
+  },
+  "osv-scanner": {
+    name: "OSV-Scanner - Vulnerability Scanner",
+    operations: {
+      lint: {
+        app: "osv-scanner",
+        args: ["scan", "source", "--recursive", "{root}"],
+        globs: ["**/*"],
+        priority: lintPriority["osv-scanner"],
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
   },
   oxfmt: {
     name: "oxfmt - The JavaScript Oxidation Compiler Formatter",
@@ -416,6 +505,25 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  protolint: {
+    name: "protolint - Protocol Buffer Linter",
+    operations: {
+      fix: {
+        app: "protolint",
+        args: ["lint", "-fix", "{file}"],
+        globs: protoGlobs,
+        priority: fixPriority.protolint,
+        scope: "per-file",
+      },
+      lint: {
+        app: "protolint",
+        args: ["lint", "{file}"],
+        globs: protoGlobs,
+        priority: lintPriority.protolint,
+        scope: "per-file",
+      },
+    },
   },
   ruff: {
     name: "Ruff - Python Linter",
@@ -656,6 +764,20 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+  trivy: {
+    name: "Trivy - Vulnerability and Misconfiguration Scanner",
+    operations: {
+      lint: {
+        app: "trivy",
+        args: ["fs", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "--no-progress", "{root}"],
+        globs: ["**/*"],
+        priority: lintPriority.trivy,
+        scope: "repository",
+      },
+    },
+    skip: !isCI,
+    skipReason: "runs in CI only",
+  },
   trufflehog: {
     name: "trufflehog",
     operations: {
@@ -702,6 +824,21 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["typescript-project"],
+  },
+  typos: {
+    name: "typos - Source Code Spell Checker",
+    operations: {
+      // lint-only by design: `typos --write-changes` auto-"corrects" legitimate
+      // identifiers and proper nouns (org names, linter names), so we never wire
+      // it into `fix`. Curate real misspellings via .typos.toml instead.
+      lint: {
+        app: "typos",
+        args: ["--format", "brief"],
+        globs: ["**/*"],
+        priority: lintPriority.typos,
+        scope: "repository",
+      },
+    },
   },
   typstyle: {
     name: "typstyle - Typst Code Formatter",

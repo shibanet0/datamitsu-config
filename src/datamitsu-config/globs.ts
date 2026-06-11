@@ -1,3 +1,8 @@
+export const actionlintGlobs: string[] = [
+  "**/.github/workflows/*.yml",
+  "**/.github/workflows/*.yaml",
+];
+
 export const dockerfileGlobs: string[] = ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"];
 
 export const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
@@ -82,6 +87,8 @@ export const packageJsonGlobs: string[] = ["**/package.json"];
 export const prettierGlobs: string[] = [...eslintGlobs, "**/*.d.ts", "**/*.md"];
 
 export const propertiesGlobs: string[] = ["**/*.properties"];
+
+export const protoGlobs: string[] = ["**/*.proto"];
 
 export const shellGlobs: string[] = ["**/*.sh", "**/*.bash"];
 
