@@ -15,8 +15,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0(commander@14.0.3)
       '@datamitsu/datamitsu':
-        specifier: 0.1.3
-        version: 0.1.3
+        specifier: 0.0.0-unstable.20260612.1ae724f
+        version: 0.0.0-unstable.20260612.1ae724f
       commander:
         specifier: 14.0.3
         version: 14.0.3
@@ -788,48 +788,48 @@ packages:
     resolution: {integrity: sha512-q+0pHQ8DbqjemyaOn/mTtBRbCuKDqhnsVbZ6J9zkTsxPgMpccjy0s5oLXwomfrrxMRBH+UcbERwtUmE+SbnoIQ==}
     engines: {node: '>=22.18.0'}
 
-  '@datamitsu/datamitsu-darwin-arm64@0.1.3':
-    resolution: {integrity: sha512-h6Xto7sBoR7co94vaxlOgBJnUPq+lN8FQoPZQbQlxJD1WmQ12M8nSab0cBEIHAm5ANNFUqbE+kVhhKqYnjj7eQ==}
+  '@datamitsu/datamitsu-darwin-arm64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-sOCo1bE7Xt1KVxQiC2uMGfUkko6QHCg1inafOPEv8T1Q1CSUWHaG7bpaeeud6cZiwounuWURBTaHCb43BZqjFQ==}
     cpu: [arm64]
     os: [darwin]
 
-  '@datamitsu/datamitsu-darwin-x64@0.1.3':
-    resolution: {integrity: sha512-9qtlnmX12C8Sd7lFom3TecLfaKOokro2m4ySISGJmjMrCezjB3frJSLWpYLnFoJuOI6DNiEcut0Qntvh0gCdBg==}
+  '@datamitsu/datamitsu-darwin-x64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-nO8omxs0zGRc/Lnwg9Fw7vzXqv8Or/8o6r9/Cp44Q1AJbTeSCK1ptdUD2PYON1/E3/IztugKi+Qg1LNq1HpvNw==}
     cpu: [x64]
     os: [darwin]
 
-  '@datamitsu/datamitsu-freebsd-arm64@0.1.3':
-    resolution: {integrity: sha512-Q1TjojNmlUmZ90Iz9x/y/dUa6hL8zV3QKqt9BP99iqbYxOKs8roquiNHMoOjhwDJQxEo6PMnom3M6Ylwrhm4fQ==}
+  '@datamitsu/datamitsu-freebsd-arm64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-rWGnVWitjMQyaMrpMDcZ/Bb4l4/8T0OTu8/l8K/dM+fI9SWWnN8oIian0CN2UtPJKprL9RMl/46DxdMSYCRwbQ==}
     cpu: [arm64]
     os: [freebsd]
 
-  '@datamitsu/datamitsu-freebsd-x64@0.1.3':
-    resolution: {integrity: sha512-orxsbjS4bzGHN7JnEmuSnYGe8UxpvilCRbJSN7+CK2K1rtvCffnNO6j5lGDhyjhoY5u/OlcI8N3xz4hW1YaytQ==}
+  '@datamitsu/datamitsu-freebsd-x64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-0N5Txh/ykI9A2NbWCeLDTzsy0enSaq9hFmbZ2WcvOzw1NJHIpKVsXGf0C/7ETo61kKSBSV2MVgJZtnQpOnaITA==}
     cpu: [x64]
     os: [freebsd]
 
-  '@datamitsu/datamitsu-linux-arm64@0.1.3':
-    resolution: {integrity: sha512-Di+Y4eUxda9KA4o4V6zorDPC42R9g9H2aBu6ywRS4MvZuMlK9ceHvyIhsULCoO4v6TfsT+nUwDmL1kHcJ7V8Gg==}
+  '@datamitsu/datamitsu-linux-arm64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-QsDS2kpE3aIIvbiK2HHtN4gOJFvf2R+9rBHYN/m0ZOxYK8w6gg41lg2T3DSqm5th7+CfyD/Aze78TQp789X21A==}
     cpu: [arm64]
     os: [linux]
 
-  '@datamitsu/datamitsu-linux-x64@0.1.3':
-    resolution: {integrity: sha512-pGjDWlBopmd+LzPNQULhEA/xaHoLaLkfCaF7nsgwmRFU3lwme3RmyrKWml8wA7fDX1sCl49o8eIlRskXE5ovsw==}
+  '@datamitsu/datamitsu-linux-x64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-V6sYzTM45vfjVMlArbI6l637iBHYI3VMybY2aZ5j5yuWU6IftnzAznFLo+TizjVDd99Ls2fI5Xvb7q8bnewmcg==}
     cpu: [x64]
     os: [linux]
 
-  '@datamitsu/datamitsu-win32-arm64@0.1.3':
-    resolution: {integrity: sha512-4+s1hUsqn93SM/JdRCXIpdSSGJLhafEN8oxMV5Oc8BPZHksWviIZ7d7V3oPuct8s75r6PR5SQSKVAadIrZaNgQ==}
+  '@datamitsu/datamitsu-win32-arm64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-m+EZF3TFL+SCaUE8mD+cplu95jo+KGHlsf3hTbKRVXkrTSE9htn4c1z99BOfRf8+8uCvH6PHE9LuwctrO0GdOA==}
     cpu: [arm64]
     os: [win32]
 
-  '@datamitsu/datamitsu-win32-x64@0.1.3':
-    resolution: {integrity: sha512-Sr8MF5IgDiS6tqTJXWMLBCXJ/OSwdQgg+9vD7m2Zf7XcDxaebJ1VL5wnNbBt9Yi9/l2vqXzHvIZvM9pZF43+hA==}
+  '@datamitsu/datamitsu-win32-x64@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-oQCbWMr0TkHtrAvZW/3oHEY5N3pNZxGr3cawpOrj2zwn/OvN18zXdRzEClqHoT8ZIDl6ODD3o2iNj71dgaEk3g==}
     cpu: [x64]
     os: [win32]
 
-  '@datamitsu/datamitsu@0.1.3':
-    resolution: {integrity: sha512-2JmoxwQ+fLifSU7pG8yzXqiZR0SIbqviio5HlnhSCo0Yq6iBabcVOhLdAQgdknkbau4uoUQ/bSEnu84htQ9vRA==}
+  '@datamitsu/datamitsu@0.0.0-unstable.20260612.1ae724f':
+    resolution: {integrity: sha512-bqTB90yfnAXBMWWMfr2Ch+9sPKrB5XdsJKMuBKCgEwXEPfWo9yGoMLJOBZ5QCCVQvJXEr2vSPV+BIU8HgTuoUg==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -6087,42 +6087,42 @@ snapshots:
 
   '@cspell/url@10.0.0': {}
 
-  '@datamitsu/datamitsu-darwin-arm64@0.1.3':
+  '@datamitsu/datamitsu-darwin-arm64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-darwin-x64@0.1.3':
+  '@datamitsu/datamitsu-darwin-x64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-freebsd-arm64@0.1.3':
+  '@datamitsu/datamitsu-freebsd-arm64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-freebsd-x64@0.1.3':
+  '@datamitsu/datamitsu-freebsd-x64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-linux-arm64@0.1.3':
+  '@datamitsu/datamitsu-linux-arm64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-linux-x64@0.1.3':
+  '@datamitsu/datamitsu-linux-x64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-win32-arm64@0.1.3':
+  '@datamitsu/datamitsu-win32-arm64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu-win32-x64@0.1.3':
+  '@datamitsu/datamitsu-win32-x64@0.0.0-unstable.20260612.1ae724f':
     optional: true
 
-  '@datamitsu/datamitsu@0.1.3':
+  '@datamitsu/datamitsu@0.0.0-unstable.20260612.1ae724f':
     dependencies:
       tinyexec: 1.1.2
     optionalDependencies:
-      '@datamitsu/datamitsu-darwin-arm64': 0.1.3
-      '@datamitsu/datamitsu-darwin-x64': 0.1.3
-      '@datamitsu/datamitsu-freebsd-arm64': 0.1.3
-      '@datamitsu/datamitsu-freebsd-x64': 0.1.3
-      '@datamitsu/datamitsu-linux-arm64': 0.1.3
-      '@datamitsu/datamitsu-linux-x64': 0.1.3
-      '@datamitsu/datamitsu-win32-arm64': 0.1.3
-      '@datamitsu/datamitsu-win32-x64': 0.1.3
+      '@datamitsu/datamitsu-darwin-arm64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-darwin-x64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-freebsd-arm64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-freebsd-x64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-linux-arm64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-linux-x64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-win32-arm64': 0.0.0-unstable.20260612.1ae724f
+      '@datamitsu/datamitsu-win32-x64': 0.0.0-unstable.20260612.1ae724f
 
   '@e18e/eslint-plugin@0.3.0(eslint@9.39.2(jiti@2.7.0))(oxlint@1.58.0)':
     dependencies:

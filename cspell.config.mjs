@@ -1,4 +1,4 @@
-import { defineConfig } from "./.datamitsu/cspell.config.js";
+import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((prev) => ({
   ...prev,

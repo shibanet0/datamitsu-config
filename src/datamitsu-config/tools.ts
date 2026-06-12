@@ -194,7 +194,7 @@ export const toolsConfig: config.MapOfTools = {
         args: [
           "lint",
           "-c",
-          "{root}/cspell.config.js",
+          "{root}/cspell.config.mjs",
           "--quiet",
           "--no-must-find-files",
           "--unique",
@@ -247,7 +247,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "eslint",
-        args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.js", "{files}"],
+        args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         batch: true,
         globs: eslintGlobs,
         priority: fixPriority.eslint,
@@ -255,7 +255,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "eslint",
-        args: ["--quiet", "-c", "{cwd}/eslint.config.js", "{files}"],
+        args: ["--quiet", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         batch: true,
         globs: eslintGlobs,
         priority: lintPriority.eslint,
@@ -489,7 +489,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "prettier",
-        args: ["-u", "--write", "--config", "{cwd}/prettier.config.js", "{files}"],
+        args: ["-u", "--write", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         batch: true,
         globs: prettierGlobs,
         priority: fixPriority.prettier,
@@ -497,7 +497,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "prettier",
-        args: ["-u", "--check", "--config", "{cwd}/prettier.config.js", "{files}"],
+        args: ["-u", "--check", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         batch: true,
         globs: prettierGlobs,
         priority: lintPriority.prettier,

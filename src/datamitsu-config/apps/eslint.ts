@@ -26,7 +26,7 @@ export const eslintApp: BinManager.App = {
     }),
   },
   links: {
-    "eslint.config.js": "index.js",
+    "eslint.config.mjs": "index.js",
   },
   node: {
     binPath: "node_modules/.bin/eslint",
