@@ -11,7 +11,7 @@ if (!args.includes("--binary-command")) {
 
 const result = spawnSync(
   getExePath(),
-  ["--before-config", join(import.meta.dirname, "../datamitsu.config.js"), ...args],
+  ["--before-config", join(import.meta.dirname, "../datamitsu.config.base.js"), ...args],
   {
     env: {
       ...process.env,

@@ -24,9 +24,14 @@ tasks:
   build:datamitsu-config:
     cmds:
       - pnpm exec tsdown --config ./tsdown.config.datamitsu.ts --config-loader unrun
-      - mv dist-datamitsu-config/datamitsu.config.js datamitsu.config.js
+      # The generated baseline is a gitignored before-config; the hand-written
+      # datamitsu.config.ts at the root layers project overrides (expectChainHash)
+      # on top of it. Drop any stale root datamitsu.config.js (e.g. left by a prior
+      # `npm pack`) so auto-discovery resolves the .ts, not the generated baseline.
+      - mv dist-datamitsu-config/datamitsu.config.js datamitsu.config.base.js
+      - rm -f datamitsu.config.js
       - pnpm dm init
-    desc: Build datamitsu.config.js and reinitialise datamitsu
+    desc: Build datamitsu.config.base.js and reinitialise datamitsu
   build:inline:
     deps:
       - task: build:agents-md

@@ -44,6 +44,7 @@
     "tsx": "bin/tsx.js"
   },
   "files": [
+    "datamitsu.config.base.js",
     "datamitsu.config.js",
     "datamitsu.config.oci-ghcr.js",
     "datamitsu.config.oci-dockerhub.js",
@@ -54,7 +55,7 @@
   ],
   "scripts": {
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
-    "build:local": "pnpm run build && cp ./datamitsu.config.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
+    "build:local": "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
     "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
@@ -63,10 +64,9 @@
     "docker:build:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
     "docker:build:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
-    "postinstall": "pnpm build:lib",
-    "prepack": "pnpm build && clean-pkg-json clean",
-    "postpack": "clean-pkg-json restore",
-    "prepare": "pnpm datamitsu init",
+    "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
+    "postpack": "clean-pkg-json restore && rm -f datamitsu.config.js",
+    "prepare": "pnpm build && pnpm datamitsu init",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:update": "vitest run --update",
