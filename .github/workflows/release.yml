@@ -1,3 +1,8 @@
+# DOCKERHUB_REPO is workflow-level (not a job output) on purpose: an output
+# whose value contains the DOCKERHUB_USERNAME secret string is silently
+# dropped by Actions secret-masking ("Skip output ... may contain secret").
+env:
+  DOCKERHUB_REPO: shibanet0/datamitsu-config
 jobs:
   build:
     if: |
@@ -193,8 +198,6 @@ jobs:
           - debian
           - alpine
   publish-dockerhub:
-    env:
-      DOCKERHUB_REPO: shibanet0/datamitsu-config
     if: |
       always() &&
       !cancelled() &&
@@ -207,8 +210,6 @@ jobs:
       - publish-docker
       - publish-oci-bundle
       - validate-stable
-    outputs:
-      bundle_image: ${{ steps.mirror.outputs.bundle_image }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -261,7 +262,6 @@ jobs:
             echo "Mirrored bundle digest $MIRRORED does not match published $EXPECTED"
             exit 1
           fi
-          echo "bundle_image=$DST" >> $GITHUB_OUTPUT
           echo "Mirrored bundle: $DST@$EXPECTED"
       - env:
           # Anonymous on purpose: GITHUB_TOKEN must never reach auth.docker.io,
@@ -311,7 +311,7 @@ jobs:
           if [[ "${{ needs.determine-release-type.outputs.is_stable }}" == "true" ]]; then
             cp datamitsu.config.js datamitsu.config.oci-dockerhub.js
             node scripts/inject-oci-pin.ts \
-              --ref "${{ needs.publish-dockerhub.outputs.bundle_image }}" \
+              --ref "index.docker.io/$DOCKERHUB_REPO" \
               --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
               --file datamitsu.config.oci-dockerhub.js
           fi
@@ -411,7 +411,7 @@ jobs:
           if [[ "${{ needs.determine-release-type.outputs.is_stable }}" == "true" ]]; then
             cp datamitsu.config.js datamitsu.config.oci-dockerhub.js
             node scripts/inject-oci-pin.ts \
-              --ref "${{ needs.publish-dockerhub.outputs.bundle_image }}" \
+              --ref "index.docker.io/$DOCKERHUB_REPO" \
               --digest "${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
               --file datamitsu.config.oci-dockerhub.js
           fi
