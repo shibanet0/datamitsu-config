@@ -155,12 +155,12 @@ tasks:
   # ──────────────────────────────────────────────
   pull:github:
     cmds:
-      - datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
+      - pnpm datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
       - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry (verify extraction only)
   pull:github:update:
     cmds:
-      - datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
+      - pnpm datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
       - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
     desc: Pull GitHub app registry with update flag
   # ──────────────────────────────────────────────
