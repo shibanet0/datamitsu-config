@@ -16,19 +16,19 @@ This configuration includes **11 project types**.
 
 ## Project Types Reference
 
-| Project Type           | Description                        | Marker Files              |
-| ---------------------- | ---------------------------------- | ------------------------- |
-| **golang-package**     | Go module                          | `**/go.mod`               |
-| **helm-chart**         | Helm chart                         | `**/Chart.yaml`           |
-| **npm-package**        | Node.js/npm project                | `**/package.json`         |
-| **pnpm-package**       | pnpm project                       | `pnpm-lock.yaml`          |
+| Project Type | Description | Marker Files |
+| --- | --- | --- |
+| **golang-package** | Go module | `**/go.mod` |
+| **helm-chart** | Helm chart | `**/Chart.yaml` |
+| **npm-package** | Node.js/npm project | `**/package.json` |
+| **pnpm-package** | pnpm project | `pnpm-lock.yaml` |
 | **pre-commit-project** | Project using pre-commit framework | `.pre-commit-config.yaml` |
-| **python-package**     | Python project                     | `**/pyproject.toml`       |
-| **terraform-project**  | Terraform infrastructure           | `**/*.tf`                 |
-| **terragrunt-project** | Terragrunt infrastructure          | `**/terragrunt.hcl`       |
-| **turbo-package**      | turbo project                      | `turbo.json`              |
-| **typescript-project** | TypeScript project                 | `**/tsconfig.json`        |
-| **typst-project**      | Typst document                     | `**/*.typ`                |
+| **python-package** | Python project | `**/pyproject.toml` |
+| **terraform-project** | Terraform infrastructure | `**/*.tf` |
+| **terragrunt-project** | Terragrunt infrastructure | `**/terragrunt.hcl` |
+| **turbo-package** | turbo project | `turbo.json` |
+| **typescript-project** | TypeScript project | `**/tsconfig.json` |
+| **typst-project** | Typst document | `**/*.typ` |
 
 ## How Project Type Detection Works
 
@@ -39,6 +39,5 @@ When you run `dm init` or `dm check`, datamitsu:
 3. Enables the appropriate [tools](tools.md) for each detected project type
 
 For example, if your repository contains `package.json` files, datamitsu will:
-
 - Detect it as an `npm-package` project type
 - Enable tools like `eslint`, `prettier`, `oxlint`, and `sort-package-json`

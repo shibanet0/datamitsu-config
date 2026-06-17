@@ -21,8 +21,8 @@
     "./tsconfig/library.json": "./tsconfig/library.json",
     "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
     "./tsconfig/react-library.json": "./tsconfig/react-library.json",
-    "./tsconfig/service.json": "./tsconfig/service.json",
     "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
+    "./tsconfig/service.json": "./tsconfig/service.json",
     "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
     "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
     "./type-fest": {
@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.0-unstable.20260612.f5ea0ab",
+    "@datamitsu/datamitsu": "0.1.4",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",

@@ -864,12 +864,10 @@ export const setup: config.MapOfConfigSetup = {
   },
   "commitlint.config.mjs": {
     content: (context) => {
-      return [
-        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
-        "",
-        "export default defineConfig();",
-        "",
-      ].join("\n");
+      return /* js */ `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";
+
+export default defineConfig();
+`;
     },
     otherFileNameList: [
       ".commitlintrc",
@@ -893,12 +891,10 @@ export const setup: config.MapOfConfigSetup = {
   },
   "cspell.config.mjs": {
     content: (context) => {
-      return [
-        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.mjs"))}";`,
-        "",
-        "export default defineConfig();",
-        "",
-      ].join("\n");
+      return /*js*/ `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.mjs"))}";
+
+export default defineConfig();
+`;
     },
     otherFileNameList: [
       ".cspell.config.yaml",
@@ -1156,7 +1152,7 @@ export default config;
             },
             "install deps": {
               priority: 1,
-              run: `pnpm i`,
+              run: `pnpm i --force`,
             },
           },
         },
