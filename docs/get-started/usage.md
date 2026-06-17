@@ -265,8 +265,8 @@ datamitsu integrates with [lefthook](https://github.com/evilmartians/lefthook) f
 
 Individual tools (ESLint, Prettier, cspell, etc.) can be customized through their standard config files. datamitsu respects these files when present in your project root:
 
-- `eslint.config.js` — ESLint configuration
-- `.prettierrc` / `prettier.config.js` — Prettier configuration
+- `eslint.config.mjs` — ESLint configuration
+- `.prettierrc` / `prettier.config.mjs` — Prettier configuration
 - `cspell.json` — cspell dictionary and settings
 - `knip.json` — Knip unused code configuration
 

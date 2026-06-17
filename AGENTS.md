@@ -82,7 +82,7 @@ import { defineConfig } from "<.datamitsu/<tool>.config.js>";
 export default defineConfig();
 ```
 
-This gives users type-checking and autocomplete when adding overrides, even in a plain `.js` file — the same experience as `eslint.config.js` and `prettier.config.js`. See [src/apps/prettier/index.ts](src/apps/prettier/index.ts) and [src/apps/eslint/index.ts](src/apps/eslint/index.ts) for reference implementations.
+This gives users type-checking and autocomplete when adding overrides, even in a plain `.js` file — the same experience as `eslint.config.mjs` and `prettier.config.mjs`. See [src/apps/prettier/index.ts](src/apps/prettier/index.ts) and [src/apps/eslint/index.ts](src/apps/eslint/index.ts) for reference implementations.
 
 `defineConfig` accepts either an overrides object (shallow-merged over the base) or a function that receives the base config and returns the final one — the latter lets users extend array/object fields instead of replacing them:
 

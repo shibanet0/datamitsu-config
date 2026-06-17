@@ -12,7 +12,7 @@ import { REMOVED_SKILLS, SKILLS } from "./skills";
 import { safeJsonParse, withTrailingNewline } from "./utils";
 import { cleanDependencies } from "./utils/cleanDependencies";
 
-const yamlIgnore: string[] = ["pnpm-lock.yaml"];
+const yamlIgnore: string[] = ["pnpm-lock.yaml", "**/*.sops.yaml", "**/.sops.yml"];
 
 const aiTools: config.MapOfConfigSetup = {
   ".cursor/rules": {
@@ -864,12 +864,10 @@ export const setup: config.MapOfConfigSetup = {
   },
   "commitlint.config.mjs": {
     content: (context) => {
-      return [
-        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";`,
-        "",
-        "export default defineConfig();",
-        "",
-      ].join("\n");
+      return /* js */ `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "commitlint.config.js"))}";
+
+export default defineConfig();
+`;
     },
     otherFileNameList: [
       ".commitlintrc",
@@ -893,12 +891,10 @@ export const setup: config.MapOfConfigSetup = {
   },
   "cspell.config.mjs": {
     content: (context) => {
-      return [
-        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.js"))}";`,
-        "",
-        "export default defineConfig();",
-        "",
-      ].join("\n");
+      return /*js*/ `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "cspell.config.mjs"))}";
+
+export default defineConfig();
+`;
     },
     otherFileNameList: [
       ".cspell.config.yaml",
@@ -963,11 +959,13 @@ export const setup: config.MapOfConfigSetup = {
       if (env().DATAMITSU_DEV_MODE) {
         return `import { join } from "node:path";
 
-import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.js"))}";
+import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.mjs"))}";
 import packageJSON from "./package.json" with { type: "json" };
 
 const config = await defineConfig(
-  /** @type {import("./dist/type-fest").PackageJson} */ (packageJSON),
+  /**
+   * @type {import("./dist/type-fest").PackageJson}
+   */ (packageJSON),
   undefined,
   {
     plugins: {
@@ -996,7 +994,7 @@ export default [
 
       return `import { join } from "node:path";
 
-  import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.js"))}";
+  import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.mjs"))}";
 
   import packageJSON from "./package.json" with { type: "json" };
 
@@ -1154,7 +1152,7 @@ export default config;
             },
             "install deps": {
               priority: 1,
-              run: `pnpm i`,
+              run: `pnpm i --force`,
             },
           },
         },
@@ -1195,9 +1193,7 @@ export default config;
       return [
         `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "oxfmt.config.js"))}";`,
         "",
-        `const config = defineConfig();`,
-        "",
-        "export default config;",
+        "export default defineConfig();",
         "",
       ].join("\n");
     },
@@ -1345,7 +1341,7 @@ export default config;
   "prettier.config.mjs": {
     content: (context) => {
       return [
-        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "prettier.config.js"))}";`,
+        `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "prettier.config.mjs"))}";`,
         "",
         `const config = defineConfig();`,
         "",

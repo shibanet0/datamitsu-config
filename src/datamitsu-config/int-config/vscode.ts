@@ -5,6 +5,7 @@ export const vscodeExtensions: (context: config.ConfigContext) => string = (cont
 
   const recommendations: Array<string> = [
     ...new Set<string>([
+      "bierner.comment-tagged-templates",
       "dbaeumer.vscode-eslint",
       "drblury.protobuf-vsc",
       "EditorConfig.EditorConfig",

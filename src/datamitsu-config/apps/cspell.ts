@@ -10,7 +10,7 @@ export const cspellApp: BinManager.App = {
   },
   description: nodeVersions["cspell"].description,
   links: {
-    "cspell.config.js": "index.js",
+    "cspell.config.mjs": "index.js",
   },
   node: {
     binPath: "node_modules/.bin/cspell",

@@ -1,10 +1,7 @@
-import { defineConfig } from "./.datamitsu/cspell.config.js";
+import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
-export default defineConfig((prev) => ({
-  ...prev,
-  words: [
-    ...(prev.words || []),
-    // Python package names (from blocklist.json)
+export default defineConfig((prev) => {
+  const words = [
     "datetimez",
     "errmsg",
     "flynt",
@@ -145,5 +142,14 @@ export default defineConfig((prev) => ({
     "dockerhub",
     "endgroup",
     "chgrp",
-  ],
-}));
+    "bierner",
+    "postpack",
+    "jscowsay",
+    "pycowsay",
+  ];
+
+  return {
+    ...prev,
+    words: [...(prev.words || []), ...words],
+  };
+});

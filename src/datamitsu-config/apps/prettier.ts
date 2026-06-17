@@ -10,7 +10,7 @@ export const prettierApp: BinManager.App = {
   },
   description: nodeVersions["prettier"].description,
   links: {
-    "prettier.config.js": "index.js",
+    "prettier.config.mjs": "index.js",
   },
   node: {
     binPath: "node_modules/.bin/prettier",

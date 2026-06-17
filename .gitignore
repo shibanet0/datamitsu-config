@@ -118,6 +118,17 @@ dist-datamitsu-config/
 **/secrets.yml
 **/secrets.json
 
+# Terraform & Terragrunt
+**/.terraform/
+**/.terragrunt-cache/
+**/*.tfstate
+**/*.tfstate.backup
+**/crash.log
+**/override.tf
+**/override.tf.json
+**/*_override.tf
+**/*_override.tf.json
+
 # Testing
 **/coverage/
 **/*.cov
@@ -133,6 +144,7 @@ dist-datamitsu-config/
 **/e2e/screenshots/
 **/e2e/videos/
 datamitsu.config.js
+datamitsu.config.base.js
 datamitsu.config.oci-ghcr.js
 oxlint_configuration_schema.json
 
