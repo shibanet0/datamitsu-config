@@ -249,7 +249,7 @@ jobs:
           rm -f datamitsu.config.js
           # Warm up the managed crane binary so install logs never mix into
           # command substitutions below.
-          pnpm exec datamitsu exec crane -- version
+          node bin/datamitsu.js exec crane -- version
           VERSION="${{ needs.validate-stable.outputs.version }}"
           SRC="ghcr.io/shibanet0/datamitsu-config"
           DST="index.docker.io/$DOCKERHUB_REPO"
@@ -266,17 +266,17 @@ jobs:
             # that already carry the right content - the Docker Hub repo has
             # tag immutability enabled, which denies ANY PUT to an existing
             # tag, even with an identical digest.
-            SRC_DIGEST=$(pnpm exec datamitsu exec crane -- digest "$SRC:$TAG" | tail -n1)
-            DST_DIGEST=$(pnpm exec datamitsu exec crane -- digest "$DST:$TAG" 2>/dev/null | tail -n1 || true)
+            SRC_DIGEST=$(node bin/datamitsu.js exec crane -- digest "$SRC:$TAG" | tail -n1)
+            DST_DIGEST=$(node bin/datamitsu.js exec crane -- digest "$DST:$TAG" 2>/dev/null | tail -n1 || true)
             if [[ -n "$DST_DIGEST" && "$DST_DIGEST" == "$SRC_DIGEST" ]]; then
               echo "$DST:$TAG already at $SRC_DIGEST, skipping"
             else
-              pnpm exec datamitsu exec crane -- copy "$SRC:$TAG" "$DST:$TAG"
+              node bin/datamitsu.js exec crane -- copy "$SRC:$TAG" "$DST:$TAG"
             fi
             echo "::endgroup::"
           done
           EXPECTED="${{ needs.publish-oci-bundle.outputs.bundle_digest }}"
-          MIRRORED=$(pnpm exec datamitsu exec crane -- digest "$DST:bundle-$VERSION" | tail -n1)
+          MIRRORED=$(node bin/datamitsu.js exec crane -- digest "$DST:bundle-$VERSION" | tail -n1)
           if [[ "$MIRRORED" != "$EXPECTED" ]]; then
             echo "Mirrored bundle digest $MIRRORED does not match published $EXPECTED"
             exit 1
