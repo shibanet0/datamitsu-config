@@ -246,6 +246,7 @@ jobs:
       - id: mirror
         name: Mirror images and bundle by digest
         run: |
+          rm -f datamitsu.config.js
           # Warm up the managed crane binary so install logs never mix into
           # command substitutions below.
           pnpm exec datamitsu exec crane -- version
@@ -287,6 +288,7 @@ jobs:
           GITHUB_TOKEN: ""
         name: Smoke test - seed the store from Docker Hub anonymously
         run: |
+          rm -f datamitsu.config.js
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-dockerhub-smoke"
           node bin/datamitsu.js store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
             --apps golangci-lint
@@ -492,6 +494,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Smoke test - seed the store from the bundle without docker
         run: |
+          rm -f datamitsu.config.js
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
           node bin/datamitsu.js store seed "${{ steps.bundle.outputs.bundle_ref }}" \
             --apps golangci-lint,lefthook
