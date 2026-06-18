@@ -288,7 +288,7 @@ jobs:
         name: Smoke test - seed the store from Docker Hub anonymously
         run: |
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-dockerhub-smoke"
-          pnpm exec datamitsu store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
+          node bin/datamitsu.js store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
             --apps golangci-lint
           DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
   publish-github:
@@ -493,7 +493,7 @@ jobs:
         name: Smoke test - seed the store from the bundle without docker
         run: |
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
-          pnpm exec datamitsu store seed "${{ steps.bundle.outputs.bundle_ref }}" \
+          node bin/datamitsu.js store seed "${{ steps.bundle.outputs.bundle_ref }}" \
             --apps golangci-lint,lefthook
           echo "Seeded. Running a seeded tool fully offline:"
           DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
