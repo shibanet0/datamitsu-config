@@ -40,26 +40,386 @@ COPY --link --from=config-split /slices/rt-uv.js /opt/datamitsu-config/datamitsu
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install --runtime uv
 
 # --- App stages (runtime-managed; inherit their runtime stage) ---
+FROM rt-uv AS app-bandit
+COPY --link --from=config-split /slices/app-bandit.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install bandit
+
+FROM rt-uv AS app-checkov
+COPY --link --from=config-split /slices/app-checkov.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install checkov
+
+FROM rt-node AS app-commitlint
+COPY --link --from=config-split /slices/app-commitlint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install commitlint
+
+FROM rt-node AS app-conventional-changelog
+COPY --link --from=config-split /slices/app-conventional-changelog.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install conventional-changelog
+
+FROM rt-node AS app-cspell
+COPY --link --from=config-split /slices/app-cspell.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cspell
+
+FROM rt-uv AS app-detect-secrets
+COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install detect-secrets
+
+FROM rt-node AS app-eslint
+COPY --link --from=config-split /slices/app-eslint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
+
 FROM rt-go AS app-govulncheck
 COPY --link --from=config-split /slices/app-govulncheck.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install govulncheck
 
-FROM rt-node AS app-jscowsay
-COPY --link --from=config-split /slices/app-jscowsay.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install jscowsay
+FROM rt-node AS app-knip
+COPY --link --from=config-split /slices/app-knip.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install knip
+
+FROM rt-jvm AS app-ktfmt
+COPY --link --from=config-split /slices/app-ktfmt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ktfmt
 
 FROM rt-jvm AS app-ktlint
 COPY --link --from=config-split /slices/app-ktlint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ktlint
 
-FROM rt-uv AS app-pycowsay
-COPY --link --from=config-split /slices/app-pycowsay.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pycowsay
+FROM rt-node AS app-markdown-link-check
+COPY --link --from=config-split /slices/app-markdown-link-check.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install markdown-link-check
+
+FROM rt-node AS app-markdownlint-cli2
+COPY --link --from=config-split /slices/app-markdownlint-cli2.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install markdownlint-cli2
+
+FROM rt-node AS app-mmdc
+COPY --link --from=config-split /slices/app-mmdc.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install mmdc
+
+FROM rt-uv AS app-mypy
+COPY --link --from=config-split /slices/app-mypy.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install mypy
+
+FROM rt-jvm AS app-openapi-generator
+COPY --link --from=config-split /slices/app-openapi-generator.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install openapi-generator
+
+FROM rt-node AS app-oxfmt
+COPY --link --from=config-split /slices/app-oxfmt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxfmt
+
+FROM rt-node AS app-oxlint
+COPY --link --from=config-split /slices/app-oxlint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxlint
+
+FROM rt-node AS app-pnpm
+COPY --link --from=config-split /slices/app-pnpm.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pnpm
+
+FROM rt-uv AS app-pre-commit
+COPY --link --from=config-split /slices/app-pre-commit.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pre-commit
+
+FROM rt-node AS app-prettier
+COPY --link --from=config-split /slices/app-prettier.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install prettier
+
+FROM rt-node AS app-quicktype
+COPY --link --from=config-split /slices/app-quicktype.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install quicktype
+
+FROM rt-uv AS app-semgrep
+COPY --link --from=config-split /slices/app-semgrep.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
+
+FROM rt-node AS app-slidev
+COPY --link --from=config-split /slices/app-slidev.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install slidev
+
+FROM rt-node AS app-sort-package-json
+COPY --link --from=config-split /slices/app-sort-package-json.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sort-package-json
+
+FROM rt-node AS app-spectral
+COPY --link --from=config-split /slices/app-spectral.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install spectral
+
+FROM rt-uv AS app-sqlfluff
+COPY --link --from=config-split /slices/app-sqlfluff.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqlfluff
+
+FROM rt-node AS app-syncpack
+COPY --link --from=config-split /slices/app-syncpack.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install syncpack
+
+FROM rt-node AS app-tsc
+COPY --link --from=config-split /slices/app-tsc.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tsc
+
+FROM rt-node AS app-tsgo
+COPY --link --from=config-split /slices/app-tsgo.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tsgo
+
+FROM rt-uv AS app-yamllint
+COPY --link --from=config-split /slices/app-yamllint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install yamllint
+
+FROM rt-uv AS app-zensical
+COPY --link --from=config-split /slices/app-zensical.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install zensical
 
 # --- Binary stages (one per downloaded binary) ---
+FROM dm-build AS app-actionlint
+COPY --link --from=config-split /slices/app-actionlint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install actionlint
+
+FROM dm-build AS app-age
+COPY --link --from=config-split /slices/app-age.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install age
+
+FROM dm-build AS app-air
+COPY --link --from=config-split /slices/app-air.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install air
+
+FROM dm-build AS app-allurectl
+COPY --link --from=config-split /slices/app-allurectl.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install allurectl
+
+FROM dm-build AS app-ast-grep
+COPY --link --from=config-split /slices/app-ast-grep.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ast-grep
+
+FROM dm-build AS app-bearer
+COPY --link --from=config-split /slices/app-bearer.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install bearer
+
+FROM dm-build AS app-buf
+COPY --link --from=config-split /slices/app-buf.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install buf
+
+FROM dm-build AS app-checkmake
+COPY --link --from=config-split /slices/app-checkmake.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install checkmake
+
+FROM dm-build AS app-conftest
+COPY --link --from=config-split /slices/app-conftest.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install conftest
+
+FROM dm-build AS app-cosign
+COPY --link --from=config-split /slices/app-cosign.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cosign
+
+FROM dm-build AS app-crane
+COPY --link --from=config-split /slices/app-crane.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install crane
+
+FROM dm-build AS app-dasel
+COPY --link --from=config-split /slices/app-dasel.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dasel
+
+FROM dm-build AS app-dotenv-linter
+COPY --link --from=config-split /slices/app-dotenv-linter.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dotenv-linter
+
+FROM dm-build AS app-editorconfig-checker
+COPY --link --from=config-split /slices/app-editorconfig-checker.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install editorconfig-checker
+
+FROM dm-build AS app-fx
+COPY --link --from=config-split /slices/app-fx.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install fx
+
+FROM dm-build AS app-gcrane
+COPY --link --from=config-split /slices/app-gcrane.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install gcrane
+
+FROM dm-build AS app-git-cliff
+COPY --link --from=config-split /slices/app-git-cliff.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install git-cliff
+
+FROM dm-build AS app-gitleaks
+COPY --link --from=config-split /slices/app-gitleaks.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install gitleaks
+
+FROM dm-build AS app-golang-migrate
+COPY --link --from=config-split /slices/app-golang-migrate.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golang-migrate
+
+FROM dm-build AS app-golangci-lint
+COPY --link --from=config-split /slices/app-golangci-lint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golangci-lint
+
+FROM dm-build AS app-goose
+COPY --link --from=config-split /slices/app-goose.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install goose
+
+FROM dm-build AS app-grype
+COPY --link --from=config-split /slices/app-grype.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install grype
+
+FROM dm-build AS app-hadolint
+COPY --link --from=config-split /slices/app-hadolint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install hadolint
+
+FROM dm-build AS app-harper-cli
+COPY --link --from=config-split /slices/app-harper-cli.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install harper-cli
+
+FROM dm-build AS app-helm
+COPY --link --from=config-split /slices/app-helm.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install helm
+
+FROM dm-build AS app-jq
+COPY --link --from=config-split /slices/app-jq.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install jq
+
+FROM dm-build AS app-just
+COPY --link --from=config-split /slices/app-just.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install just
+
+FROM dm-build AS app-kube-linter
+COPY --link --from=config-split /slices/app-kube-linter.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install kube-linter
+
+FROM dm-build AS app-kubeconform
+COPY --link --from=config-split /slices/app-kubeconform.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install kubeconform
+
+FROM dm-build AS app-kubectl
+COPY --link --from=config-split /slices/app-kubectl.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install kubectl
+
+FROM dm-build AS app-lefthook
+COPY --link --from=config-split /slices/app-lefthook.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook
+
+FROM dm-build AS app-lychee
+COPY --link --from=config-split /slices/app-lychee.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lychee
+
+FROM dm-build AS app-osv-scanner
+COPY --link --from=config-split /slices/app-osv-scanner.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install osv-scanner
+
+FROM dm-build AS app-oxipng
+COPY --link --from=config-split /slices/app-oxipng.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxipng
+
+FROM dm-build AS app-protoc
+COPY --link --from=config-split /slices/app-protoc.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install protoc
+
+FROM dm-build AS app-protolint
+COPY --link --from=config-split /slices/app-protolint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install protolint
+
+FROM dm-build AS app-ruff
+COPY --link --from=config-split /slices/app-ruff.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ruff
+
+FROM dm-build AS app-scorecard
+COPY --link --from=config-split /slices/app-scorecard.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install scorecard
+
+FROM dm-build AS app-shellcheck
+COPY --link --from=config-split /slices/app-shellcheck.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install shellcheck
+
+FROM dm-build AS app-shfmt
+COPY --link --from=config-split /slices/app-shfmt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install shfmt
+
+FROM dm-build AS app-snyk
+COPY --link --from=config-split /slices/app-snyk.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install snyk
+
+FROM dm-build AS app-sops
+COPY --link --from=config-split /slices/app-sops.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sops
+
+FROM dm-build AS app-sqlc
+COPY --link --from=config-split /slices/app-sqlc.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqlc
+
+FROM dm-build AS app-swag
+COPY --link --from=config-split /slices/app-swag.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install swag
+
+FROM dm-build AS app-syft
+COPY --link --from=config-split /slices/app-syft.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install syft
+
 FROM dm-build AS app-task
 COPY --link --from=config-split /slices/app-task.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install task
+
+FROM dm-build AS app-terraform-docs
+COPY --link --from=config-split /slices/app-terraform-docs.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install terraform-docs
+
+FROM dm-build AS app-terragrunt
+COPY --link --from=config-split /slices/app-terragrunt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install terragrunt
+
+FROM dm-build AS app-tflint
+COPY --link --from=config-split /slices/app-tflint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tflint
+
+FROM dm-build AS app-tfupdate
+COPY --link --from=config-split /slices/app-tfupdate.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tfupdate
+
+FROM dm-build AS app-tofu
+COPY --link --from=config-split /slices/app-tofu.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tofu
+
+FROM dm-build AS app-trivy
+COPY --link --from=config-split /slices/app-trivy.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trivy
+
+FROM dm-build AS app-trufflehog
+COPY --link --from=config-split /slices/app-trufflehog.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trufflehog
+
+FROM dm-build AS app-typos
+COPY --link --from=config-split /slices/app-typos.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typos
+
+FROM dm-build AS app-typst
+COPY --link --from=config-split /slices/app-typst.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typst
+
+FROM dm-build AS app-typstyle
+COPY --link --from=config-split /slices/app-typstyle.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typstyle
+
+FROM dm-build AS app-unfuck-ai-comments
+COPY --link --from=config-split /slices/app-unfuck-ai-comments.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install unfuck-ai-comments
+
+FROM dm-build AS app-utpm
+COPY --link --from=config-split /slices/app-utpm.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install utpm
+
+FROM dm-build AS app-vacuum
+COPY --link --from=config-split /slices/app-vacuum.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install vacuum
+
+FROM dm-build AS app-vale
+COPY --link --from=config-split /slices/app-vale.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install vale
+
+FROM dm-build AS app-xh
+COPY --link --from=config-split /slices/app-xh.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install xh
+
+FROM dm-build AS app-yamlfmt
+COPY --link --from=config-split /slices/app-yamlfmt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install yamlfmt
+
+FROM dm-build AS app-yq
+COPY --link --from=config-split /slices/app-yq.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install yq
 
 # --- Final image: assemble per-app store layers ---
 FROM dm-base AS final
@@ -73,12 +433,110 @@ LABEL org.opencontainers.image.vendor="shibanet0"
 COPY --link --from=rt-jvm /dm/store/.runtimes/jvm /dm/store/.runtimes/jvm
 COPY --link --from=rt-node /dm/store/.runtimes/node /dm/store/.runtimes/node
 COPY --link --from=rt-uv /dm/store/.runtimes/uv /dm/store/.runtimes/uv
+COPY --link --from=app-bandit /dm/store/.apps/uv/bandit /dm/store/.apps/uv/bandit
+COPY --link --from=app-bandit /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-checkov /dm/store/.apps/uv/checkov /dm/store/.apps/uv/checkov
+COPY --link --from=app-checkov /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-commitlint /dm/store/.apps/node/commitlint /dm/store/.apps/node/commitlint
+COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-changelog /dm/store/.apps/node/conventional-changelog
+COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
+COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
+COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-eslint /dm/store/.apps/node/eslint /dm/store/.apps/node/eslint
 COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.apps/go/govulncheck
-COPY --link --from=app-jscowsay /dm/store/.apps/node/jscowsay /dm/store/.apps/node/jscowsay
+COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
+COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
-COPY --link --from=app-pycowsay /dm/store/.apps/uv/pycowsay /dm/store/.apps/uv/pycowsay
-COPY --link --from=app-pycowsay /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-markdown-link-check /dm/store/.apps/node/markdown-link-check /dm/store/.apps/node/markdown-link-check
+COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2
+COPY --link --from=app-mmdc /dm/store/.apps/node/mmdc /dm/store/.apps/node/mmdc
+COPY --link --from=app-mypy /dm/store/.apps/uv/mypy /dm/store/.apps/uv/mypy
+COPY --link --from=app-mypy /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-openapi-generator /dm/store/.apps/jvm/openapi-generator /dm/store/.apps/jvm/openapi-generator
+COPY --link --from=app-oxfmt /dm/store/.apps/node/oxfmt /dm/store/.apps/node/oxfmt
+COPY --link --from=app-oxlint /dm/store/.apps/node/oxlint /dm/store/.apps/node/oxlint
+COPY --link --from=app-pnpm /dm/store/.apps/node/pnpm /dm/store/.apps/node/pnpm
+COPY --link --from=app-pre-commit /dm/store/.apps/uv/pre-commit /dm/store/.apps/uv/pre-commit
+COPY --link --from=app-pre-commit /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-prettier /dm/store/.apps/node/prettier /dm/store/.apps/node/prettier
+COPY --link --from=app-quicktype /dm/store/.apps/node/quicktype /dm/store/.apps/node/quicktype
+COPY --link --from=app-semgrep /dm/store/.apps/uv/semgrep /dm/store/.apps/uv/semgrep
+COPY --link --from=app-semgrep /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-slidev /dm/store/.apps/node/slidev /dm/store/.apps/node/slidev
+COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json /dm/store/.apps/node/sort-package-json
+COPY --link --from=app-spectral /dm/store/.apps/node/spectral /dm/store/.apps/node/spectral
+COPY --link --from=app-sqlfluff /dm/store/.apps/uv/sqlfluff /dm/store/.apps/uv/sqlfluff
+COPY --link --from=app-sqlfluff /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-syncpack /dm/store/.apps/node/syncpack /dm/store/.apps/node/syncpack
+COPY --link --from=app-tsc /dm/store/.apps/node/tsc /dm/store/.apps/node/tsc
+COPY --link --from=app-tsgo /dm/store/.apps/node/tsgo /dm/store/.apps/node/tsgo
+COPY --link --from=app-yamllint /dm/store/.apps/uv/yamllint /dm/store/.apps/uv/yamllint
+COPY --link --from=app-yamllint /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-zensical /dm/store/.apps/uv/zensical /dm/store/.apps/uv/zensical
+COPY --link --from=app-zensical /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-actionlint /dm/store/.bin/actionlint /dm/store/.bin/actionlint
+COPY --link --from=app-age /dm/store/.bin/age /dm/store/.bin/age
+COPY --link --from=app-air /dm/store/.bin/air /dm/store/.bin/air
+COPY --link --from=app-allurectl /dm/store/.bin/allurectl /dm/store/.bin/allurectl
+COPY --link --from=app-ast-grep /dm/store/.bin/ast-grep /dm/store/.bin/ast-grep
+COPY --link --from=app-bearer /dm/store/.bin/bearer /dm/store/.bin/bearer
+COPY --link --from=app-buf /dm/store/.bin/buf /dm/store/.bin/buf
+COPY --link --from=app-checkmake /dm/store/.bin/checkmake /dm/store/.bin/checkmake
+COPY --link --from=app-conftest /dm/store/.bin/conftest /dm/store/.bin/conftest
+COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
+COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
+COPY --link --from=app-dasel /dm/store/.bin/dasel /dm/store/.bin/dasel
+COPY --link --from=app-dotenv-linter /dm/store/.bin/dotenv-linter /dm/store/.bin/dotenv-linter
+COPY --link --from=app-editorconfig-checker /dm/store/.bin/editorconfig-checker /dm/store/.bin/editorconfig-checker
+COPY --link --from=app-fx /dm/store/.bin/fx /dm/store/.bin/fx
+COPY --link --from=app-gcrane /dm/store/.bin/gcrane /dm/store/.bin/gcrane
+COPY --link --from=app-git-cliff /dm/store/.bin/git-cliff /dm/store/.bin/git-cliff
+COPY --link --from=app-gitleaks /dm/store/.bin/gitleaks /dm/store/.bin/gitleaks
+COPY --link --from=app-golang-migrate /dm/store/.bin/golang-migrate /dm/store/.bin/golang-migrate
+COPY --link --from=app-golangci-lint /dm/store/.bin/golangci-lint /dm/store/.bin/golangci-lint
+COPY --link --from=app-goose /dm/store/.bin/goose /dm/store/.bin/goose
+COPY --link --from=app-grype /dm/store/.bin/grype /dm/store/.bin/grype
+COPY --link --from=app-hadolint /dm/store/.bin/hadolint /dm/store/.bin/hadolint
+COPY --link --from=app-harper-cli /dm/store/.bin/harper-cli /dm/store/.bin/harper-cli
+COPY --link --from=app-helm /dm/store/.bin/helm /dm/store/.bin/helm
+COPY --link --from=app-jq /dm/store/.bin/jq /dm/store/.bin/jq
+COPY --link --from=app-just /dm/store/.bin/just /dm/store/.bin/just
+COPY --link --from=app-kube-linter /dm/store/.bin/kube-linter /dm/store/.bin/kube-linter
+COPY --link --from=app-kubeconform /dm/store/.bin/kubeconform /dm/store/.bin/kubeconform
+COPY --link --from=app-kubectl /dm/store/.bin/kubectl /dm/store/.bin/kubectl
+COPY --link --from=app-lefthook /dm/store/.bin/lefthook /dm/store/.bin/lefthook
+COPY --link --from=app-lychee /dm/store/.bin/lychee /dm/store/.bin/lychee
+COPY --link --from=app-osv-scanner /dm/store/.bin/osv-scanner /dm/store/.bin/osv-scanner
+COPY --link --from=app-oxipng /dm/store/.bin/oxipng /dm/store/.bin/oxipng
+COPY --link --from=app-protoc /dm/store/.bin/protoc /dm/store/.bin/protoc
+COPY --link --from=app-protolint /dm/store/.bin/protolint /dm/store/.bin/protolint
+COPY --link --from=app-ruff /dm/store/.bin/ruff /dm/store/.bin/ruff
+COPY --link --from=app-scorecard /dm/store/.bin/scorecard /dm/store/.bin/scorecard
+COPY --link --from=app-shellcheck /dm/store/.bin/shellcheck /dm/store/.bin/shellcheck
+COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
+COPY --link --from=app-snyk /dm/store/.bin/snyk /dm/store/.bin/snyk
+COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
+COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
+COPY --link --from=app-swag /dm/store/.bin/swag /dm/store/.bin/swag
+COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
 COPY --link --from=app-task /dm/store/.bin/task /dm/store/.bin/task
+COPY --link --from=app-terraform-docs /dm/store/.bin/terraform-docs /dm/store/.bin/terraform-docs
+COPY --link --from=app-terragrunt /dm/store/.bin/terragrunt /dm/store/.bin/terragrunt
+COPY --link --from=app-tflint /dm/store/.bin/tflint /dm/store/.bin/tflint
+COPY --link --from=app-tfupdate /dm/store/.bin/tfupdate /dm/store/.bin/tfupdate
+COPY --link --from=app-tofu /dm/store/.bin/tofu /dm/store/.bin/tofu
+COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
+COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
+COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
+COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
+COPY --link --from=app-typstyle /dm/store/.bin/typstyle /dm/store/.bin/typstyle
+COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments
+COPY --link --from=app-utpm /dm/store/.bin/utpm /dm/store/.bin/utpm
+COPY --link --from=app-vacuum /dm/store/.bin/vacuum /dm/store/.bin/vacuum
+COPY --link --from=app-vale /dm/store/.bin/vale /dm/store/.bin/vale
+COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh
+COPY --link --from=app-yamlfmt /dm/store/.bin/yamlfmt /dm/store/.bin/yamlfmt
+COPY --link --from=app-yq /dm/store/.bin/yq /dm/store/.bin/yq
 USER root
 RUN find /dm /opt/datamitsu-config -type d -exec chgrp 0 {} + -exec chmod g=u {} +
 USER datamitsu

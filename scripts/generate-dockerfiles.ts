@@ -1,4 +1,5 @@
 import { execa } from "execa";
+import { join } from "node:path";
 
 /**
  * Regenerate docker/Dockerfile and docker/Dockerfile.alpine from the current datamitsu config via
@@ -117,6 +118,7 @@ const buildArgFlags = Object.entries(BUILD_ARGS).flatMap(([key, value]) => [
   `${key}=${value}`,
 ]);
 const passthrough = process.argv.slice(2);
+const beforeConfig = join(import.meta.dirname, "../datamitsu.config.base.js");
 
 for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
   const forceIncludeFlags =
@@ -124,6 +126,8 @@ for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
   await execa(
     "datamitsu",
     [
+      "--before-config",
+      beforeConfig,
       "devtools",
       "dockerfile",
       "--output",
