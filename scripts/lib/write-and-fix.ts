@@ -1,6 +1,6 @@
 import { fix } from "@datamitsu/datamitsu";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 
 export interface WriteAndFixOptions {
   content: string;
@@ -41,6 +41,7 @@ export async function writeAndFix(options: WriteAndFixOptions): Promise<WriteAnd
 
     // Step 3: Run fix on the specific file
     const fixResult = await fix({
+      beforeConfig: [join(import.meta.dirname, "../../datamitsu.config.base.js")],
       files: [filePath],
       stdio: "pipe",
     });

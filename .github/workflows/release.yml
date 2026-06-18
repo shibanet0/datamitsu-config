@@ -35,7 +35,10 @@ jobs:
           grep '"version":' package.json
       - name: Verify critical files exist
         run: |
-          test -f datamitsu.config.js || { echo "Error: datamitsu.config.js missing"; exit 1; }
+          # The build produces the gitignored baseline; the shipped artifact
+          # (datamitsu.config.js, what consumers load) is materialized from it.
+          test -f datamitsu.config.base.js || { echo "Error: datamitsu.config.base.js missing"; exit 1; }
+          cp datamitsu.config.base.js datamitsu.config.js
           test -f dist-datamitsu-config/datamitsu.config.d.ts || { echo "Error: dist-datamitsu-config/datamitsu.config.d.ts missing"; exit 1; }
           test -d dist/ || { echo "Error: dist/ directory missing"; exit 1; }
           echo "All critical files present"
@@ -47,6 +50,11 @@ jobs:
           echo "Contents:"
           tar -tzf *.tgz | grep -E "(datamitsu.config.js|dist/)" | head -20
           rm *.tgz
+      - name: Re-materialize shipped config for upload
+        # `npm pack` above runs postpack, which removes the root datamitsu.config.js;
+        # recreate it from the baseline so the artifact (consumed by the publish jobs)
+        # carries it.
+        run: cp datamitsu.config.base.js datamitsu.config.js
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:

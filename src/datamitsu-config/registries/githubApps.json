@@ -48,7 +48,7 @@
     "cosign": {
       "owner": "sigstore",
       "repo": "cosign",
-      "tag": "v3.0.6"
+      "tag": "v3.1.1"
     },
     "crane": {
       "owner": "google",
@@ -123,7 +123,7 @@
     "grype": {
       "owner": "anchore",
       "repo": "grype",
-      "tag": "v0.113.0"
+      "tag": "v0.114.0"
     },
     "hadolint": {
       "owner": "hadolint",
@@ -148,7 +148,7 @@
     "just": {
       "owner": "casey",
       "repo": "just",
-      "tag": "1.51.0"
+      "tag": "1.52.0"
     },
     "kube-linter": {
       "owner": "stackrox",
@@ -243,7 +243,7 @@
     "syft": {
       "owner": "anchore",
       "repo": "syft",
-      "tag": "v1.45.0"
+      "tag": "v1.45.1"
     },
     "task": {
       "owner": "go-task",
@@ -273,12 +273,12 @@
     "tofu": {
       "owner": "opentofu",
       "repo": "opentofu",
-      "tag": "v1.12.0"
+      "tag": "v1.12.1"
     },
     "tombi": {
       "owner": "tombi-toml",
       "repo": "tombi",
-      "tag": "v1.1.1"
+      "tag": "v1.1.3"
     },
     "trivy": {
       "owner": "aquasecurity",
@@ -318,7 +318,7 @@
     "vacuum": {
       "owner": "daveshanley",
       "repo": "vacuum",
-      "tag": "v0.29.1"
+      "tag": "v0.29.2"
     },
     "vale": {
       "owner": "errata-ai",
@@ -911,15 +911,15 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "4c3e7af8372d3ca3296e62fa56f23fcbb5721cc6ac1827900d398f110d7cd280",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-darwin-amd64"
+              "hash": "14d2678dfbfde18798151e86fbd91ebdadbb7424b18412a42a155dd8a2df4c7a",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.1.1/cosign-darwin-amd64"
             }
           },
           "arm64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "5fadd012ae6381a6a29ff86a7d39aa873878852f1073fc90b15995961ecfb084",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-darwin-arm64"
+              "hash": "94b42a9e697be95675f6160ab031a9a5f1ec1e646d6f648d7b2f5cd59ececbc5",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.1.1/cosign-darwin-arm64"
             }
           }
         },
@@ -927,15 +927,15 @@
           "amd64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "c956e5dfcac53d52bcf058360d579472f0c1d2d9b69f55209e256fe7783f4c74",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-amd64"
+              "hash": "ae1ecd212663f3693ad9edf8b1a183900c9a52d3155ba6e354237f9a0f6463fc",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.1.1/cosign-linux-amd64"
             }
           },
           "arm64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "bedac92e8c3729864e13d4a17048007cfafa79d5deca993a43a90ffe018ef2b8",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-linux-arm64"
+              "hash": "2ec865872e331c32fd12b08dae15332d3f92c0aa029219589684a4903ca85d11",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.1.1/cosign-linux-arm64"
             }
           }
         },
@@ -943,13 +943,13 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "9b85a88ebff2d9dd30ff4984a6f61f2cedc232dd87d81fa7f2ff3c0ed96c241c",
-              "url": "https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-windows-amd64.exe"
+              "hash": "9d2c026e667bfd979fa7ba1cab8c4b24d2e73f336ec2d57f7fc72c7e73e5b4b6",
+              "url": "https://github.com/sigstore/cosign/releases/download/v3.1.1/cosign-windows-amd64.exe"
             }
           }
         }
       },
-      "configHash": "5e829fa0383585e1cf17c80ff603bef9",
+      "configHash": "eca2dd7c4f5d810f07a55b8056c5c4f1",
       "description": "Code signing and transparency for containers and binaries"
     },
     "crane": {
@@ -1616,51 +1616,51 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "grype-0.113.0/grype",
+              "binaryPath": "grype-0.114.0/grype",
               "contentType": "tar.gz",
-              "hash": "572b285f46744ce35aac8c5129c90e481d57edca10f7b33362bf8f6f1a6c519a",
-              "url": "https://github.com/anchore/grype/releases/download/v0.113.0/grype_0.113.0_darwin_amd64.tar.gz"
+              "hash": "1e91f374d2db0285120501fe9d478048575ea671820c9fd7d1114df63320363a",
+              "url": "https://github.com/anchore/grype/releases/download/v0.114.0/grype_0.114.0_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "grype-0.113.0/grype",
+              "binaryPath": "grype-0.114.0/grype",
               "contentType": "tar.gz",
-              "hash": "5165a43923a6681b3991917ae7f3534bda572ec72176a5fdd6680c6b35873416",
-              "url": "https://github.com/anchore/grype/releases/download/v0.113.0/grype_0.113.0_darwin_arm64.tar.gz"
+              "hash": "c750fc57d0558d08428efb6072f76c8ad259f4029366544605e5285f80158a03",
+              "url": "https://github.com/anchore/grype/releases/download/v0.114.0/grype_0.114.0_darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "grype-0.113.0/grype",
+              "binaryPath": "grype-0.114.0/grype",
               "contentType": "tar.gz",
-              "hash": "d87059d11616446a5dd817a47c21823676b4b24bdaac529695ca404a32ba339d",
-              "url": "https://github.com/anchore/grype/releases/download/v0.113.0/grype_0.113.0_linux_amd64.tar.gz"
+              "hash": "edda0968d8827daab01d32b3cd7de192ae0915005e7bbfcfef9e68e79bc43343",
+              "url": "https://github.com/anchore/grype/releases/download/v0.114.0/grype_0.114.0_linux_amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "grype-0.113.0/grype",
+              "binaryPath": "grype-0.114.0/grype",
               "contentType": "tar.gz",
-              "hash": "9fb05aff6757913b1c8480a70f2c77f4cc78b03bca3a66d8161ad6136da35462",
-              "url": "https://github.com/anchore/grype/releases/download/v0.113.0/grype_0.113.0_linux_arm64.tar.gz"
+              "hash": "553e4c36d9d61349830ba6034d43b8700a7f10576d3e2f4981c0fd2b96086465",
+              "url": "https://github.com/anchore/grype/releases/download/v0.114.0/grype_0.114.0_linux_arm64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "grype-0.113.0/grype.exe",
+              "binaryPath": "grype-0.114.0/grype.exe",
               "contentType": "zip",
-              "hash": "6841e5990698afb714e0eac34e2295207c64636637823b2a861dfec61cdd98fa",
-              "url": "https://github.com/anchore/grype/releases/download/v0.113.0/grype_0.113.0_windows_amd64.zip"
+              "hash": "64eb27212b01deadfaa29259e463f4677b28f5cc3e6a9947e2863ce6dd181f97",
+              "url": "https://github.com/anchore/grype/releases/download/v0.114.0/grype_0.114.0_windows_amd64.zip"
             }
           }
         }
       },
-      "configHash": "23c69b26bb4e2917d166fa3c8be0a751",
+      "configHash": "1df46a167fc0ccd8c13ae563e8d9498b",
       "description": "A vulnerability scanner for container images and filesystems"
     },
     "hadolint": {
@@ -1826,59 +1826,59 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "just-1.51.0/just",
+              "binaryPath": "just-1.52.0/just",
               "contentType": "tar.gz",
-              "hash": "d583e45f1f9fcdd26069ad2fe3bb9dea414756d8d0752eb9093974cb5c0246f0",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-apple-darwin.tar.gz"
+              "hash": "52e4b7dc45d5934e9bc3b8f1ad3fe78bb92d0df1bca477de0c5449c59ac7a562",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "just-1.51.0/just",
+              "binaryPath": "just-1.52.0/just",
               "contentType": "tar.gz",
-              "hash": "61e3f1b8a545ff064b091eab4b6e14f8cc743ff15549be293b1e92f5b1467002",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-apple-darwin.tar.gz"
+              "hash": "1538caf566c9d8dd99286a21c0e1224b89f6676b70c16a4bcbeb52dd21fc78f5",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-aarch64-apple-darwin.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "musl": {
-              "binaryPath": "just-1.51.0/just",
+              "binaryPath": "just-1.52.0/just",
               "contentType": "tar.gz",
-              "hash": "c8f085ca3e885723c341d06243fc291b5abfdc8bbe3b2c076b117de490387b59",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "e0a712614574d45625332529c864754e26782422b7c7db931466180a618f092d",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
             "musl": {
-              "binaryPath": "just-1.51.0/just",
+              "binaryPath": "just-1.52.0/just",
               "contentType": "tar.gz",
-              "hash": "ed7ec466b77709198fd4afed253dba0270203ba5eb1c006bee2b0139090284f5",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-unknown-linux-musl.tar.gz"
+              "hash": "41af45372c49c404ca7b9a318ae9de5564636e39c6520cc4d42bf678f3bfb1bc",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-aarch64-unknown-linux-musl.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "just-1.51.0/just.exe",
+              "binaryPath": "just-1.52.0/just.exe",
               "contentType": "zip",
-              "hash": "09d1138b6845e73f04bff5e26be3f57663bddca25e36fe6241d28a5aa310b64e",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-x86_64-pc-windows-msvc.zip"
+              "hash": "ac53a7da91a33e344042dbec11e4bf1e1ec1d65ca4b695fe71398206d2a1630d",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "just-1.51.0/just.exe",
+              "binaryPath": "just-1.52.0/just.exe",
               "contentType": "zip",
-              "hash": "12bf56b5b3463e20a1dbb61e3d14748efaefb49231223ef465fbec4d442e2d20",
-              "url": "https://github.com/casey/just/releases/download/1.51.0/just-1.51.0-aarch64-pc-windows-msvc.zip"
+              "hash": "640816eb5ef85da89447831fcccc416c039edf35c191632e948d7d992ac30c71",
+              "url": "https://github.com/casey/just/releases/download/1.52.0/just-1.52.0-aarch64-pc-windows-msvc.zip"
             }
           }
         }
       },
-      "configHash": "2d359cae5c951e892d24d94e72de37d8",
+      "configHash": "44352476693c36d7a571a5743ca6ed18",
       "description": "🤖 Just a command runner"
     },
     "kube-linter": {
@@ -2790,59 +2790,59 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "syft-1.45.0/syft",
+              "binaryPath": "syft-1.45.1/syft",
               "contentType": "tar.gz",
-              "hash": "719e4b479b77b85cf2321ad0d1c04314163b8c14832cb8da9379d6aba7f6dc4a",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_darwin_amd64.tar.gz"
+              "hash": "abe6e73b819f433b69ece755dc180a19c7694896062bf806f89d0e3ca5db710a",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "syft-1.45.0/syft",
+              "binaryPath": "syft-1.45.1/syft",
               "contentType": "tar.gz",
-              "hash": "a3be0f0329b45f87908eda10cfeab261936b2bfbc47eaa36694ca8d613f9ca7e",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_darwin_arm64.tar.gz"
+              "hash": "2f79ccbba6236636125d1ece60a6dc71d4e4f91b9f580cc2afbbafc763ff353d",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "syft-1.45.0/syft",
+              "binaryPath": "syft-1.45.1/syft",
               "contentType": "tar.gz",
-              "hash": "cd5efa489e93ecde99c03a218db5dee8b3f03610466d7565cefd735610d1b28b",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_linux_amd64.tar.gz"
+              "hash": "20c84195e24927f50a3b2269946be51f4c4abc9d2f145fee7388b4199149f716",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_linux_amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "syft-1.45.0/syft",
+              "binaryPath": "syft-1.45.1/syft",
               "contentType": "tar.gz",
-              "hash": "3101fc588a6662ab3d46eda470159f82d6c6c0fd59f618fdd29928ed1c1197bb",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_linux_arm64.tar.gz"
+              "hash": "7df9f45cba1f6358ecfc7fac349d43b4605137001f9646b41267abe15a7c6cd7",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_linux_arm64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "syft-1.45.0/syft.exe",
+              "binaryPath": "syft-1.45.1/syft.exe",
               "contentType": "zip",
-              "hash": "d50095a7d125ac8c0e27f1e2ce770ef8696d6452d08fde61f5adb863c16341fd",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_windows_amd64.zip"
+              "hash": "a9d12c26521e09213745884b8b7dc361dff83188c3a1ada0da1af71012dbcd52",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_windows_amd64.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "syft-1.45.0/syft.exe",
+              "binaryPath": "syft-1.45.1/syft.exe",
               "contentType": "zip",
-              "hash": "04c75a5f6ed818115871083ba4ba032b4146c8dbc2c8ab5af8378ccb353a4e02",
-              "url": "https://github.com/anchore/syft/releases/download/v1.45.0/syft_1.45.0_windows_arm64.zip"
+              "hash": "a95befd77b590a8c4a83adc7edac538a8fab5d23793bf678f4bc7f603e6a4cad",
+              "url": "https://github.com/anchore/syft/releases/download/v1.45.1/syft_1.45.1_windows_arm64.zip"
             }
           }
         }
       },
-      "configHash": "daad2f04b4c0ce07671cce453455e942",
+      "configHash": "8a7ed3d0671f1b8b2cd99cc309feec27",
       "description": "CLI tool and library for generating a Software Bill of Materials from container images and filesystems"
     },
     "task": {
@@ -3167,130 +3167,131 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "472a9b14bd9fc617b58dd00cf39411f64bd6fff6474d968a7ce041f33e991e72",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_darwin_amd64.tar.gz"
+              "hash": "cd99ab9686ae1af3e4b99e6aabbeb38332254f28fc4ae784b2a06d91a8741a13",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "9ad35307131102371d770cfc1a9806225fd5040acf1a3d3d8c3b5ad5418cd454",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_darwin_arm64.tar.gz"
+              "hash": "7d5c26b3fe583ae7bdaae8d07eb92eeab5fbd43fb84d3414de417ba558c43649",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_darwin_arm64.tar.gz"
             }
           }
         },
         "freebsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "ce2bf02629f57bb0e22ab461e28f2e7484c91bec8a547c63f8ce092d05da201f",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_freebsd_amd64.tar.gz"
+              "hash": "c0c3850beab52369c52684d79a48792933acde808bd854612bf160c61b468a17",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_freebsd_amd64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "5fe1da79e7779538a13713809e83abe1238b95a7abd43ecffc6161af10b0ddf7",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_linux_amd64.tar.gz"
+              "hash": "8e818ca2f14bb4ee594231c908ca77ec3415c9e194302ab0c92c8947bd908670",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_linux_amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "2c7f48f95678cf75bbe34b66eeee35de75e6ee46e2ec4b55f80a0d93445f47d8",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_linux_arm64.tar.gz"
+              "hash": "fd3bb0dd81f8dcf38fc2e84c2381a1530a944a85e0fcfede900d56b4bd3a6a1c",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_linux_arm64.tar.gz"
             }
           }
         },
         "openbsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tofu-1.12.0/tofu",
+              "binaryPath": "tofu-1.12.1/tofu",
               "contentType": "tar.gz",
-              "hash": "9425c0b66cc7eae18f37a9369ef94fc420afd582713c9eae8eb00d9bb98c2625",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_openbsd_amd64.tar.gz"
+              "hash": "baae561065d7eb21a9e7ae066e24e13aea159372c6a6792a88078b7710263ade",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_openbsd_amd64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tofu-1.12.0/tofu.exe",
+              "binaryPath": "tofu-1.12.1/tofu.exe",
               "contentType": "tar.gz",
-              "hash": "5900eb95e934c4cebb22a487cfa372710dd1f0234400c1c16c0db63b8485e6ce",
-              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.0/tofu_1.12.0_windows_amd64.tar.gz"
+              "hash": "6b21b5bbd1def79f98364af42f89e4836a7acb4834dacc1929a34f2f4e7ab867",
+              "url": "https://github.com/opentofu/opentofu/releases/download/v1.12.1/tofu_1.12.1_windows_amd64.tar.gz"
             }
           }
         }
       },
-      "configHash": "e73e34c4c164a4493125ef2eda47f4c3"
+      "configHash": "b548f02ba9ec541b3c11d913531f4c82",
+      "description": "OpenTofu lets you declaratively manage your cloud infrastructure."
     },
     "tombi": {
       "binaries": {
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tombi-1.1.1/tombi",
+              "binaryPath": "tombi-1.1.3/tombi",
               "contentType": "tar.gz",
-              "hash": "f4c70cfb7b1ada225df2b996ba97820a80dd9704484945f57fc18ad8fa18d9c6",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-x86_64-apple-darwin.tar.gz"
+              "hash": "cafc335f23853e30303e962b7648df8e2c36731d906e52bb3c9e73cd6191268a",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "tombi-1.1.1/tombi",
+              "binaryPath": "tombi-1.1.3/tombi",
               "contentType": "tar.gz",
-              "hash": "3e675cbae672e37c9158f2a29cfd03033b912742cde6105cb3cbffd156488fb1",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-aarch64-apple-darwin.tar.gz"
+              "hash": "38f262c8d1a703b70181f6339fad1c61264a7f15c07c04e73c11b4094fb113eb",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-aarch64-apple-darwin.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "musl": {
-              "binaryPath": "tombi-cli-1.1.1-x86_64-unknown-linux-musl/tombi",
+              "binaryPath": "tombi-cli-1.1.3-x86_64-unknown-linux-musl/tombi",
               "contentType": "tar.gz",
-              "hash": "6b01a72fbf67eb158a2efc72f7081756d87e2397054e0faf4de4b36478813342",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "6f1490c46b82c04b50fc54b0fc835171d3c0bf45e180c1daf2491b217567effe",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
             "musl": {
-              "binaryPath": "tombi-cli-1.1.1-aarch64-unknown-linux-musl/tombi",
+              "binaryPath": "tombi-cli-1.1.3-x86_64-unknown-linux-musl/tombi",
               "contentType": "tar.gz",
-              "hash": "990aa9d963cb38aaa3cb327cca07420d3af601322eff3a6fe6ab4cdc3acc776a",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-aarch64-unknown-linux-musl.tar.gz"
+              "hash": "b00f85e6d3d7c0df6effd7fadb50d3bf06f9487ee314eb5aa71e28d6b6f847f4",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-aarch64-unknown-linux-musl.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "tombi-1.1.1/tombi.exe",
+              "binaryPath": "tombi-1.1.3/tombi.exe",
               "contentType": "zip",
-              "hash": "e899a3ae3a9361456061676b6264a5db0d4bb3e7d45e8890265d0ab5906439d1",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-x86_64-pc-windows-msvc.zip"
+              "hash": "fcb02afd0c3be168bb2639346040212ea963f9fdd7e8a19b2b147bddea98ed34",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "tombi-1.1.1/tombi.exe",
+              "binaryPath": "tombi-1.1.3/tombi.exe",
               "contentType": "zip",
-              "hash": "73523aea3022e9945b4d74ae26536890f2ecaacaa0b5160e47a22c6bc72c2ae1",
-              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.1/tombi-cli-1.1.1-aarch64-pc-windows-msvc.zip"
+              "hash": "7833a09638cd837972b81546f0294204d2ec335dbe8eaa3643f3de34c35a7e8a",
+              "url": "https://github.com/tombi-toml/tombi/releases/download/v1.1.3/tombi-cli-1.1.3-aarch64-pc-windows-msvc.zip"
             }
           }
         }
       },
-      "configHash": "4d2384cb949ee7ba07ee084541c80687",
+      "configHash": "baea41369b2b8c4ec9e14ae754c0f510",
       "description": "TOML Formatter / Linter / Language Server"
     },
     "trivy": {
@@ -3699,59 +3700,59 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "vacuum-0.29.1/vacuum",
+              "binaryPath": "vacuum-0.29.2/vacuum",
               "contentType": "tar.gz",
-              "hash": "4231c1716422dbaac34dc577d27f386b9d12ab48ea670479086e8996f083d70b",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_darwin_x86_64.tar.gz"
+              "hash": "77d04365e9a03944e206836f53f17cd4ccd891dbcff06c2c687333bfa5e7eb56",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_darwin_x86_64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "vacuum-0.29.1/vacuum",
+              "binaryPath": "vacuum-0.29.2/vacuum",
               "contentType": "tar.gz",
-              "hash": "ea1488de740cc55b8f04d64e0db123160bfd5fe619332beea3a9474b10e57708",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_darwin_arm64.tar.gz"
+              "hash": "a141031d18f3d6ebbdf4aa3c66e5e4d282080c205000e8560237929ccbb53b2e",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "vacuum-0.29.1/vacuum",
+              "binaryPath": "vacuum-0.29.2/vacuum",
               "contentType": "tar.gz",
-              "hash": "05f416a30e2d185e7fb20da1b462c4a90ecfdb2b2874fc7179329ce51a0bfc30",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_linux_x86_64.tar.gz"
+              "hash": "976a71c5699db0185bbfcd0d037241564915f479205425f7821c804da1745827",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_linux_x86_64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "vacuum-0.29.1/vacuum",
+              "binaryPath": "vacuum-0.29.2/vacuum",
               "contentType": "tar.gz",
-              "hash": "0d337aaa854bf997b84e27716ffd4dc3368b5d115d9788533ad2913e37e6d1c7",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_linux_arm64.tar.gz"
+              "hash": "98e7bc61238cf372daeb52e9ccdff38f84d6fc1dd493ebcfe57e74fb321d1c8a",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_linux_arm64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "vacuum-0.29.1/vacuum.exe",
+              "binaryPath": "vacuum-0.29.2/vacuum.exe",
               "contentType": "tar.gz",
-              "hash": "d1ad81fb780a5e67953245d171e14470dcc28d50600b6034d47ec7bf4204c0ba",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_windows_x86_64.tar.gz"
+              "hash": "5b401f6e55e1f20554aba1151175d81c66b1bde5924a9bf7f8301e535f5763f5",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_windows_x86_64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "vacuum-0.29.1/vacuum.exe",
+              "binaryPath": "vacuum-0.29.2/vacuum.exe",
               "contentType": "tar.gz",
-              "hash": "95ac4a822811d7be7a2cdca5e5047596a1d6aac31a88ce3084e38179172e8697",
-              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.1/vacuum_0.29.1_windows_arm64.tar.gz"
+              "hash": "a46790590ab5c760519d120ad74c6cc47bd72464d408906e2562de5d6b8a2617",
+              "url": "https://github.com/daveshanley/vacuum/releases/download/v0.29.2/vacuum_0.29.2_windows_arm64.tar.gz"
             }
           }
         }
       },
-      "configHash": "fb4bd506f8b1950761aa5a54384dad84",
+      "configHash": "46d422bf77c65d38ef78797872b76ccf",
       "description": "vacuum is the worlds fastest and most versatile OpenAPI, AsyncAPI & JSON Schema linter, docs generator and toolkit. It tears through API specs at light speed. 100% compatible with Spectral rulesets, and OpenAPI 3.0, 3.1 and 3.2"
     },
     "vale": {
