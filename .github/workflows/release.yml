@@ -290,7 +290,7 @@ jobs:
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-dockerhub-smoke"
           pnpm exec datamitsu store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
             --apps golangci-lint
-          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
   publish-github:
     if: |
       always() &&
@@ -496,8 +496,8 @@ jobs:
           pnpm exec datamitsu store seed "${{ steps.bundle.outputs.bundle_ref }}" \
             --apps golangci-lint,lefthook
           echo "Seeded. Running a seeded tool fully offline:"
-          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec golangci-lint -- version
-          DATAMITSU_OFFLINE=1 pnpm exec datamitsu exec lefthook -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec lefthook -- version
   validate-stable:
     if: |
       always() &&
