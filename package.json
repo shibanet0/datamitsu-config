@@ -84,8 +84,8 @@
   },
   "devDependencies": {
     "@antebudimir/eslint-plugin-vanilla-extract": "1.16.0",
-    "@commitlint/cli": "21.0.1",
-    "@commitlint/config-conventional": "21.0.1",
+    "@commitlint/cli": "21.0.2",
+    "@commitlint/config-conventional": "21.0.2",
     "@commitlint/format": "21.0.1",
     "@commitlint/types": "21.0.1",
     "@e18e/eslint-plugin": "0.3.0",
