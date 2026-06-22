@@ -41,6 +41,11 @@ jobs:
           }
           echo "Tarball contains required files"
           rm *.tgz
+      - name: Materialize datamitsu.config.js for the Docker context
+        # The build leaves only datamitsu.config.base.js, and npm pack's postpack
+        # removes any datamitsu.config.js, so the Docker COPY (and the artifact)
+        # would otherwise be missing it. Mirrors release.yml.
+        run: cp datamitsu.config.base.js datamitsu.config.js
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
