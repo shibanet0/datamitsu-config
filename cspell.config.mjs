@@ -11,6 +11,7 @@ export default defineConfig((prev) => {
     "tryceratops",
     "yesqa",
     "softprops",
+    "amannn",
     "footgun",
     "slugified",
     "footguns",
