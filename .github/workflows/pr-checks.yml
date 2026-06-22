@@ -1,6 +1,9 @@
 jobs:
   build-verify:
     name: Build and Verify
+    needs:
+      - lint
+      - test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,12 +29,6 @@ jobs:
             echo "::error::docker/ generated files are stale — run 'pnpm exec task -- docker:generate' and commit."
             exit 1
           }
-      - name: Run tests
-        run: pnpm test
-      - name: Run lint
-        run: pnpm dm check
-      - name: Validate blocklist
-        run: pnpm dm exec task -- validate:blocklist
       - name: Test npm pack
         run: |
           npm pack
@@ -44,6 +41,11 @@ jobs:
           }
           echo "Tarball contains required files"
           rm *.tgz
+      - name: Materialize datamitsu.config.js for the Docker context
+        # The build leaves only datamitsu.config.base.js, and npm pack's postpack
+        # removes any datamitsu.config.js, so the Docker COPY (and the artifact)
+        # would otherwise be missing it. Mirrors release.yml.
+        run: cp datamitsu.config.base.js datamitsu.config.js
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -89,6 +91,93 @@ jobs:
         variant:
           - debian
           - alpine
+  docker-smoke:
+    name: Docker Smoke Test
+    needs:
+      - docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-artifacts
+          path: .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          buildkitd-config: docker/buildkitd.toml
+      - name: Build and load amd64 image
+        uses: docker/build-push-action@v7
+        with:
+          cache-from: type=gha
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
+          load: true
+          platforms: linux/amd64
+          tags: datamitsu-config:smoke-${{ matrix.variant }}
+      - name: Verify key binaries run inside the image
+        run: |
+          IMG=datamitsu-config:smoke-${{ matrix.variant }}
+          # The image ENTRYPOINT is `datamitsu --before-config <config>`, so tools
+          # must be invoked via `exec <app> -- <args>`. OFFLINE forces use of the
+          # store baked into the image (no network).
+          docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec golangci-lint -- version
+          docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec lefthook -- version
+          docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec task -- --version
+    strategy:
+      matrix:
+        variant:
+          - debian
+          - alpine
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      - name: Run lint
+        run: pnpm dm check
+      - name: Validate blocklist
+        run: pnpm dm exec task -- validate:blocklist
+  pr-title:
+    if: github.event_name == 'pull_request'
+    name: PR Title
+    permissions:
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Lint PR title
+        uses: amannn/action-semantic-pull-request@v6
+        with:
+          requireScope: false
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+      - name: Run tests
+        run: pnpm test
 name: PR Checks
 on:
   pull_request:
