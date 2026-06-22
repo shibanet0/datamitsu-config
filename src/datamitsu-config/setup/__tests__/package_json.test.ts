@@ -70,8 +70,8 @@ describe("packageJson content", () => {
     expect(render({ scripts: { fix: "a", lint: "b", prepare: "z" } }).scripts).toBeUndefined();
   });
 
-  it("adds the datamitsu-config self dependency to devDependencies", () => {
-    expect(render({}).devDependencies?.[SELF_DEP]).toBeDefined();
+  it("pins the datamitsu-config self dependency through the pnpm catalog", () => {
+    expect(render({}).devDependencies?.[SELF_DEP]).toBe("catalog:");
   });
 
   it("drops a config object that becomes empty after removing syncpack", () => {
@@ -86,7 +86,7 @@ describe("packageJson content", () => {
   it("creates a fresh package from empty content", () => {
     const result = JSON.parse(renderRaw("")) as PackageJson;
     expect(result.type).toBe("module");
-    expect(result.devDependencies?.[SELF_DEP]).toBeDefined();
+    expect(result.devDependencies?.[SELF_DEP]).toBe("catalog:");
   });
 
   it("aborts on malformed JSON instead of overwriting", () => {

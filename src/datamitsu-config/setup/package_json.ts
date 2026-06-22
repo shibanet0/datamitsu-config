@@ -1,6 +1,6 @@
 import type { PackageJson } from "type-fest";
 
-import { name as packageJsonName, version as packageJsonVersion } from "../../../package.json";
+import { name as packageJsonName } from "../../../package.json";
 import { NODE_SUPPORT_FLOOR, runtimeVersions } from "../constants";
 import nodeVersions from "../registries/nodeVersions.json";
 import { cleanDependencies } from "../utils/cleanDependencies";
@@ -60,7 +60,10 @@ export const packageJson: config.ConfigSetup = {
       dependencies: cleanDependencies(data.dependencies),
       devDependencies: {
         ...cleanDependencies(data.devDependencies),
-        [packageJsonName]: packageJsonVersion,
+        // Pinned through the pnpm catalog (defined in pnpm-workspace.yaml at the
+        // workspace root) so bumping the config is a one-line change there
+        // instead of a churn across every package's package.json.
+        [packageJsonName]: "catalog:",
       },
       devEngines: isRoot
         ? {
