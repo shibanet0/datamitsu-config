@@ -2,27 +2,49 @@ import type { PackageJson } from "type-fest";
 
 import { name as packageJsonName, version as packageJsonVersion } from "../../../package.json";
 import { NODE_SUPPORT_FLOOR, runtimeVersions } from "../constants";
-import { env } from "../env";
 import nodeVersions from "../registries/nodeVersions.json";
 import { cleanDependencies } from "../utils/cleanDependencies";
+import { detectPackageType } from "../utils/detectPackageType";
+
+// Collapse an all-undefined object to undefined so JSON.stringify drops the key
+// entirely instead of emitting an empty `{}`.
+const pruneEmptyObject = <T extends object>(obj: T): T | undefined =>
+  Object.values(obj).some((value) => value !== undefined) ? obj : undefined;
 
 export const packageJson: config.ConfigSetup = {
-  content: ({ isRoot, originalContent }) => {
-    const data = JSON.parse(originalContent || "{}") as PackageJson;
+  content: ({ cwdPath, isRoot, originalContent }) => {
+    // Deliberately not the shared safeJsonParse(): it swallows parse errors to
+    // {}, which here would overwrite a malformed package.json with datamitsu
+    // defaults. Treat empty/missing as a fresh package, but abort loudly on
+    // invalid JSON rather than silently clobber the file.
+    let data: PackageJson;
+    if (originalContent?.trim()) {
+      try {
+        data = JSON.parse(originalContent) as PackageJson;
+      } catch {
+        throw new Error(`package.json at ${cwdPath} is not valid JSON; refusing to overwrite it`);
+      }
+    } else {
+      data = {};
+    }
 
-    const scripts: PackageJson["scripts"] = {
+    // TODO(less-opinionated): force-deleting these lifecycle/quality scripts is
+    // intentionally aggressive for now. `datamitsu init` already runs via
+    // lefthook, so the old `prepare: datamitsu init` injection just re-ran it
+    // (~1s wasted) — setting prepare to undefined cleans that stale injection out
+    // of every managed project on the next setup. Once all projects are migrated,
+    // stop clobbering these: public projects legitimately define their own
+    // prepare/postinstall/preinstall/fix/lint and overwriting them is exactly the
+    // opinionated behavior we want to drop.
+    const scripts: NonNullable<PackageJson["scripts"]> = {
       ...data.scripts,
       ...(isRoot
         ? ({
             postinstall: undefined,
             preinstall: undefined,
-            prepare: env().DATAMITSU_DEV_MODE ? "pnpm datamitsu init" : "datamitsu init",
+            prepare: undefined,
           } as any)
         : {}),
-
-      ...(env().DATAMITSU_DEV_MODE && {
-        postinstall: "pnpm build:lib",
-      }),
 
       fix: undefined,
       lint: undefined,
@@ -31,20 +53,14 @@ export const packageJson: config.ConfigSetup = {
     const config: PackageJson = {
       ...data,
 
-      scripts: scripts && Object.keys(scripts).length > 0 ? scripts : undefined,
-      type: data.type ?? "module",
-      ...(typeof data.config === "object"
-        ? {
-            config: {
-              ...data.config,
-              syncpack: undefined,
-            },
-          }
-        : {}),
+      config:
+        typeof data.config === "object" && data.config !== null
+          ? pruneEmptyObject({ ...data.config, syncpack: undefined })
+          : data.config,
       dependencies: cleanDependencies(data.dependencies),
       devDependencies: {
         ...cleanDependencies(data.devDependencies),
-        ...(env().DATAMITSU_DEV_MODE ? {} : { [packageJsonName]: packageJsonVersion }),
+        [packageJsonName]: packageJsonVersion,
       },
       devEngines: isRoot
         ? {
@@ -67,6 +83,8 @@ export const packageJson: config.ConfigSetup = {
       // Removing it breaks CI ("No pnpm version specified").
       packageManager: isRoot ? `pnpm@${nodeVersions.pnpm.version}` : undefined,
       peerDependencies: cleanDependencies(data.peerDependencies),
+      scripts: pruneEmptyObject(scripts),
+      type: data.type ?? detectPackageType(data),
       ...({
         cspell: undefined,
         eslintConfig: undefined,

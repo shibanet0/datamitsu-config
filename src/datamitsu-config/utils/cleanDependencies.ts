@@ -1,7 +1,6 @@
 import type { PackageJson } from "type-fest";
 
 import { mapOfApps } from "../apps";
-import { env } from "../env";
 
 const listOfAppsDependencies = Object.entries(mapOfApps)
   .filter(([_, el]) => typeof el.node === "object")
@@ -17,10 +16,6 @@ const listOfAppsDependencies = Object.entries(mapOfApps)
 export const cleanDependencies = (
   deps: PackageJson.PackageJsonStandard["dependencies"],
 ): PackageJson.PackageJsonStandard["dependencies"] => {
-  if (env().DATAMITSU_DEV_MODE) {
-    return deps;
-  }
-
   if (!deps) {
     return;
   }
