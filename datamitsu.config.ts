@@ -61,7 +61,7 @@ export default [
   },
 ];
 `,
-      expectChainHash: "xxh3:6e581b7be339e8bdae84368416e85bf8",
+      expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
     },
     "knip.config.js": {
       ...config.setup?.["knip.config.js"],
@@ -108,7 +108,7 @@ export default defineConfig((prev) => ({
   ],
 }));
 `,
-      expectChainHash: "xxh3:f6d543be45e51060ae443310a3b29fda",
+      expectChainHash: "xxh3:3367bb8a2b161dfca86bb5eaf61bb486",
     },
     "lefthook.yaml": {
       ...config.setup?.["lefthook.yaml"],
@@ -352,7 +352,7 @@ pre-commit:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:8701ec9ad88a55001c5c8192ad6583b0",
+      expectChainHash: "xxh3:a6c3c2d20af573774b9bb2463ea42e8f",
     },
     "pnpm-workspace.yaml": {
       ...config.setup?.["pnpm-workspace.yaml"],
@@ -395,7 +395,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:0b3223959d56ef88137630a7d59e710b",
+      expectChainHash: "xxh3:a5cf1b92eb2ba85fc50c0cccb306c037",
     },
   },
 });
