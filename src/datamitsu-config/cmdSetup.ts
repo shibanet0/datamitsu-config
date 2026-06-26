@@ -31,6 +31,7 @@ import { packageJson } from "./setup/package_json";
 import { pnpmWorkspaceYaml } from "./setup/pnpm_workspace_yaml";
 import { prettierConfigMjs } from "./setup/prettier_config_mjs";
 import { pyprojectToml } from "./setup/pyproject_toml";
+import { rustfmtToml } from "./setup/rustfmt_toml";
 import { turboJson } from "./setup/turbo_json";
 
 export { trufflehogExcludePaths } from "./setup/_trufflehog_exclude_paths_txt";
@@ -68,6 +69,7 @@ export const setup: config.MapOfConfigSetup = {
   "pnpm-workspace.yaml": pnpmWorkspaceYaml,
   "prettier.config.mjs": prettierConfigMjs,
   "pyproject.toml": pyprojectToml,
+  "rustfmt.toml": rustfmtToml,
   "turbo.json": turboJson,
   ...aiTools,
 };
