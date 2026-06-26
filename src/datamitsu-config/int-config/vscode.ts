@@ -764,6 +764,7 @@ export const vscodeSettings: (context: config.ConfigContext) => string = (contex
       ".gitleaks.toml",
       ".tombi.toml",
       ".editorconfig-checker.json",
+      "oxfmt.config.ts",
     ],
     Pipfile: [
       ".editorconfig",
