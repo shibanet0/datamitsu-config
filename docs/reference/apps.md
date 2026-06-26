@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **96 apps** across multiple runtimes (binary, node, python).
+This configuration manages **97 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **96 apps** across multiple runtimes (binary, node, p
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (47 apps): actionlint, age, air, etc.
+- **Utilities** (48 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -85,6 +85,7 @@ This configuration manages **96 apps** across multiple runtimes (binary, node, p
 | protolint              | binary  | [Info](https://github.com/yoheimuta/protolint){:target="\_blank"}                                                                        | A pluggable linter and fixer to enforce Protocol Buffer style and conventions.                                                                                                                            |
 | quicktype              | node    | [Info](https://www.npmjs.com/package/quicktype){:target="\_blank"}                                                                       | Generate types and converters from JSON, Schema, and GraphQL                                                                                                                                              |
 | ruff                   | binary  | [Info](https://github.com/astral-sh/ruff){:target="\_blank"}                                                                             | An extremely fast Python linter and code formatter, written in Rust.                                                                                                                                      |
+| rustfmt                | unknown | N/A                                                                                                                                      | Rust formatter (cargo fmt) — system toolchain; skipped when rust is absent                                                                                                                                |
 | scorecard              | binary  | [Info](https://github.com/ossf/scorecard){:target="\_blank"}                                                                             | OpenSSF Scorecard - Security health metrics for Open Source                                                                                                                                               |
 | semgrep                | python  | [Info](https://pypi.org/project/semgrep){:target="\_blank"}                                                                              | Lightweight static analysis for many languages. Find bug variants with patterns that look like source code.                                                                                               |
 | shellcheck             | binary  | [Info](https://github.com/koalaman/shellcheck){:target="\_blank"}                                                                        | ShellCheck, a static analysis tool for shell scripts                                                                                                                                                      |

@@ -52,22 +52,21 @@ describe("Dockerfile consistency", () => {
     expect(map.layers.find((e) => e.app === "lefthook")).toBeDefined();
   });
 
-  // Every non-runtime app layer must have a matching `app-<name>` build stage.
-  // Runtimes (node/jvm/uv) are copied via differently-named stages, so they are
-  // excluded.
+  // Every non-runtime layer must have a matching build stage. Runtimes
+  // (node/jvm/uv) are copied via differently-named stages, so they are excluded;
+  // WASM parser modules use `parser-<name>` stages, everything else `app-<name>`.
   for (const [mapPath, dockerfilePath] of [
     ["docker/oci-map.json", "docker/Dockerfile"],
     ["docker/oci-map.alpine.json", "docker/Dockerfile.alpine"],
   ] as const) {
-    it(`every app in ${mapPath} has an app-<name> stage in ${dockerfilePath}`, () => {
+    it(`every layer in ${mapPath} has its build stage in ${dockerfilePath}`, () => {
       const map = readOciMap(mapPath);
       const dockerfile = readFile(dockerfilePath);
       const apps = map.layers.filter((e) => e.app && e.kind !== "runtime");
       expect(apps.length).toBeGreaterThan(50);
-      for (const { app } of apps) {
-        expect(dockerfile, `Stage 'app-${app}' missing from ${dockerfilePath}`).toContain(
-          `app-${app}`,
-        );
+      for (const { app, kind } of apps) {
+        const stage = kind === "parser" ? `parser-${app}` : `app-${app}`;
+        expect(dockerfile, `Stage '${stage}' missing from ${dockerfilePath}`).toContain(stage);
       }
     });
   }

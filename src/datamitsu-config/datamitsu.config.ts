@@ -3,6 +3,7 @@ import { mapOfApps } from "./apps";
 import { initCommands, setup } from "./cmdSetup";
 import { buildManagedGitleaksToml } from "./gitleaksDefaults";
 import { ociBundle } from "./oci";
+import { parsers } from "./parsers";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
 import { SKILLS } from "./skills";
@@ -62,6 +63,7 @@ function getConfig(cfg: config.Config): config.Config {
       },
     },
     initCommands,
+    parsers,
     projectTypes,
     runtimes: {
       ...mapOfRuntimes,
@@ -97,7 +99,7 @@ function getConfig(cfg: config.Config): config.Config {
 globalThis.getConfig = getConfig;
 
 const getMinVersion = (): string => {
-  return "0.1.5";
+  return "0.1.9";
 };
 
 globalThis.getMinVersion = getMinVersion;
