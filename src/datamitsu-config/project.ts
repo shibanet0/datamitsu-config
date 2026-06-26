@@ -25,6 +25,10 @@ export const projectTypes: config.MapOfProjectTypes = {
     description: "Python project",
     markers: ["**/pyproject.toml"],
   },
+  "rust-project": {
+    description: "Rust crate",
+    markers: ["**/Cargo.toml"],
+  },
   "terraform-project": {
     description: "Terraform infrastructure",
     markers: ["**/*.tf"],

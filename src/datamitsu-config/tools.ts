@@ -46,6 +46,7 @@ type Tool =
   | "protolint"
   | "ruff"
   | "ruff-format"
+  | "rustfmt"
   | "shellcheck"
   | "shfmt"
   | "sort-package-json"
@@ -94,6 +95,7 @@ const _fixPriority: Tool[] = [
   "typstyle",
   "dotenv-linter",
   "shfmt",
+  "rustfmt",
   "toml",
   "tflint",
   "terraform-fmt",
@@ -126,6 +128,7 @@ const _lintPriority: Tool[] = [
   "editorconfig-checker",
   "dotenv-linter",
   "shfmt",
+  "rustfmt",
   "shellcheck",
   "hadolint",
   "checkmake",
@@ -568,6 +571,29 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["python-package"],
+  },
+  rustfmt: {
+    name: "rustfmt - Rust formatter (cargo fmt)",
+    operations: {
+      fix: {
+        app: "rustfmt",
+        args: [],
+        globs: ["**/*.rs"],
+        priority: fixPriority.rustfmt,
+        scope: "per-project",
+      },
+      lint: {
+        app: "rustfmt",
+        args: ["--check"],
+        globs: ["**/*.rs"],
+        priority: lintPriority.rustfmt,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["rust-project"],
+    // The rustfmt app runs via a POSIX shell guard; Windows has no `sh` by default.
+    skip: facts().os === "windows",
+    skipReason: "rustfmt runs via a POSIX shell guard (sh), unavailable on Windows by default",
   },
   shellcheck: {
     name: "ShellCheck - Shell Script Linter",

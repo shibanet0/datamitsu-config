@@ -273,6 +273,18 @@ export const mapOfApps: BinManager.MapOfApps = {
       ...nodeVersions.quicktype,
     },
   },
+  // Shell guard: format via the system rust toolchain when present, else exit 0 (skip).
+  rustfmt: {
+    description: "Rust formatter (cargo fmt) — system toolchain; skipped when rust is absent",
+    shell: {
+      args: [
+        "-c",
+        'if command -v cargo >/dev/null 2>&1 && command -v rustfmt >/dev/null 2>&1; then exec cargo fmt "$@"; else echo "datamitsu: rust toolchain not found — skipping Rust format" >&2; exit 0; fi',
+        "rustfmt",
+      ],
+      name: "sh",
+    },
+  },
   semgrep: {
     description: uvVersions.semgrep.description,
     uv: {
