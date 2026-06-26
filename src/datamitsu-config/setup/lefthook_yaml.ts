@@ -19,7 +19,7 @@ export const lefthookYaml: config.ConfigSetup = {
           },
           "install deps": {
             priority: 1,
-            run: `pnpm i --force`,
+            run: `pnpm i -y`,
           },
         },
       },

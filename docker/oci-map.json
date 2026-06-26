@@ -527,6 +527,11 @@
       "subtree": ".bin/yq",
       "kind": "binary",
       "app": "yq"
+    },
+    {
+      "subtree": ".parsers/core",
+      "kind": "parser",
+      "app": "core"
     }
   ]
 }

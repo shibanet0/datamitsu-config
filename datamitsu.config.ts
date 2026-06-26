@@ -123,7 +123,7 @@ post-checkout:
       run: node bin/datamitsu.js init
     install deps:
       priority: 1
-      run: pnpm i
+      run: pnpm i -y
 pre-commit:
   commands:
     datamitsu-check:
@@ -150,7 +150,7 @@ pre-commit:
       stage_fixed: false
   parallel: false
     `,
-      expectChainHash: "xxh3:0016a98470db020d47a929f541312c24",
+      expectChainHash: "xxh3:70a3cb2247a663d2d73391ea7100e41e",
     },
     "package.json": {
       ...config.setup?.["package.json"],
@@ -168,7 +168,7 @@ pre-commit:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.1.4",
+                "@datamitsu/datamitsu": "0.1.9",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -352,7 +352,7 @@ pre-commit:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:a6c3c2d20af573774b9bb2463ea42e8f",
+      expectChainHash: "xxh3:046faf26cd47b07ab3c89e0d66992da3",
     },
     "pnpm-workspace.yaml": {
       ...config.setup?.["pnpm-workspace.yaml"],
@@ -414,6 +414,7 @@ const cspellWords: string[] = [
   "tryceratops",
   "yesqa",
   "softprops",
+  "amannn",
   "footgun",
   "slugified",
   "footguns",

@@ -182,12 +182,13 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "checkmake",
-        args: ["{file}"],
+        args: ["--format={{.LineNumber}}:{{.Rule}}:{{.Violation}}\n", "{file}"],
         globs: makefileGlobs,
         priority: lintPriority.checkmake,
         scope: "per-file",
       },
     },
+    outputParser: { module: "core", parser: "checkmake" },
   },
   cspell: {
     name: "CSpell - A Spelling Checker for Code!",
@@ -211,6 +212,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-project",
       },
     },
+    outputParser: { module: "core", parser: "cspell" },
   },
   "dotenv-linter": {
     name: "dotenv-linter",
@@ -232,6 +234,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-file",
       },
     },
+    outputParser: { module: "core", parser: "dotenv_linter" },
   },
   "editorconfig-checker": {
     name: "EditorConfig Checker",
@@ -258,13 +261,14 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "eslint",
-        args: ["--quiet", "-c", "{cwd}/eslint.config.mjs", "{files}"],
+        args: ["--quiet", "--format=json", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         batch: true,
         globs: eslintGlobs,
         priority: lintPriority.eslint,
         scope: "per-project",
       },
     },
+    outputParser: { module: "core", parser: "eslint" },
     projectTypes: ["npm-package"],
   },
   gitleaks: {
@@ -313,7 +317,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "golangci-lint",
-        args: ["run", "--allow-parallel-runners"],
+        args: ["run", "--allow-parallel-runners", "--output.json.path=stdout"],
         env: {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
@@ -321,6 +325,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-project",
       },
     },
+    outputParser: { module: "core", parser: "golangci_lint" },
     projectTypes: ["golang-package"],
   },
   "golangci-lint-fmt": {
@@ -357,12 +362,13 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "hadolint",
-        args: ["-c", "{root}/hadolint.yaml", "--verbose", "{file}"],
+        args: ["-c", "{root}/hadolint.yaml", "--format=json", "{file}"],
         globs: dockerfileGlobs,
         priority: lintPriority.hadolint,
         scope: "per-file",
       },
     },
+    outputParser: { module: "core", parser: "hadolint" },
   },
   "harper-cli": {
     name: "Harper - The Grammar Checker for Developers",
@@ -376,6 +382,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "repository",
       },
     },
+    outputParser: { module: "core", parser: "harper_cli" },
   },
   helm: {
     name: "Helm - The Kubernetes Package Manager",
@@ -521,12 +528,13 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "protolint",
-        args: ["lint", "{file}"],
+        args: ["lint", "--reporter", "json", "{file}"],
         globs: protoGlobs,
         priority: lintPriority.protolint,
         scope: "per-file",
       },
     },
+    outputParser: { module: "core", parser: "protolint" },
   },
   ruff: {
     name: "Ruff - Python Linter",
@@ -836,6 +844,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-project",
       },
     },
+    outputParser: { module: "core", parser: "tsc" },
     projectTypes: ["typescript-project"],
   },
   tsgo: {
@@ -849,6 +858,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-project",
       },
     },
+    outputParser: { module: "core", parser: "tsc" },
     projectTypes: ["typescript-project"],
   },
   typos: {
@@ -906,13 +916,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "vale",
-        args: ["--config", "{root}/.vale.ini", "--output", "line", "{files}"],
+        args: ["--config", "{root}/.vale.ini", "--output", "JSON", "{files}"],
         batch: true,
         globs: markdownGlobs,
         priority: lintPriority.vale,
         scope: "repository",
       },
     },
+    outputParser: { module: "core", parser: "vale" },
   },
   yamlfmt: {
     name: "yamlfmt - YAML Formatter",
@@ -942,7 +953,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "yamllint",
-        args: ["-c", "{root}/.yamllint.yaml", "--strict", "{files}"],
+        args: ["-c", "{root}/.yamllint.yaml", "--strict", "-f", "parsable", "{files}"],
         batch: true,
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
@@ -950,6 +961,7 @@ export const toolsConfig: config.MapOfTools = {
         scope: "repository",
       },
     },
+    outputParser: { module: "core", parser: "yamllint" },
   },
   "yq-json": {
     name: "yq - JSON Key Sorter",
