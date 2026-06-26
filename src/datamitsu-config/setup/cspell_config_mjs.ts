@@ -24,6 +24,7 @@ export default defineConfig();
     ".cspell.config.jsonc",
     "cspell.config.json",
     "cspell.config.jsonc",
+    "cspell.config.js",
     "cspell.config.mjs",
     "cspell.config.cjs",
     ".cspell.config.mjs",
