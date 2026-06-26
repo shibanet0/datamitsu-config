@@ -19,8 +19,10 @@ describe("detectPackageType", () => {
     ["devDependencies", "electron"],
     ["peerDependencies", "react-native"],
     ["optionalDependencies", "expo"],
-  ])("returns commonjs when %s contains %s", (bucket, dep) => {
-    expect(detectPackageType({ [bucket]: { [dep]: "1.0.0" } })).toBe("commonjs");
+  ])("leaves type unset (undefined) when %s contains %s", (bucket, dep) => {
+    // CommonJS-config frameworks: unset, not an explicit `commonjs` (which breaks
+    // ESM-emitting bundler builds like Docusaurus).
+    expect(detectPackageType({ [bucket]: { [dep]: "1.0.0" } })).toBeUndefined();
   });
 });
 
@@ -46,7 +48,8 @@ describe("packageJson content", () => {
 
   it("auto-detects type when unset", () => {
     expect(render({}).type).toBe("module");
-    expect(render({ dependencies: { next: "15.0.0" } }).type).toBe("commonjs");
+    // A CommonJS-config framework dep leaves `type` unset (field omitted).
+    expect(render({ dependencies: { next: "15.0.0" } }).type).toBeUndefined();
   });
 
   it("never overrides an explicit type", () => {
