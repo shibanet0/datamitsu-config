@@ -3,6 +3,7 @@ import { formatTerraformSpacingSh } from "./setup/_datamitsu_scripts_format_terr
 import { dockerignore } from "./setup/_dockerignore";
 import { editorconfig } from "./setup/_editorconfig";
 import { editorconfigCheckerJson } from "./setup/_editorconfig_checker_json";
+import { githubDependabotYml } from "./setup/_github_dependabot_yml";
 import { gitignore } from "./setup/_gitignore";
 import { gitleaksToml } from "./setup/_gitleaks_toml";
 import { golangciYaml } from "./setup/_golangci_yaml";
@@ -42,6 +43,7 @@ export const setup: config.MapOfConfigSetup = {
   ".dockerignore": dockerignore,
   ".editorconfig": editorconfig,
   ".editorconfig-checker.json": editorconfigCheckerJson,
+  ".github/dependabot.yml": githubDependabotYml,
   ".gitignore": gitignore,
   ".gitleaks.toml": gitleaksToml,
   ".golangci.yaml": golangciYaml,

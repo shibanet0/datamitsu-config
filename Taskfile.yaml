@@ -86,6 +86,18 @@ tasks:
       - node scripts/gen-tsconfig-md.ts
     desc: Regenerate src/datamitsu-config/tsconfig.md.ts from docs/reference/tsconfig.md
   # ──────────────────────────────────────────────
+  # dependabot (manual — upstream schema changes rarely)
+  # ──────────────────────────────────────────────
+  dependabot:codegen:
+    cmds:
+      - pnpm exec json2ts --input dependabot_2.0_schema.json --output src/datamitsu-config/setup/dependabot_schema.d.ts
+    desc: Generate TypeScript types from the Dependabot JSON schema
+  dependabot:sync:schema:
+    cmds:
+      - node scripts/sync-dependabot-schema.ts
+      - task: dependabot:codegen
+    desc: Fetch the Dependabot 2.0 schema from schemastore.org and regenerate types
+  # ──────────────────────────────────────────────
   # Docker
   # ──────────────────────────────────────────────
   docker:generate:

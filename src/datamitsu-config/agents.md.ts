@@ -89,6 +89,17 @@ Before completing any task:
 
 When creating or modifying \`tsconfig.json\` files, consult the [TypeScript Configuration Guide](.datamitsu/tsconfig.md).`;
 
+const CHUNK_00_DEPENDABOT = `## Dependabot (public GitHub repos only)
+
+Keep \`.github/dependabot.yml\` accurate **only when this is a public GitHub repository**. Confirm before acting — e.g. \`gh repo view --json visibility,isPrivate\`. If the repo is private, not on GitHub, or you cannot determine this, **do nothing** and leave the file absent.
+
+When it is a public GitHub repo:
+
+1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` file with an empty \`updates:\` list is enough to opt in — \`dm setup\` fills in the rest.
+2. **Own the \`updates\` entries** (the "what"): the \`package-ecosystem\` values and their \`directory\`/\`directories\`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
+3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm setup\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
+4. **Run \`pnpm exec dm setup\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+
 const CHUNK_00_SCRIPTS = `## Project Scripts
 
 Every package in the repository — regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin) — exposes a \`package.json\` with a unified set of scripts. This makes project entry points identical across the monorepo: the same command names work everywhere, and \`turbo\` orchestrates them from the root.
@@ -288,15 +299,16 @@ README must be kept **minimal** and focused on:
 - Store screenshots in the website's static assets with descriptive names`;
 
 // ── Joined combinations ─────────────────────────────────────────────────────
-export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_SCRIPTS].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
+export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BASE_HASH = "783962987ce37124cfa3031f207b7ada24dc42f3cc809a7c0fdbf6617200d2d4"; // prettier-ignore
+export const CHUNK_00_DEPENDABOT_HASH = "db054ec686a4cefaeaa60acf4f55fc22b84d9859b4c321a1ef838728cdd27e11"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "211a1e7636bb583b8a2743b1937d61a203ab8d62940a186c0fbc0fcd156e5ec6"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "535b8ce9282c78a5328528d9455357584fe6f3021f1fda2150066f5e6c083137"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "00d40fa915002c384542cafda336e2fde0afa10de896f2e204494b46ea58e160"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "072c1c9cff927e51063758ac779408cbc68b855e0f1e2cc6297365fd850ebd1e"; // prettier-ignore
 
-export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore
+export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore

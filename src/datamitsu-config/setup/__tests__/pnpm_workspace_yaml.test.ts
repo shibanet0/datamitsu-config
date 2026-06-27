@@ -10,7 +10,7 @@ const render = (originalContent: string): Record<string, any> =>
     pnpmWorkspaceYaml.content!({
       datamitsuDir: ".datamitsu",
       originalContent,
-    } as never),
+    } as never)!,
   ) as Record<string, any>;
 
 describe("pnpmWorkspaceYaml catalog", () => {
