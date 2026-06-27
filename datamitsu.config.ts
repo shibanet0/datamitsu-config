@@ -13,6 +13,7 @@ export default defineConfig((prev) => {
 
   return ({
   ...prev,
+  ignorePaths: [...(prev.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
   words: [
     ...(prev.words || []),
     ...words

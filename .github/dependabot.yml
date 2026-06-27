@@ -1,40 +1,47 @@
 updates:
   - commit-message:
-      prefix: "build(deps)"
-    directory: "/"
+      include: scope
+      prefix: chore
+    directory: /docker
     groups:
-      commitlint:
+      all-dependencies:
         patterns:
-          - "@commitlint/*"
-      eslint:
-        patterns:
-          - "eslint*"
-          - "@eslint/*"
-      prettier:
-        patterns:
-          - "prettier*"
-      typescript:
-        patterns:
-          - "typescript"
-          - "typescript-eslint"
-          - "@types/*"
+          - "*"
     labels:
-      - "dependencies"
-      - "npm"
-    open-pull-requests-limit: 5
-    package-ecosystem: "npm"
+      - dependencies
+      - docker
+    open-pull-requests-limit: 10
+    package-ecosystem: docker
     schedule:
-      day: "monday"
-      interval: "weekly"
+      interval: weekly
   - commit-message:
-      prefix: "ci(deps)"
-    directory: "/"
+      prefix: ci
+    directory: /
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
     labels:
-      - "dependencies"
-      - "ci"
-    open-pull-requests-limit: 5
-    package-ecosystem: "github-actions"
+      - dependencies
+      - ci
+    open-pull-requests-limit: 10
+    package-ecosystem: github-actions
     schedule:
-      day: "monday"
-      interval: "weekly"
+      interval: weekly
+  - commit-message:
+      include: scope
+      prefix: chore
+    directory: /
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+      - npm
+    open-pull-requests-limit: 10
+    package-ecosystem: npm
+    schedule:
+      interval: weekly
+    versioning-strategy: auto
 version: 2

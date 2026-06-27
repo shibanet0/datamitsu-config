@@ -151,7 +151,6 @@ export default defineConfig((prev) => {
 
   return {
     ...prev,
-    // Generated from the upstream Dependabot JSON schema — not spell-checked.
     ignorePaths: [...(prev.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
     words: [...(prev.words || []), ...words],
   };
