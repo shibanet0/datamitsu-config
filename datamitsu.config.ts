@@ -168,7 +168,7 @@ pre-commit:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.1.9",
+                "@datamitsu/datamitsu": "0.1.10",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -352,7 +352,7 @@ pre-commit:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:046faf26cd47b07ab3c89e0d66992da3",
+      expectChainHash: "xxh3:cf1595c7ada06ad477c1feb8388a2030",
     },
     "pnpm-workspace.yaml": {
       ...config.setup?.["pnpm-workspace.yaml"],

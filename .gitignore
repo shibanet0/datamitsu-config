@@ -147,6 +147,7 @@ datamitsu.config.js
 datamitsu.config.base.js
 datamitsu.config.oci-ghcr.js
 oxlint_configuration_schema.json
+dependabot_2.0_schema.json
 
 # ralphex progress logs
 .ralphex/progress/

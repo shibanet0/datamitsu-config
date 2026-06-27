@@ -41,7 +41,7 @@ describe("packageJson content", () => {
     const content = packageJson.content!;
 
     renderRaw = (originalContent, isRoot = true) =>
-      content({ cwdPath: "/project", isRoot, originalContent } as never);
+      content({ cwdPath: "/project", isRoot, originalContent } as never)!;
     render = (data, isRoot = true) =>
       JSON.parse(renderRaw(JSON.stringify(data), isRoot)) as PackageJson;
   });

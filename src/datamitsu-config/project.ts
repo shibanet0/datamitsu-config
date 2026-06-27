@@ -1,6 +1,14 @@
 /// <reference path="./datamitsu.config.d.ts" />
 
 export const projectTypes: config.MapOfProjectTypes = {
+  "docker-project": {
+    description: "Docker image (Dockerfile)",
+    markers: ["**/Dockerfile", "**/Dockerfile.*", "**/*.Dockerfile"],
+  },
+  "github-actions": {
+    description: "GitHub Actions workflows",
+    markers: [".github/workflows/*.yml", ".github/workflows/*.yaml"],
+  },
   "golang-package": {
     description: "Go module",
     markers: ["**/go.mod"],
