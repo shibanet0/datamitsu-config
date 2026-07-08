@@ -89,6 +89,39 @@ Before completing any task:
 
 When creating or modifying \`tsconfig.json\` files, consult the [TypeScript Configuration Guide](.datamitsu/tsconfig.md).`;
 
+const CHUNK_00_CONFIG_INPUTS = `## Single Source for Constants, Env & Build Inputs
+
+Every project (or set of apps in a monorepo) funnels its shared constants, environment variables, and build-time flags through ONE declared, validated access point. Reading these values ad-hoc anywhere else is forbidden. This holds when STARTING a project AND while MAINTAINING one: if you see a constant, a raw env read, or a build flag used inline where it belongs in the central point, STOP and tell the user before continuing.
+
+**Why:** the full set of inputs stays discoverable in one place — trivial to rename, audit, give defaults, and reason about. Hunting scattered constants and env reads across a codebase later is the pain this rule removes.
+
+### Constants
+
+- Declare shared constants in a single module per project (Go: one package; JS/TS: one module). No magic values scattered across files.
+- Constants that must be shared ACROSS languages (e.g. Go + JS in one monorepo): keep them in a single JSON manifest and generate the per-language files from it with a codegen script — do not maintain copies by hand.
+  - Each generated file carries a header comment marking it as generated (naming the source manifest and the generator).
+  - Prefer generating on demand at build time (the artifact need not be committed) over static committed copies. The manifest is the only source of truth.
+  - The generator language is situational — TypeScript is a fine default.
+  - This is the same manifest → codegen pattern that \`datamitsu-config\` uses for its \`registries/*.json\` → generated \`.ts\`.
+
+### Environment Variables
+
+One env module per project (Go: an \`env\` package; TS: an \`env.ts\`). ALL env access goes through it.
+
+- Direct \`process.env\` (JS/TS) and \`os.Getenv\` (Go) are forbidden everywhere else — except the standard, non-app vars a child process genuinely needs (\`PATH\`, \`HOME\`, \`CI\`, …).
+- Expose each value via an accessor (a function, not a bare mutable export): it cannot be reassigned by accident, and its default lives next to it.
+- Do ALL parsing, normalization, and validation here — bool/int parsing, enum checks, coercion to the type the app expects. The rest of the app consumes an already-valid, typed value, never a raw string.
+- Centralize the KEYS too, so renaming a variable is a one-line change.
+
+### Build-Time Flags
+
+Go \`ldflags\` and build tags, Rust \`build.rs\` / \`cfg\` / \`env!\`, and equivalents.
+
+- Treat them exactly like env vars: funnel into one module with defaults, normalization, and typed accessors. Do NOT read raw ldflag-injected variables across the codebase.
+- The app must not care whether a value came from an env var or a build flag — it reads one validated config surface.
+
+Reference implementation: datamitsu's own \`internal/env\` (typed getters with defaults) and \`internal/runtimeconfig\` (env-resolved, validated effective config as a typed struct).`;
+
 const CHUNK_00_DEPENDABOT = `## Dependabot (public GitHub repos only)
 
 Keep \`.github/dependabot.yml\` accurate **only when this is a public GitHub repository**. Confirm before acting — e.g. \`gh repo view --json visibility,isPrivate\`. If the repo is private, not on GitHub, or you cannot determine this, **do nothing** and leave the file absent.
@@ -214,6 +247,68 @@ DO NOT:
 - Encode environment in the script name. Use variables.
 - Add a \`clean\` script. Use \`git clean -fdx\`.`;
 
+const CHUNK_00_STACK = `## Preferred Stack
+
+When creating a project, initializing an app, or adding a dependency, pick from this catalogue FIRST. Do not invent alternatives or reach for unmaintained/EOL packages. This is a priority list, not a hard mandate — if a project already uses a reasonable different choice, keep it.
+
+### Version Policy
+
+- If the library is already used in the repo, match that exact version.
+- If it is not present, check the CURRENT latest stable release before adding. Never pick a stale major from memory — verify the version resolves first.
+- Prefer runtimes and tools managed by \`datamitsu\`; do not hand-install what \`dm\` already provides.
+
+### Invocation
+
+- Inside a pnpm monorepo wired with this config: run managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
+- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly (\`datamitsu exec <tool>\`).
+
+### Web
+
+- App: Vite + React + TypeScript, with the React Compiler enabled.
+- Data fetching: SWR.
+- Routing: react-router with \`@ovineko/react-router\` — a type-safe React Router v7 wrapper (valibot-validated params, typed routes, automatic error handling).
+- SPA resilience: \`@ovineko/spa-guard\` — a top-level guard for single-page apps that recovers from chunk-load failures after deploys (cache-busting + automatic retry), plus version checking and error reporting. Wire it via \`@ovineko/spa-guard-react\` (hooks + error boundaries) and the \`@ovineko/spa-guard-vite\` plugin; server side via \`@ovineko/spa-guard-fastify\` / \`-node\`.
+- UI kit: admin panels → Ant Design; user-facing products → Mantine.
+- Styling: vanilla-extract (Mantine ships a vanilla-extract integration).
+- i18n: i18next.
+- Component catalogue: Storybook.
+- Emails: react-email. PDF: \`@react-pdf/renderer\` to generate, \`react-pdf\` to view.
+- Prefer the ovineko ecosystem — consult https://ovineko.com/llms.txt first.
+- **Banned: Tailwind CSS and anything built on top of it. Never introduce it.**
+
+### Node
+
+- Web framework: Fastify.
+- Schemas/validation: \`typebox\` — the npm package \`typebox\` (https://www.npmjs.com/package/typebox), NOT \`@sinclair/typebox\`.
+- Database: Kysely, a type-safe query builder (https://kysely.dev). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
+- CLI: commander with \`@commander-js/extra-typings\`.
+
+### Go
+
+- HTTP router: \`github.com/go-chi/chi/v5\`.
+- Logging: \`go.uber.org/zap\`.
+- CLI: \`github.com/spf13/cobra\`.
+- Dev/tooling: air (live reload), swag (Swagger), goose (DB migrations) — run via \`pnpm dm exec\`.
+
+### Security & Hashing
+
+- Password hashing: argon2id. Never bcrypt, plain SHA, or MD5 for passwords.
+- Non-cryptographic hashing (cache keys, fingerprints, non-adversarial): consider \`github.com/zeebo/xxh3\` — fast. Never use it to verify external content; use a cryptographic hash (SHA-256 or stronger) there.
+
+### Testing
+
+- Unit: Vitest.
+- E2E: Testcontainers (https://testcontainers.com); browser E2E → Playwright (https://playwright.dev).
+
+### Monorepo
+
+- Turborepo + pnpm workspace. Every package — including Go and Rust — carries a \`package.json\` so \`turbo run <script>\` orchestrates builds in dependency order.
+- Script names follow the Project Scripts policy; heavy build logic goes to a Taskfile invoked via \`pnpm dm exec task -- <task>\`.
+
+### Docs
+
+- Documents: Typst. Presentations: Slidev. Run both via \`pnpm dm exec\`.`;
+
 const CHUNK_10_DOCS = `## Documentation Policy
 
 Documentation is a required deliverable for every user-facing change — not optional.
@@ -299,16 +394,18 @@ README must be kept **minimal** and focused on:
 - Store screenshots in the website's static assets with descriptive names`;
 
 // ── Joined combinations ─────────────────────────────────────────────────────
-export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
+export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BASE_HASH = "783962987ce37124cfa3031f207b7ada24dc42f3cc809a7c0fdbf6617200d2d4"; // prettier-ignore
+export const CHUNK_00_CONFIG_INPUTS_HASH = "e9409cc7aa0dd16ee6853fb8f42ef4f1d406cef2836b73327c6526972cf01209"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "db054ec686a4cefaeaa60acf4f55fc22b84d9859b4c321a1ef838728cdd27e11"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "211a1e7636bb583b8a2743b1937d61a203ab8d62940a186c0fbc0fcd156e5ec6"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "5e3faaf92f3be0b30c09e120e9217be677f517198ff0c7d626314e5b1a72ef2d"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "535b8ce9282c78a5328528d9455357584fe6f3021f1fda2150066f5e6c083137"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "00d40fa915002c384542cafda336e2fde0afa10de896f2e204494b46ea58e160"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "072c1c9cff927e51063758ac779408cbc68b855e0f1e2cc6297365fd850ebd1e"; // prettier-ignore
 
-export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore
+export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore

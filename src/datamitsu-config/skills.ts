@@ -277,6 +277,153 @@ Read \`.datamitsu/ai/skills/cleanup-agents-md/instructions.md\` from the project
 
 The instructions file is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it is always up to date with the current chunks.`;
 
+// ── Skill: scaffold-stack ──────────────────────────────────────────────────
+
+const SKILL_SCAFFOLD_STACK_INSTRUCTIONS = `# Scaffold Preferred Stack
+
+You are about to scaffold a new project/app/library — or add a major dependency to an existing one — using the preferred stack for this ecosystem.
+
+The **source of truth** for library choices is the \`## Preferred Stack\` section of the agent rules already loaded in this session (from \`.datamitsu/ai/agents/*.md\`, referenced by the project's \`AGENTS.md\`). Do NOT hardcode the catalogue into this skill or reconstruct it from memory — read it from the loaded rules every run so it stays current as the catalogue evolves. The \`## Single Source for Constants, Env & Build Inputs\` rules apply to everything you scaffold.
+
+This skill installs dependencies and writes files. Always follow the propose → confirm → apply order. Never install or write without explicit confirmation.
+
+---
+
+## Step 1 — Read the source of truth
+
+1. Locate the \`## Preferred Stack\` section in the loaded agent rules. If it is not present, abort:
+   > Preferred Stack rules not found in the loaded agent rules. Ensure \`AGENTS.md\` references \`.datamitsu/ai/agents/*.md\` and run \`pnpm dm init\` to regenerate \`.datamitsu/\`, then re-run this skill.
+2. Note the picks relevant to what you are about to build (Web / Node / Go / Testing / Docs / Monorepo), the Version Policy, the Invocation rule, and the bans (e.g. Tailwind is forbidden).
+
+Do **not** hardcode the catalogue. If it gains or drops a library, this skill must pick that up automatically by re-reading the loaded rules.
+
+---
+
+## Step 2 — Understand the request and detect context
+
+Determine WHAT is being scaffolded and WHERE:
+
+- **Target kind:** Go service, Node service, Vite + React web app, shared library, monorepo root, or docs (Typst / Slidev). Ask the user if genuinely ambiguous.
+- **Invocation mode:** is there a pnpm stack wired with this config (a \`package.json\` exposing the \`dm\`/\`datamitsu\` bin, a \`pnpm-workspace.yaml\`, or an existing \`.datamitsu/\`)?
+  - Yes → drive managed tools via \`pnpm dm exec <tool>\`.
+  - No → drive the system-installed \`datamitsu\` binary directly, or offer to initialize a pnpm stack first if the target belongs in one.
+- **Monorepo:** if inside (or creating) a Turborepo + pnpm workspace, every package — including Go and Rust — needs a \`package.json\` with standard script names so \`turbo run <script>\` can orchestrate it. Confirm placement.
+
+---
+
+## Step 3 — Resolve versions
+
+For every library you intend to add, apply the Version Policy:
+
+1. If it is already used elsewhere in the repo, reuse that exact version.
+2. Otherwise, check the CURRENT latest stable release from the registry (npm, the Go module proxy, crates.io) — do not guess a major from memory. Record the resolved version.
+3. Never introduce an unmaintained/EOL package or a stale major. If a catalogue pick looks abandoned at scaffold time, stop and flag it to the user rather than silently substituting.
+
+---
+
+## Step 4 — Propose
+
+Present a plan and do not write yet. Structure it:
+
+\`\`\`
+## scaffold plan
+
+Building: <e.g. "Vite + React + TS web app inside the existing pnpm monorepo">
+Invocation: <pnpm dm exec | direct datamitsu>
+
+Libraries (catalogue → resolved version):
+- <lib> — <version> (<reused from repo | latest stable>)
+- …
+
+Structure:
+- <files/dirs to create, package.json wrapper, standard scripts, Taskfile tasks, turbo wiring>
+
+Config inputs (per the Single Source rule):
+- <env module / constants module / build-flag module to create, if any>
+
+Commands to run:
+- <exact install/scaffold commands>
+
+Apply? Reply: yes / no / show details
+\`\`\`
+
+- \`no\` → abort, write nothing.
+- \`show details\` → print full file contents / exact commands, then ask again.
+- \`yes\` → Step 5.
+
+---
+
+## Step 5 — Apply
+
+After explicit \`yes\`:
+
+1. Run the scaffold/install commands exactly as proposed.
+2. Create the \`package.json\` wrapper with standard script names; move any multi-step build logic into a \`Taskfile.yml\` invoked via \`pnpm dm exec task -- <task>\`.
+3. Set up the single env / constants / build-flag entry points per the Single Source rules — do not scatter \`process.env\` / \`os.Getenv\` / raw constants.
+4. Do not create backup files. Git is the backup.
+
+---
+
+## Step 6 — Report
+
+\`\`\`
+Done.
+
+Scaffolded: <what>
+Libraries: <lib@version, …>
+Invocation: <mode>
+
+Next steps:
+- Run \`pnpm dm check\` (or \`datamitsu check\`) to fix + lint.
+- <if monorepo:> add the new package to the workspace / turbo pipeline if needed.
+- <if a runtime like Go/Rust is required:> ensure the toolchain is installed.
+\`\`\`
+
+---
+
+## What this skill does NOT do
+
+- Does NOT pick libraries outside the loaded Preferred Stack catalogue without telling the user. If a needed capability is not covered, surface it and ask.
+- Does NOT introduce Tailwind or anything built on it — it is banned.
+- Does NOT bump or change versions of libraries already pinned in the repo.
+- Does NOT run \`dm setup\` or mutate managed configs beyond what is proposed.
+
+---
+
+## Edge cases
+
+- **Capability not in the catalogue.** Do not guess a trendy package. Propose the closest ecosystem fit, mark it "not in catalogue", and ask the user to confirm or add it to \`datamitsu-config\`.
+- **Existing project already uses a non-preferred library** for the same concern. Keep it (the catalogue is a priority list, not a forced migration). Note the divergence in the report; migrate only if the user asks.
+- **No pnpm stack and the target does not need one** (e.g. a standalone Go binary). Use the direct \`datamitsu\` binary; do not force a pnpm workspace onto it.
+- **Ambiguous target kind.** Ask; do not scaffold on a guess.
+
+---
+
+## Interaction style
+
+- Be terse. The plan is scannable, not narrative.
+- Cite the catalogue pick you are applying; one-line justifications.
+- Report resolved versions as facts; never invent a version you did not verify.`;
+
+const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE = `---
+name: scaffold-stack
+description: Scaffold or extend a project using the preferred stack — pick libraries from the Preferred Stack catalogue, resolve the correct versions (match the repo, else latest stable), and wire the pnpm-workspace / Turborepo / Taskfile conventions. Detects what is being built (Go service, Node service, Vite+React web app, monorepo, Typst/Slidev docs) and whether a pnpm stack is present (choosing \`pnpm dm exec\` vs a direct \`datamitsu\` call). Use whenever the user asks to create, init, scaffold, bootstrap, or set up a new app/service/library/monorepo, or to add a major library to an existing one — even phrased informally as "start a React app", "new Go service", "set up a monorepo", "add a database layer".
+---
+
+# Scaffold Preferred Stack
+
+Read \`.datamitsu/ai/skills/scaffold-stack/instructions.md\` from the project root and follow it precisely.
+
+The instructions file is the source of truth for this skill — it is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it always reflects the current Preferred Stack rules.`;
+
+const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX = `# /scaffold-stack
+
+Scaffold or extend a project using the preferred stack: pick libraries from the Preferred Stack catalogue, resolve the right versions (match the repo, else latest stable), and wire the pnpm-workspace / Turborepo / Taskfile conventions.
+
+Read \`.datamitsu/ai/skills/scaffold-stack/instructions.md\` from the project root and follow it precisely.
+
+The instructions file is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it always reflects the current Preferred Stack rules.`;
+
 // ── Skill: setup-tsconfig ──────────────────────────────────────────────────
 
 const SKILL_SETUP_TSCONFIG_INSTRUCTIONS = `# Setup TypeScript Config
@@ -556,6 +703,14 @@ export const SKILLS: SkillDefinition[] = [
   },
   {
     adapters: {
+      claude: SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE,
+      codex: SKILL_SCAFFOLD_STACK_ADAPTER_CODEX,
+    },
+    instructions: SKILL_SCAFFOLD_STACK_INSTRUCTIONS,
+    name: "scaffold-stack",
+  },
+  {
+    adapters: {
       claude: SKILL_SETUP_TSCONFIG_ADAPTER_CLAUDE,
       codex: SKILL_SETUP_TSCONFIG_ADAPTER_CODEX,
     },
@@ -572,6 +727,9 @@ export const REMOVED_SKILLS: string[] = [];
 export const SKILL_CLEANUP_AGENTS_MD_INSTRUCTIONS_HASH = "9fffca22fdb8a19166396dc675b13aece38d573bf2a1fd08573947cff644439d"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CLAUDE_HASH = "4c55061f8d18f4b5edf1b4478bec06da032694bccb627dc861a2dc31fd9cc167"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "c36f9ae1e4fa2d15f434c300dbe0995b8cb2a60fc5e632bb516f37488e68a300"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "28a9581cf58b87bd81913b052637f4fd08b624c23f904acddb8492a31d224d1f"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "b0deeb09ffdc91f7ae267fecb849ca1dd9e530304502492601f6caa345ee22aa"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "749b019af80df9646f8d1f1491c091b93cf9a7f1dbf2966943aa31c76160eaf9"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CLAUDE_HASH = "923a388c3ec8d1ab8bb8859c2c4ed13ead607d253aec01a428d0df654bc23911"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX_HASH = "b47e306d7f1804b6907cd262893d71b39ba82c13f7cdbb810fc695526f4a519c"; // prettier-ignore
