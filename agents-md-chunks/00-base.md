@@ -32,6 +32,12 @@
 
 Follow GitHub Flow with feature branches from main.
 
+**Never bypass commit hooks or verification — under any circumstances.** Do not pass `--no-verify` (or any equivalent skip flag) to `git commit`/`git push`, and never disable, uninstall, or work around pre-commit, commit-msg, or pre-push hooks. They run the same checks as CI; skipping them only pushes a known breakage downstream and burns the maintainer's time.
+
+- A failing hook is a real signal, not an obstacle to route around. Fix the root cause — the code, the commit contents, or the local environment (e.g. a broken toolchain/store) — then commit again.
+- **Commits must stay signed.** If commit signing is configured and signing fails (e.g. a passphrase-locked SSH key that is not loaded in the agent), STOP. Do not commit unsigned, and do not disable signing to get around it. Tell the user their commit signing needs attention and ask them to make it work so you can commit.
+- If you cannot commit cleanly, stop and report exactly why. Never trade a clean history or a green CI for a shortcut that only looks green.
+
 **Commit message format** (Conventional Commits):
 
 - `feat:` new feature

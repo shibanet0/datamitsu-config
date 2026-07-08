@@ -39,6 +39,7 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 - HTTP router: `github.com/go-chi/chi/v5`.
 - Logging: `go.uber.org/zap`.
 - CLI: `github.com/spf13/cobra`.
+- Database: sqlc — generate type-safe Go query functions from plain SQL. Pairs with goose for migrations. Run via `pnpm dm exec sqlc -- generate`.
 - Dev/tooling: air (live reload), swag (Swagger), goose (DB migrations) — run via `pnpm dm exec`.
 
 ### Security & Hashing

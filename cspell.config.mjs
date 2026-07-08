@@ -150,6 +150,7 @@ export default defineConfig((prev) => {
     "ldflag",
     "runtimeconfig",
     "Kysely",
+    "sqlc",
   ];
 
   return {

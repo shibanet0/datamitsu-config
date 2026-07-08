@@ -39,6 +39,12 @@ const CHUNK_00_BASE = `**These rules are binding for every repository that refer
 
 Follow GitHub Flow with feature branches from main.
 
+**Never bypass commit hooks or verification — under any circumstances.** Do not pass \`--no-verify\` (or any equivalent skip flag) to \`git commit\`/\`git push\`, and never disable, uninstall, or work around pre-commit, commit-msg, or pre-push hooks. They run the same checks as CI; skipping them only pushes a known breakage downstream and burns the maintainer's time.
+
+- A failing hook is a real signal, not an obstacle to route around. Fix the root cause — the code, the commit contents, or the local environment (e.g. a broken toolchain/store) — then commit again.
+- **Commits must stay signed.** If commit signing is configured and signing fails (e.g. a passphrase-locked SSH key that is not loaded in the agent), STOP. Do not commit unsigned, and do not disable signing to get around it. Tell the user their commit signing needs attention and ask them to make it work so you can commit.
+- If you cannot commit cleanly, stop and report exactly why. Never trade a clean history or a green CI for a shortcut that only looks green.
+
 **Commit message format** (Conventional Commits):
 
 - \`feat:\` new feature
@@ -288,6 +294,7 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 - HTTP router: \`github.com/go-chi/chi/v5\`.
 - Logging: \`go.uber.org/zap\`.
 - CLI: \`github.com/spf13/cobra\`.
+- Database: sqlc — generate type-safe Go query functions from plain SQL. Pairs with goose for migrations. Run via \`pnpm dm exec sqlc -- generate\`.
 - Dev/tooling: air (live reload), swag (Swagger), goose (DB migrations) — run via \`pnpm dm exec\`.
 
 ### Security & Hashing
@@ -399,11 +406,11 @@ export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUN
 export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
-export const CHUNK_00_BASE_HASH = "783962987ce37124cfa3031f207b7ada24dc42f3cc809a7c0fdbf6617200d2d4"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "013bd3130e8b1d3c9c60bea364d8133a1743ae3784fbb16fb274c0f1861332ad"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "e9409cc7aa0dd16ee6853fb8f42ef4f1d406cef2836b73327c6526972cf01209"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "db054ec686a4cefaeaa60acf4f55fc22b84d9859b4c321a1ef838728cdd27e11"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "211a1e7636bb583b8a2743b1937d61a203ab8d62940a186c0fbc0fcd156e5ec6"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "5e3faaf92f3be0b30c09e120e9217be677f517198ff0c7d626314e5b1a72ef2d"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "0806bce41aaa9f57547ae74111a387843d656746063a37202a7f10bad49d7884"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "535b8ce9282c78a5328528d9455357584fe6f3021f1fda2150066f5e6c083137"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "00d40fa915002c384542cafda336e2fde0afa10de896f2e204494b46ea58e160"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "072c1c9cff927e51063758ac779408cbc68b855e0f1e2cc6297365fd850ebd1e"; // prettier-ignore
