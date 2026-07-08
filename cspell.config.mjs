@@ -147,6 +147,9 @@ export default defineConfig((prev) => {
     "postpack",
     "jscowsay",
     "pycowsay",
+    "ldflag",
+    "runtimeconfig",
+    "Kysely",
   ];
 
   return {
