@@ -267,7 +267,7 @@ pre-commit:
                 runtime: {
                   name: "node",
                   onFail: "warn",
-                  version: ">=26.3.0",
+                  version: ">=26.5.0",
                 },
               },
               engines: {

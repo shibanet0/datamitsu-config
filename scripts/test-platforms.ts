@@ -6,17 +6,15 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const REPORTS_DIR = path.join(ROOT, "test-reports");
 
 // --- Docker images ---
-const DOCKER_IMAGE_NODE = "node:26.3.0-trixie-slim";
-const DOCKER_IMAGE_NODE_ALPINE = "node:26.3.0-alpine3.23";
+const DOCKER_IMAGE_NODE = "node:26.5.0-trixie-slim";
+const DOCKER_IMAGE_NODE_ALPINE = "node:26.5.0-alpine3.24";
 
 // --- CLI args ---
 const rawArgs = process.argv.slice(2);
 
-const TARGET = rawArgs.find((a) => !a.startsWith("-")) as
-  | "darwin"
-  | "linux-amd64"
-  | "linux-arm64"
-  | undefined;
+type Target = "darwin" | "linux-amd64" | "linux-arm64" | undefined;
+
+const TARGET = rawArgs.find((a) => !a.startsWith("-")) as Target;
 
 if (!TARGET || !["darwin", "linux-amd64", "linux-arm64"].includes(TARGET)) {
   console.error(
