@@ -229,8 +229,8 @@
     "mode": "managed",
     "node": {
       "nodeVersion": "26.3.0",
-      "pnpmHash": "a282871708f87a47b9cd72182dfdf9ee251c69100b8bac862a3d4f5e2145d8ff",
-      "pnpmVersion": "11.5.0"
+      "pnpmHash": "2b567aa66026238078ac2e0a33bec3febd60e962987aac697456f3180819b287",
+      "pnpmVersion": "11.9.0"
     }
   },
   "uv": {
