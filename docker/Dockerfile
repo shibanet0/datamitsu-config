@@ -5,7 +5,7 @@
 
 # Shared base: datamitsu binary + writable store dir. Config-free, so config
 # edits never invalidate it or anything built FROM it.
-FROM ghcr.io/datamitsu/datamitsu:0.1.10 AS dm-base
+FROM ghcr.io/datamitsu/datamitsu:0.1.15 AS dm-base
 USER root
 RUN mkdir -p /dm /opt/datamitsu-config /slices && chown -R datamitsu:0 /dm /opt/datamitsu-config /slices && chmod -R g=u /dm /opt/datamitsu-config /slices
 USER datamitsu
