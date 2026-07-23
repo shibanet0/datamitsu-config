@@ -29,7 +29,7 @@
       },
       "source": "helm",
       "urlTemplate": "https://get.helm.sh/helm-{version}-{os}-{arch}{ext}",
-      "version": "v4.2.2",
+      "version": "v4.2.3",
       "versionCheck": {
         "args": ["version"]
       }
@@ -53,7 +53,7 @@
       },
       "source": "kubernetes",
       "urlTemplate": "https://dl.k8s.io/release/{version}/bin/{os}/{arch}/kubectl{ext}",
-      "version": "v1.36.2",
+      "version": "v1.36.3",
       "versionCheck": {
         "args": ["version", "--client"]
       }
@@ -67,16 +67,16 @@
             "unknown": {
               "binaryPath": "darwin-amd64/helm",
               "contentType": "tar.gz",
-              "hash": "10c1e36ee8c5f2e2ee25a16599cb03ab74c0953cd889cacb980a49ba4b6574ba",
-              "url": "https://get.helm.sh/helm-v4.2.2-darwin-amd64.tar.gz"
+              "hash": "ff3ac86755a45f3422473bc1200776aac0fe04c5766abe6ca66699f7b564b23b",
+              "url": "https://get.helm.sh/helm-v4.2.3-darwin-amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "darwin-arm64/helm",
               "contentType": "tar.gz",
-              "hash": "5410a0dae3d5d91f45653b161260d9301aabc4ae80ae50a6605d66884b6df8ea",
-              "url": "https://get.helm.sh/helm-v4.2.2-darwin-arm64.tar.gz"
+              "hash": "048ecf5ad3160f83d918f9fe945238d2132b079640f7b106175331c25f242c64",
+              "url": "https://get.helm.sh/helm-v4.2.3-darwin-arm64.tar.gz"
             }
           }
         },
@@ -85,16 +85,16 @@
             "glibc": {
               "binaryPath": "linux-amd64/helm",
               "contentType": "tar.gz",
-              "hash": "9adafecab4d406853bba163a70e9f104f47dbbf65ce24b7653bae7e36150bcb6",
-              "url": "https://get.helm.sh/helm-v4.2.2-linux-amd64.tar.gz"
+              "hash": "e9b88b4ee95b18c706839c28d3a0220e5bc470e9cd9262410c90793c45ff8b7c",
+              "url": "https://get.helm.sh/helm-v4.2.3-linux-amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
               "binaryPath": "linux-arm64/helm",
               "contentType": "tar.gz",
-              "hash": "78803142087a0069fa4b50d3f32a84d3ef25c14d1ee8a40fbccf86a6216d2f36",
-              "url": "https://get.helm.sh/helm-v4.2.2-linux-arm64.tar.gz"
+              "hash": "21abd9354d39b2cd79a8d76be6912cd137a983cbf997193503fb8a6a6e2f2785",
+              "url": "https://get.helm.sh/helm-v4.2.3-linux-arm64.tar.gz"
             }
           }
         },
@@ -103,16 +103,16 @@
             "unknown": {
               "binaryPath": "windows-amd64/helm.exe",
               "contentType": "zip",
-              "hash": "5fad8562e98c34fa5af3ef904086a5874a6701050f9bf36e30238c975df94dcd",
-              "url": "https://get.helm.sh/helm-v4.2.2-windows-amd64.zip"
+              "hash": "5ca7de684c92d48b93d5c34a029fdda57b38e1eac04bc8541bdf1eb249388679",
+              "url": "https://get.helm.sh/helm-v4.2.3-windows-amd64.zip"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "windows-arm64/helm.exe",
               "contentType": "zip",
-              "hash": "2e993d6a1dd8197a33e65d8e90b26df9d248ff3501701dea401856aa265a2dab",
-              "url": "https://get.helm.sh/helm-v4.2.2-windows-arm64.zip"
+              "hash": "5f444ed097688ed3abaf1d8801e21110d9bddeb6ed13939afcac302888527ab5",
+              "url": "https://get.helm.sh/helm-v4.2.3-windows-arm64.zip"
             }
           }
         }
@@ -125,15 +125,15 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "ce6c5e55cd17559e87e4fb5e73ebbbc2511bcf2b695d7a40c1b1461a9817d4b3",
-              "url": "https://dl.k8s.io/release/v1.36.2/bin/darwin/amd64/kubectl"
+              "hash": "158b3b46cf74e8b6bd9b1d7cd30f665e3efb2bc1ec3c843ec925bcfdd2930de0",
+              "url": "https://dl.k8s.io/release/v1.36.3/bin/darwin/amd64/kubectl"
             }
           },
           "arm64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "4408c85c83fd3a31adaa555bdf3c7a6c81f74b19449a9060ba31ab91926f023d",
-              "url": "https://dl.k8s.io/release/v1.36.2/bin/darwin/arm64/kubectl"
+              "hash": "fc8582acde13869a606730a79379d6515f30c68afcced0b5ac8789d5d002b7d6",
+              "url": "https://dl.k8s.io/release/v1.36.3/bin/darwin/arm64/kubectl"
             }
           }
         },
@@ -141,15 +141,15 @@
           "amd64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "1e9045ec32bea85da43de85f0065358529ea7c7a152eca78154fba5b58c27d82",
-              "url": "https://dl.k8s.io/release/v1.36.2/bin/linux/amd64/kubectl"
+              "hash": "ebbd080e7c2e275093b55915722043257eb24004363e20acb3c4d71919f88336",
+              "url": "https://dl.k8s.io/release/v1.36.3/bin/linux/amd64/kubectl"
             }
           },
           "arm64": {
             "glibc": {
               "contentType": "binary",
-              "hash": "c957eb8c4bea27a3bb35b269edd9082e27f027f7b76b20b5bf4afebc726c6d3e",
-              "url": "https://dl.k8s.io/release/v1.36.2/bin/linux/arm64/kubectl"
+              "hash": "3d86f24401c41ae5a46ac50eef8865fe891d3647d324a0836f6c63757a126e62",
+              "url": "https://dl.k8s.io/release/v1.36.3/bin/linux/arm64/kubectl"
             }
           }
         },
@@ -157,8 +157,8 @@
           "amd64": {
             "unknown": {
               "contentType": "binary",
-              "hash": "df04d82234b28ffbdcd36e79d596b85da6e9c736e1a7a55ff6910c648ff47af2",
-              "url": "https://dl.k8s.io/release/v1.36.2/bin/windows/amd64/kubectl.exe"
+              "hash": "ba76657b79d0ebcc3c029c171fc83c96351ba5ce0e71d185f1e5b8b873360a5f",
+              "url": "https://dl.k8s.io/release/v1.36.3/bin/windows/amd64/kubectl.exe"
             }
           }
         }
