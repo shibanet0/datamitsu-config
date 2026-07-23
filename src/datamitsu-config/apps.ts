@@ -265,7 +265,7 @@ export const mapOfApps: BinManager.MapOfApps = {
       binPath: "node_modules/.bin/pnpm",
       ...nodeVersions.pnpm,
       lockFile:
-        "br:G6UBQBwHzrk8wFtDJDj42cA8+1I5OEGRB9AKID1zG8QFDe7gOfU5RT+iqfDHFjnCVa96Jg7HB2nWzj5jWA9sObNqT9Ujp/MeIB0l/NgzWkvQdZfrbxc1kDpD/bZTFt86Mh045q8A4CCwu1wpUkwqydCsu+vchh9O+1FMVsjxQgWCU3I6X2PURLfETUGBYwiNwp0keFF9SzT9z/r2prquKhSEJo98eSvCYJTucPi9AA9LtzKTCAWra2K9F4j4SlaILYcvpRmFCAmrZLIECR3GMDI1i62uFcuHc8VLDzm/6vtl3aVK/fSfLPsXCXsZ1Teevqh63CBoCsK9DatVV2l9UHP0Q3U6dA9UIID3Bw==",
+        "br:G6kBQBwHdiz4RuhgYyJ4NjDPvpLeRh9UG6CjFEAaxAUN7tt2f3+F5LRTIEgQRCto1gyhc5oj6K50m+DR013F0JlflsAHaI5are2gTFAgIKUt+/AZrX40jDT77SID1RkadINZuHVEWzj0VwQ4yDTSrE1LTCpJ1Rwjm5t4GAcjJivkkbbTNEGzBL2ItqnmRU5qg0RDcYiKhaP9W6XpP07etGe2wtMMnpU1Y4lOcPNPN16eoQths0ty1vBTORDnpy1a5Kg2KcYSOkGvZyl+5jIZoiP+TU0i9nA+hXMrZ9lgvaTuUzLZ5XvmbK5Pvd4fSM6etH9D6tYO9nsMQ9AsuGGYko2dkNAmC5X43G1ssV2+fwA=",
     },
   },
   "pre-commit": {
