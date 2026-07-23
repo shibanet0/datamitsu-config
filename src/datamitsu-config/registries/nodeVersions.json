@@ -376,7 +376,7 @@
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
     "packageName": "pnpm",
-    "version": "11.9.0"
+    "version": "11.13.1"
   },
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
