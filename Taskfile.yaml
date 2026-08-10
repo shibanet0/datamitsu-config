@@ -228,6 +228,10 @@ tasks:
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────
+  test:fresh-init:
+    cmds:
+      - node scripts/test-fresh-init.ts
+    desc: "Smoke-test a from-scratch consumer: init -> setup -> check the built config (requires `pnpm build` first)"
   test:platform:darwin:
     cmds:
       - node scripts/test-platforms.ts darwin --skip-passed
