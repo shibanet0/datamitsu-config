@@ -267,7 +267,7 @@ pre-commit:
                 runtime: {
                   name: "node",
                   onFail: "warn",
-                  version: ">=26.5.0",
+                  version: ">=26.7.0",
                 },
               },
               engines: {
@@ -312,7 +312,7 @@ pre-commit:
               keywords: [],
               license: "MIT",
               name: "@shibanet0/datamitsu-config",
-              packageManager: "pnpm@11.5.0",
+              packageManager: "pnpm@11.20.0",
               repository: {
                 type: "git",
                 url: "https://github.com/shibanet0/datamitsu-config",
