@@ -1,10 +1,9 @@
 glob_matcher: "doublestar"
 pre-commit:
   commands:
-    # fix phase (10-90): mutators that rewrite and re-stage files
     datamitsu-init:
       priority: 10
-      run: "node bin/datamitsu.js init"
+      run: node bin/datamitsu.js init
     sync-datamitsu-version:
       priority: 20
       run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
@@ -15,17 +14,15 @@ pre-commit:
       stage_fixed: true
     datamitsu-check:
       priority: 40
-      run: "node bin/datamitsu.js check --file-scoped"
+      run: node bin/datamitsu.js check --file-scoped
       stage_fixed: true
-    # check phase (100-190): read-only validations
     validate-blocklist:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
       stage_fixed: false
-    # test phase (200+): slower verification
     test:
       priority: 200
-      run: "pnpm test"
+      run: pnpm test
   parallel: false
 commit-msg:
   commands:
@@ -35,8 +32,8 @@ post-checkout:
   commands:
     install deps:
       priority: 1
-      run: "pnpm i -y"
+      run: pnpm i -y
     init datamitsu:
       priority: 2
-      run: "node bin/datamitsu.js init"
+      run: node bin/datamitsu.js init
   parallel: false

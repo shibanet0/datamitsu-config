@@ -76,6 +76,7 @@ export default defineConfig((prev) => ({
     "@commitlint/cli",
     "syncpack",
     "type-fest",
+    "yaml",
     "@octokit/rest",
     "publint",
     "sort-package-json",
@@ -113,7 +114,33 @@ export default defineConfig((prev) => ({
     },
     "lefthook.yaml": {
       ...config.setup?.["lefthook.yaml"],
-      content: () => /*yaml*/ `commit-msg:
+      content: () => /*yaml*/ `glob_matcher: "doublestar"
+pre-commit:
+  commands:
+    datamitsu-init:
+      priority: 10
+      run: node bin/datamitsu.js init
+    sync-datamitsu-version:
+      priority: 20
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
+      stage_fixed: true
+    docs-generate:
+      priority: 30
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md"
+      stage_fixed: true
+    datamitsu-check:
+      priority: 40
+      run: node bin/datamitsu.js check --file-scoped
+      stage_fixed: true
+    validate-blocklist:
+      priority: 100
+      run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    test:
+      priority: 200
+      run: pnpm test
+  parallel: false
+commit-msg:
   commands:
     lint commit message:
       run: "node bin/datamitsu.js exec commitlint -- --edit {1}"
@@ -125,33 +152,9 @@ post-checkout:
     install deps:
       priority: 1
       run: pnpm i -y
-pre-commit:
-  commands:
-    datamitsu-check:
-      priority: 5
-      run: node bin/datamitsu.js check --file-scoped
-      stage_fixed: true
-    datamitsu-init:
-      priority: 1
-      run: node bin/datamitsu.js init
-    docs-generate:
-      priority: 3
-      run: node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md
-      stage_fixed: true
-    sync-datamitsu-version:
-      priority: 2
-      run: node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts
-      stage_fixed: true
-    test:
-      priority: 6
-      run: pnpm test
-    validate-blocklist:
-      priority: 4
-      run: node bin/datamitsu.js exec task -- validate:blocklist
-      stage_fixed: false
   parallel: false
     `,
-      expectChainHash: "xxh3:70a3cb2247a663d2d73391ea7100e41e",
+      expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
     },
     "package.json": {
       ...config.setup?.["package.json"],
@@ -169,7 +172,7 @@ pre-commit:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.1.14",
+                "@datamitsu/datamitsu": "0.1.15",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -262,6 +265,7 @@ pre-commit:
                 "typescript-eslint": "8.56.0",
                 unrun: "0.3.0",
                 vitest: "4.1.7",
+                yaml: "2.9.0",
               },
               devEngines: {
                 runtime: {
@@ -353,14 +357,14 @@ pre-commit:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:0da61bfaff2679948d8652f089cf2b22",
+      expectChainHash: "xxh3:0e1a06b504ee7eee4877a1e18115198d",
     },
     "pnpm-workspace.yaml": {
       ...config.setup?.["pnpm-workspace.yaml"],
       content: () => /*yaml*/ `allowBuilds:
   esbuild: false
   unrs-resolver: false
-audit: true
+audit: {}
 auditLevel: high
 autoInstallPeers: true
 blockExoticSubdeps: true
@@ -396,7 +400,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:a5cf1b92eb2ba85fc50c0cccb306c037",
+      expectChainHash: "xxh3:d6e94a4265385700f8f98b13822382af",
     },
   },
 });
@@ -551,4 +555,8 @@ const cspellWords: string[] = [
   "postpack",
   "jscowsay",
   "pycowsay",
+  "ldflag",
+  "runtimeconfig",
+  "Kysely",
+  "sqlc",
 ];

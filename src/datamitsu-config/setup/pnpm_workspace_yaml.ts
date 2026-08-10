@@ -27,7 +27,7 @@ export const pnpmWorkspaceYaml: config.ConfigSetup = {
     const config = {
       ...base,
       allowBuilds,
-      audit: true,
+      audit: {},
       auditLevel: "high",
       autoInstallPeers: true,
       catalog,
