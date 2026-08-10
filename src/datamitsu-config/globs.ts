@@ -106,3 +106,13 @@ export const typstGlobs: string[] = ["**/*.typ"];
 
 export const yamlGlobs: string[] = ["**/*.yaml", "**/*.yml"];
 export const yamlExcludeGlobs: string[] = ["**/pnpm-lock.yaml"];
+
+// Lefthook config files. Their command order is meaningful (execution order is
+// by `priority`), so the `lefthook-sort` job owns their ordering — they are
+// excluded from yq's alphabetical key sorter, which would otherwise scramble
+// that order on every commit.
+export const lefthookConfigGlobs: string[] = [
+  "**/lefthook.y*ml",
+  "**/.lefthook.y*ml",
+  "**/.config/lefthook.y*ml",
+];

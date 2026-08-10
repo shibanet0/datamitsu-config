@@ -11,6 +11,7 @@ export const lefthookYaml: config.ConfigSetup = {
           },
         },
       },
+      glob_matcher: "doublestar",
       "post-checkout": {
         commands: {
           [`init ${facts().packageName}`]: {
@@ -22,17 +23,28 @@ export const lefthookYaml: config.ConfigSetup = {
             run: `pnpm i -y`,
           },
         },
+        // priority is only honoured for sequential hooks
+        parallel: false,
       },
       "pre-commit": {
+        // Priorities are assigned in phase bands so the file reads top-to-bottom
+        // in execution order (lefthook runs lowest priority first):
+        //   fix   10–90   mutators that rewrite/stage files
+        //   check 100–190 validations that only read
+        //   test  200+    slower verification
+        // Downstream projects slot their own commands into the same bands.
+        // Sorting and validating the lefthook config itself are not commands
+        // here: they are the `lefthook-sort` (fix) and `lefthook-validate`
+        // (lint) tools, so they run inside `check` like every other tool.
         commands: {
           ...existing?.["pre-commit"]?.commands,
           [`${facts().packageName}-check`]: {
-            priority: 2,
+            priority: 40,
             run: `${facts().binaryCommand} check --file-scoped`,
             stage_fixed: true,
           },
           [`${facts().packageName}-init`]: {
-            priority: 1,
+            priority: 10,
             run: `${facts().binaryCommand} init`,
           },
         },

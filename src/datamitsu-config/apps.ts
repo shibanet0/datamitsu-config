@@ -3,6 +3,7 @@ import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
 import { knipApp } from "./apps/knip";
+import { lefthookSortApp } from "./apps/lefthook-sort";
 import { prettierApp } from "./apps/prettier";
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
 import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
@@ -160,6 +161,7 @@ export const mapOfApps: BinManager.MapOfApps = {
       version: "1.8.0",
     },
   },
+  "lefthook-sort": lefthookSortApp,
   "markdown-link-check": {
     description: nodeVersions["markdown-link-check"].description,
     node: {

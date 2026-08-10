@@ -43,6 +43,7 @@ tasks:
       - task: build:inline:knip
       - task: build:inline:cspell
       - task: build:inline:oxfmt
+      - task: build:inline:lefthook-sort
     desc: Build all inline configs in parallel
   build:inline:commitlint:
     cmds:
@@ -60,6 +61,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
     desc: Build inline knip config
+  build:inline:lefthook-sort:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.lefthook-sort.ts --config-loader unrun
+    desc: Build inline lefthook-sort script
   build:inline:oxfmt:
     cmds:
       - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun

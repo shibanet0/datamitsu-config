@@ -7,6 +7,7 @@ import {
   helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  lefthookConfigGlobs,
   makefileGlobs,
   markdownGlobs,
   oxfmtGlobs,
@@ -37,6 +38,8 @@ type Tool =
   | "hadolint"
   | "harper-cli"
   | "helm"
+  | "lefthook-sort"
+  | "lefthook-validate"
   | "lychee"
   | "osv-scanner"
   | "oxfmt"
@@ -102,6 +105,9 @@ const _fixPriority: Tool[] = [
   "terragrunt-fmt",
   "terraform-docs",
   "yq-yaml",
+  // Orders lefthook configs before yamlfmt reformats them, so the formatter
+  // always gets the last word on style.
+  "lefthook-sort",
   "yamlfmt",
   "pre-commit",
 ];
@@ -138,6 +144,7 @@ const _lintPriority: Tool[] = [
   "terraform-fmt",
   "yamlfmt",
   "yamllint",
+  "lefthook-validate",
   "lychee",
   "grype",
   "trivy",
@@ -408,6 +415,36 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  // Rewrites a lefthook config into the order it actually executes: top-level
+  // hooks by the git lifecycle, then each hook's commands by `priority`. These
+  // files are excluded from yq-yaml (see lefthookConfigGlobs), which would
+  // otherwise re-sort them by key and hide the execution order.
+  "lefthook-sort": {
+    name: "lefthook - Config Sorter",
+    operations: {
+      fix: {
+        app: "lefthook-sort",
+        args: ["{file}"],
+        globs: lefthookConfigGlobs,
+        priority: fixPriority["lefthook-sort"],
+        scope: "per-file",
+      },
+    },
+  },
+  "lefthook-validate": {
+    name: "lefthook - Config Validator",
+    operations: {
+      lint: {
+        app: "lefthook",
+        args: ["validate"],
+        globs: lefthookConfigGlobs,
+        priority: lintPriority["lefthook-validate"],
+        // `lefthook validate` checks the whole merged config, so it runs once
+        // from the git root rather than per matched file.
+        scope: "repository",
+      },
+    },
   },
   lychee: {
     name: "lychee - Link Checker",
@@ -994,7 +1031,7 @@ export const toolsConfig: config.MapOfTools = {
       fix: {
         app: "yq",
         args: ["-i", "sort_keys(..)", "{file}"],
-        excludeGlobs: yamlExcludeGlobs,
+        excludeGlobs: [...yamlExcludeGlobs, ...lefthookConfigGlobs],
         globs: yamlGlobs,
         priority: fixPriority["yq-yaml"],
         scope: "per-file",

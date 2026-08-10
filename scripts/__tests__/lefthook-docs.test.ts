@@ -45,4 +45,12 @@ describe("lefthook.yaml docs integration", () => {
   it("pre-commit should not run in parallel", () => {
     expect(lefthookContent).toMatch(/pre-commit:[\s\S]*?parallel:\s*false/);
   });
+
+  it("should sort and validate the lefthook config via tools, not bespoke commands", () => {
+    // `lefthook-sort` (fix) and `lefthook-validate` (lint) are datamitsu tools,
+    // so they run inside `datamitsu check` rather than as their own hook jobs.
+    expect(lefthookContent).not.toContain("sort-lefthook:");
+    expect(lefthookContent).not.toContain("lefthook-validate:");
+    expect(lefthookContent).toMatch(/datamitsu-check:[\s\S]*?check --file-scoped/);
+  });
 });

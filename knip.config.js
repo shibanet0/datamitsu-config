@@ -8,6 +8,9 @@ export default defineConfig((prev) => ({
     "@commitlint/cli",
     "syncpack",
     "type-fest",
+    // Bundled into the lefthook-sort app via tsdown.config.lefthook-sort.ts,
+    // which knip does not trace, so its import looks unused.
+    "yaml",
     "@octokit/rest",
     "publint",
     "sort-package-json",
