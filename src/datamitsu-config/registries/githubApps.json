@@ -693,7 +693,7 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "8b87e66786b46b20e7f7e328c9e15f64f636041acfdbf93374873d9014a62d30",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Darwin-x86_64.tar.gz"
@@ -701,7 +701,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "be040ae0ca381103dfda68a36738695c4db3e48de8e91412acdc3d991f39b91e",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Darwin-arm64.tar.gz"
@@ -711,7 +711,7 @@
         "freebsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "c67a7b23afdef2802c12c2fde350ddc366243f957e9dcc09b8b053f1884c2edd",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-FreeBSD-x86_64.tar.gz"
@@ -719,7 +719,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "e991f61e66eb4992152a8eaab8564233db443d1f70d29e50939f1a8430a4e958",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-FreeBSD-arm64.tar.gz"
@@ -729,7 +729,7 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "a9c6186cf6fcf062b247345e1b7b12c26f580c1b2a4bbf4d3fe080abf85ceee8",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Linux-x86_64.tar.gz"
@@ -737,7 +737,7 @@
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "7641bd7e06a37a54cbb8c789f53465899def96196ab5c08057432f781a15d517",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Linux-aarch64.tar.gz"
@@ -747,7 +747,7 @@
         "openbsd": {
           "amd64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "42b092859a2c1bc5e635b9bb9efc7ddf34eed278c83ba1677456ea1c5e237e6e",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-OpenBSD-x86_64.tar.gz"
@@ -755,7 +755,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "buf",
+              "binaryPath": "buf/bin/buf",
               "contentType": "tar.gz",
               "hash": "7ca23eb5a68e6c86615eaf5d99bb4804e4e33f1c22d5cabd14b9e7a6170a8411",
               "url": "https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-OpenBSD-arm64.tar.gz"
