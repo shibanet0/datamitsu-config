@@ -44,10 +44,6 @@ FROM rt-uv AS app-bandit
 COPY --link --from=config-split /slices/app-bandit.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install bandit
 
-FROM rt-uv AS app-blint
-COPY --link --from=config-split /slices/app-blint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install blint
-
 FROM rt-uv AS app-checkov
 COPY --link --from=config-split /slices/app-checkov.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install checkov
@@ -63,14 +59,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install convent
 FROM rt-node AS app-cspell
 COPY --link --from=config-split /slices/app-cspell.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cspell
-
-FROM rt-node AS app-dclint
-COPY --link --from=config-split /slices/app-dclint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dclint
-
-FROM rt-uv AS app-deptry
-COPY --link --from=config-split /slices/app-deptry.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install deptry
 
 FROM rt-uv AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
@@ -197,10 +185,6 @@ FROM dm-build AS app-air
 COPY --link --from=config-split /slices/app-air.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install air
 
-FROM dm-build AS app-alint
-COPY --link --from=config-split /slices/app-alint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install alint
-
 FROM dm-build AS app-allurectl
 COPY --link --from=config-split /slices/app-allurectl.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install allurectl
@@ -208,10 +192,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install allurec
 FROM dm-build AS app-buf
 COPY --link --from=config-split /slices/app-buf.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install buf
-
-FROM dm-build AS app-cargo-deny
-COPY --link --from=config-split /slices/app-cargo-deny.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cargo-deny
 
 FROM dm-build AS app-conftest
 COPY --link --from=config-split /slices/app-conftest.js /opt/datamitsu-config/datamitsu.config.js
@@ -341,10 +321,6 @@ FROM dm-build AS app-sqlc
 COPY --link --from=config-split /slices/app-sqlc.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqlc
 
-FROM dm-build AS app-sqruff
-COPY --link --from=config-split /slices/app-sqruff.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqruff
-
 FROM dm-build AS app-syft
 COPY --link --from=config-split /slices/app-syft.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install syft
@@ -368,10 +344,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trivy
 FROM dm-build AS app-trufflehog
 COPY --link --from=config-split /slices/app-trufflehog.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trufflehog
-
-FROM dm-build AS app-ty
-COPY --link --from=config-split /slices/app-ty.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ty
 
 FROM dm-build AS app-typos
 COPY --link --from=config-split /slices/app-typos.js /opt/datamitsu-config/datamitsu.config.js
@@ -420,16 +392,11 @@ COPY --link --from=rt-node /dm/store/.runtimes/node /dm/store/.runtimes/node
 COPY --link --from=rt-uv /dm/store/.runtimes/uv /dm/store/.runtimes/uv
 COPY --link --from=app-bandit /dm/store/.apps/uv/bandit /dm/store/.apps/uv/bandit
 COPY --link --from=app-bandit /dm/store/.uv/python /dm/store/.uv/python
-COPY --link --from=app-blint /dm/store/.apps/uv/blint /dm/store/.apps/uv/blint
-COPY --link --from=app-blint /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-checkov /dm/store/.apps/uv/checkov /dm/store/.apps/uv/checkov
 COPY --link --from=app-checkov /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-commitlint /dm/store/.apps/node/commitlint /dm/store/.apps/node/commitlint
 COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-changelog /dm/store/.apps/node/conventional-changelog
 COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
-COPY --link --from=app-dclint /dm/store/.apps/node/dclint /dm/store/.apps/node/dclint
-COPY --link --from=app-deptry /dm/store/.apps/uv/deptry /dm/store/.apps/uv/deptry
-COPY --link --from=app-deptry /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-eslint /dm/store/.apps/node/eslint /dm/store/.apps/node/eslint
@@ -468,10 +435,8 @@ COPY --link --from=app-zensical /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-actionlint /dm/store/.bin/actionlint /dm/store/.bin/actionlint
 COPY --link --from=app-age /dm/store/.bin/age /dm/store/.bin/age
 COPY --link --from=app-air /dm/store/.bin/air /dm/store/.bin/air
-COPY --link --from=app-alint /dm/store/.bin/alint /dm/store/.bin/alint
 COPY --link --from=app-allurectl /dm/store/.bin/allurectl /dm/store/.bin/allurectl
 COPY --link --from=app-buf /dm/store/.bin/buf /dm/store/.bin/buf
-COPY --link --from=app-cargo-deny /dm/store/.bin/cargo-deny /dm/store/.bin/cargo-deny
 COPY --link --from=app-conftest /dm/store/.bin/conftest /dm/store/.bin/conftest
 COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
 COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
@@ -504,14 +469,12 @@ COPY --link --from=app-shellcheck /dm/store/.bin/shellcheck /dm/store/.bin/shell
 COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
 COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
 COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
-COPY --link --from=app-sqruff /dm/store/.bin/sqruff /dm/store/.bin/sqruff
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
 COPY --link --from=app-task /dm/store/.bin/task /dm/store/.bin/task
 COPY --link --from=app-tflint /dm/store/.bin/tflint /dm/store/.bin/tflint
 COPY --link --from=app-tombi /dm/store/.bin/tombi /dm/store/.bin/tombi
 COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
 COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
-COPY --link --from=app-ty /dm/store/.bin/ty /dm/store/.bin/ty
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
 COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments

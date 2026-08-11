@@ -44,10 +44,6 @@ FROM rt-uv AS app-bandit
 COPY --link --from=config-split /slices/app-bandit.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install bandit
 
-FROM rt-uv AS app-blint
-COPY --link --from=config-split /slices/app-blint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install blint
-
 FROM rt-uv AS app-checkov
 COPY --link --from=config-split /slices/app-checkov.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install checkov
@@ -63,14 +59,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install convent
 FROM rt-node AS app-cspell
 COPY --link --from=config-split /slices/app-cspell.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cspell
-
-FROM rt-node AS app-dclint
-COPY --link --from=config-split /slices/app-dclint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dclint
-
-FROM rt-uv AS app-deptry
-COPY --link --from=config-split /slices/app-deptry.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install deptry
 
 FROM rt-uv AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
@@ -237,10 +225,6 @@ FROM dm-build AS app-dotenv-linter
 COPY --link --from=config-split /slices/app-dotenv-linter.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dotenv-linter
 
-FROM dm-build AS app-droast
-COPY --link --from=config-split /slices/app-droast.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install droast
-
 FROM dm-build AS app-editorconfig-checker
 COPY --link --from=config-split /slices/app-editorconfig-checker.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install editorconfig-checker
@@ -313,17 +297,9 @@ FROM dm-build AS app-lefthook
 COPY --link --from=config-split /slices/app-lefthook.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook
 
-FROM dm-build AS app-ls-lint
-COPY --link --from=config-split /slices/app-ls-lint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ls-lint
-
 FROM dm-build AS app-lychee
 COPY --link --from=config-split /slices/app-lychee.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lychee
-
-FROM dm-build AS app-mdsf
-COPY --link --from=config-split /slices/app-mdsf.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install mdsf
 
 FROM dm-build AS app-osv-scanner
 COPY --link --from=config-split /slices/app-osv-scanner.js /opt/datamitsu-config/datamitsu.config.js
@@ -332,10 +308,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install osv-sca
 FROM dm-build AS app-oxipng
 COPY --link --from=config-split /slices/app-oxipng.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxipng
-
-FROM dm-build AS app-pinact
-COPY --link --from=config-split /slices/app-pinact.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pinact
 
 FROM dm-build AS app-protoc
 COPY --link --from=config-split /slices/app-protoc.js /opt/datamitsu-config/datamitsu.config.js
@@ -413,10 +385,6 @@ FROM dm-build AS app-trufflehog
 COPY --link --from=config-split /slices/app-trufflehog.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install trufflehog
 
-FROM dm-build AS app-ty
-COPY --link --from=config-split /slices/app-ty.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ty
-
 FROM dm-build AS app-typos
 COPY --link --from=config-split /slices/app-typos.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typos
@@ -457,10 +425,6 @@ FROM dm-build AS app-yq
 COPY --link --from=config-split /slices/app-yq.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install yq
 
-FROM dm-build AS app-zizmor
-COPY --link --from=config-split /slices/app-zizmor.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install zizmor
-
 # --- Parser stages (one per WASM output-parser module; prefetched into the store) ---
 FROM dm-build AS parser-core
 COPY --link --from=config-split /slices/parser-core.js /opt/datamitsu-config/datamitsu.config.js
@@ -480,16 +444,11 @@ COPY --link --from=rt-node /dm/store/.runtimes/node /dm/store/.runtimes/node
 COPY --link --from=rt-uv /dm/store/.runtimes/uv /dm/store/.runtimes/uv
 COPY --link --from=app-bandit /dm/store/.apps/uv/bandit /dm/store/.apps/uv/bandit
 COPY --link --from=app-bandit /dm/store/.uv/python /dm/store/.uv/python
-COPY --link --from=app-blint /dm/store/.apps/uv/blint /dm/store/.apps/uv/blint
-COPY --link --from=app-blint /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-checkov /dm/store/.apps/uv/checkov /dm/store/.apps/uv/checkov
 COPY --link --from=app-checkov /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-commitlint /dm/store/.apps/node/commitlint /dm/store/.apps/node/commitlint
 COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-changelog /dm/store/.apps/node/conventional-changelog
 COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
-COPY --link --from=app-dclint /dm/store/.apps/node/dclint /dm/store/.apps/node/dclint
-COPY --link --from=app-deptry /dm/store/.apps/uv/deptry /dm/store/.apps/uv/deptry
-COPY --link --from=app-deptry /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-eslint /dm/store/.apps/node/eslint /dm/store/.apps/node/eslint
@@ -538,7 +497,6 @@ COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
 COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
 COPY --link --from=app-dasel /dm/store/.bin/dasel /dm/store/.bin/dasel
 COPY --link --from=app-dotenv-linter /dm/store/.bin/dotenv-linter /dm/store/.bin/dotenv-linter
-COPY --link --from=app-droast /dm/store/.bin/droast /dm/store/.bin/droast
 COPY --link --from=app-editorconfig-checker /dm/store/.bin/editorconfig-checker /dm/store/.bin/editorconfig-checker
 COPY --link --from=app-fx /dm/store/.bin/fx /dm/store/.bin/fx
 COPY --link --from=app-gcrane /dm/store/.bin/gcrane /dm/store/.bin/gcrane
@@ -557,12 +515,9 @@ COPY --link --from=app-kube-linter /dm/store/.bin/kube-linter /dm/store/.bin/kub
 COPY --link --from=app-kubeconform /dm/store/.bin/kubeconform /dm/store/.bin/kubeconform
 COPY --link --from=app-kubectl /dm/store/.bin/kubectl /dm/store/.bin/kubectl
 COPY --link --from=app-lefthook /dm/store/.bin/lefthook /dm/store/.bin/lefthook
-COPY --link --from=app-ls-lint /dm/store/.bin/ls-lint /dm/store/.bin/ls-lint
 COPY --link --from=app-lychee /dm/store/.bin/lychee /dm/store/.bin/lychee
-COPY --link --from=app-mdsf /dm/store/.bin/mdsf /dm/store/.bin/mdsf
 COPY --link --from=app-osv-scanner /dm/store/.bin/osv-scanner /dm/store/.bin/osv-scanner
 COPY --link --from=app-oxipng /dm/store/.bin/oxipng /dm/store/.bin/oxipng
-COPY --link --from=app-pinact /dm/store/.bin/pinact /dm/store/.bin/pinact
 COPY --link --from=app-protoc /dm/store/.bin/protoc /dm/store/.bin/protoc
 COPY --link --from=app-protolint /dm/store/.bin/protolint /dm/store/.bin/protolint
 COPY --link --from=app-ruff /dm/store/.bin/ruff /dm/store/.bin/ruff
@@ -582,7 +537,6 @@ COPY --link --from=app-tfupdate /dm/store/.bin/tfupdate /dm/store/.bin/tfupdate
 COPY --link --from=app-tofu /dm/store/.bin/tofu /dm/store/.bin/tofu
 COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
 COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
-COPY --link --from=app-ty /dm/store/.bin/ty /dm/store/.bin/ty
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
 COPY --link --from=app-typstyle /dm/store/.bin/typstyle /dm/store/.bin/typstyle
@@ -593,7 +547,6 @@ COPY --link --from=app-vale /dm/store/.bin/vale /dm/store/.bin/vale
 COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh
 COPY --link --from=app-yamlfmt /dm/store/.bin/yamlfmt /dm/store/.bin/yamlfmt
 COPY --link --from=app-yq /dm/store/.bin/yq /dm/store/.bin/yq
-COPY --link --from=app-zizmor /dm/store/.bin/zizmor /dm/store/.bin/zizmor
 COPY --link --from=parser-core /dm/store/.parsers/core /dm/store/.parsers/core
 USER root
 RUN find /dm /opt/datamitsu-config -type d -exec chown datamitsu:0 {} + -exec chmod g=u {} +

@@ -27,15 +27,6 @@
       "kind": "uv-python"
     },
     {
-      "subtree": ".apps/uv/blint",
-      "kind": "app",
-      "app": "blint"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/uv/checkov",
       "kind": "app",
       "app": "checkov"
@@ -58,20 +49,6 @@
       "subtree": ".apps/node/cspell",
       "kind": "app",
       "app": "cspell"
-    },
-    {
-      "subtree": ".apps/node/dclint",
-      "kind": "app",
-      "app": "dclint"
-    },
-    {
-      "subtree": ".apps/uv/deptry",
-      "kind": "app",
-      "app": "deptry"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
     },
     {
       "subtree": ".apps/uv/detect-secrets",
@@ -257,11 +234,6 @@
       "app": "air"
     },
     {
-      "subtree": ".bin/alint",
-      "kind": "binary",
-      "app": "alint"
-    },
-    {
       "subtree": ".bin/allurectl",
       "kind": "binary",
       "app": "allurectl"
@@ -270,11 +242,6 @@
       "subtree": ".bin/buf",
       "kind": "binary",
       "app": "buf"
-    },
-    {
-      "subtree": ".bin/cargo-deny",
-      "kind": "binary",
-      "app": "cargo-deny"
     },
     {
       "subtree": ".bin/conftest",
@@ -437,11 +404,6 @@
       "app": "sqlc"
     },
     {
-      "subtree": ".bin/sqruff",
-      "kind": "binary",
-      "app": "sqruff"
-    },
-    {
       "subtree": ".bin/syft",
       "kind": "binary",
       "app": "syft"
@@ -470,11 +432,6 @@
       "subtree": ".bin/trufflehog",
       "kind": "binary",
       "app": "trufflehog"
-    },
-    {
-      "subtree": ".bin/ty",
-      "kind": "binary",
-      "app": "ty"
     },
     {
       "subtree": ".bin/typos",
