@@ -7,7 +7,7 @@
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
-    "version": "3.2.530"
+    "version": "3.3.9"
   },
   "detect-secrets": {
     "description": "Tool for detecting secrets in the codebase",
@@ -17,22 +17,22 @@
   "mypy": {
     "description": "Optional static typing for Python",
     "packageName": "mypy",
-    "version": "2.1.0"
+    "version": "2.3.0"
   },
   "pre-commit": {
     "description": "A framework for managing and maintaining multi-language pre-commit hooks.",
     "packageName": "pre-commit",
-    "version": "4.6.0"
+    "version": "4.6.1"
   },
   "semgrep": {
     "description": "Lightweight static analysis for many languages. Find bug variants with patterns that look like source code.",
     "packageName": "semgrep",
-    "version": "1.164.0"
+    "version": "1.172.0"
   },
   "sqlfluff": {
     "description": "The SQL Linter for Humans",
     "packageName": "sqlfluff",
-    "version": "4.2.1"
+    "version": "4.2.2"
   },
   "yamllint": {
     "description": "A linter for YAML files.",
@@ -42,6 +42,6 @@
   "zensical": {
     "description": "A modern static site generator built by the creators of Material for MkDocs",
     "packageName": "zensical",
-    "version": "0.0.43"
+    "version": "0.0.52"
   }
 }

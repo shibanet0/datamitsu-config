@@ -8,6 +8,7 @@ export default defineConfig((prev) => ({
     "@commitlint/cli",
     "syncpack",
     "type-fest",
+    "yaml",
     "@octokit/rest",
     "publint",
     "sort-package-json",

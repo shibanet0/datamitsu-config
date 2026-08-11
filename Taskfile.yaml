@@ -43,6 +43,7 @@ tasks:
       - task: build:inline:knip
       - task: build:inline:cspell
       - task: build:inline:oxfmt
+      - task: build:inline:lefthook-sort
     desc: Build all inline configs in parallel
   build:inline:commitlint:
     cmds:
@@ -60,6 +61,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
     desc: Build inline knip config
+  build:inline:lefthook-sort:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.lefthook-sort.ts --config-loader unrun
+    desc: Build inline lefthook-sort script
   build:inline:oxfmt:
     cmds:
       - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun
@@ -223,6 +228,10 @@ tasks:
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────
+  test:fresh-init:
+    cmds:
+      - node scripts/test-fresh-init.ts
+    desc: "Smoke-test a from-scratch consumer: init -> setup -> check the built config (requires `pnpm build` first)"
   test:platform:darwin:
     cmds:
       - node scripts/test-platforms.ts darwin --skip-passed

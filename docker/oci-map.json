@@ -85,6 +85,11 @@
       "app": "ktlint"
     },
     {
+      "subtree": ".apps/node/lefthook-sort",
+      "kind": "app",
+      "app": "lefthook-sort"
+    },
+    {
       "subtree": ".apps/node/markdown-link-check",
       "kind": "app",
       "app": "markdown-link-check"

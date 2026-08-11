@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **97 apps** across multiple runtimes (binary, node, python).
+This configuration manages **98 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **97 apps** across multiple runtimes (binary, node, p
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (48 apps): actionlint, age, air, etc.
+- **Utilities** (49 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -68,6 +68,7 @@ This configuration manages **97 apps** across multiple runtimes (binary, node, p
 | kubeconform            | binary  | [Info](https://github.com/yannh/kubeconform){:target="\_blank"}                                                                          | A FAST Kubernetes manifests validator, with support for Custom Resources!                                                                                                                                 |
 | kubectl                | binary  | N/A                                                                                                                                      | Kubernetes command-line tool                                                                                                                                                                              |
 | lefthook               | binary  | [Info](https://github.com/evilmartians/lefthook){:target="\_blank"}                                                                      | Fast and powerful Git hooks manager for any type of projects.                                                                                                                                             |
+| lefthook-sort          | node    | [Info](https://www.npmjs.com/package/yaml){:target="\_blank"}                                                                            | JavaScript parser and stringifier for YAML                                                                                                                                                                |
 | lychee                 | binary  | [Info](https://github.com/lycheeverse/lychee){:target="\_blank"}                                                                         | ⚡ Fast, async, stream-based link checker written in Rust. Finds broken URLs and mail addresses inside Markdown, HTML, reStructuredText, websites and more!                                               |
 | markdown-link-check    | node    | [Info](https://www.npmjs.com/package/markdown-link-check){:target="\_blank"}                                                             | checks the all of the hyperlinks in a markdown text to determine if they are alive or dead                                                                                                                |
 | markdownlint-cli2      | node    | [Info](https://www.npmjs.com/package/markdownlint-cli2){:target="\_blank"}                                                               | A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the markdownlint library                                                                          |
@@ -104,7 +105,7 @@ This configuration manages **97 apps** across multiple runtimes (binary, node, p
 | terraform-docs         | binary  | [Info](https://github.com/terraform-docs/terraform-docs){:target="\_blank"}                                                              | N/A                                                                                                                                                                                                       |
 | terragrunt             | binary  | [Info](https://github.com/gruntwork-io/terragrunt){:target="\_blank"}                                                                    | Terragrunt is a flexible orchestration tool that allows Infrastructure as Code written in OpenTofu/Terraform to scale.                                                                                    |
 | tflint                 | binary  | [Info](https://github.com/terraform-linters/tflint){:target="\_blank"}                                                                   | A Pluggable Terraform Linter                                                                                                                                                                              |
-| tfupdate               | binary  | [Info](https://github.com/minamijoyo/tfupdate){:target="\_blank"}                                                                        | N/A                                                                                                                                                                                                       |
+| tfupdate               | binary  | [Info](https://github.com/minamijoyo/tfupdate){:target="\_blank"}                                                                        | Update version constraints in your Terraform / OpenTofu configurations                                                                                                                                    |
 | tofu                   | binary  | [Info](https://github.com/opentofu/opentofu){:target="\_blank"}                                                                          | OpenTofu lets you declaratively manage your cloud infrastructure.                                                                                                                                         |
 | tombi                  | binary  | [Info](https://github.com/tombi-toml/tombi){:target="\_blank"}                                                                           | TOML Formatter / Linter / Language Server                                                                                                                                                                 |
 | trivy                  | binary  | [Info](https://github.com/aquasecurity/trivy){:target="\_blank"}                                                                         | Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more                                                                                      |

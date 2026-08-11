@@ -7,22 +7,22 @@
   "@commitlint/cli": {
     "description": "Lint your commit messages",
     "packageName": "@commitlint/cli",
-    "version": "21.0.1"
+    "version": "21.2.0"
   },
   "@commitlint/config-conventional": {
     "description": "Shareable commitlint config enforcing conventional commits",
     "packageName": "@commitlint/config-conventional",
-    "version": "21.0.1"
+    "version": "21.2.0"
   },
   "@commitlint/format": {
     "description": "Format commitlint reports",
     "packageName": "@commitlint/format",
-    "version": "21.0.1"
+    "version": "21.2.0"
   },
   "@commitlint/types": {
     "description": "Shared types for commitlint packages",
     "packageName": "@commitlint/types",
-    "version": "21.0.1"
+    "version": "21.2.0"
   },
   "@cspell/dict-ru_ru": {
     "description": "Russian dictionary for cspell.",
@@ -55,7 +55,7 @@
     "version": "3.4.2"
   },
   "@slidev/theme-default": {
-    "description": "The default theme for Slidev.",
+    "description": "Default theme for Slidev",
     "packageName": "@slidev/theme-default",
     "version": "0.25.0"
   },
@@ -76,17 +76,17 @@
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
     "packageName": "conventional-changelog",
-    "version": "7.2.0"
+    "version": "8.0.0"
   },
   "conventional-changelog-conventionalcommits": {
     "description": "Conventionalcommits.org preset for conventional-changelog.",
     "packageName": "conventional-changelog-conventionalcommits",
-    "version": "9.3.1"
+    "version": "10.2.0"
   },
   "cspell": {
     "description": "A Spelling Checker for Code!",
     "packageName": "cspell",
-    "version": "10.0.0"
+    "version": "10.0.1"
   },
   "eslint": {
     "description": "An AST-based pattern checker for JavaScript.",
@@ -341,7 +341,7 @@
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
     "packageName": "knip",
-    "version": "6.14.1"
+    "version": "6.23.0"
   },
   "markdown-link-check": {
     "description": "checks the all of the hyperlinks in a markdown text to determine if they are alive or dead",
@@ -351,17 +351,17 @@
   "markdownlint-cli2": {
     "description": "A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the `markdownlint` library",
     "packageName": "markdownlint-cli2",
-    "version": "0.22.1"
+    "version": "0.23.0"
   },
   "mmdc": {
     "description": "Command-line interface for mermaid",
     "packageName": "@mermaid-js/mermaid-cli",
-    "version": "11.15.0"
+    "version": "11.16.0"
   },
   "oxfmt": {
     "description": "Formatter for the JavaScript Oxidation Compiler",
     "packageName": "oxfmt",
-    "version": "0.52.0"
+    "version": "0.57.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
@@ -371,17 +371,17 @@
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
     "packageName": "playwright-chromium",
-    "version": "1.60.0"
+    "version": "1.61.1"
   },
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
     "packageName": "pnpm",
-    "version": "11.5.0"
+    "version": "11.20.0"
   },
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
     "packageName": "prettier",
-    "version": "3.8.3"
+    "version": "3.9.4"
   },
   "prettier-plugin-embed": {
     "description": "A configurable Prettier plugin to format embedded languages in JS/TS files.",
@@ -391,7 +391,7 @@
   "prettier-plugin-jsdoc": {
     "description": "A Prettier plugin to format JSDoc comments.",
     "packageName": "prettier-plugin-jsdoc",
-    "version": "1.8.0"
+    "version": "1.8.1"
   },
   "prettier-plugin-sql": {
     "description": "An opinionated sql formatter plugin for Prettier",
@@ -406,22 +406,22 @@
   "slidev": {
     "description": "Presentation slides for developers",
     "packageName": "@slidev/cli",
-    "version": "52.15.2"
+    "version": "52.16.0"
   },
   "sort-package-json": {
     "description": "Sort an Object or package.json based on the well-known package.json keys",
     "packageName": "sort-package-json",
-    "version": "3.6.1"
+    "version": "4.0.0"
   },
   "spectral": {
     "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
     "packageName": "@stoplight/spectral-cli",
-    "version": "6.16.0"
+    "version": "6.16.1"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",
     "packageName": "syncpack",
-    "version": "15.3.1"
+    "version": "15.3.2"
   },
   "tsgo": {
     "description": "TypeScript is a language for application scale JavaScript development",
@@ -437,5 +437,10 @@
     "description": "Tooling which enables you to use TypeScript with ESLint",
     "packageName": "typescript-eslint",
     "version": "8.56.0"
+  },
+  "yaml": {
+    "description": "JavaScript parser and stringifier for YAML",
+    "packageName": "yaml",
+    "version": "2.9.0"
   }
 }

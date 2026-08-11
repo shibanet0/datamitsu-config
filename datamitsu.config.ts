@@ -76,6 +76,7 @@ export default defineConfig((prev) => ({
     "@commitlint/cli",
     "syncpack",
     "type-fest",
+    "yaml",
     "@octokit/rest",
     "publint",
     "sort-package-json",
@@ -113,7 +114,33 @@ export default defineConfig((prev) => ({
     },
     "lefthook.yaml": {
       ...config.setup?.["lefthook.yaml"],
-      content: () => /*yaml*/ `commit-msg:
+      content: () => /*yaml*/ `glob_matcher: "doublestar"
+pre-commit:
+  commands:
+    datamitsu-init:
+      priority: 10
+      run: node bin/datamitsu.js init
+    sync-datamitsu-version:
+      priority: 20
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
+      stage_fixed: true
+    docs-generate:
+      priority: 30
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md"
+      stage_fixed: true
+    datamitsu-check:
+      priority: 40
+      run: node bin/datamitsu.js check --file-scoped
+      stage_fixed: true
+    validate-blocklist:
+      priority: 100
+      run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    test:
+      priority: 200
+      run: pnpm test
+  parallel: false
+commit-msg:
   commands:
     lint commit message:
       run: "node bin/datamitsu.js exec commitlint -- --edit {1}"
@@ -125,33 +152,9 @@ post-checkout:
     install deps:
       priority: 1
       run: pnpm i -y
-pre-commit:
-  commands:
-    datamitsu-check:
-      priority: 5
-      run: node bin/datamitsu.js check --file-scoped
-      stage_fixed: true
-    datamitsu-init:
-      priority: 1
-      run: node bin/datamitsu.js init
-    docs-generate:
-      priority: 3
-      run: node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md
-      stage_fixed: true
-    sync-datamitsu-version:
-      priority: 2
-      run: node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts
-      stage_fixed: true
-    test:
-      priority: 6
-      run: pnpm test
-    validate-blocklist:
-      priority: 4
-      run: node bin/datamitsu.js exec task -- validate:blocklist
-      stage_fixed: false
   parallel: false
     `,
-      expectChainHash: "xxh3:70a3cb2247a663d2d73391ea7100e41e",
+      expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
     },
     "package.json": {
       ...config.setup?.["package.json"],
@@ -169,7 +172,7 @@ pre-commit:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.1.10",
+                "@datamitsu/datamitsu": "0.1.15",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -180,10 +183,10 @@ pre-commit:
               description: "Shared datamitsu configuration with 79+ managed development tools",
               devDependencies: {
                 "@antebudimir/eslint-plugin-vanilla-extract": "1.16.0",
-                "@commitlint/cli": "21.0.1",
-                "@commitlint/config-conventional": "21.0.1",
-                "@commitlint/format": "21.0.1",
-                "@commitlint/types": "21.0.1",
+                "@commitlint/cli": "21.2.0",
+                "@commitlint/config-conventional": "21.2.0",
+                "@commitlint/format": "21.2.0",
+                "@commitlint/types": "21.2.0",
                 "@e18e/eslint-plugin": "0.3.0",
                 "@eslint/config-helpers": "0.5.2",
                 "@eslint/js": "9.39.2",
@@ -196,8 +199,8 @@ pre-commit:
                 "@types/remove-markdown": "0.3.4",
                 "@vitest/coverage-v8": "4.1.7",
                 "@vitest/eslint-plugin": "1.6.9",
-                "conventional-changelog-conventionalcommits": "9.3.1",
-                cspell: "10.0.0",
+                "conventional-changelog-conventionalcommits": "10.2.0",
+                cspell: "10.0.1",
                 eslint: "9.39.2",
                 "eslint-config-prettier": "10.1.8",
                 "eslint-flat-config-utils": "3.0.1",
@@ -250,24 +253,25 @@ pre-commit:
                 "eslint-typegen": "2.3.0",
                 globals: "17.3.0",
                 "json-schema-to-typescript": "15.0.4",
-                knip: "6.14.1",
-                oxfmt: "0.52.0",
+                knip: "6.23.0",
+                oxfmt: "0.57.0",
                 oxlint: "1.58.0",
-                prettier: "3.8.3",
+                prettier: "3.9.4",
                 "prettier-plugin-embed": "0.5.1",
-                "prettier-plugin-jsdoc": "1.8.0",
+                "prettier-plugin-jsdoc": "1.8.1",
                 "prettier-plugin-sql": "0.20.0",
                 "remove-markdown": "0.6.4",
                 tsdown: "0.22.0",
                 "typescript-eslint": "8.56.0",
                 unrun: "0.3.0",
                 vitest: "4.1.7",
+                yaml: "2.9.0",
               },
               devEngines: {
                 runtime: {
                   name: "node",
                   onFail: "warn",
-                  version: ">=26.3.0",
+                  version: ">=26.7.0",
                 },
               },
               engines: {
@@ -312,7 +316,7 @@ pre-commit:
               keywords: [],
               license: "MIT",
               name: "@shibanet0/datamitsu-config",
-              packageManager: "pnpm@11.5.0",
+              packageManager: "pnpm@11.20.0",
               repository: {
                 type: "git",
                 url: "https://github.com/shibanet0/datamitsu-config",
@@ -327,13 +331,13 @@ pre-commit:
                 "docker:build":
                   "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
                 "docker:build:alpine:amd64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-amd64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
                 "docker:build:alpine:arm64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-arm64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
                 "docker:build:amd64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
                 "docker:build:arm64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
                 "docker:builder":
                   "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
                 postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
@@ -353,14 +357,14 @@ pre-commit:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:cf1595c7ada06ad477c1feb8388a2030",
+      expectChainHash: "xxh3:0e1a06b504ee7eee4877a1e18115198d",
     },
     "pnpm-workspace.yaml": {
       ...config.setup?.["pnpm-workspace.yaml"],
       content: () => /*yaml*/ `allowBuilds:
   esbuild: false
   unrs-resolver: false
-audit: true
+audit: {}
 auditLevel: high
 autoInstallPeers: true
 blockExoticSubdeps: true
@@ -396,7 +400,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:a5cf1b92eb2ba85fc50c0cccb306c037",
+      expectChainHash: "xxh3:d6e94a4265385700f8f98b13822382af",
     },
   },
 });
@@ -551,4 +555,8 @@ const cspellWords: string[] = [
   "postpack",
   "jscowsay",
   "pycowsay",
+  "ldflag",
+  "runtimeconfig",
+  "Kysely",
+  "sqlc",
 ];

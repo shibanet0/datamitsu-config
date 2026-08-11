@@ -59,10 +59,10 @@
     "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\"./dist\" bin/datamitsu.js --binary-command \"node bin/datamitsu.js\"",
     "dm": "pnpm --silent datamitsu",
     "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
-    "docker:build:alpine:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-amd64 --load .",
-    "docker:build:alpine:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-arm64 --load .",
-    "docker:build:amd64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
-    "docker:build:arm64": "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
+    "docker:build:alpine:amd64": "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
+    "docker:build:alpine:arm64": "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
+    "docker:build:amd64": "pnpm run docker:builder && node scripts/docker-build.ts amd64",
+    "docker:build:arm64": "pnpm run docker:builder && node scripts/docker-build.ts arm64",
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
     "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
     "postpack": "clean-pkg-json restore && rm -f datamitsu.config.js",
@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.1.10",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260810.ac81c4c",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
@@ -84,10 +84,10 @@
   },
   "devDependencies": {
     "@antebudimir/eslint-plugin-vanilla-extract": "1.16.0",
-    "@commitlint/cli": "21.0.1",
-    "@commitlint/config-conventional": "21.0.1",
-    "@commitlint/format": "21.0.1",
-    "@commitlint/types": "21.0.1",
+    "@commitlint/cli": "21.2.0",
+    "@commitlint/config-conventional": "21.2.0",
+    "@commitlint/format": "21.2.0",
+    "@commitlint/types": "21.2.0",
     "@e18e/eslint-plugin": "0.3.0",
     "@eslint/config-helpers": "0.5.2",
     "@eslint/js": "9.39.2",
@@ -100,8 +100,8 @@
     "@types/remove-markdown": "0.3.4",
     "@vitest/coverage-v8": "4.1.7",
     "@vitest/eslint-plugin": "1.6.9",
-    "conventional-changelog-conventionalcommits": "9.3.1",
-    "cspell": "10.0.0",
+    "conventional-changelog-conventionalcommits": "10.2.0",
+    "cspell": "10.0.1",
     "eslint": "9.39.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-flat-config-utils": "3.0.1",
@@ -154,20 +154,21 @@
     "eslint-typegen": "2.3.0",
     "globals": "17.3.0",
     "json-schema-to-typescript": "15.0.4",
-    "knip": "6.14.1",
-    "oxfmt": "0.52.0",
+    "knip": "6.23.0",
+    "oxfmt": "0.57.0",
     "oxlint": "1.58.0",
-    "prettier": "3.8.3",
+    "prettier": "3.9.4",
     "prettier-plugin-embed": "0.5.1",
-    "prettier-plugin-jsdoc": "1.8.0",
+    "prettier-plugin-jsdoc": "1.8.1",
     "prettier-plugin-sql": "0.20.0",
     "remove-markdown": "0.6.4",
     "tsdown": "0.22.0",
     "typescript-eslint": "8.56.0",
     "unrun": "0.3.0",
-    "vitest": "4.1.7"
+    "vitest": "4.1.7",
+    "yaml": "2.9.0"
   },
-  "packageManager": "pnpm@11.5.0",
+  "packageManager": "pnpm@11.20.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -175,7 +176,7 @@
     "runtime": {
       "name": "node",
       "onFail": "warn",
-      "version": ">=26.3.0"
+      "version": ">=26.7.0"
     }
   }
 }
