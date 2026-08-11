@@ -27,6 +27,15 @@
       "kind": "uv-python"
     },
     {
+      "subtree": ".apps/uv/blint",
+      "kind": "app",
+      "app": "blint"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
       "subtree": ".apps/uv/checkov",
       "kind": "app",
       "app": "checkov"
@@ -49,6 +58,20 @@
       "subtree": ".apps/node/cspell",
       "kind": "app",
       "app": "cspell"
+    },
+    {
+      "subtree": ".apps/node/dclint",
+      "kind": "app",
+      "app": "dclint"
+    },
+    {
+      "subtree": ".apps/uv/deptry",
+      "kind": "app",
+      "app": "deptry"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
     },
     {
       "subtree": ".apps/uv/detect-secrets",
@@ -284,6 +307,11 @@
       "app": "dotenv-linter"
     },
     {
+      "subtree": ".bin/droast",
+      "kind": "binary",
+      "app": "droast"
+    },
+    {
       "subtree": ".bin/editorconfig-checker",
       "kind": "binary",
       "app": "editorconfig-checker"
@@ -374,9 +402,19 @@
       "app": "lefthook"
     },
     {
+      "subtree": ".bin/ls-lint",
+      "kind": "binary",
+      "app": "ls-lint"
+    },
+    {
       "subtree": ".bin/lychee",
       "kind": "binary",
       "app": "lychee"
+    },
+    {
+      "subtree": ".bin/mdsf",
+      "kind": "binary",
+      "app": "mdsf"
     },
     {
       "subtree": ".bin/osv-scanner",
@@ -387,6 +425,11 @@
       "subtree": ".bin/oxipng",
       "kind": "binary",
       "app": "oxipng"
+    },
+    {
+      "subtree": ".bin/pinact",
+      "kind": "binary",
+      "app": "pinact"
     },
     {
       "subtree": ".bin/protoc",
@@ -484,6 +527,11 @@
       "app": "trufflehog"
     },
     {
+      "subtree": ".bin/ty",
+      "kind": "binary",
+      "app": "ty"
+    },
+    {
       "subtree": ".bin/typos",
       "kind": "binary",
       "app": "typos"
@@ -532,6 +580,11 @@
       "subtree": ".bin/yq",
       "kind": "binary",
       "app": "yq"
+    },
+    {
+      "subtree": ".bin/zizmor",
+      "kind": "binary",
+      "app": "zizmor"
     },
     {
       "subtree": ".parsers/core",

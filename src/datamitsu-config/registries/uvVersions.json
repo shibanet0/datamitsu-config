@@ -4,10 +4,20 @@
     "packageName": "bandit",
     "version": "1.9.4"
   },
+  "blint": {
+    "description": "Linter and SBOM generator for binary files.",
+    "packageName": "blint",
+    "version": "3.2.3"
+  },
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
     "version": "3.3.9"
+  },
+  "deptry": {
+    "description": "A command line utility to check for unused, missing and transitive dependencies in a Python project.",
+    "packageName": "deptry",
+    "version": "0.25.1"
   },
   "detect-secrets": {
     "description": "Tool for detecting secrets in the codebase",

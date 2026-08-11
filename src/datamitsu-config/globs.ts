@@ -5,6 +5,31 @@ export const actionlintGlobs: string[] = [
 
 export const dockerfileGlobs: string[] = ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"];
 
+// docker-compose / compose files (dclint targets these). Mirrors dclint's own
+// matcher: `(docker-)?compose(.<name>)?.ya?ml`.
+export const composeGlobs: string[] = [
+  "**/docker-compose.yml",
+  "**/docker-compose.yaml",
+  "**/docker-compose.*.yml",
+  "**/docker-compose.*.yaml",
+  "**/compose.yml",
+  "**/compose.yaml",
+  "**/compose.*.yml",
+  "**/compose.*.yaml",
+];
+
+// Rust: Cargo manifests + sources (cargo-deny re-checks the whole crate graph).
+export const cargoGlobs: string[] = ["**/Cargo.toml", "**/Cargo.lock", "**/*.rs"];
+
+// Go sources + module file (govulncheck scans the module).
+export const goGlobs: string[] = ["**/*.go", "**/go.mod"];
+
+export const sqlGlobs: string[] = ["**/*.sql"];
+
+// ty type-checks Python sources, stubs, and Jupyter notebooks (NOT markdown —
+// ty's markdown support is only its internal `mdtest` format, not a user input).
+export const tyGlobs: string[] = ["**/*.py", "**/*.pyi", "**/*.ipynb"];
+
 export const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
 
 export const eslintGlobs: string[] = [

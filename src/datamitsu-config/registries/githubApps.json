@@ -15,6 +15,11 @@
       "repo": "air",
       "tag": "v1.67.4"
     },
+    "alint": {
+      "owner": "asamarts",
+      "repo": "alint",
+      "tag": "v0.14.1"
+    },
     "allurectl": {
       "owner": "allure-framework",
       "repo": "allurectl",
@@ -34,6 +39,11 @@
       "owner": "bufbuild",
       "repo": "buf",
       "tag": "v1.72.0"
+    },
+    "cargo-deny": {
+      "owner": "EmbarkStudios",
+      "repo": "cargo-deny",
+      "tag": "0.20.2"
     },
     "checkmake": {
       "owner": "checkmake",
@@ -74,6 +84,11 @@
       "owner": "dotenv-linter",
       "repo": "dotenv-linter",
       "tag": "v4.0.0"
+    },
+    "droast": {
+      "owner": "immanuwell",
+      "repo": "dockerfile-roast",
+      "tag": "1.4.12"
     },
     "editorconfig-checker": {
       "owner": "editorconfig-checker",
@@ -165,10 +180,20 @@
       "repo": "lefthook",
       "tag": "v2.1.10"
     },
+    "ls-lint": {
+      "owner": "loeffel-io",
+      "repo": "ls-lint",
+      "tag": "v2.3.1"
+    },
     "lychee": {
       "owner": "lycheeverse",
       "repo": "lychee",
       "tag": "lychee-v0.24.2"
+    },
+    "mdsf": {
+      "owner": "hougesen",
+      "repo": "mdsf",
+      "tag": "v0.12.1"
     },
     "osv-scanner": {
       "owner": "google",
@@ -179,6 +204,11 @@
       "owner": "oxipng",
       "repo": "oxipng",
       "tag": "v10.1.1"
+    },
+    "pinact": {
+      "owner": "suzuki-shunsuke",
+      "repo": "pinact",
+      "tag": "v4.1.1"
     },
     "protoc": {
       "owner": "protocolbuffers",
@@ -235,6 +265,11 @@
       "repo": "sqlc",
       "tag": "v1.31.1"
     },
+    "sqruff": {
+      "owner": "quarylabs",
+      "repo": "sqruff",
+      "tag": "v0.39.0"
+    },
     "swag": {
       "owner": "swaggo",
       "repo": "swag",
@@ -290,6 +325,11 @@
       "repo": "trufflehog",
       "tag": "v3.96.0"
     },
+    "ty": {
+      "owner": "astral-sh",
+      "repo": "ty",
+      "tag": "0.0.65"
+    },
     "typos": {
       "owner": "crate-ci",
       "repo": "typos",
@@ -339,6 +379,11 @@
       "owner": "mikefarah",
       "repo": "yq",
       "tag": "v4.53.3"
+    },
+    "zizmor": {
+      "owner": "zizmorcore",
+      "repo": "zizmor",
+      "tag": "v1.29.0"
     }
   },
   "binaries": {
@@ -531,6 +576,58 @@
       },
       "configHash": "cc70e74678e9fca0d6288654cea60170",
       "description": "☁️ Live reload for Go apps"
+    },
+    "alint": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "alint-v0.14.1/alint",
+              "contentType": "tar.gz",
+              "hash": "e756ba60ea5d865bac606a518ffe8957da93def0334129cfa85b7a1fe0ca3386",
+              "url": "https://github.com/asamarts/alint/releases/download/v0.14.1/alint-v0.14.1-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "alint-v0.14.1/alint",
+              "contentType": "tar.gz",
+              "hash": "4f302328332ff9932a3f65faf214e222d46696511e19a3485f7d39f2f55b6b4d",
+              "url": "https://github.com/asamarts/alint/releases/download/v0.14.1/alint-v0.14.1-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "musl": {
+              "binaryPath": "alint-v0.14.1/alint",
+              "contentType": "tar.gz",
+              "hash": "b310a0a7138cb847cf47dad759afd5ec7295cc4eee1a68cb167a83bcd5f961c4",
+              "url": "https://github.com/asamarts/alint/releases/download/v0.14.1/alint-v0.14.1-x86_64-unknown-linux-musl.tar.gz"
+            }
+          },
+          "arm64": {
+            "musl": {
+              "binaryPath": "alint-v0.14.1/alint",
+              "contentType": "tar.gz",
+              "hash": "7fea929a4c788ea85f52cd81e3168ef54e87af86e79efe3485eb82ac8ed20164",
+              "url": "https://github.com/asamarts/alint/releases/download/v0.14.1/alint-v0.14.1-aarch64-unknown-linux-musl.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "alint-v0.14.1/alint.exe",
+              "contentType": "tar.gz",
+              "hash": "ab42756261191ddad7814ab7646f7ea9cb0169833f324a75f9b22960693e833a",
+              "url": "https://github.com/asamarts/alint/releases/download/v0.14.1/alint-v0.14.1-x86_64-pc-windows-msvc.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "4ba68a038f579458c2ac6aeaca1d2f6c",
+      "description": "Language-agnostic linter for repository structure, files, and content"
     },
     "allurectl": {
       "binaries": {
@@ -781,6 +878,58 @@
       },
       "configHash": "2dea3ec09403eb3e6810f4c450968f36",
       "description": "The best way of working with Protocol Buffers."
+    },
+    "cargo-deny": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "cargo-deny-0.20.2/cargo-deny",
+              "contentType": "tar.gz",
+              "hash": "248da7f581724e470071990c088ffc55c811981715f4cbdb258621fb79f8b7a6",
+              "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "cargo-deny-0.20.2/cargo-deny",
+              "contentType": "tar.gz",
+              "hash": "fe67d82a10d8597a3549364cb733a3f9cc1bfff9031b7ae46384a9f2a72090c3",
+              "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "musl": {
+              "binaryPath": "cargo-deny-0.20.2/cargo-deny",
+              "contentType": "tar.gz",
+              "hash": "9f12ed4c49936e09b48bf862b595cde2fe64fcbd9d74dfacac6131ca824c8d5f",
+              "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-unknown-linux-musl.tar.gz"
+            }
+          },
+          "arm64": {
+            "musl": {
+              "binaryPath": "cargo-deny-0.20.2/cargo-deny",
+              "contentType": "tar.gz",
+              "hash": "995c82be0defc7a025cae49a2aa2644ce8245c9a3318fc4103907c6a285e8c7d",
+              "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-aarch64-unknown-linux-musl.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "cargo-deny-0.20.2/cargo-deny.exe",
+              "contentType": "tar.gz",
+              "hash": "975a22143262fd27476d19ee00c7af67978426e40e1dee94eed6bbade1cf87dc",
+              "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-pc-windows-msvc.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "78af47cda8a882fa50689245f82fa710",
+      "description": "❌ Cargo plugin for linting your dependencies 🦀"
     },
     "checkmake": {
       "binaries": {
@@ -1112,6 +1261,53 @@
       },
       "configHash": "103dd0625f5278ef469a8a4edfbdfffb",
       "description": "⚡️Lightning-fast linter for .env files. Written in Rust 🦀"
+    },
+    "droast": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "253e9ea4795f2829bdcffb3fd794dcf8eeaa135ed3943a75e547952e926b2e49",
+              "url": "https://github.com/immanuwell/dockerfile-roast/releases/download/1.4.12/droast-macos-x86_64"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "66131383f56863186d31d6f1968868ad7034cce0590867ba1503645b84a1f88e",
+              "url": "https://github.com/immanuwell/dockerfile-roast/releases/download/1.4.12/droast-macos-arm64"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "contentType": "binary",
+              "hash": "eeced64d7dab427001efeb190e3efbcc439a36538ad231c00edc1ecb31c69cc8",
+              "url": "https://github.com/immanuwell/dockerfile-roast/releases/download/1.4.12/droast-linux-x86_64"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "contentType": "binary",
+              "hash": "db3ae3223fd19204a9869693d7567e6f570e04b023c77bc887fb7b04411a7214",
+              "url": "https://github.com/immanuwell/dockerfile-roast/releases/download/1.4.12/droast-linux-arm64"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "30b53978f715904a6dfbf143d1fc2d994858ee95c5508fef2d67933b9186ac12",
+              "url": "https://github.com/immanuwell/dockerfile-roast/releases/download/1.4.12/droast-windows-x86_64.exe"
+            }
+          }
+        }
+      },
+      "configHash": "ed2018c473ed3eb2afbd7d106476fe34",
+      "description": "droast - a dockerfile linter that actually has opinions 🔥"
     },
     "editorconfig-checker": {
       "binaries": {
@@ -2094,6 +2290,53 @@
       "configHash": "c13074c848b8913d51adc40e923fa5ef",
       "description": "Fast and powerful Git hooks manager for any type of projects."
     },
+    "ls-lint": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "fc17fc642e95fd8bf7030ed661e86758bee654f6e11f1e31a5f21887f47f73ae",
+              "url": "https://github.com/loeffel-io/ls-lint/releases/download/v2.3.1/ls-lint-darwin-amd64"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "e4ed2ce2b7b61d6685769e34c6375ccecb14a3f00ee59438cf82d01d6236a3c4",
+              "url": "https://github.com/loeffel-io/ls-lint/releases/download/v2.3.1/ls-lint-darwin-arm64"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "contentType": "binary",
+              "hash": "b5a0d2e4427ad039fbc574551f17679f38f142b25d15e0e538769f8cf15af397",
+              "url": "https://github.com/loeffel-io/ls-lint/releases/download/v2.3.1/ls-lint-linux-amd64"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "contentType": "binary",
+              "hash": "2abdb71243c619f0bb29587be5c228bec84c107985f2c066139ef0ec35fd3a99",
+              "url": "https://github.com/loeffel-io/ls-lint/releases/download/v2.3.1/ls-lint-linux-arm64"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "contentType": "binary",
+              "hash": "94e5cfb9468e597cb513fb7a8bf26499c9315ebd505d960c74e2d4849167bd31",
+              "url": "https://github.com/loeffel-io/ls-lint/releases/download/v2.3.1/ls-lint-windows-amd64.exe"
+            }
+          }
+        }
+      },
+      "configHash": "93808e68214abd5c1fcca7b0e4e3e32b",
+      "description": "An extremely fast directory and filename linter - Bring some structure to your project filesystem"
+    },
     "lychee": {
       "binaries": {
         "darwin": {
@@ -2157,6 +2400,50 @@
       },
       "configHash": "3a43e9f554577a97495a011f76becd2a",
       "description": "⚡ Fast, async, stream-based link checker written in Rust. Finds broken URLs and mail addresses inside Markdown, HTML, reStructuredText, websites and more!"
+    },
+    "mdsf": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "mdsf",
+              "contentType": "tar.gz",
+              "hash": "ab3990678f514a45719b14d18ba53b87414ddca8f7ff0d33262371f20d8fea6f",
+              "url": "https://github.com/hougesen/mdsf/releases/download/v0.12.1/mdsf-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "mdsf",
+              "contentType": "tar.gz",
+              "hash": "91f46b517bf3547190fcadf6ad1f4e4b177ff1abc7fd720f4df285c910e4f0fe",
+              "url": "https://github.com/hougesen/mdsf/releases/download/v0.12.1/mdsf-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "mdsf",
+              "contentType": "tar.gz",
+              "hash": "adba0ac7765458ac76901fbc9952c7006842ac233ee5565702cfa0aea39cace5",
+              "url": "https://github.com/hougesen/mdsf/releases/download/v0.12.1/mdsf-x86_64-unknown-linux-gnu.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "mdsf.exe",
+              "contentType": "tar.gz",
+              "hash": "d35c0fa327df59cb4b9089bee933742eef2c7abaf650742f120759409334e8f3",
+              "url": "https://github.com/hougesen/mdsf/releases/download/v0.12.1/mdsf-x86_64-pc-windows-msvc.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "7744d360c649a1107d51272ce322044f",
+      "description": "Format markdown code blocks using your favorite tools"
     },
     "osv-scanner": {
       "binaries": {
@@ -2275,6 +2562,66 @@
       },
       "configHash": "a63398476fab1a59d6e33eacd1d8ce9d",
       "description": "Multithreaded PNG optimizer written in Rust"
+    },
+    "pinact": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "pinact",
+              "contentType": "tar.gz",
+              "hash": "513678fdb0bb59b2742dd06d28f0ee851496a83ba939954009aa6be53f5aec9c",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_darwin_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "pinact",
+              "contentType": "tar.gz",
+              "hash": "c13998c9f0dd09d8973700938aa5f6ac52a1db4e94d4f578d8cc976cda478614",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "pinact",
+              "contentType": "tar.gz",
+              "hash": "d1cffebe5704b74e2e5f8a864efb9f7e54768972dc686188c008033fb1797841",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "pinact",
+              "contentType": "tar.gz",
+              "hash": "dd1f29908319ed3e59f9fe6b39196efbb76936357f3bd741cd759a96306ae8d8",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "pinact.exe",
+              "contentType": "zip",
+              "hash": "88db480a3f8833d7233b482a72c97308df558ebceb0d3214775889239901f6a9",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_windows_amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "pinact.exe",
+              "contentType": "zip",
+              "hash": "98e99a7e13472fa5d1dc1298eea736fa5267bfa4a06dd5ba83a8bf42d3f02f67",
+              "url": "https://github.com/suzuki-shunsuke/pinact/releases/download/v4.1.1/pinact_windows_arm64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "03d466902d86fbf17c5b75f76e70806e",
+      "description": "pinact is a CLI to edit GitHub Workflow and Composite action files and pin versions of Actions and Reusable Workflows. pinact can also update their versions and verify version annotations."
     },
     "protoc": {
       "binaries": {
@@ -2749,6 +3096,58 @@
       },
       "configHash": "caf87c212ff675422543141726f412aa",
       "description": "Generate type-safe code from SQL"
+    },
+    "sqruff": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "sqruff",
+              "contentType": "tar.gz",
+              "hash": "e0c873b14ffdeb934ec20770de1066ce4bc9c877a37287031bb57db37caa18c5",
+              "url": "https://github.com/quarylabs/sqruff/releases/download/v0.39.0/sqruff-darwin-x86_64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "sqruff",
+              "contentType": "tar.gz",
+              "hash": "88910104b048f7d434e28407ca306e00756ecbecac40436bafce4bc0a32a90d3",
+              "url": "https://github.com/quarylabs/sqruff/releases/download/v0.39.0/sqruff-darwin-aarch64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "musl": {
+              "binaryPath": "sqruff",
+              "contentType": "tar.gz",
+              "hash": "5d5ad0d1a9c9db870fb96ce80556001f809505e152101df4a5252cacca2014dc",
+              "url": "https://github.com/quarylabs/sqruff/releases/download/v0.39.0/sqruff-linux-x86_64-musl.tar.gz"
+            }
+          },
+          "arm64": {
+            "musl": {
+              "binaryPath": "sqruff",
+              "contentType": "tar.gz",
+              "hash": "51508afb71d1139f63e757a3aefe0548591d993d4a246bcd0fcf3605553be7f5",
+              "url": "https://github.com/quarylabs/sqruff/releases/download/v0.39.0/sqruff-linux-aarch64-musl.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "sqruff.exe",
+              "contentType": "zip",
+              "hash": "3c3c3e0c0924e0a38fe75d99d7fd40ca6ba5d9701cbfbe7caa8b92e6930c9c43",
+              "url": "https://github.com/quarylabs/sqruff/releases/download/v0.39.0/sqruff-windows-x86_64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "099de97bdb0cfe353ed8033a5da1c842",
+      "description": "Fast SQL formatter/linter"
     },
     "swag": {
       "binaries": {
@@ -3420,6 +3819,78 @@
       "configHash": "459b08237fb9e7414631a7139b1d0185",
       "description": "Find, verify, and analyze leaked credentials"
     },
+    "ty": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "17f5eabf61e2cf9973a2fd6807367d491e4a684cb3566802d151713f65ca429a",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "528f0eb7564ac42dded760762c94ee48d107752874c5697af2f7a49e3db244ba",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "a8e061c140d0f9a9d50259bc8abf457a97dd099e7ba72a989cd9bf1fceb58d6b",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-x86_64-unknown-linux-gnu.tar.gz"
+            },
+            "musl": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "5f90d8da23f1d9ab54baafa3abf4c70c947e0e925440da3b84afd2d0d515d969",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-x86_64-unknown-linux-musl.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "c91e3a43700291aa984dc01c32c69e01288f9b85167985d3b1e15b0d9c532818",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-aarch64-unknown-linux-gnu.tar.gz"
+            },
+            "musl": {
+              "binaryPath": "ty",
+              "contentType": "tar.gz",
+              "hash": "1f8b79699a6639b1aaad31a86941482064d5390236271b6188144e2ddf981ab0",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-aarch64-unknown-linux-musl.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "ty.exe",
+              "contentType": "zip",
+              "hash": "81895538d51543766f8e167014d48c7806314e4c4d8579ca2ab25b96e1e0e57e",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-x86_64-pc-windows-msvc.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "ty.exe",
+              "contentType": "zip",
+              "hash": "42a3c43de8dc1562e264adda05b757c0017e4bcdaee396c7e2f58d6be50395a0",
+              "url": "https://github.com/astral-sh/ty/releases/download/0.0.65/ty-aarch64-pc-windows-msvc.zip"
+            }
+          }
+        }
+      },
+      "configHash": "e87ed32a72650b0beb9fa60a7d740e49",
+      "description": "An extremely fast Python type checker and language server, written in Rust."
+    },
     "typos": {
       "binaries": {
         "darwin": {
@@ -3994,6 +4465,58 @@
       },
       "configHash": "e3d51ecef1047aee308fe9bb29e7f0b4",
       "description": "yq is a portable command-line YAML, JSON, XML, CSV, TOML, HCL  and properties processor"
+    },
+    "zizmor": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "zizmor",
+              "contentType": "tar.gz",
+              "hash": "648b72ab9941a7f2a8d65d7b68a8e76cef789538c8df3a3950384d38423375b0",
+              "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-x86_64-apple-darwin.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "zizmor",
+              "contentType": "tar.gz",
+              "hash": "720322fade9e83a9c7953944c438f2ba942636b86b96a8f0e6b15ce94c8a6b6f",
+              "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-aarch64-apple-darwin.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "zizmor",
+              "contentType": "tar.gz",
+              "hash": "dd96df044a6e8538d5f423790f453bdd03d49e5b2bcc38214acc41a2f1297839",
+              "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "zizmor",
+              "contentType": "tar.gz",
+              "hash": "415eaa7c0a06479a701b8e44a3e812c1047decc848ec4bede7bd6bbf49f22d20",
+              "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-aarch64-unknown-linux-gnu.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "zizmor.exe",
+              "contentType": "zip",
+              "hash": "68a6bc6888f10bf0d53658c75885e7c1b7a0588d4c1fbc3f0ca280ad7324bf06",
+              "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-x86_64-pc-windows-msvc.zip"
+            }
+          }
+        }
+      },
+      "configHash": "0415db9b04a0fb3d4a1bc56b9ac64842",
+      "description": "Static analysis for GitHub Actions"
     }
   }
 }
