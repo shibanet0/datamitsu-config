@@ -331,13 +331,13 @@ post-checkout:
                 "docker:build":
                   "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
                 "docker:build:alpine:amd64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-amd64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
                 "docker:build:alpine:arm64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile.alpine -t datamitsu-config:local-alpine-arm64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
                 "docker:build:amd64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/amd64 -f docker/Dockerfile -t datamitsu-config:local-amd64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
                 "docker:build:arm64":
-                  "pnpm run docker:builder && docker buildx build --builder dm-config-local --platform linux/arm64 -f docker/Dockerfile -t datamitsu-config:local-arm64 --load .",
+                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
                 "docker:builder":
                   "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
                 postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
