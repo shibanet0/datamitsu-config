@@ -1,9 +1,12 @@
 import { indentSettings } from "./constants";
 import {
   actionlintGlobs,
+  cargoGlobs,
+  composeGlobs,
   dockerfileGlobs,
   dotenvLinterGlobs,
   eslintGlobs,
+  goGlobs,
   helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
@@ -17,7 +20,9 @@ import {
   propertiesGlobs,
   protoGlobs,
   shellGlobs,
+  sqlGlobs,
   tomlGlobs,
+  tyGlobs,
   typescriptGlobs,
   typstGlobs,
   yamlExcludeGlobs,
@@ -157,6 +162,9 @@ const lintPriority = toPriorityMap(_lintPriority);
 
 const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
+// Reason shown in the skipped report for the opt-in batch below.
+const optInSkip = "opt-in: pending manual review & config tuning";
+
 export const toolsConfig: config.MapOfTools = {
   actionlint: {
     name: "actionlint - GitHub Actions Workflow Linter",
@@ -169,6 +177,25 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-file",
       },
     },
+  },
+  // ── opt-in tools (disabled by default) ──────────────────────────────────
+  // Registered as apps + wired here, but held at `skip: true` until each is
+  // manually validated and its config tuned. To enable a tool: drop `skip`
+  // (network scanners noted below should become `skip: !isCI` instead) and
+  // give it a `priority`. Added 2026-08-11.
+  alint: {
+    name: "alint - language-agnostic repository structure linter",
+    operations: {
+      // Ships bundled rulesets; layer/override via its config before enabling.
+      lint: {
+        app: "alint",
+        args: [],
+        globs: ["**/*"],
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
   },
   bearer: {
     name: "Bearer - Static Application Security Testing",
@@ -183,6 +210,37 @@ export const toolsConfig: config.MapOfTools = {
     },
     skip: !isCI,
     skipReason: "runs in CI only",
+  },
+  blint: {
+    name: "blint - binary linter & SBOM generator",
+    operations: {
+      // Inspects compiled binaries, not source — point `-i` at build output
+      // when enabling. Network scanner → enable as `skip: !isCI`.
+      lint: {
+        app: "blint",
+        args: ["--no-banner", "--no-error", "-i", "{root}", "-o", "{toolCache}/blint"],
+        globs: ["**/*"],
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
+  },
+  "cargo-deny": {
+    name: "cargo-deny - Rust dependency linter",
+    operations: {
+      // advisories + bans only (no license policy → no deny.toml required). The
+      // advisories DB fetch hits the network → enable as `skip: !isCI`.
+      lint: {
+        app: "cargo-deny",
+        args: ["check", "advisories", "bans"],
+        globs: cargoGlobs,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["rust-project"],
+    skip: true,
+    skipReason: optInSkip,
   },
   checkmake: {
     name: "checkmake - Makefile Linter",
@@ -221,6 +279,41 @@ export const toolsConfig: config.MapOfTools = {
     },
     outputParser: { module: "core", parser: "cspell" },
   },
+  dclint: {
+    name: "dclint - Docker Compose linter",
+    operations: {
+      fix: {
+        app: "dclint",
+        args: ["--fix", "{files}"],
+        batch: true,
+        globs: composeGlobs,
+        scope: "repository",
+      },
+      lint: {
+        app: "dclint",
+        args: ["{files}"],
+        batch: true,
+        globs: composeGlobs,
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
+  },
+  deptry: {
+    name: "deptry - find unused/missing Python dependencies",
+    operations: {
+      lint: {
+        app: "deptry",
+        args: ["{cwd}"],
+        globs: ["**/*.py", "**/pyproject.toml"],
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["python-package"],
+    skip: true,
+    skipReason: optInSkip,
+  },
   "dotenv-linter": {
     name: "dotenv-linter",
     operations: {
@@ -242,6 +335,21 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     outputParser: { module: "core", parser: "dotenv_linter" },
+  },
+  droast: {
+    name: "dockerfile-roast - opinionated Dockerfile linter",
+    operations: {
+      // Repository scope (not per-file like hadolint): droast draws value from
+      // the whole build context, so it runs once from the git root.
+      lint: {
+        app: "droast",
+        args: ["{root}"],
+        globs: dockerfileGlobs,
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
   },
   "editorconfig-checker": {
     name: "EditorConfig Checker",
@@ -350,6 +458,21 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["golang-package"],
   },
+  govulncheck: {
+    name: "govulncheck - Go vulnerability scanner",
+    operations: {
+      // Queries the Go vulnerability DB over the network → enable as `skip: !isCI`.
+      lint: {
+        app: "govulncheck",
+        args: ["./..."],
+        globs: goGlobs,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["golang-package"],
+    skip: true,
+    skipReason: optInSkip,
+  },
   grype: {
     name: "Grype - Vulnerability Scanner",
     operations: {
@@ -416,6 +539,23 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["npm-package", "typescript-project"],
   },
+  kubeconform: {
+    name: "kubeconform - Kubernetes manifest validation",
+    operations: {
+      // helm-chart projectType only (no universal k8s-YAML glob). Raw Helm
+      // templates are not plain manifests — when enabling, validate rendered
+      // output (`helm template`) rather than the template files directly.
+      lint: {
+        app: "kubeconform",
+        args: ["-ignore-missing-schemas", "-summary", "{cwd}"],
+        globs: helmGlobs,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["helm-chart"],
+    skip: true,
+    skipReason: optInSkip,
+  },
   // Rewrites a lefthook config into the order it actually executes: top-level
   // hooks by the git lifecycle, then each hook's commands by `priority`. These
   // files are excluded from yq-yaml (see lefthookConfigGlobs), which would
@@ -446,6 +586,20 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+  "ls-lint": {
+    name: "ls-lint - directory & filename linter",
+    operations: {
+      // Reads .ls-lint.yml from the git root; author that config before enabling.
+      lint: {
+        app: "ls-lint",
+        args: [],
+        globs: ["**/*"],
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
+  },
   lychee: {
     name: "lychee - Link Checker",
     operations: {
@@ -460,6 +614,29 @@ export const toolsConfig: config.MapOfTools = {
     },
     skip: !isCI,
     skipReason: "runs in CI only (network access)",
+  },
+  mdsf: {
+    name: "mdsf - format code blocks inside Markdown",
+    operations: {
+      // mdsf shells out to other formatters (must be on PATH); finalize the
+      // formatter set when enabling.
+      fix: {
+        app: "mdsf",
+        args: ["format", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        scope: "repository",
+      },
+      lint: {
+        app: "mdsf",
+        args: ["verify", "{files}"],
+        batch: true,
+        globs: markdownGlobs,
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
   },
   "osv-scanner": {
     name: "OSV-Scanner - Vulnerability Scanner",
@@ -517,6 +694,27 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  pinact: {
+    name: "pinact - pin GitHub Actions to commit SHAs",
+    operations: {
+      fix: {
+        app: "pinact",
+        args: ["run", "{files}"],
+        batch: true,
+        globs: actionlintGlobs,
+        scope: "repository",
+      },
+      lint: {
+        app: "pinact",
+        args: ["run", "--check", "{files}"],
+        batch: true,
+        globs: actionlintGlobs,
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
   },
   "pre-commit": {
     name: "pre-commit - Multi-language pre-commit hooks",
@@ -693,6 +891,27 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["npm-package", "typescript-project"],
   },
+  sqruff: {
+    name: "sqruff - SQL linter & formatter",
+    operations: {
+      fix: {
+        app: "sqruff",
+        args: ["fix", "{files}"],
+        batch: true,
+        globs: sqlGlobs,
+        scope: "per-project",
+      },
+      lint: {
+        app: "sqruff",
+        args: ["lint", "{files}"],
+        batch: true,
+        globs: sqlGlobs,
+        scope: "per-project",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
+  },
   syncpack: {
     name: "syncpack",
     operations: {
@@ -835,6 +1054,7 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+
   trivy: {
     name: "Trivy - Vulnerability and Misconfiguration Scanner",
     operations: {
@@ -897,6 +1117,22 @@ export const toolsConfig: config.MapOfTools = {
     },
     outputParser: { module: "core", parser: "tsc" },
     projectTypes: ["typescript-project"],
+  },
+  ty: {
+    name: "ty - Astral's Python type checker",
+    operations: {
+      // ty checks .py/.pyi and Jupyter notebooks (.ipynb) — NOT Markdown.
+      lint: {
+        app: "ty",
+        args: ["check", "{files}"],
+        batch: true,
+        globs: tyGlobs,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["python-package"],
+    skip: true,
+    skipReason: optInSkip,
   },
   typos: {
     name: "typos - Source Code Spell Checker",
@@ -1037,5 +1273,20 @@ export const toolsConfig: config.MapOfTools = {
         scope: "per-file",
       },
     },
+  },
+  zizmor: {
+    name: "zizmor - static analysis for GitHub Actions",
+    operations: {
+      // --offline keeps it hermetic; with GH_TOKEN it does deeper online audits
+      // → enable as `skip: !isCI` if you want the online pass in CI.
+      lint: {
+        app: "zizmor",
+        args: ["--offline", "--format", "plain", "{root}"],
+        globs: actionlintGlobs,
+        scope: "repository",
+      },
+    },
+    skip: true,
+    skipReason: optInSkip,
   },
 };

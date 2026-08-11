@@ -3,6 +3,27 @@ import { defineConfig as defineCspellConfig } from "cspell";
 type CSpellConfig = Parameters<typeof defineCspellConfig>[0];
 
 const words: string[] = [
+  // opt-in tool names, owners, and their config-file stems (added with the
+  // droast/ty/zizmor/… tool batch).
+  "alint",
+  "asamarts",
+  "blint",
+  "dclint",
+  "dclintrc",
+  "deptry",
+  "droast",
+  "hougesen",
+  "immanuwell",
+  "loeffel",
+  "mdsf",
+  "mdtest",
+  "pinact",
+  "quarylabs",
+  "shunsuke",
+  "sqruff",
+  "sqruffignore",
+  "zizmor",
+  "zizmorcore",
   "aeslint",
   "anchore",
   "antebudimir",

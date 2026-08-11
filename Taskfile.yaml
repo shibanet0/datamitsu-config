@@ -80,7 +80,10 @@ tasks:
   build:lib:datamitsu-types:
     cmds:
       - echo "// prettier-ignore" > src/datamitsu-config/datamitsu.config.d.ts
-      - pnpm dm config types >> src/datamitsu-config/datamitsu.config.d.ts
+      # --silent keeps pnpm's devEngines Node warning off stdout so it can't leak
+      # into the generated .d.ts (which breaks tsc). The warning still shows on
+      # other pnpm commands — this only guards the redirected type output.
+      - pnpm --silent dm config types >> src/datamitsu-config/datamitsu.config.d.ts
     desc: Generate datamitsu.config.d.ts type file
   build:skills:
     cmds:

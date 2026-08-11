@@ -142,7 +142,9 @@ for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
       ...forceIncludeFlags,
       ...passthrough,
     ],
-    { preferLocal: true, stdio: "inherit" },
+    // DATAMITSU_OCI_MINIMAL drops the opt-in tool apps from mapOfApps (see
+    // apps.ts) so the image stays under the overlay2 128-layer limit.
+    { env: { DATAMITSU_OCI_MINIMAL: "1" }, preferLocal: true, stdio: "inherit" },
   );
   console.log(`Generated ${output} + ${ociMap}`);
 }
