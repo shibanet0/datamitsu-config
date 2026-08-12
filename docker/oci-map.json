@@ -274,6 +274,11 @@
       "app": "crane"
     },
     {
+      "subtree": ".bin/d2",
+      "kind": "binary",
+      "app": "d2"
+    },
+    {
       "subtree": ".bin/dasel",
       "kind": "binary",
       "app": "dasel"

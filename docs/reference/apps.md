@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **110 apps** across multiple runtimes (binary, node, python).
+This configuration manages **111 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **110 apps** across multiple runtimes (binary, node, 
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (61 apps): actionlint, age, air, etc.
+- **Utilities** (62 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -45,6 +45,7 @@ This configuration manages **110 apps** across multiple runtimes (binary, node, 
 | cosign                 | binary  | [Info](https://github.com/sigstore/cosign){:target="\_blank"}                                                                            | Code signing and transparency for containers and binaries                                                                                                                                                 |
 | crane                  | binary  | [Info](https://github.com/google/go-containerregistry){:target="\_blank"}                                                                | Go library and CLIs for working with container registries                                                                                                                                                 |
 | cspell                 | node    | [Info](https://www.npmjs.com/package/cspell){:target="\_blank"}                                                                          | A Spelling Checker for Code!                                                                                                                                                                              |
+| d2                     | binary  | [Info](https://github.com/d2lang/d2){:target="\_blank"}                                                                                  | D2 is a modern diagram scripting language that turns text to diagrams.                                                                                                                                    |
 | dasel                  | binary  | [Info](https://github.com/TomWright/dasel){:target="\_blank"}                                                                            | Unified querying, transformation, and modification of JSON, TOML, YAML, XML, INI, HCL, KDL and CSV.                                                                                                       |
 | dclint                 | node    | [Info](https://www.npmjs.com/package/dclint){:target="\_blank"}                                                                          | A command-line tool for validating and enforcing best practices in Docker Compose files.                                                                                                                  |
 | deptry                 | python  | [Info](https://pypi.org/project/deptry){:target="\_blank"}                                                                               | A command line utility to check for unused, missing and transitive dependencies in a Python project.                                                                                                      |

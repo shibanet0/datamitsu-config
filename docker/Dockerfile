@@ -217,6 +217,10 @@ FROM dm-build AS app-crane
 COPY --link --from=config-split /slices/app-crane.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install crane
 
+FROM dm-build AS app-d2
+COPY --link --from=config-split /slices/app-d2.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install d2
+
 FROM dm-build AS app-dasel
 COPY --link --from=config-split /slices/app-dasel.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dasel
@@ -495,6 +499,7 @@ COPY --link --from=app-checkmake /dm/store/.bin/checkmake /dm/store/.bin/checkma
 COPY --link --from=app-conftest /dm/store/.bin/conftest /dm/store/.bin/conftest
 COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
 COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
+COPY --link --from=app-d2 /dm/store/.bin/d2 /dm/store/.bin/d2
 COPY --link --from=app-dasel /dm/store/.bin/dasel /dm/store/.bin/dasel
 COPY --link --from=app-dotenv-linter /dm/store/.bin/dotenv-linter /dm/store/.bin/dotenv-linter
 COPY --link --from=app-editorconfig-checker /dm/store/.bin/editorconfig-checker /dm/store/.bin/editorconfig-checker
