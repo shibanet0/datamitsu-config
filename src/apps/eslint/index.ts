@@ -3,7 +3,7 @@ import { globalIgnores } from "eslint/config";
 
 import type {
   ConfigNames,
-  DefineConfigFn,
+  DefineConfigFn as DefineConfigFunction,
   DefineConfigOptions,
   TypedFlatConfigItem,
 } from "./types";
@@ -33,7 +33,7 @@ const defaultOptions: DefineConfigOptions = {
   },
 };
 
-export const defineConfig: DefineConfigFn = async (packageJSON, config, options) => {
+export const defineConfig: DefineConfigFunction = async (packageJSON, config, options) => {
   const _options: DefineConfigOptions = {
     ...defaultOptions,
     ...options,
@@ -43,27 +43,27 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
     },
   };
 
-  const deps = {
+  const dependencies = {
     ...packageJSON?.dependencies,
     ...packageJSON?.devDependencies,
     ...packageJSON?.peerDependencies,
     ...packageJSON?.optionalDependencies,
   };
-  const depsKeys = Object.keys(deps);
+  const dependenciesKeys = Object.keys(dependencies);
 
-  const isReactEnabled = depsKeys.some(
-    (el) => el.startsWith("react-") || el === "@types/react" || el === "react",
+  const isReactEnabled = dependenciesKeys.some(
+    (element) => element.startsWith("react-") || element === "@types/react" || element === "react",
   );
 
   const enableReact = options?.react === undefined ? isReactEnabled : options.react;
 
-  const isPlaywrightEnabled = depsKeys.some((el) => el === "playwright");
-  const isVitestEnabled = depsKeys.some((el) => el === "vitest");
-  const isStorybookEnabled = depsKeys.some(
-    (el) => el === "storybook" || el.startsWith("@storybook/"),
+  const isPlaywrightEnabled = dependenciesKeys.some((element) => element === "playwright");
+  const isVitestEnabled = dependenciesKeys.some((element) => element === "vitest");
+  const isStorybookEnabled = dependenciesKeys.some(
+    (element) => element === "storybook" || element.startsWith("@storybook/"),
   );
-  const isI18nextEnabled = depsKeys.some((el) => el.includes("i18next"));
-  const isClsxEnabled = depsKeys.some((el) => el === "clsx");
+  const isI18nextEnabled = dependenciesKeys.some((element) => element.includes("i18next"));
+  const isClsxEnabled = dependenciesKeys.some((element) => element === "clsx");
 
   const configs: Awaitable<TypedFlatConfigItem[]>[] = [
     [globalIgnores(GLOB_EXCLUDE, "shibanet0/ignores") as TypedFlatConfigItem],
@@ -173,10 +173,10 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
       {
         loader: () =>
           import("./plugins/react").then((r) => {
-            const reactVersion = options?.plugins?.react?.version || deps["react"];
+            const reactVersion = options?.plugins?.react?.version || dependencies["react"];
             return r.react({
               ...options?.plugins?.react,
-              ...(reactVersion ? { version: reactVersion } : {}),
+              ...(reactVersion && { version: reactVersion }),
             });
           }),
         name: "react",
@@ -204,10 +204,6 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
         name: "react-hooks",
       },
       {
-        loader: () => import("./plugins/react-perf").then((r) => r.reactPerf()),
-        name: "react-perf",
-      },
-      {
         condition: isStorybookEnabled,
         loader: () => import("./plugins/storybook").then((r) => r.storybook()),
         name: "storybook",
@@ -232,6 +228,8 @@ export const defineConfig: DefineConfigFn = async (packageJSON, config, options)
   if (!_options?.plugins?.oxlint?.disabled) {
     configs.push(import("./plugins/oxlint").then((r) => r.oxlint(options?.plugins?.oxlint)));
   }
+
+  configs.push(import("./eslint-10-todo").then((r) => r.eslint10Todo()));
 
   const resolved = await Promise.all(configs).then((r) => r.flat());
 

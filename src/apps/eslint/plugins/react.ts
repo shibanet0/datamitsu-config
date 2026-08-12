@@ -8,51 +8,37 @@ export async function react(
         version?: string;
       },
 ): Promise<TypedFlatConfigItem[]> {
-  const plugin = await import("eslint-plugin-react");
+  const plugin = await import("@eslint-react/eslint-plugin");
+
+  const recommended = plugin.default.configs.recommended;
 
   return [
     {
+      ...recommended,
       name: "shibanet0/react/rules",
-      plugins: {
-        react: plugin.default,
-      },
-      rules: {
-        ...plugin.default.configs["jsx-runtime"].rules,
-        ...plugin.default.configs.recommended.rules,
-        "react/destructuring-assignment": "off", // TODO
-        "react/display-name": "off",
-        "react/forbid-component-props": "off", // TODO
-        "react/forward-ref-uses-ref": "off",
-        "react/function-component-definition": "off",
-        "react/iframe-missing-sandbox": "off",
-        "react/jsx-child-element-spacing": "off",
-        "react/jsx-closing-tag-location": "off", // TODO
-        "react/jsx-curly-newline": "off", // TODO
-        "react/jsx-filename-extension": "off",
-        "react/jsx-handler-names": "off",
-        "react/jsx-indent": "off", // TODO
-        // "react/jsx-max-depth": "off", // TODO
-        "react/jsx-max-props-per-line": "off", // TODO
-        "react/jsx-newline": "off", // TODO
-        "react/jsx-no-bind": "off", // TODO
-        "react/jsx-no-literals": "off", // TODO
-        "react/jsx-no-useless-fragment": "off",
-        "react/jsx-one-expression-per-line": "off", // TODO
-        "react/jsx-pascal-case": "off",
-        "react/jsx-props-no-spreading": "off",
-        "react/jsx-sort-props": "off", // TODO
-        "react/no-array-index-key": "off", // TODO
-        "react/no-unknown-property": "off",
-        "react/no-unused-prop-types": "warn",
-        "react/prefer-read-only-props": "off", // TODO
-        "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off",
-        "react/require-default-props": "off",
-      },
       settings: {
-        react: {
-          version: options?.version || "latest",
+        ...recommended.settings,
+        "react-x": {
+          ...(recommended.settings?.["react-x"] as Record<string, unknown> | undefined),
+          version: options?.version || "detect",
         },
+      },
+    },
+    {
+      rules: {
+        // These rules also ship in eslint-plugin-react-hooks, which stays the
+        // authority for hook diagnostics — keep them off here to avoid double
+        // reporting. @eslint-react offers the mirror preset
+        // `disable-conflict-eslint-plugin-react-hooks` for the opposite choice.
+        "@eslint-react/error-boundaries": "off",
+        "@eslint-react/exhaustive-deps": "off",
+        "@eslint-react/purity": "off",
+        "@eslint-react/rules-of-hooks": "off",
+        "@eslint-react/set-state-in-effect": "off",
+        "@eslint-react/set-state-in-render": "off",
+        "@eslint-react/static-components": "off",
+        "@eslint-react/unsupported-syntax": "off",
+        "@eslint-react/use-memo": "off",
       },
     },
   ];

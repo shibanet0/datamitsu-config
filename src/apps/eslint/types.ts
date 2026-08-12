@@ -180,9 +180,6 @@ export interface DefineConfigOptions {
     "react-hooks"?: {
       disabled?: boolean;
     };
-    "react-perf"?: {
-      disabled?: boolean;
-    };
     "react-prefer-function-component"?: {
       disabled?: boolean;
     };

@@ -1,7 +1,7 @@
 import { defineConfig } from "./.datamitsu/knip.config.js";
 
-export default defineConfig((prev) => ({
-  ...prev,
+export default defineConfig((previous) => ({
+  ...previous,
   ignoreBinaries: ["bin/datamitsu.js"],
   ignoreDependencies: [
     "@e18e/eslint-plugin",
@@ -14,18 +14,17 @@ export default defineConfig((prev) => ({
     "sort-package-json",
     "eslint-config-prettier",
     "eslint-plugin-array-func",
-    "eslint-plugin-import",
+    "eslint-plugin-import-x",
     "eslint-plugin-json",
     "eslint-plugin-json-schema-validator",
-    "eslint-plugin-jsx-a11y",
+    "eslint-plugin-jsx-a11y-x",
     "eslint-plugin-n",
     "eslint-plugin-no-use-extend-native",
     "eslint-plugin-perfectionist",
     "eslint-plugin-playwright",
     "eslint-plugin-promise",
-    "eslint-plugin-react",
+    "@eslint-react/eslint-plugin",
     "eslint-plugin-react-hooks",
-    "eslint-plugin-react-perf",
     "prettier-plugin-embed",
     "prettier-plugin-jsdoc",
     "prettier-plugin-sql",

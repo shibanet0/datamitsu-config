@@ -1,5 +1,7 @@
 import type { TypedFlatConfigItem } from "../types";
 
+import { GLOB_SRC } from "../globs";
+
 // export const unicornRules: ConfigWithExtends[] = [
 //   eslintPluginUnicorn.configs.recommended,
 //   {
@@ -17,6 +19,11 @@ export async function unicorn(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
+      // ESLint 10 refuses to apply a rule that declares a language to files owned
+      // by a different language plugin, and eslint-plugin-jsonc v3 now registers
+      // its own `jsonc/x` language for JSON files. Scope unicorn to JS/TS so the
+      // two never overlap.
+      files: [GLOB_SRC],
       name: "shibanet0/unicorn/rules",
       plugins: {
         unicorn: plugin.default,
@@ -27,6 +34,7 @@ export async function unicorn(): Promise<TypedFlatConfigItem[]> {
     },
 
     {
+      files: [GLOB_SRC],
       rules: {
         "unicorn/catch-error-name": "off",
         "unicorn/consistent-function-scoping": "off",

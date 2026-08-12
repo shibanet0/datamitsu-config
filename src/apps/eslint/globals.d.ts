@@ -1,10 +1,3 @@
-declare module "eslint-plugin-import" {
-  const flatConfigs: {
-    recommended: any;
-  };
-  export { flatConfigs };
-}
-
 declare module "eslint-plugin-promise" {
   const configs: {
     ["flat/recommended"]: any;
@@ -41,13 +34,6 @@ declare module "@antebudimir/eslint-plugin-vanilla-extract" {
   export { configs };
 }
 
-// declare module "eslint-plugin-jsx-a11y" {
-//   const flatConfigs: {
-//     recommended: any;
-//   };
-//   export { flatConfigs };
-// }
-
 declare module "eslint-plugin-array-func" {
   const configs: {
     all: any;
@@ -59,13 +45,6 @@ declare module "eslint-plugin-array-func" {
 declare module "eslint-plugin-no-use-extend-native" {
   const configs: {
     recommended: any;
-  };
-  export { configs };
-}
-
-declare module "eslint-plugin-react-perf" {
-  const configs: {
-    flat: { recommended: any };
   };
   export { configs };
 }
