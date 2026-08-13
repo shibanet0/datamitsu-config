@@ -229,8 +229,6 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
     configs.push(import("./plugins/oxlint").then((r) => r.oxlint(options?.plugins?.oxlint)));
   }
 
-  configs.push(import("./eslint-10-todo").then((r) => r.eslint10Todo()));
-
   const resolved = await Promise.all(configs).then((r) => r.flat());
 
   const composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>();

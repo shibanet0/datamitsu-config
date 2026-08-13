@@ -8,35 +8,18 @@ const finalized: Oxlintrc["rules"] = {
   "unicorn/prefer-string-raw": "off",
 };
 
-/**
- * TODO(eslint-10): rules oxlint added to the enabled categories between 1.58 and 1.77, switched off
- * so the ESLint 10 upgrade did not turn into a codebase-wide refactor. Each still needs a
- * decision.
- *
- * Counts are diagnostics observed in this repository at the time of the upgrade.
- */
-const addedInOxlint177: Oxlintrc["rules"] = {
-  "method-signature-style": "off", // typescript, 41 warnings
-  "no-underscore-dangle": "off", // eslint, 6 errors
-  "prefer-named-capture-group": "off", // eslint, 19 warnings
-  "require-unicode-regexp": "off", // eslint, 48 errors
-  "unicorn/max-nested-calls": "off", // 3 warnings
-  "unicorn/prefer-number-coercion": "off", // 4 errors
-  "unicorn/prefer-single-call": "off", // 1 error
-};
-
 export const oxlintConfig: Oxlintrc = {
   $schema: `./node_modules/${name}/oxlint_configuration_schema.json`,
   categories: {
     correctness: "error",
     pedantic: "error",
     perf: "error",
-    style: "warn",
+    style: "error",
     suspicious: "error",
+    restriction: "error",
   },
   rules: {
     ...finalized,
-    ...addedInOxlint177,
     "array-type": "off",
     "arrow-body-style": "off",
     "capitalized-comments": "off",
