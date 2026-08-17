@@ -8,7 +8,7 @@ import type {
   TypedFlatConfigItem,
 } from "./types";
 
-import { GLOB_EXCLUDE } from "./globs";
+import { GLOB_EXCLUDE, GLOB_SRC_EXT } from "./globs";
 
 export { globalIgnores } from "@eslint/config-helpers";
 
@@ -234,6 +234,21 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   const composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>();
 
   composer.append(...resolved);
+
+  // The datamitsu config file is evaluated by goja, not Node. It has no module system to export
+  // from, so the entry points must be published by assigning onto the global object
+  // (`globalThis.getConfig = getConfig`) — the shape `datamitsu init` generates and the runtime
+  // requires. unicorn 73's no-global-object-property-assignment flags exactly that, which made
+  // `dm setup` fail on the config file datamitsu had just written. Scoped to those files only, so
+  // the rule keeps working everywhere else. Appended before the caller's own config, so a
+  // consumer can still override it.
+  composer.append({
+    files: [`**/datamitsu.config.${GLOB_SRC_EXT}`, `**/datamitsu.config.*.${GLOB_SRC_EXT}`],
+    name: "datamitsu/config-file",
+    rules: {
+      "unicorn/no-global-object-property-assignment": "off",
+    },
+  });
 
   composer.append(...((config || []) as unknown as TypedFlatConfigItem[]));
 
