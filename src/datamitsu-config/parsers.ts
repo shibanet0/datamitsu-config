@@ -9,26 +9,35 @@
  * all of them. It is downloaded once and SHA-256 verified against `hash` before it is loaded into
  * the sandboxed WASM runtime.
  *
- * Pinned to the datamitsu release this config targets (keep in sync with the @datamitsu/datamitsu
- * pin in package.json). On a bump, update BOTH constants below and the hash — take the hash from
- * the release's signed checksums.txt entry for the `datamitsu_parsers_*.wasm` asset.
+ * Pinned to the datamitsu build this config targets — keep in sync with the @datamitsu/datamitsu
+ * pin in package.json. The values below are exactly the ones that build publishes in its own
+ * `parsers-oci.json` (node_modules/@datamitsu/datamitsu/parsers-oci.json), which is the file to
+ * copy from on every bump.
  *
- * The release tag and the asset's version string are spelled differently on unstable prereleases
- * (tag `unstable-<date>-<sha>` vs. asset `0.0.0-unstable.<date>.<sha>-SNAPSHOT-<sha>`), so they are
- * two separate constants rather than one interpolated version.
+ * Sourced from the registry rather than a release asset. The module is delivered over two channels
+ * — a GitHub release asset (`url`) and an OCI artifact (`oci`) — and an entry declares exactly one;
+ * there is no fallback chain. `oci` is used here because unstable builds are published to npm and
+ * to the registry but do not always get a GitHub release cut, so the release asset can 404 for a
+ * version that otherwise exists. The registry copy is always there.
+ *
+ * `hash` does double duty on this channel: it is the module's SHA-256 _and_ the expected digest of
+ * the artifact's single layer, so a manifest pointing at other content is rejected before a single
+ * payload byte is requested. Note the hash changes on every build even when the parser sources do
+ * not — the module's version string is injected at compile time, so its bytes differ.
  */
 
-// Keep in lockstep with the @datamitsu/datamitsu pin in package.json.
-const PARSERS_RELEASE_TAG = "unstable-20260817-793644e";
-const PARSERS_ASSET_VERSION = "0.0.0-unstable.20260817.793644e-SNAPSHOT-793644e";
+const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
+const PARSERS_OCI_DIGEST =
+  "sha256:525951192993f08df9229c45aca7b6283327486e277df2566891b2d2fbaf574f";
 
-const CORE_PARSER_HASH = "d9157cd8b538105520cec6a05193156f5b8986744f6f396e0cc8bf371a4059a0";
+const CORE_PARSER_HASH = "46a7f0848eabe3716dc0967417463afb44c89f1c24bd9e6bacf17bacffc4deca";
 
 export const parsers: config.MapOfParsers = {
   core: {
     hash: CORE_PARSER_HASH,
-    url:
-      `https://github.com/datamitsu/datamitsu/releases/download/` +
-      `${PARSERS_RELEASE_TAG}/datamitsu_parsers_${PARSERS_ASSET_VERSION}.wasm`,
+    oci: {
+      digest: PARSERS_OCI_DIGEST,
+      ref: PARSERS_OCI_REF,
+    },
   },
 };
