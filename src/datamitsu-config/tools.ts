@@ -206,7 +206,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "bearer",
-        args: ["scan", "--exit-code", "1", "{root}"],
+        args: ["scan", "--exit-code", "1", "{target}"],
         globs: ["**/*"],
         priority: lintPriority.bearer,
         scope: "repository",
@@ -222,7 +222,7 @@ export const toolsConfig: config.MapOfTools = {
       // when enabling. Network scanner → enable as `skip: !isCI`.
       lint: {
         app: "blint",
-        args: ["--no-banner", "--no-error", "-i", "{root}", "-o", "{toolCache}/blint"],
+        args: ["--no-banner", "--no-error", "-i", "{target}", "-o", "{toolCache}/blint"],
         globs: ["**/*"],
         scope: "repository",
       },
@@ -368,6 +368,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "eslint",
+        granularity: "file",
         args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         globs: eslintGlobs,
         priority: fixPriority.eslint,
@@ -375,6 +376,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "eslint",
+        granularity: "file",
         args: ["--quiet", "--format=json", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         globs: eslintGlobs,
         priority: lintPriority.eslint,
@@ -480,7 +482,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "grype",
-        args: ["dir:{root}", "--fail-on", "high"],
+        args: ["dir:{target}", "--fail-on", "high"],
         globs: ["**/*"],
         priority: lintPriority.grype,
         scope: "repository",
@@ -520,7 +522,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "helm",
-        args: ["lint", "{cwd}"],
+        args: ["lint", "{target}"],
         globs: helmGlobs,
         priority: lintPriority.helm,
         scope: "per-project",
@@ -548,7 +550,7 @@ export const toolsConfig: config.MapOfTools = {
       // output (`helm template`) rather than the template files directly.
       lint: {
         app: "kubeconform",
-        args: ["-ignore-missing-schemas", "-summary", "{cwd}"],
+        args: ["-ignore-missing-schemas", "-summary", "{target}"],
         globs: helmGlobs,
         scope: "per-project",
       },
@@ -641,7 +643,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "osv-scanner",
-        args: ["scan", "source", "--recursive", "{root}"],
+        args: ["scan", "source", "--recursive", "{target}"],
         globs: ["**/*"],
         priority: lintPriority["osv-scanner"],
         scope: "repository",
@@ -726,6 +728,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "prettier",
+        granularity: "file",
         args: ["-u", "--write", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
         priority: fixPriority.prettier,
@@ -733,6 +736,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "prettier",
+        granularity: "file",
         args: ["-u", "--check", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
         priority: lintPriority.prettier,
@@ -766,6 +770,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
+        granularity: "file",
         args: ["check", "--fix", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
         priority: fixPriority.ruff,
@@ -773,6 +778,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "ruff",
+        granularity: "file",
         args: ["check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
         priority: lintPriority.ruff,
@@ -786,6 +792,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
+        granularity: "file",
         args: ["format", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
         priority: fixPriority["ruff-format"],
@@ -793,6 +800,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "ruff",
+        granularity: "file",
         args: ["format", "--check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
         priority: lintPriority["ruff-format"],
@@ -880,12 +888,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "sqruff",
+        granularity: "file",
         args: ["fix", "{files}"],
         globs: sqlGlobs,
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
+        granularity: "file",
         args: ["lint", "{files}"],
         globs: sqlGlobs,
         scope: "per-project",
@@ -1000,14 +1010,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "tofu",
-        args: ["fmt", "-recursive", "{cwd}"],
+        args: ["fmt", "-recursive", "{target}"],
         globs: ["**/*.tf", "**/*.tfvars"],
         priority: fixPriority["terraform-fmt"],
         scope: "per-project",
       },
       lint: {
         app: "tofu",
-        args: ["fmt", "-check", "-recursive", "-diff", "{cwd}"],
+        args: ["fmt", "-check", "-recursive", "-diff", "{target}"],
         globs: ["**/*.tf", "**/*.tfvars"],
         priority: lintPriority["terraform-fmt"],
         scope: "per-project",
@@ -1040,7 +1050,15 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "trivy",
-        args: ["fs", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "--no-progress", "{root}"],
+        args: [
+          "fs",
+          "--exit-code",
+          "1",
+          "--severity",
+          "HIGH,CRITICAL",
+          "--no-progress",
+          "{target}",
+        ],
         globs: ["**/*"],
         priority: lintPriority.trivy,
         scope: "repository",
@@ -1259,7 +1277,7 @@ export const toolsConfig: config.MapOfTools = {
       // → enable as `skip: !isCI` if you want the online pass in CI.
       lint: {
         app: "zizmor",
-        args: ["--offline", "--format", "plain", "{root}"],
+        args: ["--offline", "--format", "plain", "{target}"],
         globs: actionlintGlobs,
         scope: "repository",
       },
