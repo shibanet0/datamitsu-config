@@ -1,7 +1,6 @@
 allowBuilds:
   esbuild: false
   unrs-resolver: false
-audit: {}
 auditLevel: high
 autoInstallPeers: true
 blockExoticSubdeps: true

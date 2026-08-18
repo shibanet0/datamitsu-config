@@ -312,6 +312,23 @@ declare global {
       bundles?: BinManager.MapOfBundles;
 
       /**
+       * How far the core may widen work beyond the selection you asked for, per operation. An
+       * operation left unset takes the core default ("unit").
+       *
+       * - "target" — only what was named; anything needing more is reported as skipped
+       * - "unit" — may widen to the unit (project/module) containing the target
+       * - "repo" — may widen to the whole repository
+       *
+       * Requires a core that implements granularity; declare it with getMinVersion().
+       *
+       * @example
+       *   execution: { widenTo: { fix: "target" } };
+       */
+      execution?: {
+        widenTo?: Partial<Record<OperationType, "repo" | "target" | "unit">>;
+      };
+
+      /**
        * Ignore rules in .datamitsuignore syntax. Applied alongside file-based .datamitsuignore
        * rules. Rules from multiple configs are concatenated (append).
        *
@@ -891,7 +908,7 @@ declare global {
        * execution: - {file} - single file path (per-file scope) - {files} - space-separated file
        * list (batch mode) - {root} - git repository root (or cwd if not in a git repo) - {cwd} -
        * per-project working directory - {toolCache} - per-project, per-tool cache directory
-       * (cache/{projectPath}/{toolName}/)
+       * (cache/{projectPath}/{toolName}/) - {target} - the single directory a scanner should scan
        *
        * @example
        *   ["--fix", "{file}"];
@@ -905,9 +922,28 @@ declare global {
       args: string[];
 
       /**
+       * The shape of paths this operation accepts on its command line. Inferred exactly from the
+       * placeholders in `args` — declare it only to assert the inference, and a declared value that
+       * disagrees is a config load error.
+       *
+       * - "many" — an arbitrary list of paths ({files})
+       * - "one" — exactly one path per process ({file})
+       * - "dir" — exactly one directory, no file list ({target})
+       * - "none" — no paths on the command line at all
+       *
+       * @example
+       *   arity: "dir";
+       */
+      arity?: "dir" | "many" | "none" | "one";
+
+      /**
        * Batch mode - process files in groups or one at a time Only used for scope: "per-project" or
        * "repository"
        *
+       * @deprecated Superseded by `arity`, which describes the tool's command-line contract instead
+       *   of being derived from `scope`. One boolean cannot express the four shapes that exist (a
+       *   list of paths, exactly one path, one directory, no paths). Ignored for dispatch; a later
+       *   release rejects it outright.
        * @default true for "per-project" and "repository", false for "per-file"
        */
       batch?: boolean;
@@ -945,6 +981,23 @@ declare global {
        *   ["**\/*.md"];
        */
       globs?: string[];
+
+      /**
+       * The smallest set of input files on which this operation's verdict is complete.
+       *
+       * - "file" — any subset of files is a valid, complete input
+       * - "unit" — valid only over a whole project/module/compilation unit
+       * - "repo" — valid only over the whole repository
+       *
+       * Inferred when omitted: "per-file" scope and file-referencing "repository" scope give
+       * "file", other "repository" scope gives "repo", and "per-project" gives "unit". The
+       * per-project default is deliberately conservative — declaring "file" is a speed decision
+       * that is only correct when a file's verdict cannot depend on its siblings.
+       *
+       * @example
+       *   granularity: "file";
+       */
+      granularity?: "file" | "repo" | "unit";
 
       /**
        * How the file content reaches the tool. - "file" (default): pass file paths as arguments via
@@ -1446,6 +1499,13 @@ declare global {
      * Package name from ldflags
      */
     packageName: string;
+
+    /**
+     * Running build's version string, verbatim: a release tag, "dev" for a plain `go build`, or
+     * "0.0.0-unstable.*" for a prerelease. Diagnostics only: declare a minimum core with
+     * getMinVersion(), which is enforced for stable releases.
+     */
+    version: string;
   }
 
   /**
