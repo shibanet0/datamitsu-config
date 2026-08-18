@@ -171,12 +171,16 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "actionlint",
-        args: ["-color", "{file}"],
+        // `-format {{json .}}` emits the machine-readable report the parser reads (on stdout).
+        // The Go-template braces are not datamitsu placeholders — only the literal {file},
+        // {files}, {root}, {cwd} and {toolCache} tokens are substituted — so they pass through.
+        args: ["-no-color", "-format", "{{json .}}", "{file}"],
         globs: actionlintGlobs,
         priority: lintPriority.actionlint,
         scope: "per-file",
       },
     },
+    outputParser: { module: "core", parser: "actionlint" },
   },
   // ── opt-in tools (disabled by default) ──────────────────────────────────
   // Registered as apps + wired here, but held at `skip: true` until each is

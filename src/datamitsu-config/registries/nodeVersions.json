@@ -2,7 +2,7 @@
   "@antebudimir/eslint-plugin-vanilla-extract": {
     "description": "Comprehensive ESLint plugin for vanilla-extract with CSS property ordering, style validation, and best practices enforcement. Supports alphabetical, concentric and custom CSS ordering, auto-fixing, and zero-runtime safety.",
     "packageName": "@antebudimir/eslint-plugin-vanilla-extract",
-    "version": "1.16.0"
+    "version": "1.17.0"
   },
   "@commitlint/cli": {
     "description": "Lint your commit messages",
@@ -32,22 +32,32 @@
   "@e18e/eslint-plugin": {
     "description": "The official e18e ESLint plugin for modernizing code and improving performance.",
     "packageName": "@e18e/eslint-plugin",
-    "version": "0.3.0"
+    "version": "0.8.0"
+  },
+  "@eslint-community/eslint-plugin-eslint-comments": {
+    "description": "Additional ESLint rules for ESLint directive comments.",
+    "packageName": "@eslint-community/eslint-plugin-eslint-comments",
+    "version": "4.7.2"
+  },
+  "@eslint-react/eslint-plugin": {
+    "description": "A series of composable ESLint rules for libraries and frameworks that use React as a UI runtime.",
+    "packageName": "@eslint-react/eslint-plugin",
+    "version": "5.18.2"
   },
   "@eslint/config-helpers": {
     "description": "Helper utilities for creating ESLint configuration",
     "packageName": "@eslint/config-helpers",
-    "version": "0.5.2"
+    "version": "0.7.0"
   },
   "@eslint/js": {
     "description": "ESLint JavaScript language implementation",
     "packageName": "@eslint/js",
-    "version": "9.39.2"
+    "version": "10.0.1"
   },
   "@next/eslint-plugin-next": {
     "description": "ESLint plugin for Next.js.",
     "packageName": "@next/eslint-plugin-next",
-    "version": "16.1.6"
+    "version": "16.3.0"
   },
   "@prettier/plugin-xml": {
     "description": "prettier plugin for XML",
@@ -61,17 +71,17 @@
   },
   "@stylistic/eslint-plugin": {
     "packageName": "@stylistic/eslint-plugin",
-    "version": "5.8.0"
+    "version": "5.10.0"
   },
   "@vitest/eslint-plugin": {
     "description": "ESLint plugin for Vitest",
     "packageName": "@vitest/eslint-plugin",
-    "version": "1.6.9"
+    "version": "1.6.26"
   },
   "aeslint-flat-config-utilsa": {
     "description": "Utils for managing and manipulating ESLint flat config arrays",
     "packageName": "eslint-flat-config-utils",
-    "version": "3.0.1"
+    "version": "3.2.0"
   },
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
@@ -96,7 +106,7 @@
   "eslint": {
     "description": "An AST-based pattern checker for JavaScript.",
     "packageName": "eslint",
-    "version": "9.39.2"
+    "version": "10.8.0"
   },
   "eslint-config-prettier": {
     "description": "Turns off all rules that are unnecessary or might conflict with Prettier.",
@@ -106,17 +116,17 @@
   "eslint-flat-config-utils": {
     "description": "Utils for managing and manipulating ESLint flat config arrays",
     "packageName": "eslint-flat-config-utils",
-    "version": "3.0.1"
+    "version": "3.2.0"
   },
   "eslint-import-resolver-typescript": {
     "description": "This plugin adds `TypeScript` support to `eslint-plugin-import`",
     "packageName": "eslint-import-resolver-typescript",
-    "version": "4.4.4"
+    "version": "4.4.5"
   },
   "eslint-plugin-array-func": {
     "description": "Rules dealing with Array functions and methods.",
     "packageName": "eslint-plugin-array-func",
-    "version": "5.1.0"
+    "version": "5.1.1"
   },
   "eslint-plugin-arrow-return-style": {
     "description": "Enforce arrow function return style and automatically fix it",
@@ -126,72 +136,62 @@
   "eslint-plugin-baseline-js": {
     "description": "Enforce JavaScript Baseline (widely/newly/year) browser compatibility with a single ESLint rule. Prevent runtime errors by catching unsupported JavaScript features during development.",
     "packageName": "eslint-plugin-baseline-js",
-    "version": "0.5.0"
+    "version": "0.7.0"
   },
   "eslint-plugin-boundaries": {
     "description": "Eslint plugin checking architecture boundaries between elements",
     "packageName": "eslint-plugin-boundaries",
-    "version": "5.4.0"
+    "version": "7.1.0"
   },
   "eslint-plugin-clsx": {
     "description": "An ESLint plugin for clsx/classnames",
     "packageName": "eslint-plugin-clsx",
-    "version": "0.0.12"
+    "version": "0.1.0"
   },
   "eslint-plugin-command": {
     "description": "Comment-as-command for one-off codemod with ESLint",
     "packageName": "eslint-plugin-command",
-    "version": "3.4.0"
+    "version": "4.0.0"
   },
   "eslint-plugin-compat": {
     "description": "Lint browser compatibility of API used",
     "packageName": "eslint-plugin-compat",
-    "version": "6.1.0"
+    "version": "7.0.2"
   },
   "eslint-plugin-de-morgan": {
     "description": "ESLint plugin for transforming negated boolean expressions via De Morgan’s laws",
     "packageName": "eslint-plugin-de-morgan",
-    "version": "2.0.0"
+    "version": "2.1.3"
   },
   "eslint-plugin-decorator-position": {
     "description": "ESLint plugin for enforcing decorator position",
     "packageName": "eslint-plugin-decorator-position",
-    "version": "6.0.0"
+    "version": "6.1.1"
   },
   "eslint-plugin-depend": {
     "description": "An ESLint plugin to suggest optimized dependencies, native alternatives and more",
     "packageName": "eslint-plugin-depend",
-    "version": "1.4.0"
+    "version": "1.5.0"
   },
   "eslint-plugin-es-x": {
     "description": "ESLint plugin about ECMAScript syntactic features.",
     "packageName": "eslint-plugin-es-x",
-    "version": "9.4.0"
+    "version": "10.0.0"
   },
   "eslint-plugin-escompat": {
     "description": "This plugin will report eslint errors for code which - if left untranspiled - will not work in some browsers.",
     "packageName": "eslint-plugin-escompat",
     "version": "3.11.4"
   },
-  "eslint-plugin-eslint-comments": {
-    "description": "Additional ESLint rules for ESLint directive comments.",
-    "packageName": "eslint-plugin-eslint-comments",
-    "version": "3.2.0"
-  },
-  "eslint-plugin-filenames": {
-    "description": "Eslint rule for consistent filenames.",
-    "packageName": "eslint-plugin-filenames",
-    "version": "1.3.2"
-  },
   "eslint-plugin-fsecond": {
     "description": "ESLint plugin with misc rules. Typescript and React related.",
     "packageName": "eslint-plugin-fsecond",
-    "version": "1.4.0"
+    "version": "1.5.0"
   },
   "eslint-plugin-functional": {
     "description": "ESLint rules to promote functional programming in TypeScript.",
     "packageName": "eslint-plugin-functional",
-    "version": "9.0.2"
+    "version": "10.0.0"
   },
   "eslint-plugin-html": {
     "description": "A ESLint plugin to lint and fix inline scripts contained in HTML files.",
@@ -201,92 +201,82 @@
   "eslint-plugin-i18next": {
     "description": "ESLint plugin for i18n",
     "packageName": "eslint-plugin-i18next",
-    "version": "6.1.3"
+    "version": "6.1.5"
   },
-  "eslint-plugin-import": {
+  "eslint-plugin-import-x": {
     "description": "Import with sanity.",
-    "packageName": "eslint-plugin-import",
-    "version": "2.32.0"
+    "packageName": "eslint-plugin-import-x",
+    "version": "4.17.1"
   },
   "eslint-plugin-jsdoc": {
     "description": "JSDoc linting rules for ESLint.",
     "packageName": "eslint-plugin-jsdoc",
-    "version": "62.6.0"
+    "version": "63.3.3"
   },
   "eslint-plugin-json": {
     "description": "eslint plugin for JSON files",
     "packageName": "eslint-plugin-json",
-    "version": "4.0.1"
+    "version": "5.0.0"
   },
   "eslint-plugin-json-schema-validator": {
     "description": "ESLint plugin that validates data using JSON Schema Validator.",
     "packageName": "eslint-plugin-json-schema-validator",
-    "version": "6.0.3"
+    "version": "6.3.1"
   },
   "eslint-plugin-jsonc": {
     "description": "ESLint plugin for JSON, JSONC and JSON5 files.",
     "packageName": "eslint-plugin-jsonc",
-    "version": "2.21.1"
+    "version": "3.4.1"
   },
-  "eslint-plugin-jsx-a11y": {
+  "eslint-plugin-jsx-a11y-x": {
     "description": "Static AST checker for accessibility rules on JSX elements.",
-    "packageName": "eslint-plugin-jsx-a11y",
-    "version": "6.10.2"
+    "packageName": "eslint-plugin-jsx-a11y-x",
+    "version": "0.2.0"
   },
   "eslint-plugin-n": {
     "description": "Additional ESLint's rules for Node.js",
     "packageName": "eslint-plugin-n",
-    "version": "17.24.0"
+    "version": "18.2.2"
   },
   "eslint-plugin-no-unsanitized": {
     "description": "ESLint rule to disallow unsanitized code",
     "packageName": "eslint-plugin-no-unsanitized",
-    "version": "4.1.4"
+    "version": "4.1.5"
   },
   "eslint-plugin-no-use-extend-native": {
     "description": "ESLint plugin to prevent use of extended native objects",
     "packageName": "eslint-plugin-no-use-extend-native",
-    "version": "0.7.2"
+    "version": "0.7.3"
   },
   "eslint-plugin-oxlint": {
     "description": "Turn off all rules already supported by oxlint",
     "packageName": "eslint-plugin-oxlint",
-    "version": "1.58.0"
+    "version": "1.77.0"
   },
   "eslint-plugin-perfectionist": {
     "description": "ESLint plugin for sorting various data such as objects, imports, types, enums, JSX props, etc.",
     "packageName": "eslint-plugin-perfectionist",
-    "version": "5.5.0"
+    "version": "5.10.1"
   },
   "eslint-plugin-playwright": {
     "description": "ESLint plugin for Playwright testing.",
     "packageName": "eslint-plugin-playwright",
-    "version": "2.6.0"
+    "version": "2.11.0"
   },
   "eslint-plugin-pnpm": {
     "description": "ESLint Plugin for pnpm",
     "packageName": "eslint-plugin-pnpm",
-    "version": "1.6.0"
+    "version": "1.7.0"
   },
   "eslint-plugin-promise": {
     "description": "Enforce best practices for JavaScript promises",
     "packageName": "eslint-plugin-promise",
-    "version": "7.2.1"
-  },
-  "eslint-plugin-react": {
-    "description": "React specific linting rules for ESLint",
-    "packageName": "eslint-plugin-react",
-    "version": "7.37.5"
+    "version": "7.3.0"
   },
   "eslint-plugin-react-hooks": {
     "description": "ESLint rules for React Hooks",
     "packageName": "eslint-plugin-react-hooks",
-    "version": "7.0.1"
-  },
-  "eslint-plugin-react-perf": {
-    "description": "Performance-minded React linting rules for ESLint",
-    "packageName": "eslint-plugin-react-perf",
-    "version": "3.3.3"
+    "version": "7.1.1"
   },
   "eslint-plugin-react-prefer-function-component": {
     "description": "ESLint plugin that prevents the use of JSX class components",
@@ -296,42 +286,42 @@
   "eslint-plugin-react-refresh": {
     "description": "Validate that your components can safely be updated with Fast Refresh",
     "packageName": "eslint-plugin-react-refresh",
-    "version": "0.5.0"
+    "version": "0.5.3"
   },
   "eslint-plugin-react-you-might-not-need-an-effect": {
     "description": "ESLint rule to warn against unnecessary React useEffect hooks.",
     "packageName": "eslint-plugin-react-you-might-not-need-an-effect",
-    "version": "0.9.1"
+    "version": "1.0.1"
   },
   "eslint-plugin-regexp": {
     "description": "ESLint plugin for finding RegExp mistakes and RegExp style guide violations.",
     "packageName": "eslint-plugin-regexp",
-    "version": "3.0.0"
+    "version": "3.1.1"
   },
   "eslint-plugin-security": {
     "description": "Security rules for eslint",
     "packageName": "eslint-plugin-security",
-    "version": "3.0.1"
+    "version": "4.0.1"
   },
   "eslint-plugin-sonarjs": {
     "description": "SonarJS rules for ESLint",
     "packageName": "eslint-plugin-sonarjs",
-    "version": "3.0.5"
+    "version": "4.2.0"
   },
   "eslint-plugin-storybook": {
     "description": "Storybook ESLint Plugin: Best practice rules for writing stories",
     "packageName": "eslint-plugin-storybook",
-    "version": "10.2.9"
+    "version": "10.5.6"
   },
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
-    "version": "2.8.9"
+    "version": "2.10.8"
   },
   "eslint-plugin-unicorn": {
     "description": "More than 100 powerful ESLint rules",
     "packageName": "eslint-plugin-unicorn",
-    "version": "63.0.0"
+    "version": "73.0.0"
   },
   "eslint-plugin-unused-imports": {
     "description": "Report and remove unused es6 modules",
@@ -341,7 +331,7 @@
   "globals": {
     "description": "Global identifiers from different JavaScript environments",
     "packageName": "globals",
-    "version": "17.3.0"
+    "version": "17.9.0"
   },
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
@@ -371,7 +361,7 @@
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
-    "version": "1.58.0"
+    "version": "1.77.0"
   },
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
@@ -441,7 +431,7 @@
   "typescript-eslint": {
     "description": "Tooling which enables you to use TypeScript with ESLint",
     "packageName": "typescript-eslint",
-    "version": "8.56.0"
+    "version": "8.66.0"
   },
   "yaml": {
     "description": "JavaScript parser and stringifier for YAML",

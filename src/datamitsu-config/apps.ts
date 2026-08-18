@@ -6,7 +6,7 @@ import { knipApp } from "./apps/knip";
 import { lefthookSortApp } from "./apps/lefthook-sort";
 import { prettierApp } from "./apps/prettier";
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
-import { data as oxlintConfigurationSchemaData } from "./inline-config/oxlint_configuration_schema";
+import { data as oxlintConfigSchemaData } from "./inline-config/oxlint_configuration_schema";
 import {
   apps as externalAppsJSON,
   binaries as externalBinariesJSON,
@@ -21,22 +21,22 @@ import uvVersions from "./registries/uvVersions.json";
 const requiredGithubApps = new Set<keyof typeof githubBinariesJSON>(["lefthook"]);
 
 const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApps>(
-  (acc, [key, el]) => {
-    const binaries = el.binaries as unknown as BinManager.MapOfBinaries;
+  (accumulator, [key, element]) => {
+    const binaries = element.binaries as unknown as BinManager.MapOfBinaries;
 
     const app = githubAppsJSON[key as keyof typeof githubAppsJSON];
 
-    acc[key] = {
+    accumulator[key] = {
       binary: {
         binaries,
         version: app.tag,
       },
-      description: (el as any).description ?? undefined,
+      description: (element as any).description ?? undefined,
       required: requiredGithubApps.has(key as keyof typeof githubBinariesJSON),
     };
 
     if (["air", "kubeconform"].includes(key)) {
-      acc[key].versionCheck = { args: ["-v"] };
+      accumulator[key].versionCheck = { args: ["-v"] };
     }
 
     if (
@@ -53,39 +53,39 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
         "vacuum",
       ].includes(key)
     ) {
-      acc[key].versionCheck = { args: ["version"] };
+      accumulator[key].versionCheck = { args: ["version"] };
     }
 
     // harper-cli's binary self-versions independently (reports 0.1.0) of the
     // harper monorepo release tag it ships from, so a tag-vs-output check is
     // meaningless — skip it.
     if (key === "harper-cli") {
-      acc[key].versionCheck = { disabled: true };
+      accumulator[key].versionCheck = { disabled: true };
     }
 
-    return acc;
+    return accumulator;
   },
   {},
 );
 
 const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapOfApps>(
-  (acc, [key, el]) => {
-    const binaries = el.binaries as unknown as BinManager.MapOfBinaries;
+  (accumulator, [key, element]) => {
+    const binaries = element.binaries as unknown as BinManager.MapOfBinaries;
     const app = externalAppsJSON[key as keyof typeof externalAppsJSON];
 
-    acc[key] = {
+    accumulator[key] = {
       binary: {
         binaries,
         version: app.version,
       },
-      description: (el as any).description ?? undefined,
+      description: (element as any).description ?? undefined,
     };
 
     if (app.versionCheck) {
-      acc[key].versionCheck = app.versionCheck;
+      accumulator[key].versionCheck = app.versionCheck;
     }
 
-    return acc;
+    return accumulator;
   },
   {},
 );
@@ -276,7 +276,7 @@ const allApps: BinManager.MapOfApps = {
         null,
         2,
       ),
-      "oxlint_configuration_schema.json": oxlintConfigurationSchemaData,
+      "oxlint_configuration_schema.json": oxlintConfigSchemaData,
     },
     links: {
       ".oxlintrc.json": ".oxlintrc.json",
@@ -286,7 +286,7 @@ const allApps: BinManager.MapOfApps = {
       binPath: "node_modules/.bin/oxlint",
       ...nodeVersions.oxlint,
       lockFile:
-        "br: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",
+        "br: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",
     },
   },
   pnpm: {
