@@ -22,9 +22,6 @@ keep the shape**, which is what carries the meaning:
 > ✅ `Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
 package fails to typecheck because a generated file is missing.`
 
-The second version is more useful, not less: the file count and package count are what the numbers
-scale with, and the repository name is not.
-
 ### Naming other projects requires explicit permission
 
 Do not name another project, repository, author, or product — or describe an approach as coming
@@ -38,11 +35,9 @@ Without that permission, describe the **idea** rather than its source:
 
 A user pasting a link is not the same as a user granting permission to cite it. If the attribution
 genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it
-down. Asking costs one sentence; an unwanted disclosure cannot be taken back.
+down.
 
 ### Scope
 
-These rules bind documentation, plans, backlog entries, commit messages, PR descriptions, and code
-alike. They apply to what an agent writes and to what an agent copies. When in doubt, anonymize —
-a sanitized note that survives review is worth more than a precise one that has to be rewritten out
-of the history.
+These rules bind everything an agent writes into the repository and everything an agent copies into
+it. When in doubt, anonymize.

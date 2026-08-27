@@ -2,10 +2,6 @@
 
 Every package in the repository — regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin) — exposes a `package.json` with a unified set of scripts. This makes project entry points identical across the monorepo: the same command names work everywhere, and `turbo` orchestrates them from the root.
 
-### Promise
-
-Any package in this monorepo runs with `pnpm install && pnpm dev`, regardless of the language inside. New contributors do not need to learn the underlying toolchain (Go, Rust, Python, Swift) to start the happy path. Toolchain-specific knowledge is required only when working on optimizations, edge cases, or build internals.
-
 ### Standard Scripts
 
 Implement the relevant subset in each package. Names and meanings are fixed.
@@ -49,7 +45,7 @@ Always run `pnpm dm check` after completing a task. This runs fixers (formatters
 
 ### Complex Orchestration
 
-When a script grows past a single command — multiple steps, parallelism, dependencies, conditions, intermediate variables — it moves to `Taskfile.yml`. The `package.json` script becomes a thin entry point that delegates:
+When a script grows past a single command — multiple steps, parallelism, dependencies, conditions, intermediate variables — it moves to `Taskfile.yaml`. The `package.json` script becomes a thin entry point that delegates:
 
 ```json
 {
