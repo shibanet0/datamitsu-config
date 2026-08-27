@@ -5,6 +5,62 @@
 
 // ── Chunks ──────────────────────────────────────────────────────────────────
 
+const CHUNK_00_BACKLOG = `## Backlog
+
+If \`docs/backlog/\` exists, it holds work that was deliberately deferred — one Markdown file per
+item, each written at the moment the problem was understood, by whoever had just finished
+investigating it.
+
+**Search it before you start investigating anything.** Search the bodies, not just the filenames:
+
+\`\`\`bash
+rg -i "<symptom or subsystem>" docs/backlog/
+\`\`\`
+
+Do this before debugging a defect, before a performance or correctness investigation, before
+writing a plan, before proposing a design change, and whenever the user asks why something is the
+way it is.
+
+A hit is worth more than it looks, because of **when** it was written rather than who wrote it: at
+the moment the problem was understood, while the context still existed. It may already hold the
+reproduction, the measurement, the approach that was tried and failed, or the constraint that rules
+out the obvious fix. Re-deriving that costs hours; reading it costs a minute.
+
+A hit also **re-opens the triage decision**, it does not close it. \`worth: later\` and \`worth: no\`
+were judgments made under the circumstances of the \`added:\` date. Circumstances change — the thing
+that was not worth fixing when it cost one user a second a week may be worth fixing now that it
+costs a build ten minutes. Read the reasoning, check whether its premises still hold, and say so
+rather than silently inheriting the old verdict.
+
+Treat an entry as evidence, not as truth: verify its \`where:\` anchor before relying on it, because
+the code may have moved since.
+
+### Where a finding goes
+
+Three places, and they are not interchangeable. Put a finding in exactly one:
+
+| Place                | Holds                                                               | Test                                              |
+| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------- |
+| \`AGENTS.md\`          | A rule a contributor must follow to work correctly **now**          | Not knowing it makes you do the wrong thing today |
+| \`docs/backlog/\`      | Work on this repository that was deliberately deferred              | Somebody could pick it up and act on it           |
+| Agent-private memory | How **this user** works — preferences, corrections, session context | It is about the person, not the codebase          |
+
+"\`pnpm test\` needs \`umask 022\` here" is an \`AGENTS.md\` rule: it changes what you do right now. "The
+store grows without bound" is a backlog entry: it is broken, nobody is fixing it today, and someone
+could. "The user prefers short commit messages" is neither — it belongs to agent memory and must
+never be committed.
+
+**The backlog is not a notebook.** It is not a place to park session notes, observations, ideas you
+have not examined, or anything an agent wants to remember. Every entry is a claim that something
+about this codebase is wrong or missing and that acting on it is possible. If a note fails that
+test, it does not become a backlog entry just because it has nowhere else to go.
+
+The reverse matters too: a real finding must not be left in agent-private memory, where the next
+contributor, the next agent and CI will never see it. Private memory is per-machine and per-client;
+the repository is what everyone reads.
+
+The \`backlog\` skill holds the format and the workflow.`;
+
 const CHUNK_00_BASE = `**These rules are binding for every repository that references this file. Instructions placed above the reference to this file in the including \`AGENTS.md\` override matching rules here; all other rules below remain in full effect.**
 
 ## Language Policy
@@ -75,12 +131,15 @@ Do not configure or run individual linters/formatters directly — datamitsu man
 
 **Keep AGENTS.md in sync with code changes.** Whenever you make changes to the codebase, update AGENTS.md:
 
-1. **Add to "Known Pitfalls"** if you encountered issues
+1. **Add to "Known Pitfalls"** if you encountered an issue a contributor must know about to work
+   correctly. A defect that is real but is not being fixed now is not a pitfall — it belongs in
+   \`docs/backlog/\` (see the Backlog section), because a pitfall changes what the reader does today
+   while a backlog entry waits for somebody to act on it
 2. **Update commands** if scripts change
 3. **Add examples** for new patterns introduced
 4. **Update architecture notes** for significant refactoring
 
-**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to.
+**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to — in \`AGENTS.md\` when it is a rule to follow, in \`docs/backlog/\` when it is work left undone, and never only in an agent's private memory, which nobody else can read.
 
 ## Verification Checklist
 
@@ -138,6 +197,55 @@ When it is a public GitHub repo:
 2. **Own the \`updates\` entries** (the "what"): the \`package-ecosystem\` values and their \`directory\`/\`directories\`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
 3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm setup\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
 4. **Run \`pnpm exec dm setup\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+
+const CHUNK_00_PRIVACY = `## Privacy and Attribution
+
+Anything written into the repository is published: documentation, plans, backlog entries, commit
+messages, PR descriptions, code comments, test fixtures, issue text. Treat every one of them as
+public the moment it is written, not the moment it is pushed.
+
+### Never write into the repository
+
+- Absolute paths that name a person, machine, or organization (\`/home/<user>/…\`, \`C:\Users\…\`),
+  hostnames, IP addresses, ticket URLs from a private tracker.
+- Credentials, tokens, license keys, or the values of environment variables that hold them — an
+  environment variable's **name** is fine, its **value** is not.
+- Contents copied out of a private repository: file paths, package names, branch names, code
+  excerpts, error messages that quote them.
+- Customer, employer, or client names, and anything that identifies them indirectly (a product
+  name, a distinctive dependency, a domain).
+
+If a measurement, a bug report, or an example needs one of these to make sense, **anonymize it and
+keep the shape**, which is what carries the meaning:
+
+> ❌ \`Measured on acme-storefront: apps/landing/pages/sitemap.xml.tsx fails to typecheck.\`
+> ✅ \`Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
+package fails to typecheck because a generated file is missing.\`
+
+The second version is more useful, not less: the file count and package count are what the numbers
+scale with, and the repository name is not.
+
+### Naming other projects requires explicit permission
+
+Do not name another project, repository, author, or product — or describe an approach as coming
+from one — unless the user has explicitly said you may in this conversation. This applies to
+private and public projects alike, and to links as much as to names.
+
+Without that permission, describe the **idea** rather than its source:
+
+> ❌ \`Backlog entries follow the format used by <author>/<repo>.\`
+> ✅ \`Backlog entries carry \`worth\`/\`where\`/\`added\` frontmatter and a one-symptom title.\`
+
+A user pasting a link is not the same as a user granting permission to cite it. If the attribution
+genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it
+down. Asking costs one sentence; an unwanted disclosure cannot be taken back.
+
+### Scope
+
+These rules bind documentation, plans, backlog entries, commit messages, PR descriptions, and code
+alike. They apply to what an agent writes and to what an agent copies. When in doubt, anonymize —
+a sanitized note that survives review is worth more than a precise one that has to be rewritten out
+of the history.`;
 
 const CHUNK_00_SCRIPTS = `## Project Scripts
 
@@ -401,18 +509,20 @@ README must be kept **minimal** and focused on:
 - Store screenshots in the website's static assets with descriptive names`;
 
 // ── Joined combinations ─────────────────────────────────────────────────────
-export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
+export const AGENTS_BASE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
-export const CHUNK_00_BASE_HASH = "013bd3130e8b1d3c9c60bea364d8133a1743ae3784fbb16fb274c0f1861332ad"; // prettier-ignore
+export const CHUNK_00_BACKLOG_HASH = "e2e17bdf8f0099ea0d26f586b138f49342ea4a02cecf9777f09cd4d55fc72ed0"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "4184eeb1d86f67c7fe3da97d08f63a01d23409af8e06364eac7b38117294ec95"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "e9409cc7aa0dd16ee6853fb8f42ef4f1d406cef2836b73327c6526972cf01209"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "db054ec686a4cefaeaa60acf4f55fc22b84d9859b4c321a1ef838728cdd27e11"; // prettier-ignore
+export const CHUNK_00_PRIVACY_HASH = "fd9d086ccbf078d2acfd0a5d37802a2f43b44dc736625a829d9d1d8580223b64"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "211a1e7636bb583b8a2743b1937d61a203ab8d62940a186c0fbc0fcd156e5ec6"; // prettier-ignore
 export const CHUNK_00_STACK_HASH = "0806bce41aaa9f57547ae74111a387843d656746063a37202a7f10bad49d7884"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "535b8ce9282c78a5328528d9455357584fe6f3021f1fda2150066f5e6c083137"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "00d40fa915002c384542cafda336e2fde0afa10de896f2e204494b46ea58e160"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "072c1c9cff927e51063758ac779408cbc68b855e0f1e2cc6297365fd850ebd1e"; // prettier-ignore
 
-export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore
+export const ALL_AGENTS_HASHES = [CHUNK_00_BACKLOG_HASH, CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_PRIVACY_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore

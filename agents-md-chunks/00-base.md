@@ -68,12 +68,15 @@ Do not configure or run individual linters/formatters directly — datamitsu man
 
 **Keep AGENTS.md in sync with code changes.** Whenever you make changes to the codebase, update AGENTS.md:
 
-1. **Add to "Known Pitfalls"** if you encountered issues
+1. **Add to "Known Pitfalls"** if you encountered an issue a contributor must know about to work
+   correctly. A defect that is real but is not being fixed now is not a pitfall — it belongs in
+   `docs/backlog/` (see the Backlog section), because a pitfall changes what the reader does today
+   while a backlog entry waits for somebody to act on it
 2. **Update commands** if scripts change
 3. **Add examples** for new patterns introduced
 4. **Update architecture notes** for significant refactoring
 
-**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to.
+**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to — in `AGENTS.md` when it is a rule to follow, in `docs/backlog/` when it is work left undone, and never only in an agent's private memory, which nobody else can read.
 
 ## Verification Checklist
 
