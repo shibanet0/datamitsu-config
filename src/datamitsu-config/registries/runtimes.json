@@ -183,7 +183,7 @@
               "binaryPath": "node-v26.7.0-linux-x64-musl/bin/node",
               "contentType": "tar.xz",
               "extractDir": true,
-              "hash": "0608f9dcffe4daeef082255f5cba6047c7b82eb57a7ab168a0e9bd459823f74b",
+              "hash": "b6acfd9133393956ef4dd977678a4a0863314d7cf2f925457069f9541dce8d40",
               "url": "https://unofficial-builds.nodejs.org/download/release/v26.7.0/node-v26.7.0-linux-x64-musl.tar.xz"
             }
           },
@@ -199,7 +199,7 @@
               "binaryPath": "node-v26.7.0-linux-arm64-musl/bin/node",
               "contentType": "tar.xz",
               "extractDir": true,
-              "hash": "54392f06e0f2b21502d685ca5667ef0d96ea302ee56af12fb1a46e574e6931b0",
+              "hash": "9cc46e7b106abf606dd9b824abfd8f32043f53ca46a41d4ed2e61ebe7c58ef7e",
               "url": "https://unofficial-builds.nodejs.org/download/release/v26.7.0/node-v26.7.0-linux-arm64-musl.tar.xz"
             }
           }
