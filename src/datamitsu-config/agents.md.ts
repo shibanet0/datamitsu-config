@@ -61,7 +61,7 @@ const CHUNK_00_BASE = `**These rules are binding for every repository that refer
 
 Write one ONLY in these cases:
 
-- **Non-obvious business logic** — a domain rule or algorithm whose *why* is not derivable from the code.
+- **Non-obvious business logic** — a domain rule or algorithm whose _why_ is not derivable from the code.
 - **Architectural decisions** — why this approach, and over which specific alternative.
 - **Workarounds** — name the bug, version, or constraint that forces the unusual shape.
 - **Doc comments the language requires** — Go exported identifiers and packages (the shipped \`revive\` config enables \`exported\` and \`package-comments\`). Such a comment MUST say something the signature does not. \`// Foo does Foo\` satisfies the linter and is forbidden anyway, like any other restatement.
@@ -476,7 +476,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "4191d3e2a7f26ef28ac76b141ef8747b65d5d2457a0800515969420a0be68986"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "1445af01de14894ff68bea77c522bddcd518640fea2840dc44ed5d937cad36a7"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "b05aca84224760df0b9dae1f499a911c7c6531dd4623a7e55ab4d50b4f93f115"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "d8be582e591eb438952dd4173019ddb1f0f194260b04d1146526b6bd6afbd9f3"; // prettier-ignore
