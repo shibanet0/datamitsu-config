@@ -114,7 +114,10 @@ function typedefJsDoc(
       const typeStr = m.type ? resolveAliases(printNode(m.type)) : "any";
       return `${JSON.stringify(propName)}${opt}: ${typeStr}`;
     }
-    return resolveAliases(printNode(m));
+    // The printer terminates a member (a method signature, say) with its own `;`,
+    // which the `"; "` join below would double into an empty member. TypeScript 6
+    // parsed that anyway; TypeScript 7 rejects it with "Identifier expected".
+    return resolveAliases(printNode(m)).replace(/;\s*$/, "");
   });
   return `/** @typedef {{ ${memberParts.join("; ")} }} ${name} */`;
 }
@@ -149,7 +152,11 @@ for (const [name, typeStr] of exportDecls) {
 
   for (const pattern of patterns) {
     if (pattern.test(jsContent)) {
-      jsContent = jsContent.replace(pattern, `${jsdocBlock}\n$1`);
+      // Replace via a function, not a string: the bundler deduplicates colliding type
+      // names with a `$1` suffix (`Doc$1`, `Options$1`), and in a string replacement
+      // those read as capture-group references, splicing the matched declaration into
+      // the emitted JSDoc and producing output no parser accepts.
+      jsContent = jsContent.replace(pattern, (match) => `${jsdocBlock}\n${match}`);
       injected++;
       break;
     }

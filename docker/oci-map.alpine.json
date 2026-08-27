@@ -196,11 +196,6 @@
       "app": "tsc"
     },
     {
-      "subtree": ".apps/node/tsgo",
-      "kind": "app",
-      "app": "tsgo"
-    },
-    {
       "subtree": ".apps/uv/yamllint",
       "kind": "app",
       "app": "yamllint"

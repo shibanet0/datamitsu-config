@@ -135,6 +135,5 @@
     "**/public": true,
     "**/temp": true,
     "**/yarn.lock": true
-  },
-  "typescript.experimental.useTsgo": true
+  }
 }

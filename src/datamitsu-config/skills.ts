@@ -1120,7 +1120,8 @@ Before finalizing the preset, validate against the negative rules in \`.datamits
 - **\`library.json\` in a monorepo.** If picked preset is \`library.json\` but the project is inside a monorepo, upgrade to \`shared-library.json\` (so project references work). Same for \`react-library.json\` → \`shared-react-library.json\`.
 - **Missing \`types: ["node"]\`.** If the picked preset is \`base.json\` or one of the library presets, but the source imports \`node:*\` modules, add \`compilerOptions.types: ["node"]\` to the override block of \`tsconfig.json\`.
 - **Node types in a Cloudflare Worker.** If the project has \`wrangler.*\` or \`@cloudflare/workers-types\` but was assigned \`service.json\` (Node types), switch to \`service-worker.json\`. \`@types/node\` globals (\`process\`, \`Buffer\`, etc.) don't exist on the Workers runtime.
-- **TypeScript version.** If \`typescript\` in devDependencies is \`< 6.0.0\`, flag it — \`.datamitsu/tsconfig.md\` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally.
+- **TypeScript version.** If \`typescript\` in devDependencies is \`< 6.0.0\`, flag it — \`.datamitsu/tsconfig.md\` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally. Never recommend \`typescript@latest\`: that now resolves to 7.x, a different (Go) compiler with no JavaScript compiler API, which no released typescript-eslint accepts (\`typescript >=4.8.4 <6.1.0\`). Recommend \`typescript@^6\` unless the user asks for 7 specifically.
+- **Redundant \`@typescript/native-preview\`.** If it (or a \`tsgo\` script) is present, flag it as superseded — TypeScript 7 _is_ the native compiler. Removing it is the user's call; do not touch it.
 
 ### Compute the override block
 
@@ -1174,7 +1175,8 @@ Why: <one-sentence justification, citing the row in the table>
 ### Warnings
 
 <list any of these that apply; omit section if none:>
-- TypeScript version is \`<x.y.z>\`, preset requires >= 6.0.0. Update with \`pnpm add -D typescript@latest\`.
+- TypeScript version is \`<x.y.z>\`, preset requires >= 6.0.0. Update with \`pnpm add -D typescript@^6\`.
+- <if @typescript/native-preview or a tsgo script is present:> \`@typescript/native-preview\` is superseded by TypeScript 7 and can be dropped.
 - Source imports \`node:*\` but \`types: ["node"]\` was not previously set. Will add it.
 - Existing \`tsconfig.json\` had \`<surprising option>\` that the preset does not include. Will be removed unless you object.
 
@@ -1220,7 +1222,7 @@ Preset: \`@shibanet0/datamitsu-config/tsconfig/<preset>.json\`
 Next steps:
 - Run \`pnpm tsc --noEmit\` to verify the new config compiles.
 - <if monorepo + shared-*:> Add a \`references\` entry from consumer packages to this package.
-- <if TS version was flagged:> Update TypeScript: \`pnpm add -D typescript@latest\`.
+- <if TS version was flagged:> Update TypeScript: \`pnpm add -D typescript@^6\`.
 \`\`\`
 
 ---
@@ -1340,6 +1342,6 @@ export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "85dab71e883e003e2ee4a
 export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "28a9581cf58b87bd81913b052637f4fd08b624c23f904acddb8492a31d224d1f"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "b0deeb09ffdc91f7ae267fecb849ca1dd9e530304502492601f6caa345ee22aa"; // prettier-ignore
-export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "749b019af80df9646f8d1f1491c091b93cf9a7f1dbf2966943aa31c76160eaf9"; // prettier-ignore
+export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "c411af06bac7b2c18b68fc83941be0858245bddee75df40bb740cfd26d6341c0"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CLAUDE_HASH = "923a388c3ec8d1ab8bb8859c2c4ed13ead607d253aec01a428d0df654bc23911"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX_HASH = "b47e306d7f1804b6907cd262893d71b39ba82c13f7cdbb810fc695526f4a519c"; // prettier-ignore

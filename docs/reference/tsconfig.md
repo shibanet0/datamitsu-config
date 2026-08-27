@@ -4,7 +4,8 @@ This package provides reusable TypeScript configurations for different project t
 
 ## Requirements
 
-- **TypeScript 6.0+** required
+- **TypeScript 6.0+** required. Every preset is also valid under TypeScript 7 — see
+  [TypeScript 7](#typescript-7) before upgrading, as the compiler is stricter than 6.
 - Modern bundler (tsup, vite, esbuild)
 
 ## Quick Selection
@@ -251,8 +252,11 @@ import { helper } from "../../utils/helper";
 **TypeScript 6.0+ required:**
 
 ```bash
-pnpm add -D typescript@latest
+pnpm add -D typescript@^6
 ```
+
+Pin the major deliberately — `typescript@latest` now resolves to 7.x, which is a
+different compiler. See [TypeScript 7](#typescript-7).
 
 **Add explicit types:**
 
@@ -270,6 +274,36 @@ pnpm add -D typescript@latest
 ```bash
 tsc --noEmit
 ```
+
+---
+
+## TypeScript 7
+
+TypeScript 7 is the compiler rewritten in Go — what used to ship separately as
+`@typescript/native-preview` (`tsgo`). It is now the `typescript` package itself, so a
+separate native-preview dependency is redundant and should be removed.
+
+Every preset here is valid under 7 — the `compilerOptions` surface is unchanged. Two
+things are not:
+
+**The JavaScript compiler API is gone.** `typescript@7` exports only `version` and
+`versionMajorMinor`. The AST moved to the `typescript/unstable/*` entrypoints and is
+reshaped: there is a scanner and the `SyntaxKind`/`is*` surface, but no `createSourceFile`
+parser and no `createPrinter`. Any build script that imports `typescript` for its AST
+needs a 6.x installed alongside, or a rewrite.
+
+**typescript-eslint does not support it.** Every published version, canary included, peers
+on `typescript >=4.8.4 <6.1.0` and fails outright with `typescript-eslint does not support
+TS 7.0`. A project that lints with type-aware rules must stay on 6.x until that lands.
+
+The compiler is also stricter, in ways that surface as new errors on code 6 accepted —
+JSDoc is parsed more strictly, and assignability is tightened (notably `Ref<T>` against
+`Ref<T> | undefined` under `exactOptionalPropertyTypes`, and generic-schema variance).
+Expect to fix real type errors, not just to swap the dependency.
+
+Upgrade the type-checker independently of the toolchain: datamitsu's managed `tsc` runs
+7.x as its own isolated app, while the `eslint` app keeps its own 6.x, so the two never
+collide.
 
 ---
 

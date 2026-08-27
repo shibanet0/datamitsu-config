@@ -13,8 +13,7 @@
  * pin in package.json. The values below are exactly the ones that build publishes in its own
  * `parsers-oci.json` (node_modules/@datamitsu/datamitsu/parsers-oci.json), which is the file to
  * copy from on every bump. `pnpm sync-datamitsu-version` does NOT rewrite this file — it only
- * touches package.json and datamitsu.config.ts — so these three values are a manual step and were
- * left on an unstable build the last time the pin moved.
+ * touches package.json and datamitsu.config.ts — so these three values are a manual step.
  *
  * Sourced from the registry rather than a release asset. The module is delivered over two channels
  * — a GitHub release asset (`url`) and an OCI artifact (`oci`) — and an entry declares exactly one;
@@ -31,9 +30,9 @@
 
 const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers";
 const PARSERS_OCI_DIGEST =
-  "sha256:2076af1cf584fa729452cc562ba9d9057c70e440e0db700c77c9b640527cb796";
+  "sha256:33f5437bfa8c974e79f5d597af2009a56f2b438792958d62ee885749b445d5e2";
 
-const CORE_PARSER_HASH = "7b127dc263b115ca40cff4996af0c0c2aec5d8f5489c4745236879f0351b68f5";
+const CORE_PARSER_HASH = "b5425355969f69f9a80a9838269b350b33ab47ec290358d7aa761483a2921986";
 
 export const parsers: config.MapOfParsers = {
   core: {
