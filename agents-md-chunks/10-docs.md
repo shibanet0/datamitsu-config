@@ -4,8 +4,10 @@ Documentation is a required deliverable for every user-facing change — not opt
 
 When implementing features or making changes, documentation MUST be updated in the same PR/commit:
 
-- **User-facing features** → update docs with examples
+- **User-facing features** → update docs with examples and guides
 - **API changes** → update reference docs
+- **CLI commands** → update the command reference
+- **Configuration options** → update the config reference
 - **Breaking changes** → document migration path
 
 ### Documentation Quality

@@ -5,6 +5,50 @@
 
 // ── Chunks ──────────────────────────────────────────────────────────────────
 
+const CHUNK_00_BACKLOG = `## Backlog
+
+If \`docs/backlog/\` exists, it holds work that was deliberately deferred — one Markdown file per
+item, written at the moment the problem was understood, by whoever had just finished investigating
+it.
+
+**Search it before you start investigating anything.** Search the bodies, not just the filenames:
+
+\`\`\`bash
+rg -i "<symptom or subsystem>" docs/backlog/
+\`\`\`
+
+Do this before debugging a defect, before a performance or correctness investigation, before
+writing a plan, before proposing a design change, and whenever the user asks why something is the
+way it is. An entry may already hold the reproduction, the measurement, the approach that was tried
+and failed, or the constraint that rules out the obvious fix.
+
+A hit **re-opens the triage decision**, it does not close it. \`worth: later\` and \`worth: no\` were
+judgments made under the circumstances of the \`added:\` date. Read the reasoning, check whether its
+premises still hold, and say so rather than silently inheriting the old verdict.
+
+Treat an entry as evidence, not as truth: verify its \`where:\` anchor before relying on it, because
+the code may have moved since.
+
+### Where a finding goes
+
+Three places, and they are not interchangeable. Put a finding in exactly one:
+
+| Place                | Holds                                                               | Test                                              |
+| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------- |
+| \`AGENTS.md\`          | A rule a contributor must follow to work correctly **now**          | Not knowing it makes you do the wrong thing today |
+| \`docs/backlog/\`      | Work on this repository that was deliberately deferred              | Somebody could pick it up and act on it           |
+| Agent-private memory | How **this user** works — preferences, corrections, session context | It is about the person, not the codebase          |
+
+Agent-private facts must never be committed. Conversely, a real finding must not be left in
+agent-private memory, where the next contributor, the next agent and CI will never see it.
+
+**The backlog is not a notebook.** It is not a place to park session notes, observations, ideas you
+have not examined, or anything an agent wants to remember. Every entry is a claim that something
+about this codebase is wrong or missing and that acting on it is possible. If a note fails that
+test, it does not become a backlog entry just because it has nowhere else to go.
+
+The \`backlog\` skill holds the format and the workflow.`;
+
 const CHUNK_00_BASE = `**These rules are binding for every repository that references this file. Instructions placed above the reference to this file in the including \`AGENTS.md\` override matching rules here; all other rules below remain in full effect.**
 
 ## Language Policy
@@ -13,19 +57,23 @@ const CHUNK_00_BASE = `**These rules are binding for every repository that refer
 
 ## Code Commenting Guidelines
 
-### When to Add Comments
+**Default to no comment.** Code that needs prose to be understood should be rewritten first — a clearer name, a smaller function, an extracted constant. A comment is the fallback for what genuinely cannot live in the code; it is never a way to describe code you just wrote.
 
-1. **Non-obvious business logic**: Complex algorithms or domain-specific rules that aren't immediately clear
-2. **Architectural decisions**: Why a particular approach was chosen over alternatives
-3. **Workarounds**: Explaining why unusual code exists (e.g., working around library bugs)
-4. **Public API documentation**: Exported functions, types, and packages should have doc comments
+Write one ONLY in these cases:
 
-### When NOT to Add Comments
+- **Non-obvious business logic** — a domain rule or algorithm whose _why_ is not derivable from the code.
+- **Architectural decisions** — why this approach, and over which specific alternative.
+- **Workarounds** — name the bug, version, or constraint that forces the unusual shape.
+- **Doc comments the language requires** — Go exported identifiers and packages (the shipped \`revive\` config enables \`exported\` and \`package-comments\`). Such a comment MUST say something the signature does not. \`// Foo does Foo\` satisfies the linter and is forbidden anyway, like any other restatement.
 
-1. **Repeating what the code does**: Bad: \`// Create temp file\` above \`os.CreateTemp()\`
-2. **Stating the obvious**: Bad: \`// Loop through items\` above a for-loop
-3. **Explaining standard patterns**: Bad: \`// Close file\` in defer/finally statements
-4. **Tracking changes**: Use git history instead of inline change logs
+**Everything else is forbidden.** Never write a comment that:
+
+- restates what the code does, in any form;
+- states the obvious, labels a standard pattern (\`defer\`/\`finally\` cleanup, a loop, a getter), or captions a section of a function body;
+- narrates the edit — what changed, what it used to be, what you decided while writing it. That belongs in the commit message and git history;
+- repeats the signature: parameter names, types, or the return value.
+
+**The test:** say what the comment adds that the line below it does not. If you cannot, delete it rather than reword it. Apply this to comments you are about to write, and to existing ones in code you are already changing.
 
 ## Testing
 
@@ -59,35 +107,31 @@ Follow GitHub Flow with feature branches from main.
 - **Internal packages**: Always use workspace protocol references (\`workspace:*\`)
 - **Peer dependencies**: Use caret ranges (\`^\`) for compatibility
 - **Regular dependencies**: Pin exact versions for reproducibility
-- After adding dependencies, run \`pnpm exec dm check\` to sync and validate
+- After adding dependencies, run \`pnpm dm check\` to sync and validate
 
 ## Linting & Formatting
 
-This project uses [datamitsu](https://datamitsu.com/) as the unified linting and formatting orchestrator. All checks run through a single command:
-
-\`\`\`bash
-pnpm exec dm check
-\`\`\`
-
-Do not configure or run individual linters/formatters directly — datamitsu manages the full toolchain.
+All linting and formatting runs through [datamitsu](https://datamitsu.com/) via one command: \`pnpm dm check\`. Do not configure or run individual linters/formatters directly — datamitsu manages the full toolchain.
 
 ## AGENTS.md Maintenance
 
 **Keep AGENTS.md in sync with code changes.** Whenever you make changes to the codebase, update AGENTS.md:
 
-1. **Add to "Known Pitfalls"** if you encountered issues
+1. **Add to "Known Pitfalls"** if you encountered an issue a contributor must know about to work
+   correctly today. A real defect that nobody is fixing now is not a pitfall — it belongs in
+   \`docs/backlog/\` (see the Backlog section)
 2. **Update commands** if scripts change
 3. **Add examples** for new patterns introduced
 4. **Update architecture notes** for significant refactoring
 
-**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to.
+**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to — routed per the Backlog section, and never only in an agent's private memory.
 
 ## Verification Checklist
 
 Before completing any task:
 
 1. Run the test suite if tests exist
-2. Run \`pnpm exec dm check\`
+2. Run \`pnpm dm check\`
 3. Verify build succeeds
 4. Update AGENTS.md if a new pattern or pitfall was discovered
 
@@ -99,8 +143,6 @@ const CHUNK_00_CONFIG_INPUTS = `## Single Source for Constants, Env & Build Inpu
 
 Every project (or set of apps in a monorepo) funnels its shared constants, environment variables, and build-time flags through ONE declared, validated access point. Reading these values ad-hoc anywhere else is forbidden. This holds when STARTING a project AND while MAINTAINING one: if you see a constant, a raw env read, or a build flag used inline where it belongs in the central point, STOP and tell the user before continuing.
 
-**Why:** the full set of inputs stays discoverable in one place — trivial to rename, audit, give defaults, and reason about. Hunting scattered constants and env reads across a codebase later is the pain this rule removes.
-
 ### Constants
 
 - Declare shared constants in a single module per project (Go: one package; JS/TS: one module). No magic values scattered across files.
@@ -108,7 +150,6 @@ Every project (or set of apps in a monorepo) funnels its shared constants, envir
   - Each generated file carries a header comment marking it as generated (naming the source manifest and the generator).
   - Prefer generating on demand at build time (the artifact need not be committed) over static committed copies. The manifest is the only source of truth.
   - The generator language is situational — TypeScript is a fine default.
-  - This is the same manifest → codegen pattern that \`datamitsu-config\` uses for its \`registries/*.json\` → generated \`.ts\`.
 
 ### Environment Variables
 
@@ -124,9 +165,7 @@ One env module per project (Go: an \`env\` package; TS: an \`env.ts\`). ALL env 
 Go \`ldflags\` and build tags, Rust \`build.rs\` / \`cfg\` / \`env!\`, and equivalents.
 
 - Treat them exactly like env vars: funnel into one module with defaults, normalization, and typed accessors. Do NOT read raw ldflag-injected variables across the codebase.
-- The app must not care whether a value came from an env var or a build flag — it reads one validated config surface.
-
-Reference implementation: datamitsu's own \`internal/env\` (typed getters with defaults) and \`internal/runtimeconfig\` (env-resolved, validated effective config as a typed struct).`;
+- The app must not care whether a value came from an env var or a build flag — it reads one validated config surface.`;
 
 const CHUNK_00_DEPENDABOT = `## Dependabot (public GitHub repos only)
 
@@ -137,15 +176,55 @@ When it is a public GitHub repo:
 1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` file with an empty \`updates:\` list is enough to opt in — \`dm setup\` fills in the rest.
 2. **Own the \`updates\` entries** (the "what"): the \`package-ecosystem\` values and their \`directory\`/\`directories\`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
 3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm setup\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
-4. **Run \`pnpm exec dm setup\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+4. **Run \`pnpm dm setup\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+
+const CHUNK_00_PRIVACY = `## Privacy and Attribution
+
+Anything written into the repository is published: documentation, plans, backlog entries, commit
+messages, PR descriptions, code comments, test fixtures, issue text. Treat every one of them as
+public the moment it is written, not the moment it is pushed.
+
+### Never write into the repository
+
+- Absolute paths that name a person, machine, or organization (\`/home/<user>/…\`, \`C:\Users\…\`),
+  hostnames, IP addresses, ticket URLs from a private tracker.
+- Credentials, tokens, license keys, or the values of environment variables that hold them — an
+  environment variable's **name** is fine, its **value** is not.
+- Contents copied out of a private repository: file paths, package names, branch names, code
+  excerpts, error messages that quote them.
+- Customer, employer, or client names, and anything that identifies them indirectly (a product
+  name, a distinctive dependency, a domain).
+
+If a measurement, a bug report, or an example needs one of these to make sense, **anonymize it and
+keep the shape**, which is what carries the meaning:
+
+> ❌ \`Measured on acme-storefront: apps/landing/pages/sitemap.xml.tsx fails to typecheck.\`
+> ✅ \`Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
+package fails to typecheck because a generated file is missing.\`
+
+### Naming other projects requires explicit permission
+
+Do not name another project, repository, author, or product — or describe an approach as coming
+from one — unless the user has explicitly said you may in this conversation. This applies to
+private and public projects alike, and to links as much as to names.
+
+Without that permission, describe the **idea** rather than its source:
+
+> ❌ \`Backlog entries follow the format used by <author>/<repo>.\`
+> ✅ \`Backlog entries carry \`worth\`/\`where\`/\`added\` frontmatter and a one-symptom title.\`
+
+A user pasting a link is not the same as a user granting permission to cite it. If the attribution
+genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it
+down.
+
+### Scope
+
+These rules bind everything an agent writes into the repository and everything an agent copies into
+it. When in doubt, anonymize.`;
 
 const CHUNK_00_SCRIPTS = `## Project Scripts
 
 Every package in the repository — regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin) — exposes a \`package.json\` with a unified set of scripts. This makes project entry points identical across the monorepo: the same command names work everywhere, and \`turbo\` orchestrates them from the root.
-
-### Promise
-
-Any package in this monorepo runs with \`pnpm install && pnpm dev\`, regardless of the language inside. New contributors do not need to learn the underlying toolchain (Go, Rust, Python, Swift) to start the happy path. Toolchain-specific knowledge is required only when working on optimizations, edge cases, or build internals.
 
 ### Standard Scripts
 
@@ -190,7 +269,7 @@ Always run \`pnpm dm check\` after completing a task. This runs fixers (formatte
 
 ### Complex Orchestration
 
-When a script grows past a single command — multiple steps, parallelism, dependencies, conditions, intermediate variables — it moves to \`Taskfile.yml\`. The \`package.json\` script becomes a thin entry point that delegates:
+When a script grows past a single command — multiple steps, parallelism, dependencies, conditions, intermediate variables — it moves to \`Taskfile.yaml\`. The \`package.json\` script becomes a thin entry point that delegates:
 
 \`\`\`json
 {
@@ -265,8 +344,10 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 
 ### Invocation
 
-- Inside a pnpm monorepo wired with this config: run managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
-- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly (\`datamitsu exec <tool>\`).
+Every datamitsu command follows the same rule:
+
+- Inside a pnpm monorepo wired with this config: \`pnpm dm <command>\` — \`pnpm dm check\`, \`pnpm dm setup\`, and managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
+- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly — \`datamitsu check\`, \`datamitsu setup\`, \`datamitsu exec <tool>\`.
 
 ### Web
 
@@ -322,8 +403,10 @@ Documentation is a required deliverable for every user-facing change — not opt
 
 When implementing features or making changes, documentation MUST be updated in the same PR/commit:
 
-- **User-facing features** → update docs with examples
+- **User-facing features** → update docs with examples and guides
 - **API changes** → update reference docs
+- **CLI commands** → update the command reference
+- **Configuration options** → update the config reference
 - **Breaking changes** → document migration path
 
 ### Documentation Quality
@@ -351,13 +434,8 @@ const CHUNK_20_DOCS_MARKDOWN = `## Documentation Surface
 
 All user-facing documentation lives in Markdown files within the repository. Primary surfaces:
 
-- **\`docs/\`** — detailed guides, API reference, architecture docs
+- **\`docs/\`** — detailed guides, API reference, architecture docs, command reference, config reference
 - **\`README.md\`** — entry point; keep focused but may include more detail than a website-backed project
-
-When implementing features or making changes, update the relevant \`docs/\` files or README in the same PR/commit:
-
-- **CLI commands** → update command reference in \`docs/\`
-- **Configuration options** → update config reference in \`docs/\`
 
 ### README.md Scope
 
@@ -372,15 +450,7 @@ Keep README focused. Detailed architecture explanations and full API references 
 
 const CHUNK_20_DOCS_WEBSITE = `## Documentation Surface
 
-**All user-facing documentation lives in the documentation website. README.md files must remain minimal.**
-
-When implementing features or making changes, documentation MUST be updated in the same PR/commit:
-
-- **User-facing features** → update website docs with examples and guides
-- **API changes** → update reference pages
-- **CLI commands** → update command reference
-- **Configuration options** → update config reference
-- **Breaking changes** → document migration path
+**All user-facing documentation lives in the documentation website. README.md files must remain minimal.** Reference pages, the command reference and the config reference all live there.
 
 ### README.md Scope
 
@@ -397,22 +467,23 @@ README must be kept **minimal** and focused on:
 
 - Add diagrams for complex architectural concepts
 - Use screenshots for UI-related features — show, don't just tell
-- Keep diagrams as code (Mermaid preferred) for version control
 - Store screenshots in the website's static assets with descriptive names`;
 
 // ── Joined combinations ─────────────────────────────────────────────────────
-export const AGENTS_BASE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
-export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
+export const AGENTS_BASE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_MARKDOWN].join("\n\n"); // prettier-ignore
+export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
-export const CHUNK_00_BASE_HASH = "013bd3130e8b1d3c9c60bea364d8133a1743ae3784fbb16fb274c0f1861332ad"; // prettier-ignore
-export const CHUNK_00_CONFIG_INPUTS_HASH = "e9409cc7aa0dd16ee6853fb8f42ef4f1d406cef2836b73327c6526972cf01209"; // prettier-ignore
-export const CHUNK_00_DEPENDABOT_HASH = "db054ec686a4cefaeaa60acf4f55fc22b84d9859b4c321a1ef838728cdd27e11"; // prettier-ignore
-export const CHUNK_00_SCRIPTS_HASH = "211a1e7636bb583b8a2743b1937d61a203ab8d62940a186c0fbc0fcd156e5ec6"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "0806bce41aaa9f57547ae74111a387843d656746063a37202a7f10bad49d7884"; // prettier-ignore
-export const CHUNK_10_DOCS_HASH = "535b8ce9282c78a5328528d9455357584fe6f3021f1fda2150066f5e6c083137"; // prettier-ignore
-export const CHUNK_20_DOCS_MARKDOWN_HASH = "00d40fa915002c384542cafda336e2fde0afa10de896f2e204494b46ea58e160"; // prettier-ignore
-export const CHUNK_20_DOCS_WEBSITE_HASH = "072c1c9cff927e51063758ac779408cbc68b855e0f1e2cc6297365fd850ebd1e"; // prettier-ignore
+export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "1445af01de14894ff68bea77c522bddcd518640fea2840dc44ed5d937cad36a7"; // prettier-ignore
+export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
+export const CHUNK_00_DEPENDABOT_HASH = "b05aca84224760df0b9dae1f499a911c7c6531dd4623a7e55ab4d50b4f93f115"; // prettier-ignore
+export const CHUNK_00_PRIVACY_HASH = "d8be582e591eb438952dd4173019ddb1f0f194260b04d1146526b6bd6afbd9f3"; // prettier-ignore
+export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "bb04b25a48bec2084d5453936317e81529fdadd47d3b34e3d0c4cabcffebdb35"; // prettier-ignore
+export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
+export const CHUNK_20_DOCS_MARKDOWN_HASH = "babafc853c28c64fc881f395c2a221a9639a1e34bfd8f219a50221e91e40dd05"; // prettier-ignore
+export const CHUNK_20_DOCS_WEBSITE_HASH = "a9d1c1a59fa5b7ffd4c62819a84162113389675a4af72a7ab1e6eb0bfb325029"; // prettier-ignore
 
-export const ALL_AGENTS_HASHES = [CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore
+export const ALL_AGENTS_HASHES = [CHUNK_00_BACKLOG_HASH, CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_PRIVACY_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore

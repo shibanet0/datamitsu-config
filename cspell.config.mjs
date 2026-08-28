@@ -3,6 +3,12 @@ import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 export default defineConfig((prev) => {
   const words = [
     "datetimez",
+    // YAML metadata block at the top of a Markdown file — the term the backlog
+    // skill and the shared agent rules use for it.
+    "frontmatter",
+    // "triage" used as a verb, which is how the backlog skill talks about
+    // revisiting a deferred item's worth.
+    "triaging",
     "errmsg",
     "flynt",
     "perflint",

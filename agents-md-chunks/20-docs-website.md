@@ -1,14 +1,6 @@
 ## Documentation Surface
 
-**All user-facing documentation lives in the documentation website. README.md files must remain minimal.**
-
-When implementing features or making changes, documentation MUST be updated in the same PR/commit:
-
-- **User-facing features** → update website docs with examples and guides
-- **API changes** → update reference pages
-- **CLI commands** → update command reference
-- **Configuration options** → update config reference
-- **Breaking changes** → document migration path
+**All user-facing documentation lives in the documentation website. README.md files must remain minimal.** Reference pages, the command reference and the config reference all live there.
 
 ### README.md Scope
 
@@ -25,5 +17,4 @@ README must be kept **minimal** and focused on:
 
 - Add diagrams for complex architectural concepts
 - Use screenshots for UI-related features — show, don't just tell
-- Keep diagrams as code (Mermaid preferred) for version control
 - Store screenshots in the website's static assets with descriptive names

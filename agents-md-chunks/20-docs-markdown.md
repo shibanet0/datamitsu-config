@@ -2,13 +2,8 @@
 
 All user-facing documentation lives in Markdown files within the repository. Primary surfaces:
 
-- **`docs/`** — detailed guides, API reference, architecture docs
+- **`docs/`** — detailed guides, API reference, architecture docs, command reference, config reference
 - **`README.md`** — entry point; keep focused but may include more detail than a website-backed project
-
-When implementing features or making changes, update the relevant `docs/` files or README in the same PR/commit:
-
-- **CLI commands** → update command reference in `docs/`
-- **Configuration options** → update config reference in `docs/`
 
 ### README.md Scope
 
