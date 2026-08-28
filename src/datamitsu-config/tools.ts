@@ -66,7 +66,6 @@ type Tool =
   | "toml"
   | "trivy"
   | "tsc"
-  | "tsgo"
   | "typos"
   | "typstyle"
   | "vale"
@@ -125,7 +124,6 @@ const _lintPriority: Tool[] = [
   "protolint",
   "actionlint",
   "tsc",
-  "tsgo",
   "cspell",
   "harper-cli",
   "vale",
@@ -1096,20 +1094,6 @@ export const toolsConfig: config.MapOfTools = {
         args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
         globs: typescriptGlobs,
         priority: lintPriority.tsc,
-        scope: "per-project",
-      },
-    },
-    outputParser: { module: "core", parser: "tsc" },
-    projectTypes: ["typescript-project"],
-  },
-  tsgo: {
-    name: "tsgo",
-    operations: {
-      lint: {
-        app: "tsgo",
-        args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
-        globs: typescriptGlobs,
-        priority: lintPriority.tsgo,
         scope: "per-project",
       },
     },

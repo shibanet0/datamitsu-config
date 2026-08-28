@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **111 apps** across multiple runtimes (binary, node, python).
+This configuration manages **110 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **111 apps** across multiple runtimes (binary, node, 
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (62 apps): actionlint, age, air, etc.
+- **Utilities** (61 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -122,7 +122,6 @@ This configuration manages **111 apps** across multiple runtimes (binary, node, 
 | trivy                  | binary  | [Info](https://github.com/aquasecurity/trivy){:target="\_blank"}                                                                         | Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more                                                                                      |
 | trufflehog             | binary  | [Info](https://github.com/trufflesecurity/trufflehog){:target="\_blank"}                                                                 | Find, verify, and analyze leaked credentials                                                                                                                                                              |
 | tsc                    | node    | [Info](https://www.npmjs.com/package/typescript){:target="\_blank"}                                                                      | TypeScript is a language for application scale JavaScript development                                                                                                                                     |
-| tsgo                   | node    | [Info](https://www.npmjs.com/package/@typescript/native-preview){:target="\_blank"}                                                      | TypeScript is a language for application scale JavaScript development                                                                                                                                     |
 | ty                     | binary  | [Info](https://github.com/astral-sh/ty){:target="\_blank"}                                                                               | An extremely fast Python type checker and language server, written in Rust.                                                                                                                               |
 | typos                  | binary  | [Info](https://github.com/crate-ci/typos){:target="\_blank"}                                                                             | Source code spell checker                                                                                                                                                                                 |
 | typst                  | binary  | [Info](https://github.com/typst/typst){:target="\_blank"}                                                                                | A markup-based typesetting system that is powerful and easy to learn.                                                                                                                                     |

@@ -25,7 +25,24 @@ if (nodeVersions.pnpm.version && packageJson.packageManager?.startsWith("pnpm@")
   packageJson.packageManager = `pnpm@${nodeVersions.pnpm.version}`;
 }
 
+// Registry entries whose version pins the *shipped app* only, and must not be
+// mirrored into this repo's own dependencies.
+//
+// `typescript`: the registry pins the `tsc` app at 7.x. That app just runs the
+// native (Go) `tsc` binary, so it is happy there — but this repo's own build is
+// not. typescript-eslint hard-rejects it ("typescript-eslint does not support
+// TS 7.0"), and no released version accepts `typescript >= 6.1.0`, while
+// `scripts/inject-jsdoc.ts` needs the classic JS compiler API that TS 7 dropped
+// (`typescript@7` exports only `version`/`versionMajorMinor`; the AST moved
+// behind `typescript/unstable/*`, which has a scanner but no parser or printer).
+// The shipped eslint app is unaffected — it installs its own typescript 6.x.
+// Drop this entry once typescript-eslint supports TS 7.
+const appOnlyPackages = new Set(["typescript"]);
+
 for (const [_, { packageName, version }] of Object.entries(nodeVersions)) {
+  if (appOnlyPackages.has(packageName)) {
+    continue;
+  }
   if (packageJson.dependencies?.[packageName] !== undefined) {
     packageJson.dependencies[packageName] = version;
   }

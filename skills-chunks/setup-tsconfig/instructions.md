@@ -93,7 +93,8 @@ Before finalizing the preset, validate against the negative rules in `.datamitsu
 - **`library.json` in a monorepo.** If picked preset is `library.json` but the project is inside a monorepo, upgrade to `shared-library.json` (so project references work). Same for `react-library.json` → `shared-react-library.json`.
 - **Missing `types: ["node"]`.** If the picked preset is `base.json` or one of the library presets, but the source imports `node:*` modules, add `compilerOptions.types: ["node"]` to the override block of `tsconfig.json`.
 - **Node types in a Cloudflare Worker.** If the project has `wrangler.*` or `@cloudflare/workers-types` but was assigned `service.json` (Node types), switch to `service-worker.json`. `@types/node` globals (`process`, `Buffer`, etc.) don't exist on the Workers runtime.
-- **TypeScript version.** If `typescript` in devDependencies is `< 6.0.0`, flag it — `.datamitsu/tsconfig.md` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally.
+- **TypeScript version.** If `typescript` in devDependencies is `< 6.0.0`, flag it — `.datamitsu/tsconfig.md` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally. Never recommend `typescript@latest`: that now resolves to 7.x, a different (Go) compiler with no JavaScript compiler API, which no released typescript-eslint accepts (`typescript >=4.8.4 <6.1.0`). Recommend `typescript@^6` unless the user asks for 7 specifically.
+- **Redundant `@typescript/native-preview`.** If it (or a `tsgo` script) is present, flag it as superseded — TypeScript 7 _is_ the native compiler. Removing it is the user's call; do not touch it.
 
 ### Compute the override block
 
@@ -147,7 +148,8 @@ Why: <one-sentence justification, citing the row in the table>
 ### Warnings
 
 <list any of these that apply; omit section if none:>
-- TypeScript version is `<x.y.z>`, preset requires >= 6.0.0. Update with `pnpm add -D typescript@latest`.
+- TypeScript version is `<x.y.z>`, preset requires >= 6.0.0. Update with `pnpm add -D typescript@^6`.
+- <if @typescript/native-preview or a tsgo script is present:> `@typescript/native-preview` is superseded by TypeScript 7 and can be dropped.
 - Source imports `node:*` but `types: ["node"]` was not previously set. Will add it.
 - Existing `tsconfig.json` had `<surprising option>` that the preset does not include. Will be removed unless you object.
 
@@ -193,7 +195,7 @@ Preset: `@shibanet0/datamitsu-config/tsconfig/<preset>.json`
 Next steps:
 - Run `pnpm tsc --noEmit` to verify the new config compiles.
 - <if monorepo + shared-*:> Add a `references` entry from consumer packages to this package.
-- <if TS version was flagged:> Update TypeScript: `pnpm add -D typescript@latest`.
+- <if TS version was flagged:> Update TypeScript: `pnpm add -D typescript@^6`.
 ```
 
 ---

@@ -113,6 +113,29 @@ with runtime emit, or anything implying `enum`/`namespace` usage) as **skip** un
 type-level. The litmus test for any new construct/option: _"does the source still run unchanged after
 `node` strips the types?"_ If no, reject it.
 
+### 3. TypeScript 7 is the shipped checker, 6 is the build-time library
+
+TypeScript 7 is the Go rewrite — the compiler that used to ship as `@typescript/native-preview`
+(`tsgo`). It is now `typescript` itself, so this repo has **no separate tsgo app or tool**; do not
+reintroduce one, and treat any upstream `tsgo`/native-preview wiring as already covered.
+
+All presets are valid under 7 (verified: the `compilerOptions` surface is unchanged), so preset
+decisions do not depend on the major. Two constraints do, and they are why the versions differ by
+role — keep them straight when a change touches versions or tooling:
+
+- **The registry pins the `tsc` app at 7.x** (`src/datamitsu-config/registries/nodeVersions.json`).
+  That app only executes the native binary, so it has no API surface to lose.
+- **The repo's own `typescript` dependency stays on 6.x.** TS 7 exports only `version` and
+  `versionMajorMinor` — the AST moved behind `typescript/unstable/*`, which has a scanner but no
+  parser and no printer — and `scripts/inject-jsdoc.ts` needs the classic API. Independently, no
+  released typescript-eslint (canary included) accepts `typescript >= 6.1.0`; it hard-fails with
+  `typescript-eslint does not support TS 7.0`. `scripts/sync-node-versions-to-package-json.ts`
+  encodes this split via `appOnlyPackages`. Do not "fix" the mismatch by aligning them.
+
+7 is also stricter than 6 on the same source: JSDoc is parsed more strictly, and assignability is
+tightened (`Ref<T>` vs `Ref<T> | undefined` under `exactOptionalPropertyTypes`, generic-schema
+variance). Never present a 7 upgrade as a drop-in swap; it surfaces real type errors.
+
 ---
 
 ## Step 1 — Read the pin
@@ -208,7 +231,8 @@ Do not summarise diffs mechanically — explain the reasoning. Sources, in order
 3. **TypeScript release notes / handbook.** If a `compilerOptions` flag is unfamiliar, ambiguous, or
    new (e.g. introduced in a TS release), look it up via WebFetch/WebSearch on the official TS docs
    (`https://www.typescriptlang.org/tsconfig`, TS release notes). Confirm what the option does, its
-   default, and which TS version it requires — this repo's guide claims "TypeScript 6.0+".
+   default, and which TS version it requires — this repo's guide requires "TypeScript 6.0+" and
+   documents 7 in its "TypeScript 7" section (see the TypeScript 7 rules below).
 
 For each change, classify it for **this repo**:
 

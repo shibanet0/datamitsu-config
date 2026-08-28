@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.2.0",
+    "@datamitsu/datamitsu": "0.2.1",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
@@ -159,7 +159,7 @@
     "prettier-plugin-jsdoc": "1.8.1",
     "prettier-plugin-sql": "0.20.0",
     "remove-markdown": "0.6.4",
-    "tsdown": "0.22.0",
+    "tsdown": "0.22.14",
     "typescript-eslint": "8.66.0",
     "unrun": "0.3.0",
     "vitest": "4.1.7",
