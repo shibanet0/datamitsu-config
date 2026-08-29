@@ -7,17 +7,17 @@
   "@commitlint/cli": {
     "description": "Lint your commit messages",
     "packageName": "@commitlint/cli",
-    "version": "21.2.0"
+    "version": "21.2.2"
   },
   "@commitlint/config-conventional": {
     "description": "Shareable commitlint config enforcing conventional commits",
     "packageName": "@commitlint/config-conventional",
-    "version": "21.2.0"
+    "version": "21.2.2"
   },
   "@commitlint/format": {
     "description": "Format commitlint reports",
     "packageName": "@commitlint/format",
-    "version": "21.2.0"
+    "version": "21.2.2"
   },
   "@commitlint/types": {
     "description": "Shared types for commitlint packages",
@@ -40,9 +40,9 @@
     "version": "4.7.2"
   },
   "@eslint-react/eslint-plugin": {
-    "description": "A series of composable ESLint rules for libraries and frameworks that use React as a UI runtime.",
+    "description": "ESLint React's unified ESLint plugin that combines all individual plugins into one.",
     "packageName": "@eslint-react/eslint-plugin",
-    "version": "5.18.2"
+    "version": "5.18.6"
   },
   "@eslint/config-helpers": {
     "description": "Helper utilities for creating ESLint configuration",
@@ -57,7 +57,7 @@
   "@next/eslint-plugin-next": {
     "description": "ESLint plugin for Next.js.",
     "packageName": "@next/eslint-plugin-next",
-    "version": "16.3.0"
+    "version": "16.3.2"
   },
   "@prettier/plugin-xml": {
     "description": "prettier plugin for XML",
@@ -76,7 +76,7 @@
   "@vitest/eslint-plugin": {
     "description": "ESLint plugin for Vitest",
     "packageName": "@vitest/eslint-plugin",
-    "version": "1.6.26"
+    "version": "1.6.27"
   },
   "aeslint-flat-config-utilsa": {
     "description": "Utils for managing and manipulating ESLint flat config arrays",
@@ -86,12 +86,12 @@
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
     "packageName": "conventional-changelog",
-    "version": "8.0.0"
+    "version": "8.1.3"
   },
   "conventional-changelog-conventionalcommits": {
     "description": "Conventionalcommits.org preset for conventional-changelog.",
     "packageName": "conventional-changelog-conventionalcommits",
-    "version": "10.2.0"
+    "version": "10.4.0"
   },
   "cspell": {
     "description": "A Spelling Checker for Code!",
@@ -106,7 +106,7 @@
   "eslint": {
     "description": "An AST-based pattern checker for JavaScript.",
     "packageName": "eslint",
-    "version": "10.8.0"
+    "version": "10.9.0"
   },
   "eslint-config-prettier": {
     "description": "Turns off all rules that are unnecessary or might conflict with Prettier.",
@@ -136,12 +136,12 @@
   "eslint-plugin-baseline-js": {
     "description": "Enforce JavaScript Baseline (widely/newly/year) browser compatibility with a single ESLint rule. Prevent runtime errors by catching unsupported JavaScript features during development.",
     "packageName": "eslint-plugin-baseline-js",
-    "version": "0.7.0"
+    "version": "0.7.1"
   },
   "eslint-plugin-boundaries": {
     "description": "Eslint plugin checking architecture boundaries between elements",
     "packageName": "eslint-plugin-boundaries",
-    "version": "7.1.0"
+    "version": "7.2.0"
   },
   "eslint-plugin-clsx": {
     "description": "An ESLint plugin for clsx/classnames",
@@ -211,7 +211,7 @@
   "eslint-plugin-jsdoc": {
     "description": "JSDoc linting rules for ESLint.",
     "packageName": "eslint-plugin-jsdoc",
-    "version": "63.3.3"
+    "version": "64.2.1"
   },
   "eslint-plugin-json": {
     "description": "eslint plugin for JSON files",
@@ -229,14 +229,14 @@
     "version": "3.4.1"
   },
   "eslint-plugin-jsx-a11y-x": {
-    "description": "Static AST checker for accessibility rules on JSX elements.",
+    "description": "An ESLint plugin to apply various a11y rules to JSX templates",
     "packageName": "eslint-plugin-jsx-a11y-x",
     "version": "0.2.0"
   },
   "eslint-plugin-n": {
     "description": "Additional ESLint's rules for Node.js",
     "packageName": "eslint-plugin-n",
-    "version": "18.2.2"
+    "version": "18.3.0"
   },
   "eslint-plugin-no-unsanitized": {
     "description": "ESLint rule to disallow unsanitized code",
@@ -251,7 +251,7 @@
   "eslint-plugin-oxlint": {
     "description": "Turn off all rules already supported by oxlint",
     "packageName": "eslint-plugin-oxlint",
-    "version": "1.77.0"
+    "version": "1.79.0"
   },
   "eslint-plugin-perfectionist": {
     "description": "ESLint plugin for sorting various data such as objects, imports, types, enums, JSX props, etc.",
@@ -266,7 +266,7 @@
   "eslint-plugin-pnpm": {
     "description": "ESLint Plugin for pnpm",
     "packageName": "eslint-plugin-pnpm",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "eslint-plugin-promise": {
     "description": "Enforce best practices for JavaScript promises",
@@ -286,17 +286,17 @@
   "eslint-plugin-react-refresh": {
     "description": "Validate that your components can safely be updated with Fast Refresh",
     "packageName": "eslint-plugin-react-refresh",
-    "version": "0.5.3"
+    "version": "0.5.4"
   },
   "eslint-plugin-react-you-might-not-need-an-effect": {
-    "description": "ESLint rule to warn against unnecessary React useEffect hooks.",
+    "description": "ESLint plugin to catch unnecessary React effects for simpler, faster, safer code.",
     "packageName": "eslint-plugin-react-you-might-not-need-an-effect",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "eslint-plugin-regexp": {
     "description": "ESLint plugin for finding RegExp mistakes and RegExp style guide violations.",
     "packageName": "eslint-plugin-regexp",
-    "version": "3.1.1"
+    "version": "3.2.0"
   },
   "eslint-plugin-security": {
     "description": "Security rules for eslint",
@@ -311,15 +311,15 @@
   "eslint-plugin-storybook": {
     "description": "Storybook ESLint Plugin: Best practice rules for writing stories",
     "packageName": "eslint-plugin-storybook",
-    "version": "10.5.6"
+    "version": "10.5.10"
   },
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
-    "version": "2.10.8"
+    "version": "2.10.11"
   },
   "eslint-plugin-unicorn": {
-    "description": "More than 100 powerful ESLint rules",
+    "description": "More than 300 powerful ESLint rules",
     "packageName": "eslint-plugin-unicorn",
     "version": "73.0.0"
   },
@@ -331,22 +331,22 @@
   "globals": {
     "description": "Global identifiers from different JavaScript environments",
     "packageName": "globals",
-    "version": "17.9.0"
+    "version": "17.11.0"
   },
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
     "packageName": "knip",
-    "version": "6.23.0"
+    "version": "6.32.2"
   },
   "markdown-link-check": {
     "description": "checks the all of the hyperlinks in a markdown text to determine if they are alive or dead",
     "packageName": "markdown-link-check",
-    "version": "3.14.2"
+    "version": "3.15.0"
   },
   "markdownlint-cli2": {
     "description": "A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the `markdownlint` library",
     "packageName": "markdownlint-cli2",
-    "version": "0.23.0"
+    "version": "0.23.2"
   },
   "mmdc": {
     "description": "Command-line interface for mermaid",
@@ -356,27 +356,27 @@
   "oxfmt": {
     "description": "Formatter for the JavaScript Oxidation Compiler",
     "packageName": "oxfmt",
-    "version": "0.57.0"
+    "version": "0.64.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
-    "version": "1.77.0"
+    "version": "1.79.0"
   },
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
     "packageName": "playwright-chromium",
-    "version": "1.61.1"
+    "version": "1.62.1"
   },
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
     "packageName": "pnpm",
-    "version": "11.20.0"
+    "version": "11.22.0"
   },
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
     "packageName": "prettier",
-    "version": "3.9.4"
+    "version": "3.9.6"
   },
   "prettier-plugin-embed": {
     "description": "A configurable Prettier plugin to format embedded languages in JS/TS files.",
@@ -396,12 +396,12 @@
   "quicktype": {
     "description": "![](https://raw.githubusercontent.com/quicktype/quicktype/master/media/quicktype-logo.svg?sanitize=true)",
     "packageName": "quicktype",
-    "version": "23.2.6"
+    "version": "26.0.0"
   },
   "slidev": {
     "description": "Presentation slides for developers",
     "packageName": "@slidev/cli",
-    "version": "52.16.0"
+    "version": "52.19.1"
   },
   "sort-package-json": {
     "description": "Sort an Object or package.json based on the well-known package.json keys",
@@ -411,12 +411,12 @@
   "spectral": {
     "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
     "packageName": "@stoplight/spectral-cli",
-    "version": "6.16.1"
+    "version": "6.16.3"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",
     "packageName": "syncpack",
-    "version": "15.3.2"
+    "version": "15.3.3"
   },
   "typescript": {
     "description": "TypeScript is a language for application scale JavaScript development",
@@ -426,7 +426,7 @@
   "typescript-eslint": {
     "description": "Tooling which enables you to use TypeScript with ESLint",
     "packageName": "typescript-eslint",
-    "version": "8.66.0"
+    "version": "8.67.0"
   },
   "yaml": {
     "description": "JavaScript parser and stringifier for YAML",

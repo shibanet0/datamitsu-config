@@ -26,6 +26,7 @@
     "no-underscore-dangle": "off",
     "no-unused-vars": "off",
     "no-warning-comments": "off",
+    "one-var": ["error", "never"],
     "prefer-destructuring": "off",
     "prefer-template": "off",
     "require-await": "off",

@@ -6,6 +6,7 @@ const finalized: Oxlintrc["rules"] = {
   "sort-keys": "off",
   "unicorn/prefer-query-selector": "off", // http://jsben.ch/8tEs3
   "unicorn/prefer-string-raw": "off",
+  "one-var": ["error", "never"],
 };
 
 /**

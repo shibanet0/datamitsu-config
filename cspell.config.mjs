@@ -157,6 +157,7 @@ export default defineConfig((prev) => {
     "runtimeconfig",
     "Kysely",
     "sqlc",
+    "ELIFECYCLE",
   ];
 
   return {
