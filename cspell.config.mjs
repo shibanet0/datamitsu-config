@@ -1,13 +1,9 @@
 import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
-export default defineConfig((prev) => {
+export default defineConfig((previous) => {
   const words = [
     "datetimez",
-    // YAML metadata block at the top of a Markdown file — the term the backlog
-    // skill and the shared agent rules use for it.
     "frontmatter",
-    // "triage" used as a verb, which is how the backlog skill talks about
-    // revisiting a deferred item's worth.
     "triaging",
     "errmsg",
     "flynt",
@@ -157,11 +153,12 @@ export default defineConfig((prev) => {
     "runtimeconfig",
     "Kysely",
     "sqlc",
+    "ELIFECYCLE",
   ];
 
   return {
-    ...prev,
-    ignorePaths: [...(prev.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
-    words: [...(prev.words || []), ...words],
+    ...previous,
+    ignorePaths: [...(previous.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
+    words: [...(previous.words || []), ...words],
   };
 });

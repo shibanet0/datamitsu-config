@@ -10,7 +10,9 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "esnext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
@@ -27,10 +29,16 @@
     "sourceMap": true,
     "strict": true,
     "target": "esnext",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "useUnknownInCatchVariables": true
   },
   "display": "Infrastructure as Code (Pulumi)",
-  "exclude": ["${configDir}/node_modules"],
-  "include": ["${configDir}/**/*.ts"]
+  "exclude": [
+    "${configDir}/node_modules"
+  ],
+  "include": [
+    "${configDir}/**/*.ts"
+  ]
 }

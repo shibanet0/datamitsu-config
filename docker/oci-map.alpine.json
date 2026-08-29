@@ -449,6 +449,11 @@
       "app": "vacuum"
     },
     {
+      "subtree": ".bin/wt",
+      "kind": "binary",
+      "app": "wt"
+    },
+    {
       "subtree": ".bin/xh",
       "kind": "binary",
       "app": "xh"

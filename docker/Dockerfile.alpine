@@ -357,6 +357,10 @@ FROM dm-build AS app-vacuum
 COPY --link --from=config-split /slices/app-vacuum.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install vacuum
 
+FROM dm-build AS app-wt
+COPY --link --from=config-split /slices/app-wt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install wt
+
 FROM dm-build AS app-xh
 COPY --link --from=config-split /slices/app-xh.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install xh
@@ -474,6 +478,7 @@ COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
 COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments
 COPY --link --from=app-vacuum /dm/store/.bin/vacuum /dm/store/.bin/vacuum
+COPY --link --from=app-wt /dm/store/.bin/wt /dm/store/.bin/wt
 COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh
 COPY --link --from=app-yamlfmt /dm/store/.bin/yamlfmt /dm/store/.bin/yamlfmt
 COPY --link --from=app-yq /dm/store/.bin/yq /dm/store/.bin/yq

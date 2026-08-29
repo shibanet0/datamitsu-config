@@ -42,6 +42,25 @@ Follow GitHub Flow with feature branches from main.
 - **Commits must stay signed.** If commit signing is configured and signing fails (e.g. a passphrase-locked SSH key that is not loaded in the agent), STOP. Do not commit unsigned, and do not disable signing to get around it. Tell the user their commit signing needs attention and ask them to make it work so you can commit.
 - If you cannot commit cleanly, stop and report exactly why. Never trade a clean history or a green CI for a shortcut that only looks green.
 
+### Worktrees
+
+Worktrees are managed with `wt`, which datamitsu installs. Never run `git worktree add`/`remove` by hand, and never install `wt` separately — no `brew`, no `cargo`, no `curl | sh`.
+
+| Task                            | Command                                       |
+| ------------------------------- | --------------------------------------------- |
+| Create a worktree and a branch  | `pnpm dm exec wt -- switch --create <branch>` |
+| List worktrees with their state | `pnpm dm exec wt -- list`                     |
+| Land the branch and clean up    | `pnpm dm exec wt -- merge`                    |
+| Drop a worktree and its branch  | `pnpm dm exec wt -- remove <branch>`          |
+
+`wt switch` changes the directory through shell integration, which a child process cannot do. An agent asks for the path instead and moves itself:
+
+```bash
+pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
+```
+
+Activity markers in `wt list`, and routing of a harness's own worktree creation through `wt`, come from an optional plugin that datamitsu does not install. Suggest `wt config plugins <claude|codex|opencode> install` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+
 **Commit message format** (Conventional Commits):
 
 - `feat:` new feature

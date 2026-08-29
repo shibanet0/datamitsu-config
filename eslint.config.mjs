@@ -42,6 +42,7 @@ export default [
       "unicorn/prefer-await": "off",
       "unicorn/prefer-number-coercion": "off",
       "unicorn/no-duplicate-loops": "off",
+      "unicorn/max-nested-calls": "off",
       "unicorn/consistent-boolean-name": "off",
       "unicorn/no-break-in-nested-loop": "off",
       "unicorn/prefer-direct-iteration": "off",

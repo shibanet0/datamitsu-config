@@ -93,6 +93,25 @@ Follow GitHub Flow with feature branches from main.
 - **Commits must stay signed.** If commit signing is configured and signing fails (e.g. a passphrase-locked SSH key that is not loaded in the agent), STOP. Do not commit unsigned, and do not disable signing to get around it. Tell the user their commit signing needs attention and ask them to make it work so you can commit.
 - If you cannot commit cleanly, stop and report exactly why. Never trade a clean history or a green CI for a shortcut that only looks green.
 
+### Worktrees
+
+Worktrees are managed with \`wt\`, which datamitsu installs. Never run \`git worktree add\`/\`remove\` by hand, and never install \`wt\` separately — no \`brew\`, no \`cargo\`, no \`curl | sh\`.
+
+| Task                            | Command                                       |
+| ------------------------------- | --------------------------------------------- |
+| Create a worktree and a branch  | \`pnpm dm exec wt -- switch --create <branch>\` |
+| List worktrees with their state | \`pnpm dm exec wt -- list\`                     |
+| Land the branch and clean up    | \`pnpm dm exec wt -- merge\`                    |
+| Drop a worktree and its branch  | \`pnpm dm exec wt -- remove <branch>\`          |
+
+\`wt switch\` changes the directory through shell integration, which a child process cannot do. An agent asks for the path instead and moves itself:
+
+\`\`\`bash
+pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
+\`\`\`
+
+Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+
 **Commit message format** (Conventional Commits):
 
 - \`feat:\` new feature
@@ -476,7 +495,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "1445af01de14894ff68bea77c522bddcd518640fea2840dc44ed5d937cad36a7"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "dc82caf6a6f273b7b87d967dc8ee3d46dadf7f02f02663bf15b9aae0a307bb25"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "b05aca84224760df0b9dae1f499a911c7c6531dd4623a7e55ab4d50b4f93f115"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "d8be582e591eb438952dd4173019ddb1f0f194260b04d1146526b6bd6afbd9f3"; // prettier-ignore
