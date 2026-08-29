@@ -37,10 +37,10 @@ interface ExternalRegistry {
 function buildUrl(
   template: string,
   replacements: { arch: string; os: string; version: string },
-  extMap?: Record<string, string>,
+  extensionMap?: Record<string, string>,
 ): string {
-  const ext = extMap
-    ? (extMap[replacements.os] ?? extMap["default"] ?? "")
+  const extension = extensionMap
+    ? (extensionMap[replacements.os] ?? extensionMap["default"] ?? "")
     : replacements.os === "windows"
       ? ".exe"
       : "";
@@ -48,7 +48,7 @@ function buildUrl(
     .replaceAll("{version}", replacements.version)
     .replaceAll("{os}", replacements.os)
     .replaceAll("{arch}", replacements.arch)
-    .replaceAll("{ext}", ext);
+    .replaceAll("{ext}", extension);
 }
 
 async function computeSha256(url: string): Promise<string> {
@@ -77,9 +77,9 @@ async function fetchLatestVersion(
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  const update = args.includes("--update");
-  const registryPath = args.find((a) => !a.startsWith("--"));
+  const arguments_ = process.argv.slice(2);
+  const update = arguments_.includes("--update");
+  const registryPath = arguments_.find((a) => !a.startsWith("--"));
 
   if (!registryPath) {
     console.error("Usage: pull-external-apps.ts [--update] <path-to-externalApps.json>");
@@ -116,11 +116,11 @@ async function main(): Promise<void> {
         const hash = await computeSha256(url);
         const entry: BinaryEntry = { contentType, hash, url };
         if (appMeta.binaryPathTemplate) {
-          const binExt = os === "windows" ? ".exe" : "";
+          const binExtension = os === "windows" ? ".exe" : "";
           entry.binaryPath = appMeta.binaryPathTemplate
             .replaceAll("{os}", os)
             .replaceAll("{arch}", arch)
-            .replaceAll("{binExt}", binExt);
+            .replaceAll("{binExt}", binExtension);
         }
         binariesMap[os][arch] = { [libc]: entry };
       }

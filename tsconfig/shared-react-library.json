@@ -5,7 +5,11 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx",
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ]
   },
   "display": "Monorepo shared React component library",
   "extends": "./base.json"

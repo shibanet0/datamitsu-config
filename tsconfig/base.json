@@ -10,7 +10,9 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "isolatedModules": true,
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "preserve",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
@@ -35,6 +37,12 @@
     "verbatimModuleSyntax": true
   },
   "display": "Base configuration",
-  "exclude": ["${configDir}/node_modules", "${configDir}/dist"],
-  "include": ["${configDir}/src", "${configDir}/src/**/*.json"]
+  "exclude": [
+    "${configDir}/node_modules",
+    "${configDir}/dist"
+  ],
+  "include": [
+    "${configDir}/src",
+    "${configDir}/src/**/*.json"
+  ]
 }

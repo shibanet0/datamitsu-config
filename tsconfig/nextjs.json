@@ -2,7 +2,11 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "jsx": "preserve",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "noEmit": true,
     "noUncheckedSideEffectImports": false,
     "plugins": [
@@ -11,10 +15,14 @@
       }
     ],
     "rootDir": "${configDir}",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "display": "Next.js app",
-  "exclude": ["${configDir}/node_modules"],
+  "exclude": [
+    "${configDir}/node_modules"
+  ],
   "extends": "./base.json",
   "include": [
     "${configDir}",

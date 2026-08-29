@@ -1,6 +1,6 @@
 import { defineConfig as defineOxfmtConfig, type OxfmtConfig } from "oxfmt";
 
-import { indentSettings } from "../../datamitsu-config/constants";
+import { indentSettings, jsonAlwaysExpandedOverride } from "../../datamitsu-config/constants";
 
 export type { OxfmtConfig } from "oxfmt";
 
@@ -11,6 +11,7 @@ export const defineConfig = (config?: OxfmtConfig): OxfmtConfig =>
     jsdoc: {
       commentLineStrategy: "multiline",
     },
+    overrides: [jsonAlwaysExpandedOverride],
     printWidth: indentSettings.lineWidth,
     sortImports: false,
     sortPackageJson: false,

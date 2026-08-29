@@ -173,7 +173,7 @@
     "runtime": {
       "name": "node",
       "onFail": "warn",
-      "version": ">=26.7.0"
+      "version": ">=26.8.1"
     }
   }
 }

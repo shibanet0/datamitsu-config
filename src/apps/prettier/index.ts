@@ -1,12 +1,13 @@
 import type { Config } from "prettier";
 
-import { indentSettings } from "../../datamitsu-config/constants";
+import { indentSettings, jsonAlwaysExpandedOverride } from "../../datamitsu-config/constants";
 
 export type { Config } from "prettier";
 
 const baseConfig: Config = {
   arrowParens: "always",
   endOfLine: "lf",
+  overrides: [jsonAlwaysExpandedOverride],
   printWidth: indentSettings.lineWidth,
   tabWidth: indentSettings.indentWidth,
   trailingComma: "all",

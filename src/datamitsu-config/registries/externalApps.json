@@ -31,7 +31,9 @@
       "urlTemplate": "https://get.helm.sh/helm-{version}-{os}-{arch}{ext}",
       "version": "v4.2.4",
       "versionCheck": {
-        "args": ["version"]
+        "args": [
+          "version"
+        ]
       }
     },
     "kubectl": {
@@ -55,7 +57,10 @@
       "urlTemplate": "https://dl.k8s.io/release/{version}/bin/{os}/{arch}/kubectl{ext}",
       "version": "v1.37.0",
       "versionCheck": {
-        "args": ["version", "--client"]
+        "args": [
+          "version",
+          "--client"
+        ]
       }
     }
   },
