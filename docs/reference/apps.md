@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **110 apps** across multiple runtimes (binary, node, python).
+This configuration manages **111 apps** across multiple runtimes (binary, node, python).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **110 apps** across multiple runtimes (binary, node, 
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (61 apps): actionlint, age, air, etc.
+- **Utilities** (62 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -130,6 +130,7 @@ This configuration manages **110 apps** across multiple runtimes (binary, node, 
 | utpm                   | binary  | [Info](https://github.com/typst-community/utpm){:target="_blank"}                                                                       | A package manager for local and remote Typst packages.                                                                                                                                                    |
 | vacuum                 | binary  | [Info](https://github.com/daveshanley/vacuum){:target="_blank"}                                                                         | vacuum is the worlds fastest and most versatile OpenAPI, AsyncAPI & JSON Schema linter, docs generator and toolkit. It tears through API specs at light speed. 100% compatible with Spectral rulesets,... |
 | vale                   | binary  | [Info](https://github.com/vale-cli/vale){:target="_blank"}                                                                              | :pencil: A markup-aware linter for prose built with speed and extensibility in mind.                                                                                                                      |
+| wt                     | binary  | [Info](https://github.com/max-sixty/worktrunk){:target="_blank"}                                                                        | Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows                                                                                                                  |
 | xh                     | binary  | [Info](https://github.com/ducaale/xh){:target="_blank"}                                                                                 | Friendly and fast tool for sending HTTP requests                                                                                                                                                          |
 | yamlfmt                | binary  | [Info](https://github.com/google/yamlfmt){:target="_blank"}                                                                             | An extensible command line tool or library to format yaml files.                                                                                                                                          |
 | yamllint               | python  | [Info](https://pypi.org/project/yamllint){:target="_blank"}                                                                             | A linter for YAML files.                                                                                                                                                                                  |

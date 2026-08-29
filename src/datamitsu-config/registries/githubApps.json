@@ -370,6 +370,11 @@
       "repo": "vale",
       "tag": "v3.18.0"
     },
+    "wt": {
+      "owner": "max-sixty",
+      "repo": "worktrunk",
+      "tag": "v0.75.0"
+    },
     "xh": {
       "owner": "ducaale",
       "repo": "xh",
@@ -4360,6 +4365,58 @@
       },
       "configHash": "ad92ae3a7ffd75d2a77112e277d78bb7",
       "description": ":pencil: A markup-aware linter for prose built with speed and extensibility in mind."
+    },
+    "wt": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "wt",
+              "contentType": "tar.xz",
+              "hash": "dbc5a7e5f787d19943e2f7f1a3214be836f71bab2ef79ff4e8ede4cb390cd634",
+              "url": "https://github.com/max-sixty/worktrunk/releases/download/v0.75.0/worktrunk-x86_64-apple-darwin.tar.xz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "wt",
+              "contentType": "tar.xz",
+              "hash": "c5868d06bddd28b8e49d7b0c42c06e5825ec27e930ce7f3d254a8d8f6511c3b9",
+              "url": "https://github.com/max-sixty/worktrunk/releases/download/v0.75.0/worktrunk-aarch64-apple-darwin.tar.xz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "musl": {
+              "binaryPath": "wt",
+              "contentType": "tar.xz",
+              "hash": "9ca16c77245c01edb079620a4375a8a49046fded4d4e571dd21930fd0235eca3",
+              "url": "https://github.com/max-sixty/worktrunk/releases/download/v0.75.0/worktrunk-x86_64-unknown-linux-musl.tar.xz"
+            }
+          },
+          "arm64": {
+            "musl": {
+              "binaryPath": "wt",
+              "contentType": "tar.xz",
+              "hash": "2504fdc07152fadd2c53c6d71268c6684aa08fb9f5a3ea4ec740c8747d3dde88",
+              "url": "https://github.com/max-sixty/worktrunk/releases/download/v0.75.0/worktrunk-aarch64-unknown-linux-musl.tar.xz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "wt.exe",
+              "contentType": "zip",
+              "hash": "ded8b08156410ce9bf217d9a8e5b7c150eb52d0960799c3846fde1b80f616b20",
+              "url": "https://github.com/max-sixty/worktrunk/releases/download/v0.75.0/worktrunk-x86_64-pc-windows-msvc.zip"
+            }
+          }
+        }
+      },
+      "configHash": "babdbb1fc179f3782cb638446165b420",
+      "description": "Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows"
     },
     "xh": {
       "binaries": {
