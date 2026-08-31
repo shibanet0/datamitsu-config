@@ -25,4 +25,4 @@ const config = await defineConfig(
   },
 );
 
-export default [globalIgnores([".datamitsu/"]), ...config];
+export default [globalIgnores([".datamitsu/", "dist-*/"]), ...config];

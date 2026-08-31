@@ -58,6 +58,25 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "oxc/no-optional-chaining": "optional chaining is the baseline, not a hazard",
 
   /**
+   * Needs project-specific configuration this shared config cannot supply, and reports nonsense
+   * without it rather than staying quiet.
+   */
+  "n/no-missing-import":
+    "eslint-plugin-n resolves imports the way Node does; this stack is bundler-resolved, so extensionless paths and `./.datamitsu/*` links read as missing \u{2014} 245 hits, none of them real",
+
+  /**
+   * JSDoc tags that restate what TypeScript already says. A `@returns` type in a comment is a
+   * second, unchecked copy of the signature — exactly the duplication types exist to remove.
+   */
+  "jsdoc/require-returns":
+    "TypeScript already states the return type; a `@returns` tag restates it and rots separately",
+  "jsdoc/require-returns-type":
+    "the type is in the signature \u{2014} writing it again in the comment is the thing TS removed",
+  "jsdoc/require-throws-type": "same: a thrown type belongs in the code, not in a tag",
+  "jsdoc/valid-types":
+    "validates JSDoc type syntax, which this codebase does not use for types at all",
+
+  /**
    * Arbitrary size and shape caps. They gate line counts rather than defects, and the number is
    * always wrong for some file — so they get suppressed per-file, which is worse than not having
    * them.

@@ -88,9 +88,6 @@ export type DefineConfigFn = (
 export interface DefineConfigOptions {
   globalIgnores?: string[];
   plugins?: {
-    "arrow-return-style"?: {
-      disabled?: boolean;
-    };
     boundaries?: {
       disabled?: boolean;
     };

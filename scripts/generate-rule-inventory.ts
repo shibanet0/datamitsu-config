@@ -246,6 +246,29 @@ const inventory: Inventory = {
   oxlint: await collectOxlint(),
 };
 
+// `warn` is not a severity this config uses. datamitsu runs eslint with `--quiet`, so a warn-level
+// rule reports nothing and fails nothing while still running on every file — off in every way that
+// matters, minus the honesty of saying so. `defineConfig` raises every warn a plugin preset leaves
+// behind; this catches the case where something slips past that, which would otherwise show up as a
+// rule quietly doing nothing rather than as an error.
+const warned = [...Object.entries(inventory.eslint), ...Object.entries(inventory.oxlint)]
+  .filter(([, severity]) => severity === "warn")
+  .map(([name]) => name);
+
+if (warned.length > 0) {
+  console.error(
+    [
+      `${warned.length} rule(s) resolve to "warn", which this config does not use:`,
+      "",
+      ...warned.map((name) => `  ${name}`),
+      "",
+      "Every rule is either error or off. Raise it in the plugin's config under",
+      "src/apps/eslint/plugins/, or turn it off by name in src/lint-rules.",
+    ].join("\n"),
+  );
+  process.exit(1);
+}
+
 const serialized = `${JSON.stringify(inventory, null, 2)}\n`;
 
 /**

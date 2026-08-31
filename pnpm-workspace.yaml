@@ -21,6 +21,17 @@ minimumReleaseAgeExclude:
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
+packageExtensions:
+  # Both packages import these at runtime and declare neither a dependency nor a peer on them, so
+  # under pnpm's isolated layout they simply cannot resolve. They only ever worked by accident,
+  # through whatever else happened to drag the package into the tree — which is why enabling the
+  # plugins surfaced a crash rather than a lint result.
+  "@antebudimir/eslint-plugin-vanilla-extract":
+    dependencies:
+      "@typescript-eslint/utils": "*"
+  eslint-plugin-compat:
+    dependencies:
+      caniuse-lite: "*"
 packageManagerStrict: true
 packageManagerStrictVersion: true
 preferFrozenLockfile: true

@@ -7,6 +7,14 @@ export const eslintDeps = {
   "@eslint-community/eslint-plugin-eslint-comments":
     nodeVersions["@eslint-community/eslint-plugin-eslint-comments"].version,
   "@eslint-react/eslint-plugin": nodeVersions["@eslint-react/eslint-plugin"].version,
+  // Same story: eslint-plugin-compat requires caniuse-lite at runtime and declares neither a
+  // dependency nor a peer on it.
+  "caniuse-lite": nodeVersions["caniuse-lite"].version,
+  // Not a plugin. @antebudimir/eslint-plugin-vanilla-extract imports it at runtime without
+  // declaring it as a dependency or a peer, so it only ever resolved by accident, through
+  // whatever else happened to pull it in. Pinned to the same minor as typescript-eslint so the
+  // tree stays single-versioned.
+  "@typescript-eslint/utils": nodeVersions["@typescript-eslint/utils"].version,
   "@eslint/config-helpers": nodeVersions["@eslint/config-helpers"].version,
   "@eslint/js": nodeVersions["@eslint/js"].version,
   "@next/eslint-plugin-next": nodeVersions["@next/eslint-plugin-next"].version,
@@ -17,7 +25,6 @@ export const eslintDeps = {
   "eslint-flat-config-utils": nodeVersions["eslint-flat-config-utils"].version,
   "eslint-import-resolver-typescript": nodeVersions["eslint-import-resolver-typescript"].version,
   "eslint-plugin-array-func": nodeVersions["eslint-plugin-array-func"].version,
-  "eslint-plugin-arrow-return-style": nodeVersions["eslint-plugin-arrow-return-style"].version,
   "eslint-plugin-baseline-js": nodeVersions["eslint-plugin-baseline-js"].version,
   "eslint-plugin-boundaries": nodeVersions["eslint-plugin-boundaries"].version,
   "eslint-plugin-clsx": nodeVersions["eslint-plugin-clsx"].version,

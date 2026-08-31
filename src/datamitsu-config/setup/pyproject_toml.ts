@@ -5,7 +5,7 @@ export const pyprojectToml: config.ConfigSetup = {
     // Strip the managed `[tool.tombi]` table, and seed a baseline `[tool.deptry]`
     // (deptry reads its config only from pyproject.toml). `extend_exclude` keeps
     // deptry's dependency scan off test dirs — tune per project. Existing keys win.
-    const { tombi, ...rest } = (data.tool ?? {}) as Record<string, unknown>;
+    const { tombi: _tombi, ...rest } = (data.tool ?? {}) as Record<string, unknown>;
 
     return TOML.stringify({
       ...data,

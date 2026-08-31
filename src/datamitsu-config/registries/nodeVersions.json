@@ -73,6 +73,11 @@
     "packageName": "@stylistic/eslint-plugin",
     "version": "5.10.0"
   },
+  "@typescript-eslint/utils": {
+    "description": "Utilities for working with TypeScript ESLint (undeclared import of eslint-plugin-vanilla-extract)",
+    "packageName": "@typescript-eslint/utils",
+    "version": "8.67.0"
+  },
   "@vitest/eslint-plugin": {
     "description": "ESLint plugin for Vitest",
     "packageName": "@vitest/eslint-plugin",
@@ -82,6 +87,11 @@
     "description": "Utils for managing and manipulating ESLint flat config arrays",
     "packageName": "eslint-flat-config-utils",
     "version": "3.2.0"
+  },
+  "caniuse-lite": {
+    "description": "Browser support tables (undeclared import of eslint-plugin-compat)",
+    "packageName": "caniuse-lite",
+    "version": "1.0.30001760"
   },
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
@@ -127,11 +137,6 @@
     "description": "Rules dealing with Array functions and methods.",
     "packageName": "eslint-plugin-array-func",
     "version": "5.1.1"
-  },
-  "eslint-plugin-arrow-return-style": {
-    "description": "Enforce arrow function return style and automatically fix it",
-    "packageName": "eslint-plugin-arrow-return-style",
-    "version": "1.3.1"
   },
   "eslint-plugin-baseline-js": {
     "description": "Enforce JavaScript Baseline (widely/newly/year) browser compatibility with a single ESLint rule. Prevent runtime errors by catching unsupported JavaScript features during development.",

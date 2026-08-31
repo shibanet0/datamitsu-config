@@ -7,6 +7,10 @@
     }
   },
   "node": {
+    "eslint-plugin-arrow-return-style": {
+      "reason": "Incompatible with ESLint 10: it pulls @typescript-eslint/utils@7, which throws \"Class extends value undefined\" the moment the plugin loads. It was shipped as a dependency but switched off by default, so the breakage stayed invisible",
+      "replacement": "None. Arrow body style is taste, and arrow-body-style is already permanently disabled in src/lint-rules/permanent.ts"
+    },
     "eslint-plugin-toml": {
       "reason": "TOML linting/formatting via ESLint is unnecessary, replaced by dedicated tombi and yq-toml tools",
       "replacement": "Use tombi for formatting/linting and yq-toml for key sorting of TOML files"

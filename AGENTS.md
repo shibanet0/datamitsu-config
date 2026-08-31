@@ -128,6 +128,16 @@ Do not turn a rule off in `src/apps/oxlint/index.ts`, in a plugin config under `
 
 A project that is already clean can opt out of the backlog with `defineConfig(pkg, config, { temporaryRules: false })`.
 
+## No Warn Severity
+
+Every rule is `error` or `off`. Nothing is `warn`.
+
+datamitsu runs eslint with `--quiet`, so a warn-level rule reports nothing and fails nothing while still running on every file — off in every way that matters, minus the honesty of saying so. oxlint has no warn tier at all, which is the behavior being matched.
+
+`defineConfig` enforces it: `raiseWarningsToErrors` rewrites the severity of every warn a plugin preset leaves behind, in place, so plugin registration and `files` scoping survive and rule options are preserved. A plugin bump that introduces a warn-level rule is raised the moment it appears. `task validate:rule-inventory` fails if anything still resolves to `warn`.
+
+A rule that should not fail the build goes in `src/lint-rules` with a reason, not to a severity nobody sees.
+
 ## Lint Rule Inventory
 
 [src/lint-rules/rule-inventory.json](src/lint-rules/rule-inventory.json) is a committed census of every rule ESLint and oxlint know about, with the severity this config gives it. Nothing reads it at runtime — its whole job is to be diffed.

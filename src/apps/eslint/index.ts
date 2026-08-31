@@ -19,20 +19,45 @@ interface PluginEntry {
   name: string;
 }
 
+/**
+ * Every plugin this config ships is loaded. There is deliberately nothing off by default: a plugin
+ * that is a dependency but never runs is weight every consumer downloads for no check, and its
+ * rules sit outside the inventory, so a bump can change them with nobody noticing. A rule that is
+ * not wanted is turned off by name in `src/lint-rules`, where the reason is written down — a whole
+ * plugin switched off silently is the thing that list exists to replace.
+ */
 const defaultOptions: DefineConfigOptions = {
-  plugins: {
-    "arrow-return-style": { disabled: true },
-    compat: { disabled: true },
-    depend: { disabled: true },
-    e18e: { disabled: true },
-    n: { disabled: true },
-    "no-unsanitized": { disabled: true },
-    "no-use-extend-native": { disabled: true },
-    regexp: { disabled: true },
-    turbo: { disabled: true },
-    "vanilla-extract": { disabled: true },
-  },
+  plugins: {},
 };
+
+/**
+ * Returns the configs with every warn-level severity raised to error, leaving options and scoping
+ * untouched. Rule entries are copied rather than mutated — a plugin's exported config object is
+ * shared, and editing it would leak into anything else that loaded the same plugin.
+ */
+function raiseWarningsToErrors(configs: TypedFlatConfigItem[]): TypedFlatConfigItem[] {
+  return configs.map((item) => {
+    if (!item.rules) {
+      return item;
+    }
+
+    let changed = false;
+    const rules: NonNullable<TypedFlatConfigItem["rules"]> = {};
+
+    for (const [name, entry] of Object.entries(item.rules)) {
+      const severity = Array.isArray(entry) ? entry[0] : entry;
+
+      if (severity === "warn" || severity === 1) {
+        rules[name] = Array.isArray(entry) ? ["error", ...entry.slice(1)] : "error";
+        changed = true;
+      } else {
+        rules[name] = entry;
+      }
+    }
+
+    return changed ? { ...item, rules } : item;
+  });
+}
 
 export const defineConfig: DefineConfigFunction = async (packageJSON, config, options) => {
   const _options: DefineConfigOptions = {
@@ -114,10 +139,6 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
     },
     { loader: () => import("./plugins/security").then((r) => r.security()), name: "security" },
     { loader: () => import("./plugins/prettier").then((r) => r.prettier()), name: "prettier" },
-    {
-      loader: () => import("./plugins/arrow-return-style").then((r) => r.arrowReturnStyle()),
-      name: "arrow-return-style",
-    },
     {
       loader: () => import("./plugins/vanilla-extract").then((r) => r.vanillaExtract()),
       name: "vanilla-extract",
@@ -234,7 +255,25 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
 
   const composer = new FlatConfigComposer<TypedFlatConfigItem, ConfigNames>();
 
-  composer.append(...resolved);
+  composer.append(...raiseWarningsToErrors(resolved));
+
+  // `warn` is not a severity this config uses, so every rule a plugin preset left at warn is raised
+  // to error.
+  //
+  // datamitsu runs eslint with `--quiet`, which reports errors only. A warn-level rule therefore
+  // fails nothing and prints nothing — it is off in every way that matters, except that it still
+  // runs on every file and still shows up in an editor. Three severities where the runner
+  // understands two is not a softer bar, it is a rule nobody can act on. oxlint has no warn tier at
+  // all, which is the behavior being matched.
+  //
+  // Rewritten in place rather than appended as one overriding block: a plugin's rules are only
+  // addressable from a config object that registers that plugin, and several are scoped to `files`
+  // as well, so a flat block naming them all fails to resolve the plugin. Editing the severity
+  // where the rule was declared keeps both the plugin registration and the file scope.
+  //
+  // Done for every resolved config, so a plugin bump that introduces a warn-level rule is raised the
+  // moment it appears rather than waiting for someone to notice. What the shared lists turn off is
+  // applied after this and still wins.
 
   // The disabled rules oxlint and ESLint share, applied last so they win over every plugin's
   // recommended config — including eslint-plugin-oxlint's.

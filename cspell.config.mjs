@@ -154,6 +154,12 @@ export default defineConfig((previous) => {
     "Kysely",
     "sqlc",
     "ELIFECYCLE",
+    // Rule names that appear in the generated src/lint-rules/rule-inventory.json.
+    "canparse",
+    "charcode",
+    "lookarounds",
+    "extensionless",
+
     "classlist",
     "categorises",
     "severitied",

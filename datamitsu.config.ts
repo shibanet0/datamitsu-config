@@ -52,7 +52,10 @@ const config = await defineConfig(
 );
 
 export default [
-  globalIgnores([".datamitsu/"]),
+  // dist-* are this repo's build outputs (the inline config bundles and the goja bundle).
+  // GLOB_EXCLUDE covers "dist", not the "dist-<name>" convention used here, so they were being
+  // linted — six of the seven unused-variable reports came from generated .d.ts files.
+  globalIgnores([".datamitsu/", "dist-*/"]),
   ...config,
 ];
 `,
@@ -277,7 +280,6 @@ post-checkout:
                 "eslint-flat-config-utils": "3.2.0",
                 "eslint-import-resolver-typescript": "4.4.5",
                 "eslint-plugin-array-func": "5.1.1",
-                "eslint-plugin-arrow-return-style": "1.3.1",
                 "eslint-plugin-baseline-js": "0.7.1",
                 "eslint-plugin-boundaries": "7.2.0",
                 "eslint-plugin-clsx": "0.1.0",
