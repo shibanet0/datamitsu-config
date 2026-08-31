@@ -67,6 +67,34 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
 
   // @typescript-eslint
   "@typescript-eslint/array-type": "off in datamitsu-config, 1 oxlint config",
+  "@typescript-eslint/no-unsafe-member-access":
+    "type-aware — 238 in src/; the whole no-unsafe-* family goes away with @typescript-eslint/no-explicit-any",
+  "@typescript-eslint/no-unsafe-call": "type-aware — 118 in src/; tied to no-explicit-any",
+  "@typescript-eslint/promise-function-async": "type-aware — 98 in src/",
+  "@typescript-eslint/no-unsafe-assignment": "type-aware — 94 in src/; tied to no-explicit-any",
+  "@typescript-eslint/no-unsafe-type-assertion": "type-aware — 87 in src/; tied to no-explicit-any",
+  "@typescript-eslint/strict-boolean-expressions": "type-aware — 51 in src/",
+  "@typescript-eslint/only-throw-error": "type-aware — rethrowing a caught `unknown` trips it",
+  "@typescript-eslint/prefer-nullish-coalescing": "type-aware — 42 in src/",
+  "@typescript-eslint/no-unsafe-argument": "type-aware — 35 in src/; tied to no-explicit-any",
+  "@typescript-eslint/dot-notation": "type-aware — 15 in src/",
+  "@typescript-eslint/no-unsafe-return": "type-aware — 13 in src/; tied to no-explicit-any",
+  "@typescript-eslint/no-unnecessary-type-parameters":
+    "type-aware — a type parameter used once is often still the clearer signature",
+  "@typescript-eslint/no-unnecessary-type-assertion": "type-aware — 9 in src/",
+  "@typescript-eslint/require-await": "type-aware — 7 in src/",
+  "@typescript-eslint/prefer-readonly": "type-aware — 5 in src/",
+  "@typescript-eslint/no-floating-promises":
+    "type-aware — 4 in src/, all on the deliberately mixed array fed to Promise.all in apps/eslint/index.ts",
+  "@typescript-eslint/consistent-return": "type-aware — 4 in src/",
+  "@typescript-eslint/require-array-sort-compare": "type-aware — 3 in src/",
+  "@typescript-eslint/non-nullable-type-assertion-style": "type-aware — 2 in src/",
+  "@typescript-eslint/prefer-promise-reject-errors": "type-aware — 2 in src/",
+  "@typescript-eslint/no-unnecessary-type-arguments": "type-aware — 1 in src/",
+  "@typescript-eslint/no-base-to-string": "type-aware — 1 in src/",
+  "@typescript-eslint/await-thenable":
+    "type-aware — 1 in src/, same Promise.all(mixed array) pattern",
+  "@typescript-eslint/no-unnecessary-template-expression": "type-aware — 1 in src/",
   "@typescript-eslint/ban-ts-comment": "1 oxlint config",
   "@typescript-eslint/ban-types":
     "1 oxlint config — gone from typescript-eslint, still an oxlint rule",
@@ -78,6 +106,31 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "@typescript-eslint/explicit-member-accessibility": "off in datamitsu-config, 1 oxlint config",
   "@typescript-eslint/explicit-module-boundary-types": "off in datamitsu-config, 1 oxlint config",
   "@typescript-eslint/method-signature-style": "off in datamitsu-config, 1 oxlint config",
+  "@typescript-eslint/no-confusing-void-expression": "type-aware — 2 in the repo",
+  "@typescript-eslint/no-deprecated":
+    "type-aware — 6 in the repo, and the most worth turning back on first",
+  "@typescript-eslint/no-misused-spread":
+    "type-aware — spreading a string or a class into an array/object is usually a mistake, but not always",
+  "@typescript-eslint/consistent-type-exports":
+    "type-aware — would rewrite every re-export to `export type`",
+  "@typescript-eslint/no-duplicate-type-constituents":
+    "type-aware — duplicates in a union are usually generated, not written",
+  "@typescript-eslint/no-redundant-type-constituents":
+    "type-aware — a redundant constituent is often deliberate documentation",
+  "@typescript-eslint/no-unnecessary-type-conversion":
+    "type-aware — an explicit conversion is sometimes the clearer intent",
+  "@typescript-eslint/restrict-template-expressions":
+    "type-aware — bans interpolating anything but a string",
+  "@typescript-eslint/return-await":
+    "type-aware — `return await` inside try/catch is meaningful, outside it is noise",
+  "@typescript-eslint/switch-exhaustiveness-check":
+    "type-aware — wants a case per union member plus a default",
+  "@typescript-eslint/no-misused-promises": "type-aware — 4 in the repo",
+  "@typescript-eslint/prefer-regexp-exec": "type-aware — 4 in the repo",
+  "@typescript-eslint/prefer-string-starts-ends-with": "type-aware — 1 in the repo",
+  "@typescript-eslint/strict-void-return":
+    "type-aware — 13 in the repo, mostly tsdown config callbacks",
+  "@typescript-eslint/use-unknown-in-catch-callback-variable": "type-aware — 1 in the repo",
   "@typescript-eslint/no-dynamic-delete": "off in datamitsu-config, 1 oxlint config",
   "@typescript-eslint/no-empty-interface": "2 oxlint configs",
   "@typescript-eslint/no-empty-object-type": "1 oxlint config",

@@ -363,6 +363,11 @@
     "packageName": "oxlint",
     "version": "1.79.0"
   },
+  "oxlint-tsgolint": {
+    "description": "Type-aware linting engine for oxlint, powered by typescript-go",
+    "packageName": "oxlint-tsgolint",
+    "version": "7.0.2001"
+  },
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
     "packageName": "playwright-chromium",

@@ -37,6 +37,12 @@ export const oxlintConfig: Oxlintrc = {
     style: "error",
     suspicious: "error",
   },
+  // Type-aware linting, run by `oxlint-tsgolint` against the project's tsconfig. It is what makes
+  // rules like `no-floating-promises` possible at all — they cannot be decided from syntax alone.
+  // Cheap enough to leave on: the engine is Go, not the TypeScript compiler's checker.
+  options: {
+    typeAware: true,
+  },
   rules: {
     ...enabled,
     ...disabledRulesForOxlint(),

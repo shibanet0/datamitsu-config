@@ -200,20 +200,24 @@ async function collectOxlint(): Promise<RuleMap> {
   return sortKeys(rules);
 }
 
-function diff(before: RuleMap, after: RuleMap): string[] {
+function diff(
+  before: RuleMap,
+  after: RuleMap,
+  spell: (name: string) => string = (name) => name,
+): string[] {
   const lines: string[] = [];
 
   for (const [name, severity] of Object.entries(after)) {
     if (!(name in before)) {
-      lines.push(`  + ${name} (${severity})`);
+      lines.push(`  + ${spell(name)} (${severity})`);
     } else if (before[name] !== severity) {
-      lines.push(`  ~ ${name}: ${before[name]} → ${severity}`);
+      lines.push(`  ~ ${spell(name)}: ${before[name]} → ${severity}`);
     }
   }
 
   for (const [name, value] of Object.entries(before)) {
     if (!(name in after)) {
-      lines.push(`  - ${name} (was ${value})`);
+      lines.push(`  - ${spell(name)} (was ${value})`);
     }
   }
 
@@ -294,7 +298,7 @@ if (process.argv.includes("--check")) {
     const previous = JSON.parse(committed) as Inventory;
     const changes = [
       ...diff(previous.eslint, inventory.eslint).map((line) => `eslint${line}`),
-      ...diff(previous.oxlint, inventory.oxlint).map((line) => `oxlint${line}`),
+      ...diff(previous.oxlint, inventory.oxlint, toESLintSpelling).map((line) => `oxlint${line}`),
     ];
 
     console.error(
@@ -302,6 +306,8 @@ if (process.argv.includes("--check")) {
         "The lint rule set changed and the committed inventory no longer matches it.",
         "",
         ...changes,
+        "",
+        "Names are shown in the ESLint spelling the lists are written in, ready to paste.",
         "",
         "Decide what each rule should be — leave it on, or add it to src/lint-rules/permanent.ts",
         "or src/lint-rules/temporary.ts with a reason — then accept the new set with:",

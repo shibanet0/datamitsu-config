@@ -16,8 +16,7 @@ tasks:
       - pnpm exec tsdown
       - task: build:datamitsu-config
       - task: docker:generate
-      - task: validate:rule-inventory
-    desc: Build the package. Ends by gating on the rule inventory.
+    desc: Build the package.
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -247,8 +246,14 @@ tasks:
   # ──────────────────────────────────────────────
   rules:inventory:
     cmds:
+      # Builds first on purpose. The census is taken from the built package — the resolved ESLint
+      # config and `oxlint --print-config` — so accepting a rule change without rebuilding would
+      # record the previous build's answer. `build` deliberately carries no inventory gate, which is
+      # what lets this depend on it: gate inside build + build inside accept is a cycle, and the way
+      # out of it was one command that always failed the first time.
+      - task: build
       - node scripts/generate-rule-inventory.ts
-    desc: Accept the current ESLint + oxlint rule set into src/lint-rules/rule-inventory.json
+    desc: Rebuild, then accept the current ESLint + oxlint rule set as reviewed
   # ──────────────────────────────────────────────
   # Misc
   # ──────────────────────────────────────────────
@@ -263,7 +268,12 @@ tasks:
   sync:datamitsu-version:
     cmds:
       - node scripts/sync-datamitsu-version.ts
-    desc: Sync @datamitsu/datamitsu min version from package.json into datamitsu.config.ts
+      - task: sync:parsers
+    desc: Sync the @datamitsu/datamitsu pins and the WASM parser artifact from the installed build
+  sync:parsers:
+    cmds:
+      - node scripts/sync-parsers.ts
+    desc: Repin src/datamitsu-config/parsers.ts from the installed build's parsers-oci.json
   # ──────────────────────────────────────────────
   # Test
   # ──────────────────────────────────────────────
@@ -289,12 +299,17 @@ tasks:
   validate:
     cmds:
       - task: validate:blocklist
+      - task: validate:parsers
       - task: validate:rule-inventory
     desc: Every check that guards the committed sources. Runs at the end of `refresh`.
   validate:blocklist:
     cmds:
       - node scripts/validate-registry-blocklist.ts
     desc: Validate registry files against blocklist
+  validate:parsers:
+    cmds:
+      - node scripts/sync-parsers.ts --check
+    desc: Fail when the WASM parser pin has drifted from the installed datamitsu build
   validate:rule-inventory:
     cmds:
       - node scripts/generate-rule-inventory.ts --check

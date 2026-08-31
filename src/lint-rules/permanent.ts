@@ -43,6 +43,14 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "unicorn/import-style": "generated config picks the import style datamitsu needs",
 
   /**
+   * Type-aware, and unusable as designed: it demands a deeply-readonly type for every parameter of
+   * every function, which is a whole-codebase rewrite to satisfy one rule. 270 hits here on its own
+   * — more than every other type-aware rule put together.
+   */
+  "@typescript-eslint/prefer-readonly-parameter-types":
+    "every parameter would need a deep readonly type",
+
+  /**
    * `restriction` rules written for an ES5-era target. This stack is modern ESM + TypeScript, so
    * the thing they ban is the thing we want.
    */
