@@ -86,14 +86,14 @@ function render(source: ParsersOCI): string {
  * Pinned to datamitsu ${source.version}.
  */
 
-const PARSERS_OCI_REF = ${JSON.stringify(source.ref)};
+const PARSERS_OCI_REF = "${source.ref}";
 // Wrapped because prettier does: "sha256:" plus 64 hex characters always overruns the line width,
 // and an unwrapped line here would leave every \`task refresh\` with a file the formatter rewrites
 // and \`validate:parsers\` then rejects.
 const PARSERS_OCI_DIGEST =
-  ${JSON.stringify(digest)};
+  "${JSON.stringify(digest).slice(1, -1)}";
 
-const CORE_PARSER_HASH = ${JSON.stringify(source.sha256)};
+const CORE_PARSER_HASH = "${source.sha256}";
 
 export const parsers: config.MapOfParsers = {
   core: {
