@@ -5,16 +5,6 @@ export async function perfectionist(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      files: ["**/*.css.ts"],
-      name: "shibanet0/perfectionist/vanilla-extract/rules",
-      plugins: {
-        perfectionist: plugin.default,
-      },
-      rules: {
-        "perfectionist/sort-objects": "off",
-      },
-    },
-    {
       name: "shibanet0/perfectionist/rules",
       plugins: {
         perfectionist: plugin.default,
@@ -99,6 +89,21 @@ export async function perfectionist(): Promise<TypedFlatConfigItem[]> {
         // "perfectionist/sort-modules": "off",
         // "perfectionist/sort-classes": "off",
         // "perfectionist/sort-enums": "off",
+      },
+    },
+    // After the general rules, not before: that block spreads `recommended-natural`, which switches
+    // sort-objects on, so an exception placed ahead of it was silently overridden — flat config is
+    // last-one-wins. A vanilla-extract style object is a CSS rule written as an object literal, and
+    // vanilla-extract/concentric-order orders it the way stylesheets are read (outside in). Two
+    // orderings of the same braces cannot both hold; this is the file type where the CSS one does.
+    {
+      files: ["**/*.css.ts"],
+      name: "shibanet0/perfectionist/vanilla-extract/rules",
+      plugins: {
+        perfectionist: plugin.default,
+      },
+      rules: {
+        "perfectionist/sort-objects": "off",
       },
     },
   ];

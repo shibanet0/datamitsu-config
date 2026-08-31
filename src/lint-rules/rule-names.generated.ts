@@ -1977,18 +1977,7 @@ export type ESLintRuleName =
   | "unicorn/throw-new-error"
   | "unicorn/try-complexity"
   | "unused-imports/no-unused-imports"
-  | "unused-imports/no-unused-vars"
-  | "vanilla-extract/alphabetical-order"
-  | "vanilla-extract/concentric-order"
-  | "vanilla-extract/custom-order"
-  | "vanilla-extract/no-empty-style-blocks"
-  | "vanilla-extract/no-px-unit"
-  | "vanilla-extract/no-trailing-zero"
-  | "vanilla-extract/no-unitless-values"
-  | "vanilla-extract/no-unknown-unit"
-  | "vanilla-extract/no-zero-unit"
-  | "vanilla-extract/prefer-logical-properties"
-  | "vanilla-extract/prefer-theme-tokens";
+  | "unused-imports/no-unused-vars";
 
 // Declared out of dependency order because `perfectionist/sort-modules` wants it alphabetical, and
 // type aliases hoist so the order is free.

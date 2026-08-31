@@ -366,17 +366,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "eslint",
-        granularity: "file",
         args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         globs: eslintGlobs,
+        granularity: "file",
         priority: fixPriority.eslint,
         scope: "per-project",
       },
       lint: {
         app: "eslint",
-        granularity: "file",
         args: ["--quiet", "--format=json", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         globs: eslintGlobs,
+        granularity: "file",
         priority: lintPriority.eslint,
         scope: "per-project",
       },
@@ -726,17 +726,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "prettier",
-        granularity: "file",
         args: ["-u", "--write", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
+        granularity: "file",
         priority: fixPriority.prettier,
         scope: "per-project",
       },
       lint: {
         app: "prettier",
-        granularity: "file",
         args: ["-u", "--check", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
+        granularity: "file",
         priority: lintPriority.prettier,
         scope: "per-project",
       },
@@ -768,17 +768,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
-        granularity: "file",
         args: ["check", "--fix", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: fixPriority.ruff,
         scope: "per-project",
       },
       lint: {
         app: "ruff",
-        granularity: "file",
         args: ["check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: lintPriority.ruff,
         scope: "per-project",
       },
@@ -790,17 +790,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
-        granularity: "file",
         args: ["format", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: fixPriority["ruff-format"],
         scope: "per-project",
       },
       lint: {
         app: "ruff",
-        granularity: "file",
         args: ["format", "--check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: lintPriority["ruff-format"],
         scope: "per-project",
       },
@@ -886,16 +886,16 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "sqruff",
-        granularity: "file",
         args: ["fix", "{files}"],
         globs: sqlGlobs,
+        granularity: "file",
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        granularity: "file",
         args: ["lint", "{files}"],
         globs: sqlGlobs,
+        granularity: "file",
         scope: "per-project",
       },
     },

@@ -162,87 +162,13 @@ post-checkout:
         return (
           JSON.stringify(
             {
-              name: "@shibanet0/datamitsu-config",
-              version: "0.0.3-alpha-28",
-              description: "Shared datamitsu configuration with 79+ managed development tools",
-              keywords: [],
-              repository: {
-                type: "git",
-                url: "https://github.com/shibanet0/datamitsu-config",
-              },
-              license: "MIT",
               author: "Alexander Svinarev <shibanet0@gmail.com> (shibanet0.com)",
-              type: "module",
-              exports: {
-                ".": {
-                  types: "./dist/datamitsu-api/index.d.ts",
-                  default: "./dist/datamitsu-api/index.js",
-                },
-                "./package.json": "./package.json",
-                "./tsconfig/base.json": "./tsconfig/base.json",
-                "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
-                "./tsconfig/library.json": "./tsconfig/library.json",
-                "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
-                "./tsconfig/react-library.json": "./tsconfig/react-library.json",
-                "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
-                "./tsconfig/service.json": "./tsconfig/service.json",
-                "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
-                "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
-                "./type-fest": {
-                  import: {
-                    types: "./dist/type-fest/index.d.ts",
-                  },
-                },
-                "./type-fest/globals": {
-                  import: {
-                    types: "./dist/type-fest/globals/index.d.ts",
-                  },
-                },
-              },
               bin: {
                 datamitsu: "bin/datamitsu.js",
                 dm: "bin/datamitsu.js",
                 s0: "bin/s0.js",
                 tsc: "bin/tsc.js",
                 tsx: "bin/tsx.js",
-              },
-              files: [
-                "datamitsu.config.base.js",
-                "datamitsu.config.js",
-                "datamitsu.config.oci-ghcr.js",
-                "datamitsu.config.oci-dockerhub.js",
-                "datamitsu.config.d.ts",
-                "tsconfig/**",
-                "dist/**",
-                "bin/**",
-              ],
-              scripts: {
-                build: "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
-                "build:local":
-                  "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
-                datamitsu:
-                  'DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME="./dist" bin/datamitsu.js --binary-command "node bin/datamitsu.js"',
-                dm: "pnpm --silent datamitsu",
-                "docker:build":
-                  "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
-                "docker:build:alpine:amd64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
-                "docker:build:alpine:arm64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
-                "docker:build:amd64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
-                "docker:build:arm64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
-                "docker:builder":
-                  "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
-                prepack:
-                  "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
-                postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
-                prepare: "pnpm build && pnpm datamitsu init",
-                test: "vitest run",
-                "test:coverage": "vitest run --coverage",
-                "test:update": "vitest run --update",
-                "test:watch": "vitest watch",
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
@@ -254,6 +180,7 @@ post-checkout:
                 "type-fest": "5.6.0",
                 typescript: "6.0.3",
               },
+              description: "Shared datamitsu configuration with 79+ managed development tools",
               devDependencies: {
                 "@antebudimir/eslint-plugin-vanilla-extract": "1.17.0",
                 "@commitlint/cli": "21.2.2",
@@ -336,10 +263,6 @@ post-checkout:
                 vitest: "4.1.7",
                 yaml: "2.9.0",
               },
-              packageManager: "pnpm@11.22.0",
-              engines: {
-                node: ">=22.12.0",
-              },
               devEngines: {
                 runtime: {
                   name: "node",
@@ -347,6 +270,83 @@ post-checkout:
                   version: ">=26.8.1",
                 },
               },
+              engines: {
+                node: ">=22.12.0",
+              },
+              exports: {
+                ".": {
+                  default: "./dist/datamitsu-api/index.js",
+                  types: "./dist/datamitsu-api/index.d.ts",
+                },
+                "./package.json": "./package.json",
+                "./tsconfig/base.json": "./tsconfig/base.json",
+                "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
+                "./tsconfig/library.json": "./tsconfig/library.json",
+                "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
+                "./tsconfig/react-library.json": "./tsconfig/react-library.json",
+                "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
+                "./tsconfig/service.json": "./tsconfig/service.json",
+                "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
+                "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
+                "./type-fest": {
+                  import: {
+                    types: "./dist/type-fest/index.d.ts",
+                  },
+                },
+                "./type-fest/globals": {
+                  import: {
+                    types: "./dist/type-fest/globals/index.d.ts",
+                  },
+                },
+              },
+              files: [
+                "datamitsu.config.base.js",
+                "datamitsu.config.js",
+                "datamitsu.config.oci-ghcr.js",
+                "datamitsu.config.oci-dockerhub.js",
+                "datamitsu.config.d.ts",
+                "tsconfig/**",
+                "dist/**",
+                "bin/**",
+              ],
+              keywords: [],
+              license: "MIT",
+              name: "@shibanet0/datamitsu-config",
+              packageManager: "pnpm@11.22.0",
+              repository: {
+                type: "git",
+                url: "https://github.com/shibanet0/datamitsu-config",
+              },
+              scripts: {
+                build: "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
+                "build:local":
+                  "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
+                datamitsu:
+                  'DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME="./dist" bin/datamitsu.js --binary-command "node bin/datamitsu.js"',
+                dm: "pnpm --silent datamitsu",
+                "docker:build":
+                  "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
+                "docker:build:alpine:amd64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
+                "docker:build:alpine:arm64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
+                "docker:build:amd64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
+                "docker:build:arm64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
+                "docker:builder":
+                  "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
+                postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
+                prepack:
+                  "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
+                prepare: "pnpm build && pnpm datamitsu init",
+                test: "vitest run",
+                "test:coverage": "vitest run --coverage",
+                "test:update": "vitest run --update",
+                "test:watch": "vitest watch",
+              },
+              type: "module",
+              version: "0.0.3-alpha-28",
             },
             null,
             2,

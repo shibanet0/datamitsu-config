@@ -7,19 +7,19 @@ export const eslintDeps = {
   "@eslint-community/eslint-plugin-eslint-comments":
     nodeVersions["@eslint-community/eslint-plugin-eslint-comments"].version,
   "@eslint-react/eslint-plugin": nodeVersions["@eslint-react/eslint-plugin"].version,
-  // Same story: eslint-plugin-compat requires caniuse-lite at runtime and declares neither a
-  // dependency nor a peer on it.
-  "caniuse-lite": nodeVersions["caniuse-lite"].version,
+  "@eslint/config-helpers": nodeVersions["@eslint/config-helpers"].version,
+  "@eslint/js": nodeVersions["@eslint/js"].version,
+  "@next/eslint-plugin-next": nodeVersions["@next/eslint-plugin-next"].version,
+  "@stylistic/eslint-plugin": nodeVersions["@stylistic/eslint-plugin"].version,
   // Not a plugin. @antebudimir/eslint-plugin-vanilla-extract imports it at runtime without
   // declaring it as a dependency or a peer, so it only ever resolved by accident, through
   // whatever else happened to pull it in. Pinned to the same minor as typescript-eslint so the
   // tree stays single-versioned.
   "@typescript-eslint/utils": nodeVersions["@typescript-eslint/utils"].version,
-  "@eslint/config-helpers": nodeVersions["@eslint/config-helpers"].version,
-  "@eslint/js": nodeVersions["@eslint/js"].version,
-  "@next/eslint-plugin-next": nodeVersions["@next/eslint-plugin-next"].version,
-  "@stylistic/eslint-plugin": nodeVersions["@stylistic/eslint-plugin"].version,
   "@vitest/eslint-plugin": nodeVersions["@vitest/eslint-plugin"].version,
+  // Same story: eslint-plugin-compat requires caniuse-lite at runtime and declares neither a
+  // dependency nor a peer on it.
+  "caniuse-lite": nodeVersions["caniuse-lite"].version,
   eslint: nodeVersions["eslint"].version,
   "eslint-config-prettier": nodeVersions["eslint-config-prettier"].version,
   "eslint-flat-config-utils": nodeVersions["eslint-flat-config-utils"].version,
