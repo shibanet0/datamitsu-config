@@ -221,6 +221,19 @@ export interface DefineConfigOptions {
     };
   };
   react?: boolean;
+
+  /**
+   * Apply the shared migration backlog — the rules in `src/lint-rules/temporary` that should be on
+   * and are off only until the code is ready for them. Defaults to `true`.
+   *
+   * Set to `false` to lint against the bar the backlog is deferring. The permanently disabled rules
+   * stay off either way; those are decisions, not deferrals.
+   *
+   * Oxlint reads its own copy of the same lists from the generated `.oxlintrc.json`, so a project
+   * that opts out here should re-enable the same rules in `.oxlintrc.json` to keep the two tools
+   * saying the same thing.
+   */
+  temporaryRules?: boolean;
 }
 
 export type Rules = Record<string, Linter.RuleEntry<any> | undefined>;

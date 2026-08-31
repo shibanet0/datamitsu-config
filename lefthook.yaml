@@ -20,6 +20,10 @@ pre-commit:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
       stage_fixed: false
+    validate-rule-inventory:
+      priority: 110
+      run: "node bin/datamitsu.js exec task -- validate:rule-inventory"
+      stage_fixed: false
     test:
       priority: 200
       run: pnpm test

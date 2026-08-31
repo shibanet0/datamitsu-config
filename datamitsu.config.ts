@@ -54,12 +54,6 @@ const config = await defineConfig(
 export default [
   globalIgnores([".datamitsu/"]),
   ...config,
-  {
-    rules: {
-      "playwright/no-standalone-expect": "off",
-      "unicorn/no-object-as-default-parameter": "off",
-    },
-  },
 ];
 `,
       expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
@@ -134,6 +128,10 @@ pre-commit:
     validate-blocklist:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    validate-rule-inventory:
+      priority: 110
+      run: "node bin/datamitsu.js exec task -- validate:rule-inventory"
       stage_fixed: false
     test:
       priority: 200

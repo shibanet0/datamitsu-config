@@ -8,6 +8,7 @@ import type {
   TypedFlatConfigItem,
 } from "./types";
 
+import { disabledRulesForESLint } from "../../lint-rules";
 import { GLOB_EXCLUDE, GLOB_SRC_EXT } from "./globs";
 
 export { globalIgnores } from "@eslint/config-helpers";
@@ -57,16 +58,16 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
 
   const enableReact = options?.react === undefined ? isReactEnabled : options.react;
 
-  const isPlaywrightEnabled = dependenciesKeys.some((element) => element === "playwright");
-  const isVitestEnabled = dependenciesKeys.some((element) => element === "vitest");
+  const isPlaywrightEnabled = dependenciesKeys.includes("playwright");
+  const isVitestEnabled = dependenciesKeys.includes("vitest");
   const isStorybookEnabled = dependenciesKeys.some(
     (element) => element === "storybook" || element.startsWith("@storybook/"),
   );
   const isI18nextEnabled = dependenciesKeys.some((element) => element.includes("i18next"));
-  const isClsxEnabled = dependenciesKeys.some((element) => element === "clsx");
+  const isClsxEnabled = dependenciesKeys.includes("clsx");
 
   const configs: Awaitable<TypedFlatConfigItem[]>[] = [
-    [globalIgnores(GLOB_EXCLUDE, "shibanet0/ignores") as TypedFlatConfigItem],
+    [globalIgnores(GLOB_EXCLUDE, "s0/ignores") as TypedFlatConfigItem],
     import("./plugins/javascript").then((r) => r.javascript()),
     import("./plugins/typescript").then((r) => r.typescript()),
   ];
@@ -235,6 +236,19 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
 
   composer.append(...resolved);
 
+  // The disabled rules oxlint and ESLint share, applied last so they win over every plugin's
+  // recommended config — including eslint-plugin-oxlint's.
+  //
+  // That plugin turns an ESLint rule off only while oxlint is *reporting* the equivalent, so
+  // silencing a rule in the oxlint config used to hand it straight back to ESLint: same finding,
+  // same file, still failing, now under a different rule name. Both tools reading one list is what
+  // stops that — and it is why a project no longer needs a wall of local turn-offs to adopt this
+  // config at all. Appended before the caller's own config, so a consumer can still re-enable.
+  composer.append({
+    name: "s0/disabled-rules",
+    rules: disabledRulesForESLint({ temporary: _options.temporaryRules }),
+  });
+
   // The datamitsu config file is evaluated by goja, not Node. It has no module system to export
   // from, so the entry points must be published by assigning onto the global object
   // (`globalThis.getConfig = getConfig`) — the shape `datamitsu init` generates and the runtime
@@ -244,7 +258,7 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   // consumer can still override it.
   composer.append({
     files: [`**/datamitsu.config.${GLOB_SRC_EXT}`, `**/datamitsu.config.*.${GLOB_SRC_EXT}`],
-    name: "datamitsu/config-file",
+    name: "s0/config-file",
     rules: {
       "unicorn/no-global-object-property-assignment": "off",
     },

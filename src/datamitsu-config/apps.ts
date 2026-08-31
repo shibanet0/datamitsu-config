@@ -1,4 +1,4 @@
-import oxlintrc from "../../.oxlintrc.json";
+import { oxlintConfig } from "../apps/oxlint";
 import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
@@ -268,9 +268,13 @@ const allApps: BinManager.MapOfApps = {
   oxlint: {
     description: nodeVersions.oxlint.description,
     files: {
+      // Straight from `src/apps/oxlint`, not from the checked-in `.oxlintrc.json` at the repo root.
+      // That file is this repository's own config; reading it here made the package contents depend
+      // on someone having re-run `datamitsu setup` after every rule change, and a stale root file
+      // silently shipped an out-of-date rule list to every consumer.
       ".oxlintrc.json": JSON.stringify(
         {
-          ...oxlintrc,
+          ...oxlintConfig,
           $schema: "./oxlint_configuration_schema.json",
         },
         null,

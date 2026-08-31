@@ -16,7 +16,8 @@ tasks:
       - pnpm exec tsdown
       - task: build:datamitsu-config
       - task: docker:generate
-    desc: Full build (sync-version → oxlint → datamitsu-types → build:inline → tsdown → datamitsu-config → docker:generate)
+      - task: validate:rule-inventory
+    desc: Build the package. Ends by gating on the rule inventory.
   build:agents-md:
     cmds:
       - node scripts/gen-agents-md.ts
@@ -150,17 +151,22 @@ tasks:
     cmds:
       - pnpm dm exec zensical -- serve --dev-addr 0.0.0.0:8000
     desc: Serve documentation site locally (http://localhost:8000)
+  # ──────────────────────────────────────────────
+  # oxlint
+  # ──────────────────────────────────────────────
   oxlint:codegen:
     cmds:
       - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts
     desc: Generate TypeScript types from oxlint JSON schema
-  # ──────────────────────────────────────────────
-  # oxlint
-  # ──────────────────────────────────────────────
+  oxlint:sync:known-rules:
+    cmds:
+      - node scripts/generate-oxlint-known-rules.ts
+    desc: Regenerate src/lint-rules/oxlint-known-rules.generated.ts by probing the pinned oxlint
   oxlint:sync:schema:
     cmds:
       - node scripts/oxlint-sync-schema.ts
       - task: oxlint:codegen
+      - task: oxlint:sync:known-rules
     desc: Sync oxlint schema from node_modules and regenerate types
   pull:external:
     cmds:
@@ -214,6 +220,36 @@ tasks:
       - pnpm dm fix ./src/datamitsu-config/registries/uvVersions.json
     desc: Pull uv versions with update flag
   # ──────────────────────────────────────────────
+  # The one command
+  # ──────────────────────────────────────────────
+  refresh:
+    cmds:
+      # `build` already regenerates the chunks, the upstream schemas and the version stamp — they are
+      # `deps` of the tasks it runs. Only the docs and the guards sat outside it, which is why they
+      # kept being run by hand or, worse, only by the pre-commit hook.
+      - task: build
+      - task: docs:generate
+      - task: validate
+    desc: >-
+      Regenerate everything derived from the sources in this repo, then check it. This is the normal command — reach for the individual tasks below only when you know which one you want.
+  # Registries are pulled over the network and are deliberately NOT part of `refresh`: they change
+  # because upstream published something, not because this repo did. `refresh` afterwards.
+  refresh:registries:
+    cmds:
+      - task: pull:node:update
+      - task: pull:uv:update
+      - task: pull:github:update
+      - task: pull:external:update
+      - task: pull:runtimes:update
+    desc: Update every registry from upstream. Run `refresh` afterwards.
+  # ──────────────────────────────────────────────
+  # Lint rules
+  # ──────────────────────────────────────────────
+  rules:inventory:
+    cmds:
+      - node scripts/generate-rule-inventory.ts
+    desc: Accept the current ESLint + oxlint rule set into src/lint-rules/rule-inventory.json
+  # ──────────────────────────────────────────────
   # Misc
   # ──────────────────────────────────────────────
   s0:
@@ -250,8 +286,20 @@ tasks:
   # ──────────────────────────────────────────────
   # Validation
   # ──────────────────────────────────────────────
+  validate:
+    cmds:
+      - task: validate:blocklist
+      - task: validate:rule-inventory
+    desc: Every check that guards the committed sources. Runs at the end of `refresh`.
   validate:blocklist:
     cmds:
       - node scripts/validate-registry-blocklist.ts
     desc: Validate registry files against blocklist
+  validate:rule-inventory:
+    cmds:
+      - node scripts/generate-rule-inventory.ts --check
+    desc: Fail when the ESLint/oxlint rule set drifted from the committed inventory
+    # `build` gates on it and `validate` groups it; `refresh` calls both, so without this the whole
+    # census would be computed twice per run.
+    run: once
 version: "3"
