@@ -1,5 +1,6 @@
 /**
- * Checks `src/lint-rules/{permanent,temporary}.ts` as _lists_, which nothing else does.
+ * Checks `src/lint-rules/{permanent-disabled,permanent-enabled,temporary}.ts` as _lists_, which
+ * nothing else does.
  *
  * `validate:rule-inventory` compares the rule set against the committed census, and
  * `oxlint-known-rules.generated.ts` guarantees only that the names surviving the filter parse. Both
@@ -22,7 +23,8 @@ import fsPromise from "node:fs/promises";
 import path from "node:path";
 
 import { OXLINT_KNOWN_RULES } from "../src/lint-rules/oxlint-known-rules.generated.ts";
-import { PERMANENTLY_DISABLED_RULES } from "../src/lint-rules/permanent.ts";
+import { PERMANENTLY_DISABLED_RULES } from "../src/lint-rules/permanent-disabled.ts";
+import { PERMANENTLY_ENABLED_RULES } from "../src/lint-rules/permanent-enabled.ts";
 import { TEMPORARILY_DISABLED_RULES } from "../src/lint-rules/temporary.ts";
 
 const repoRoot = path.join(import.meta.dirname, "..");
@@ -246,12 +248,44 @@ const splitVerdicts = [...byBareName.entries()].filter(
 const placeholders = entries.filter((entry) => PLACEHOLDER_REASON.test(entry.reason.trim()));
 
 // ---------------------------------------------------------------------------
+// A rule the config guarantees that neither tool is actually reporting. This is the check that
+// makes `permanent-enabled.ts` worth having: without it the list is a wish, and a plugin bump that
+// drops a rule from its recommended preset turns it off with nothing but a census diff to say so.
+//
+// At least one tool, not both. `eslint-plugin-oxlint` deliberately leaves exactly one of them
+// reporting — requiring both would demand the double diagnostics the handoff exists to prevent.
+// ---------------------------------------------------------------------------
+
+const notEnforced: { name: string; reason: string; severities: string }[] = [];
+
+for (const [name, rule] of Object.entries(PERMANENTLY_ENABLED_RULES)) {
+  const inESLint = inventory.eslint[name];
+  const inOxlint = inventory.oxlint[toOxlintRuleName(name)];
+
+  if (inESLint !== "error" && inOxlint !== "error") {
+    notEnforced.push({
+      name,
+      reason: rule?.reason ?? "",
+      severities: `eslint ${inESLint ?? "absent"}, oxlint ${inOxlint ?? "absent"}`,
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 function heading(title: string, count: number): void {
   process.stdout.write(`\n${title} — ${count}\n${"─".repeat(72)}\n`);
 }
 
 let failed = false;
+
+if (notEnforced.length > 0) {
+  failed = true;
+  heading("Declared as permanently enabled, reported by neither tool", notEnforced.length);
+  for (const { name, reason, severities } of notEnforced) {
+    process.stdout.write(`  ${name}\n      ! ${severities}\n      → ${reason}\n`);
+  }
+}
 
 if (wrongSpelling.length > 0) {
   failed = true;
@@ -281,7 +315,7 @@ if (offOutsideTheLists.length > 0) {
   heading("Turned off in a plugin file, recorded in neither list", offOutsideTheLists.length);
   process.stdout.write(
     "  A decision with no reason next to it, invisible to the census diff and to anyone\n" +
-      "  reading the lists. Move each into permanent.ts or temporary.ts with a reason.\n\n",
+      "  reading the lists. Move each into permanent-disabled.ts or temporary.ts with a reason.\n\n",
   );
   for (const { file, line, rule } of offOutsideTheLists) {
     process.stdout.write(`  ${rule.padEnd(52)} plugins/${file}:${line}\n`);

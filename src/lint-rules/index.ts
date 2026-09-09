@@ -1,8 +1,14 @@
 import { OXLINT_KNOWN_RULES } from "./oxlint-known-rules.generated";
-import { PERMANENTLY_DISABLED_RULES } from "./permanent";
+import { PERMANENTLY_DISABLED_RULES } from "./permanent-disabled";
+import { PERMANENTLY_ENABLED_RULES } from "./permanent-enabled";
 import { TEMPORARILY_DISABLED_RULES } from "./temporary";
 
-export { PERMANENTLY_DISABLED_RULES } from "./permanent";
+export { PERMANENTLY_DISABLED_RULES } from "./permanent-disabled";
+export {
+  enabledRulesForESLint,
+  PERMANENTLY_ENABLED_RULES,
+  type PermanentlyEnabledRule,
+} from "./permanent-enabled";
 export { TEMPORARILY_DISABLED_RULES } from "./temporary";
 
 export interface DisabledRulesOptions {
@@ -134,6 +140,26 @@ export function disabledRulesForOxlint(options: DisabledRulesOptions = {}): Reco
 
     if (OXLINT_KNOWN_RULES.includes(oxlintName)) {
       rules[oxlintName] = "off";
+    }
+  }
+
+  return rules;
+}
+
+/**
+ * The enabled rules in the spelling oxlint uses, translated the same way the disabled ones are.
+ *
+ * Filtered against the pinned build for the same reason: an unknown name is a hard config-parse
+ * failure. A rule oxlint does not have simply stays ESLint to report.
+ */
+export function enabledRulesForOxlint(): Record<string, unknown[]> {
+  const rules: Record<string, unknown[]> = {};
+
+  for (const [name, rule] of Object.entries(PERMANENTLY_ENABLED_RULES)) {
+    const oxlintName = toOxlintRuleName(name);
+
+    if (OXLINT_KNOWN_RULES.includes(oxlintName)) {
+      rules[oxlintName] = ["error", ...(rule?.options ?? [])];
     }
   }
 

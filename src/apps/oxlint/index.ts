@@ -1,7 +1,7 @@
 import type { Oxlintrc } from "./schema";
 
 import { GLOB_EXCLUDE, GLOB_TESTS_OXLINT, toOxlintIgnorePatterns } from "../../globs/globs";
-import { disabledRulesForOxlint } from "../../lint-rules";
+import { disabledRulesForOxlint, enabledRulesForOxlint } from "../../lint-rules";
 import { OXLINT_KNOWN_RULES } from "../../lint-rules/oxlint-known-rules.generated";
 import { OXLINT_PLUGINS } from "./plugins.generated";
 
@@ -104,23 +104,13 @@ function oxlintPlugins(packageJSON?: OxlintPackageJson): NonNullable<Oxlintrc["p
 }
 
 /**
- * Rules datamitsu-config turns _on_ beyond what the categories already enable.
+ * Rules datamitsu-config turns _on_ beyond what the categories already enable, with their options.
  *
- * Everything that gets turned _off_ lives in `src/lint-rules` instead, shared with ESLint — see
- * {@link oxlintConfig}.
+ * These used to be two entries written out by hand right here — the one place AGENTS.md says rules
+ * must not be configured — because the shared lists carry severity and not options. They live in
+ * `src/lint-rules/permanent-enabled` now, next to the reason, and reach both tools from there.
  */
-const enabled: Oxlintrc["rules"] = {
-  /**
-   * The same options ESLint gets, because the shared list carries severity and not options.
-   *
-   * `src/lint-rules` only ever turns rules _off_, so a rule both tools enable by default runs with
-   * each tool's own defaults. Here that mattered: `no-eq-null` is permanently off on the grounds
-   * that `== null` is the idiomatic check and `eqeqeq` covers everything else — which is only true
-   * with `{ null: "ignore" }`, and oxlint's categories enable `eqeqeq` without it.
-   */
-  eqeqeq: ["error", "always", { null: "ignore" }],
-  "one-var": ["error", "never"],
-};
+const enabled = enabledRulesForOxlint() as NonNullable<Oxlintrc["rules"]>;
 
 /**
  * The oxlint half of the shared lint configuration.

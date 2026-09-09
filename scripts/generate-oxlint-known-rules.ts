@@ -19,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 
-import { PERMANENTLY_DISABLED_RULES } from "../src/lint-rules/permanent.ts";
+import { PERMANENTLY_DISABLED_RULES } from "../src/lint-rules/permanent-disabled.ts";
 import { TEMPORARILY_DISABLED_RULES } from "../src/lint-rules/temporary.ts";
 
 const execFileAsync = promisify(execFile);

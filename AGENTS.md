@@ -108,18 +108,27 @@ When wiring a formatter, reference `indentSettings.indentWidth` / `indentSetting
 
 Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.
 
-## Shared Disabled Lint Rules
+## Shared Lint Rule Lists
 
-[src/lint-rules/](src/lint-rules/) is the **single source of truth** for every rule ESLint and oxlint turn off. Both tools read the same two lists:
+[src/lint-rules/](src/lint-rules/) is the **single source of truth** for what ESLint and oxlint do with every rule. Both tools read the same three lists:
 
-- [permanent.ts](src/lint-rules/permanent.ts) — decisions. The rule is wrong for this stack, or another tool already owns what it checks. Not coming back.
+- [permanent-disabled.ts](src/lint-rules/permanent-disabled.ts) — decisions. The rule is wrong for this stack, or another tool already owns what it checks. Not coming back.
 - [temporary.ts](src/lint-rules/temporary.ts) — the migration backlog. The rule should be on and is off only until the code is ready. Shrinking this list is the work.
+- [permanent-enabled.ts](src/lint-rules/permanent-enabled.ts) — the third verdict, and the newest. Rules that must stay on, with the options they must stay on with.
+
+Why the third one exists: without it, "off" was a decision with a reason and "on" was a **residual** — whatever survived after the plugin presets and oxlint's categories had decided. A residual has no author and no protection, so a plugin bump that drops a rule from its `recommended` preset turns it off and leaves only a census-diff line for somebody to notice. It also gave options nowhere to live: `eqeqeq` needed `{ null: "ignore" }` to make `no-eq-null`'s reason true, so it was written by hand into both `src/apps/oxlint/index.ts` and `src/apps/eslint/plugins/javascript.ts` — and only the oxlint copy was ever read, because the handoff turns the ESLint one off.
+
+It is deliberately not a mirror of the other two:
+
+- **Small.** Writing down everything anyone is happy with would be a hand-maintained copy of `rule-inventory.json` that drifts from the census it duplicates. An entry belongs here when losing it silently should fail the build, when the defaults are wrong, or when a preset is likely to move it.
+- **Asserted, not assumed.** Off-in-both is idempotent, which is why the off-lists are shared blindly. On-in-both is not — that is one finding reported twice under two names. So `validate:lists` requires that **at least one** tool reports the rule at error; which one is the handoff's business.
+- **A declaration, not a fourth config site.** The options are emitted into both tools from here, and the gate reads the committed census, so the list cannot quietly disagree with what the tools do.
 
 Rules there are always written in the **ESLint** spelling (`@typescript-eslint/`, `import-x/`, `jsx-a11y-x/`, `@next/next/`). `index.ts` translates to oxlint's shorter prefixes and filters out what oxlint does not have.
 
 A prefix table cannot express every case: sometimes the plugin swap renamed the rule as well, and then the entry needs a line in `ESLINT_TO_OXLINT_RULE` instead. `@eslint-react/no-clone-element` is oxlint's `react/no-clone-element`; `react-refresh/only-export-components` is its `react/only-export-components`; unicorn renamed `no-array-for-each` to `no-for-each` and oxlint kept the old name. That table is deliberately narrow — it maps one rule to _the same rule_ under another name, never one plugin's rule to another plugin's implementation of the same idea. `sonarjs/no-unused-vars` and core `no-unused-vars` stay two entries, because parking one is not a decision about the other.
 
-`task validate:lists` is what keeps this honest. It reads the two lists **as lists** — which nothing else does — and reports an entry written in oxlint's spelling (with the ESLint name to paste), an entry the filter drops while oxlint still has a rule of that name, a rule turned off somewhere other than these lists, one check appearing under two spellings with two verdicts, and a reason that only restates the observation. It is not in `task validate` yet: the lists do not pass it today. Put it there once they do — that is the point at which the corpus stops being able to drift back.
+`task validate:lists` is what keeps this honest. It reads the lists **as lists** — which nothing else does — and reports an entry written in oxlint's spelling (with the ESLint name to paste), an entry the filter drops while oxlint still has a rule of that name, a rule turned off somewhere other than these lists, one check appearing under two spellings with two verdicts, and a reason that only restates the observation. It is not in `task validate` yet: the lists do not pass it today. Put it there once they do — that is the point at which the corpus stops being able to drift back.
 
 Why both tools have to read one list: `eslint-plugin-oxlint` suppresses an ESLint rule only while oxlint is _reporting_ the equivalent. Turning a rule off in the oxlint config therefore hands it straight back to ESLint — same finding, same file, still failing, under a different rule name.
 
@@ -128,7 +137,7 @@ Why the lists are asymmetric at the edges:
 - ESLint gets every name verbatim, including oxlint-only ones (`oxc/*`). ESLint ignores a rule name it does not know as long as the severity is `"off"` — even under a prefix whose plugin is loaded. Core rules are also emitted under `@typescript-eslint/` and `@stylistic/`, because a plugin that re-publishes a core rule otherwise keeps reporting it.
 - oxlint gets a filtered list. It rejects the **whole config file** over one unknown rule or plugin name, even at `"off"`. The allowlist in `oxlint-known-rules.generated.ts` is produced by probing the pinned binary — see [scripts/generate-oxlint-known-rules.ts](scripts/generate-oxlint-known-rules.ts) — and is regenerated by `task oxlint:sync:schema`, so it tracks oxlint version bumps.
 
-Do not turn a rule off in `src/apps/oxlint/index.ts`, in a plugin config under `src/apps/eslint/plugins/`, in this repository's own `oxlint.config.mts` / `eslint.config.mjs`, or in a consuming project's. Add it to one of the two lists with a reason, then run `task refresh`.
+Do not turn a rule on or off in `src/apps/oxlint/index.ts`, in a plugin config under `src/apps/eslint/plugins/`, in this repository's own `oxlint.config.mts` / `eslint.config.mjs`, or in a consuming project's. Add it to one of the three lists with a reason, then run `task refresh`.
 
 A project that is already clean can opt out of the backlog with `defineConfig(pkg, config, { temporaryRules: false })` — and oxlint's `defineConfig` takes the same option, in the same position, so both tools answer the same question. It did not use to: oxlint had no such option at all, so opting out raised the bar in ESLint while oxlint kept all 226 backlog rules off.
 
@@ -171,7 +180,7 @@ A rule that should not fail the build goes in `src/lint-rules` with a reason, no
 
 [src/lint-rules/rule-inventory.json](src/lint-rules/rule-inventory.json) is a committed census of every rule ESLint and oxlint know about, with the severity this config gives it. Nothing reads it at runtime — its whole job is to be diffed.
 
-A plugin bump that adds, removes or re-categorises a rule is otherwise invisible until the new rule starts firing in whichever project upgrades first. With the inventory committed, the same bump lands as a reviewable diff, and the decision — leave it on, or park it in `permanent.ts` / `temporary.ts` — is made once, here, before any consumer is affected.
+A plugin bump that adds, removes or re-categorises a rule is otherwise invisible until the new rule starts firing in whichever project upgrades first. With the inventory committed, the same bump lands as a reviewable diff, and the decision — leave it on, or park it in `permanent-disabled.ts` / `temporary.ts` — is made once, here, before any consumer is affected.
 
 - `task validate:rule-inventory` — fails when the live rule set has drifted from the committed one, printing added / removed / re-severitied rules. Runs in `task validate` (so `task refresh` covers it), in pre-commit and in CI, so a drifted rule set cannot be committed or merged.
 
@@ -185,7 +194,7 @@ A plugin bump that adds, removes or re-categorises a rule is otherwise invisible
 
 The drift report prints rule names in the ESLint spelling the lists use, not oxlint's — it is the place those names get copied from, and printing `typescript/x` there was teaching the spelling the lists reject.
 
-The same census is also emitted as [rule-names.generated.ts](src/lint-rules/rule-names.generated.ts) — string-literal unions of every rule name both tools know. `permanent.ts` and `temporary.ts` are keyed by `KnownRuleName`, so a typo, or a rule a plugin dropped in an upgrade, is a `tsc` error instead of a line that silently stops doing anything. Types only, so `tsdown` strips them: a stale name breaks the typecheck without blocking the rebuild you need in order to regenerate the file.
+The same census is also emitted as [rule-names.generated.ts](src/lint-rules/rule-names.generated.ts) — string-literal unions of every rule name both tools know. `permanent-disabled.ts`, `permanent-enabled.ts` and `temporary.ts` are keyed by `KnownRuleName`, so a typo, or a rule a plugin dropped in an upgrade, is a `tsc` error instead of a line that silently stops doing anything. Types only, so `tsdown` strips them: a stale name breaks the typecheck without blocking the rebuild you need in order to regenerate the file.
 
 Coverage, and its limits — see [scripts/generate-rule-inventory.ts](scripts/generate-rule-inventory.ts):
 
@@ -206,7 +215,7 @@ Config blocks this package appends are named `s0/*` (`s0/ignores`, `s0/disabled-
     task refresh:registries   update every registry from upstream, then run `task refresh`
     task build                produce the package (no gates — see Lint Rule Inventory)
     task validate             blocklist + parsers + pins + rule-inventory
-    task validate:lists       read the two rule lists as lists — not in `validate` yet, see above
+    task validate:lists       read the three rule lists as lists — not in `validate` yet, see above
     task rules:inventory      accept the current rule set as reviewed
 
 `task validate:pins` is the newest of them and the least obvious. The root `datamitsu.config.ts` restates every dependency and version, because that is how a datamitsu-managed `package.json` is declared — and nothing kept the two equal. `pull:node` updates the registry and the manifest; `sync:datamitsu-version` aligns exactly one entry and leaves the other ninety. It is latent, since only `datamitsu setup` applies the literal and this repository does not run setup — which is what makes it worth a gate, because drift accumulates unobserved and reverts on the day someone does.

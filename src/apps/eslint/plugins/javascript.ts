@@ -81,15 +81,11 @@ export const javascript = async (): Promise<TypedFlatConfigItem[]> => {
     {
       name: "s0/js/rules",
       rules: {
-        /**
-         * `{ null: "ignore" }` is what makes `no-eq-null` a decision rather than a hole.
-         *
-         * That rule sits in `permanent.ts` saying "`== null` is the idiomatic null-or-undefined
-         * check; eqeqeq covers the rest" — and eqeqeq was itself off, so nothing covered the rest.
-         * The option is the other half of the same sentence: `==` is an error everywhere except
-         * against `null`, which is the one place it means something.
-         */
-        eqeqeq: ["error", "always", { null: "ignore" }],
+        // `eqeqeq` and its `{ null: "ignore" }` used to be written out here as well as in the
+        // oxlint config. Only the oxlint copy was ever read — `eslint-plugin-oxlint` turns the
+        // ESLint one off because oxlint reports it — so the options sat here doing nothing. Both
+        // now come from `src/lint-rules/permanent-enabled`, applied as the `s0/enabled-rules`
+        // block ahead of that handoff.
       },
     },
   ];

@@ -8,7 +8,7 @@ import type {
   TypedFlatConfigItem,
 } from "./types";
 
-import { disabledRulesForESLint } from "../../lint-rules";
+import { disabledRulesForESLint, enabledRulesForESLint } from "../../lint-rules";
 import {
   GLOB_EXCLUDE,
   GLOB_HTML,
@@ -355,6 +355,19 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
       );
     }
   }
+
+  // The rules this config guarantees, with their options — see `src/lint-rules/permanent-enabled`.
+  //
+  // Pushed here, before the oxlint block rather than after `s0/disabled-rules`, and that ordering is
+  // the whole point. A block appended later would override the handoff and get the finding reported
+  // twice, once by each tool; from here `eslint-plugin-oxlint` can still take the rule over when
+  // oxlint is the one reporting it. The options reach whichever tool ends up doing the work.
+  configs.push([
+    {
+      name: "s0/enabled-rules",
+      rules: enabledRulesForESLint(),
+    } as TypedFlatConfigItem,
+  ]);
 
   if (!_options?.plugins?.oxlint?.disabled) {
     configs.push(
