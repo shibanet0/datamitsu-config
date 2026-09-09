@@ -5,7 +5,7 @@ export async function jsxA11y(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/jsx-a11y/rules",
+      name: "s0/jsx-a11y/rules",
       plugins: {
         "jsx-a11y-x": plugin.default,
       },

@@ -2,7 +2,9 @@ import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((previous) => {
   const words = [
+    "browserslistrc",
     "datetimez",
+    "extglobs",
     "frontmatter",
     "triaging",
     "errmsg",
@@ -155,6 +157,26 @@ export default defineConfig((previous) => {
     "sqlc",
     "ELIFECYCLE",
     // Rule names that appear in the generated src/lint-rules/rule-inventory.json.
+    // The second group arrived with the 292 core ESLint rules the census had been missing, plus the
+    // storybook and vanilla-extract probes: environment names from `globals`, and the deliberate
+    // misspellings that typo-detection rules are named after.
+    "applescript",
+    "atomtest",
+    "autofixers",
+    "bject",
+    "destructurings",
+    "duplicative",
+    "embertest",
+    "esmodule",
+    "formart",
+    "gnored",
+    "mymethod",
+    "nashorn",
+    "prototypejs",
+    "rray",
+    "serviceworker",
+    "strnig",
+    "thenables",
     "canparse",
     "charcode",
     "lookarounds",

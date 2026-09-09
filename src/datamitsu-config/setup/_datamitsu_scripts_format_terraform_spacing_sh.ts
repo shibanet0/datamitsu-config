@@ -27,7 +27,6 @@ export const formatTerraformSpacingSh: config.ConfigSetup = {
       "  temp_file=$(mktemp)",
       '  cp "$file" "$temp_file"',
       "",
-      // oxlint-disable-next-line no-template-curly-in-string -- shell script syntax, not JS template
       '  for entity in "${TERRAFORM_ENTITIES[@]}"; do',
       "    # Match entity at the beginning of line (with optional spaces)",
       "    # Replace with 3 newlines + the matched line",

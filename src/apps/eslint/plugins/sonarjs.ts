@@ -5,7 +5,7 @@ export async function sonarjs(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/sonarjs/rules",
+      name: "s0/sonarjs/rules",
       plugins: {
         sonarjs: plugin.default,
       },

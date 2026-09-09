@@ -43,6 +43,7 @@ tasks:
       - task: build:inline:knip
       - task: build:inline:cspell
       - task: build:inline:oxfmt
+      - task: build:inline:oxlint
       - task: build:inline:lefthook-sort
     desc: Build all inline configs in parallel
   build:inline:commitlint:
@@ -69,6 +70,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun
     desc: Build inline oxfmt config
+  build:inline:oxlint:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.oxlint.ts --config-loader unrun
+    desc: Build inline oxlint config
   build:inline:prettier:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
@@ -98,7 +103,11 @@ tasks:
   # ──────────────────────────────────────────────
   dependabot:codegen:
     cmds:
-      - pnpm exec json2ts --input dependabot_2.0_schema.json --output src/datamitsu-config/setup/dependabot_schema.d.ts
+      # --bannerComment replaces json2ts's default header, keeping a disable for the sorting rules
+      # and saying why. The member order in this file is json2ts's, not ours, so perfectionist cannot
+      # be satisfied without editing generated output by hand. Named rather than blanket, so a
+      # different rule firing here later still surfaces.
+      - pnpm exec json2ts --input dependabot_2.0_schema.json --output src/datamitsu-config/setup/dependabot_schema.d.ts --bannerComment "/* eslint-disable perfectionist/sort-interfaces, perfectionist/sort-modules, perfectionist/sort-object-types, perfectionist/sort-union-types */ /** Generated from dependabot_2.0_schema.json by \`task dependabot:codegen\` — do not edit. json2ts decides the member order, so the style rules cannot be satisfied here. */"
     desc: Generate TypeScript types from the Dependabot JSON schema
   dependabot:sync:schema:
     cmds:
@@ -155,16 +164,26 @@ tasks:
   # ──────────────────────────────────────────────
   oxlint:codegen:
     cmds:
-      - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts
+      # Same treatment the dependabot schema already gets, and for the same reason. json2ts's
+      # default header is a blanket `/* eslint-disable */`, which `no-unlimited-disable` reports —
+      # and rightly: a catch-all hides whatever a future json2ts release starts tripping. Naming
+      # the four sorting rules keeps the rest of the file linted. The member order here
+      # is json2ts's, not ours, so those four cannot be satisfied.
+      - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts --bannerComment "/* eslint-disable perfectionist/sort-interfaces, perfectionist/sort-intersection-types, perfectionist/sort-modules, perfectionist/sort-object-types, perfectionist/sort-union-types, sonarjs/no-duplicate-in-composite, unicorn/prefer-type-literal-last */ /** Generated from oxlint_configuration_schema.json by \`task oxlint:codegen\` — do not edit. json2ts decides the member order, so the style rules cannot be satisfied here. */"
     desc: Generate TypeScript types from oxlint JSON schema
   oxlint:sync:known-rules:
     cmds:
       - node scripts/generate-oxlint-known-rules.ts
     desc: Regenerate src/lint-rules/oxlint-known-rules.generated.ts by probing the pinned oxlint
+  oxlint:sync:plugins:
+    cmds:
+      - node scripts/generate-oxlint-plugins.ts
+    desc: Regenerate src/apps/oxlint/plugins.generated.ts from the pinned oxlint schema
   oxlint:sync:schema:
     cmds:
       - node scripts/oxlint-sync-schema.ts
       - task: oxlint:codegen
+      - task: oxlint:sync:plugins
       - task: oxlint:sync:known-rules
     desc: Sync oxlint schema from node_modules and regenerate types
   pull:external:
@@ -300,21 +319,35 @@ tasks:
     cmds:
       - task: validate:blocklist
       - task: validate:parsers
+      - task: validate:pins
       - task: validate:rule-inventory
     desc: Every check that guards the committed sources. Runs at the end of `refresh`.
   validate:blocklist:
     cmds:
       - node scripts/validate-registry-blocklist.ts
     desc: Validate registry files against blocklist
+  validate:lists:
+    cmds:
+      - node scripts/validate-lint-rule-lists.ts
+    # Deliberately not in `validate` yet: the lists do not pass it today, and the batch park in
+    # progress is what it is reporting on. Add it there once they are clean — that is the point at
+    # which the corpus stops being able to drift back into this state.
+    desc: >-
+      Check the two rule lists against what the tools actually do — entries in oxlint's spelling, parks that reach only one tool, rules turned off outside the lists, split verdicts
   validate:parsers:
     cmds:
       - node scripts/sync-parsers.ts --check
     desc: Fail when the WASM parser pin has drifted from the installed datamitsu build
+  validate:pins:
+    cmds:
+      - node scripts/validate-pins.ts
+    desc: >-
+      Fail when the dependency literal in datamitsu.config.ts has drifted from the package.json it manages — `pull:node` updates one and not the other
   validate:rule-inventory:
     cmds:
       - node scripts/generate-rule-inventory.ts --check
+    # No `run: once`. It was there for a `build` gate that does not exist — see AGENTS.md on why
+    # the census cannot be gated inside the build it is taken from — so `validate` is the only
+    # caller and there was nothing to deduplicate.
     desc: Fail when the ESLint/oxlint rule set drifted from the committed inventory
-    # `build` gates on it and `validate` groups it; `refresh` calls both, so without this the whole
-    # census would be computed twice per run.
-    run: once
 version: "3"

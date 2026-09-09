@@ -12,17 +12,14 @@ const oxlintConfigurationSchema = JSON.parse(
   await fsPromise.readFile(path.join(oxlintRoot, "configuration_schema.json"), "utf8"),
 );
 
+// Only the checked-in copy at the repo root. It feeds `json2ts` (→ src/apps/oxlint/schema.d.ts),
+// the plugin-list generator and the known-rules probe.
+//
+// It used to be embedded in the goja bundle as well, so that a generated `.oxlintrc.json` could
+// point its `$schema` at a copy on disk. The config is a TypeScript module now — the
+// `Oxlintrc` type does that job — so the embedded copy is 757 KB of JSON nothing reads.
 await fsPromise.writeFile(
   path.join(import.meta.dirname, "../oxlint_configuration_schema.json"),
   JSON.stringify(oxlintConfigurationSchema, null, 2),
-  "utf8",
-);
-
-await fsPromise.writeFile(
-  path.join(
-    import.meta.dirname,
-    "../src/datamitsu-config/inline-config/oxlint_configuration_schema.ts",
-  ),
-  `// prettier-ignore\nexport const data = ${JSON.stringify(JSON.stringify(oxlintConfigurationSchema, null, 2))};\n`,
   "utf8",
 );

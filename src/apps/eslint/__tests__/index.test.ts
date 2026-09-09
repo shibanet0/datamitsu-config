@@ -10,8 +10,8 @@ describe("defineConfig plugin registry", () => {
   it("loads base plugins (javascript, typescript) with empty package.json", async () => {
     const items = (await defineConfig({}, [])) as unknown as { name?: string }[];
     const names = getConfigNames(items);
-    expect(names.some((n) => n.includes("shibanet0/js"))).toBe(true);
-    expect(names.some((n) => n.includes("shibanet0/typescript"))).toBe(true);
+    expect(names.some((n) => n.includes("s0/js"))).toBe(true);
+    expect(names.some((n) => n.includes("s0/typescript"))).toBe(true);
   });
 
   it("respects disabled flag on a plugin", async () => {

@@ -25,7 +25,6 @@ export default defineConfig((prev) => {
     "eslint.config.mjs": {
       ...config.setup?.["eslint.config.mjs"],
       content: () => /* js */ `import { globalIgnores } from "@eslint/config-helpers";
-import { join } from "node:path";
 
 import { defineConfig } from "./.datamitsu/eslint.config.mjs";
 import packageJSON from "./package.json" with { type: "json" };
@@ -39,9 +38,6 @@ const config = await defineConfig(
     plugins: {
       e18e: {
         disabled: true,
-      },
-      oxlint: {
-        configFilePath: join(import.meta.dirname, ".oxlintrc.json"),
       },
       react: {
         version: "19.2.3",
@@ -118,7 +114,7 @@ pre-commit:
       run: node bin/datamitsu.js init
     sync-datamitsu-version:
       priority: 20
-      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu.config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
       stage_fixed: true
     docs-generate:
       priority: 30
@@ -128,9 +124,17 @@ pre-commit:
       priority: 40
       run: node bin/datamitsu.js check --file-scoped
       stage_fixed: true
+    build:
+      priority: 50
+      run: "node bin/datamitsu.js exec task -- build"
+      stage_fixed: false
     validate-blocklist:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    validate-parsers:
+      priority: 105
+      run: "node bin/datamitsu.js exec task -- validate:parsers"
       stage_fixed: false
     validate-rule-inventory:
       priority: 110
@@ -154,7 +158,7 @@ post-checkout:
       run: pnpm i -y
   parallel: false
     `,
-      expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
+      expectChainHash: "xxh3:0ccc1cc11456bb55707ba3b08e1dc1ed",
     },
     "package.json": {
       ...config.setup?.["package.json"],
@@ -198,8 +202,14 @@ post-checkout:
                 "@stylistic/eslint-plugin": "5.10.0",
                 "@types/node": "25.9.1",
                 "@types/remove-markdown": "0.3.4",
+                // Not plugins. Two packages that import them at runtime without declaring either a
+                // dependency or a peer — @antebudimir/eslint-plugin-vanilla-extract needs
+                // @typescript-eslint/utils, eslint-plugin-compat needs caniuse-lite — so under
+                // pnpm's isolated layout they only ever resolved by accident.
+                "@typescript-eslint/utils": "8.67.0",
                 "@vitest/coverage-v8": "4.1.7",
                 "@vitest/eslint-plugin": "1.6.27",
+                "caniuse-lite": "1.0.30001760",
                 "conventional-changelog-conventionalcommits": "10.4.0",
                 cspell: "10.0.1",
                 eslint: "10.9.0",
@@ -406,7 +416,13 @@ const _getMinVersion = () => "0.0.0";
 globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [
+  // The dotfile browserslist reads, named in the comment that explains why `compat` and `escompat`
+  // are gated on the manifest field instead.
+  "browserslistrc",
   "datetimez",
+  // Plural of the shell glob form `?(a|b)`, which `toOxlintIgnorePatterns` expands because oxlint's
+  // matcher has no extglob support.
+  "extglobs",
   "errmsg",
   "flynt",
   "perflint",

@@ -6,7 +6,7 @@ export async function reactPreferFunctionComponent(): Promise<TypedFlatConfigIte
 
   return [
     {
-      name: "shibanet0/react-prefer-function-component/rules",
+      name: "s0/react-prefer-function-component/rules",
       plugins: {
         "react-prefer-function-component": plugin.default,
       },

@@ -9,7 +9,7 @@ export async function vanillaExtract(): Promise<TypedFlatConfigItem[]> {
     // have nothing to do with styling, where it collides head-on with perfectionist/sort-objects.
     {
       files: ["**/*.css.ts"],
-      name: "shibanet0/vanilla-extract/rules",
+      name: "s0/vanilla-extract/rules",
       plugins: {
         "vanilla-extract": plugin.default,
       },

@@ -32,12 +32,33 @@ const oxlintBin = path.join(repoRoot, "node_modules/.bin/oxlint");
  * it generates a dependency of.
  */
 const ESLINT_TO_OXLINT_PREFIX: [string, string][] = [
+  ["@next/next/", "nextjs/"],
   ["@typescript-eslint/", "typescript/"],
   ["import-x/", "import/"],
   ["jsx-a11y-x/", "jsx-a11y/"],
+  ["n/", "node/"],
 ];
 
+/**
+ * Mirror of `ESLINT_TO_OXLINT_RULE`, for the same reason the prefix table is duplicated here.
+ */
+const ESLINT_TO_OXLINT_RULE: Record<string, string> = {
+  "@eslint-react/dom-no-dangerously-set-innerhtml": "react/no-danger",
+  "@eslint-react/no-array-index-key": "react/no-array-index-key",
+  "@eslint-react/no-clone-element": "react/no-clone-element",
+  "react-prefer-function-component/react-prefer-function-component":
+    "react/prefer-function-component",
+  "react-refresh/only-export-components": "react/only-export-components",
+  "unicorn/no-for-each": "unicorn/no-array-for-each",
+};
+
 function toOxlintRuleName(name: string): string {
+  const alias = ESLINT_TO_OXLINT_RULE[name];
+
+  if (alias) {
+    return alias;
+  }
+
   for (const [eslintPrefix, oxlintPrefix] of ESLINT_TO_OXLINT_PREFIX) {
     if (name.startsWith(eslintPrefix)) {
       return oxlintPrefix + name.slice(eslintPrefix.length);

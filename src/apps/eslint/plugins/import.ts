@@ -5,7 +5,7 @@ export async function pluginImport(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/import/rules",
+      name: "s0/import/rules",
       plugins: {
         "import-x": plugin.default,
       },
@@ -23,7 +23,6 @@ export async function pluginImport(): Promise<TypedFlatConfigItem[]> {
         "import-x/no-relative-packages": "off",
         "import-x/no-unresolved": "off",
         "import-x/order": "off",
-        "import-x/prefer-default-export": "off",
       },
     },
   ];

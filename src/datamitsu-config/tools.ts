@@ -366,7 +366,26 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "eslint",
-        args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.mjs", "{files}"],
+        // `--fix-type` excludes `directive`, which is the fix type for an unused `eslint-disable`
+        // comment — and "unused" here means "names a rule this config has off", which is ~1600 of
+        // them. Without the flag, `--quiet --fix` deletes the comment and its reason text, prints
+        // nothing, and exits 0; pre-commit then stages the deletion.
+        //
+        // Two shapes of loss. A rule oxlint owns: the comment goes, oxlint still reports it, and
+        // nothing tells you the replacement is `oxlint-disable-next-line`. A rule parked in
+        // `temporary.ts`: the deletion is completely silent, and when that rule is triaged back on,
+        // the deliberate suppression that would have covered it is already gone.
+        //
+        // With the flag the directive is left alone and reported instead, so it is a decision.
+        args: [
+          "--quiet",
+          "--fix",
+          "--fix-type",
+          "problem,suggestion,layout",
+          "-c",
+          "{cwd}/eslint.config.mjs",
+          "{files}",
+        ],
         globs: eslintGlobs,
         granularity: "file",
         priority: fixPriority.eslint,
@@ -674,14 +693,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "--fix", "{files}"],
+        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "--fix", "{files}"],
         globs: oxlintGlobs,
         priority: fixPriority.oxlint,
         scope: "per-project",
       },
       lint: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "{files}"],
+        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "{files}"],
         globs: oxlintGlobs,
         priority: lintPriority.oxlint,
         scope: "per-project",

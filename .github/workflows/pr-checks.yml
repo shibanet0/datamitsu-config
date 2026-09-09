@@ -151,8 +151,18 @@ jobs:
         uses: ./.github/actions/setup-environment
       - name: Run lint
         run: pnpm dm check
-      - name: Validate blocklist
-        run: pnpm dm exec task -- validate:blocklist
+      # `validate` rather than `validate:blocklist` alone: the parser pin and the rule-inventory
+      # census had no CI gate at all, and both are exactly the kind of drift a Dependabot bump
+      # produces. Without this, a plugin bump that adds or re-categorises a rule merges with a
+      # stale census — which is the one thing the committed inventory exists to prevent.
+      #
+      # It needs a build, because the census is taken from the built package rather than from the
+      # sources; `validate:rule-inventory` now refuses to answer against an older build instead of
+      # quietly reporting on the previous rule set.
+      - name: Build
+        run: pnpm dm exec task -- build
+      - name: Validate
+        run: pnpm dm exec task -- validate
   pr-title:
     if: github.event_name == 'pull_request'
     name: PR Title

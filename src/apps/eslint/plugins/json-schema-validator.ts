@@ -6,7 +6,7 @@ export async function jsonSchemaValidator(): Promise<TypedFlatConfigItem[]> {
   return [
     ...plugin.default.configs["flat/recommended"],
     // {
-    //   name: "shibanet0/json-schema-validator/rules",
+    //   name: "s0/json-schema-validator/rules",
     //   plugins: {
     //     "json-schema-validator": plugin.default,
     //   },

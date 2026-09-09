@@ -1,4 +1,3 @@
-import { oxlintConfig } from "../apps/oxlint";
 import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
@@ -6,7 +5,7 @@ import { knipApp } from "./apps/knip";
 import { lefthookSortApp } from "./apps/lefthook-sort";
 import { prettierApp } from "./apps/prettier";
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
-import { data as oxlintConfigSchemaData } from "./inline-config/oxlint_configuration_schema";
+import { data as oxlintConfigArchive } from "./inline-config/oxlint";
 import {
   apps as externalAppsJSON,
   binaries as externalBinariesJSON,
@@ -266,25 +265,20 @@ const allApps: BinManager.MapOfApps = {
     },
   },
   oxlint: {
-    description: nodeVersions.oxlint.description,
-    files: {
-      // Straight from `src/apps/oxlint`, not from the checked-in `.oxlintrc.json` at the repo root.
-      // That file is this repository's own config; reading it here made the package contents depend
-      // on someone having re-run `datamitsu setup` after every rule change, and a stale root file
-      // silently shipped an out-of-date rule list to every consumer.
-      ".oxlintrc.json": JSON.stringify(
-        {
-          ...oxlintConfig,
-          $schema: "./oxlint_configuration_schema.json",
-        },
-        null,
-        2,
-      ),
-      "oxlint_configuration_schema.json": oxlintConfigSchemaData,
+    // The config ships as a JavaScript module, not as generated JSON. A JSON config can only be
+    // reused through `extends`, which carries `rules`, `plugins` and `overrides` and silently drops
+    // `env`, `globals`, `settings`, `ignorePatterns` and `options` — so half of what
+    // `src/apps/oxlint` decides never reached the project that extended it. An imported object has
+    // nothing to drop, and the consumer's `oxlint.config.mts` gets the same `defineConfig` shape
+    // every other JS-configurable tool here already has.
+    archives: {
+      main: {
+        inline: oxlintConfigArchive,
+      },
     },
+    description: nodeVersions.oxlint.description,
     links: {
-      ".oxlintrc.json": ".oxlintrc.json",
-      "oxlint_configuration_schema.json": "oxlint_configuration_schema.json",
+      "oxlint.config.js": "index.js",
     },
     node: {
       binPath: "node_modules/.bin/oxlint",

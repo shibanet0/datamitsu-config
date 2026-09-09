@@ -24,7 +24,6 @@ const getEditorJS = async (buf: Buffer) => {
 
   const encryptedContentBuf = await encryptor.encrypt(buf, encryptionKey);
 
-  // oxlint-disable-next-line consistent-function-scoping
   const editor = async (contentEncryptedBase64: string, encryptionKeyBase64: string) => {
     const [fsInner, cryptoInner, utilInner] = await Promise.all([
       import("node:fs/promises"),
@@ -39,7 +38,6 @@ const getEditorJS = async (buf: Buffer) => {
 
     const contentBuf = await innerEncryptor.decrypt(contentEncryptedBuffer, decryptionKey);
 
-    // oxlint-disable-next-line consistent-function-scoping
     const normalizeAndSortJSON = (inputBuf: Buffer): Buffer => {
       try {
         const str = inputBuf.toString("utf8");
@@ -218,7 +216,6 @@ export const pulumiEncrypt = async () => {
   for (let i = 0; i < files.length; i += batchSize) {
     const batch = files.slice(i, i + batchSize);
 
-    // oxlint-disable-next-line no-await-in-loop
     const results = await Promise.allSettled(
       batch.map((file) => processFile(file, datamitsu, GPG_TTY)),
     );

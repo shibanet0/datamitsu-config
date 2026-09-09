@@ -99,3 +99,31 @@ describe("disabledRulesForOxlint", () => {
     expect(rules["typescript/no-explicit-any"]).toBe("off");
   });
 });
+
+describe("rule aliases", () => {
+  it("translates a rule whose name changed, not just its prefix", () => {
+    // A prefix table cannot express these: the plugin swap renamed the rule as well. Before the
+    // alias table each of them was silently dropped by the known-rules filter, leaving the rule
+    // parked in ESLint and live in oxlint — the exact asymmetry the shared list exists to prevent.
+    expect(toOxlintRuleName("@eslint-react/no-clone-element")).toBe("react/no-clone-element");
+    expect(toOxlintRuleName("react-refresh/only-export-components")).toBe(
+      "react/only-export-components",
+    );
+    expect(toOxlintRuleName("unicorn/no-for-each")).toBe("unicorn/no-array-for-each");
+  });
+
+  it("leaves a rule the prefix table already handles to the prefix table", () => {
+    expect(toOxlintRuleName("@next/next/no-img-element")).toBe("nextjs/no-img-element");
+    expect(toOxlintRuleName("n/no-process-exit")).toBe("node/no-process-exit");
+  });
+
+  it("emits every alias target, so no alias resolves to a name oxlint rejects", () => {
+    const aliased = disabledRuleNames()
+      .map((name) => toOxlintRuleName(name))
+      .filter((name) => !OXLINT_KNOWN_RULES.includes(name));
+
+    // Names that translate to something oxlint does not know are dropped rather than emitted, so
+    // this only fails if an alias points at a rule the pinned build has never had.
+    expect(Object.keys(disabledRulesForOxlint())).not.toEqual(expect.arrayContaining(aliased));
+  });
+});

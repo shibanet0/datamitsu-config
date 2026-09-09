@@ -15,7 +15,7 @@ export async function react(
   return [
     {
       ...recommended,
-      name: "shibanet0/react/rules",
+      name: "s0/react/rules",
       settings: {
         ...recommended.settings,
         "react-x": {

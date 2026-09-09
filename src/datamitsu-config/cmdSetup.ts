@@ -13,7 +13,6 @@ import { golangciYaml } from "./setup/_golangci_yaml";
 import { lsLintYml } from "./setup/_ls_lint_yml";
 import { nodeVersion } from "./setup/_node_version";
 import { npmrc } from "./setup/_npmrc";
-import { oxlintrcJson } from "./setup/_oxlintrc_json";
 import { pinactYaml } from "./setup/_pinact_yaml";
 import { sqruff } from "./setup/_sqruff";
 import { syncpackrcJson } from "./setup/_syncpackrc_json";
@@ -36,6 +35,7 @@ import { knipConfigJs } from "./setup/knip_config_js";
 import { lefthookYaml } from "./setup/lefthook_yaml";
 import { mdsfJson } from "./setup/mdsf_json";
 import { oxfmtConfigTs } from "./setup/oxfmt_config_ts";
+import { oxlintConfigMts } from "./setup/oxlint_config_mts";
 import { packageJson } from "./setup/package_json";
 import { pnpmWorkspaceYaml } from "./setup/pnpm_workspace_yaml";
 import { prettierConfigMjs } from "./setup/prettier_config_mjs";
@@ -62,7 +62,6 @@ export const setup: config.MapOfConfigSetup = {
   ".ls-lint.yml": lsLintYml,
   ".node-version": nodeVersion,
   ".npmrc": npmrc,
-  ".oxlintrc.json": oxlintrcJson,
   ".pinact.yaml": pinactYaml,
   ".sqruff": sqruff,
   ".syncpackrc.json": syncpackrcJson,
@@ -84,6 +83,7 @@ export const setup: config.MapOfConfigSetup = {
   "lefthook.yaml": lefthookYaml,
   "mdsf.json": mdsfJson,
   "oxfmt.config.ts": oxfmtConfigTs,
+  "oxlint.config.mts": oxlintConfigMts,
   "package.json": packageJson,
   "pnpm-workspace.yaml": pnpmWorkspaceYaml,
   "prettier.config.mjs": prettierConfigMjs,

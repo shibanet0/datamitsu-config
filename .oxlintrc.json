@@ -1,6 +1,0 @@
-{
-  "$schema": "./.datamitsu/oxlint_configuration_schema.json",
-  "extends": [
-    "./.datamitsu/.oxlintrc.json"
-  ]
-}

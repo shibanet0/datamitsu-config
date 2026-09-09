@@ -6,7 +6,7 @@ export async function turbo(): Promise<TypedFlatConfigItem[]> {
   return [
     plugin.configs!["flat/recommended"] as unknown as TypedFlatConfigItem,
     // {
-    //   name: "shibanet0/turbo/rules",
+    //   name: "s0/turbo/rules",
     //   plugins: {
     //     turbo: plugin.default,
     //   },
