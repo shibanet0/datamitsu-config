@@ -14,10 +14,7 @@ export async function arrayFunc(): Promise<TypedFlatConfigItem[]> {
       },
     },
     {
-      rules: {
-        "array-func/from-map": "off",
-        "array-func/prefer-array-from": "off",
-      },
+      rules: {},
     },
   ];
 }

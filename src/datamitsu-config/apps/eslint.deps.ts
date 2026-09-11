@@ -41,6 +41,9 @@ export const eslintDeps = {
   "eslint-plugin-i18next": nodeVersions["eslint-plugin-i18next"].version,
   "eslint-plugin-import-x": nodeVersions["eslint-plugin-import-x"].version,
   "eslint-plugin-jsdoc": nodeVersions["eslint-plugin-jsdoc"].version,
+  // Kept as a dependency although nothing imports it any more: the app installs against a frozen
+  // lockfile whose blob is generated elsewhere, so dropping the entry breaks the install until that
+  // blob is regenerated. The plugin itself is no longer loaded — jsonc owns .json now.
   "eslint-plugin-json": nodeVersions["eslint-plugin-json"].version,
   "eslint-plugin-json-schema-validator":
     nodeVersions["eslint-plugin-json-schema-validator"].version,

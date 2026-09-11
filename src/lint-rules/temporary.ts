@@ -266,8 +266,6 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "jsdoc/require-returns-check": "-",
   "jsdoc/require-returns-description": "1 in the repo",
   "jsdoc/tag-lines": "80 in the repo",
-  "json-schema-validator/no-invalid":
-    "3 in the repo \u{2014} the bundled schema uses a draft where exclusiveMinimum is a number, not a boolean",
   // jsx-a11y-x
   "jsx-a11y-x/alt-text": "2 eslint configs",
   "jsx-a11y-x/anchor-has-content": "2 eslint configs",
@@ -545,7 +543,6 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "unicorn/require-module-specifiers": "off in datamitsu-config, 1 oxlint config",
   "unicorn/require-post-message-target-origin": "1 oxlint config",
   "unicorn/single-line-block-comment-style": "2 eslint configs",
-  "unused-imports/no-unused-vars": "-",
   "vitest/consistent-test-filename": "-",
   "vitest/prefer-expect-resolves": "off",
   "vitest/prefer-importing-vitest-globals": "off",

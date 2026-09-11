@@ -21,7 +21,6 @@ export const typescript = async (): Promise<TypedFlatConfigItem[]> => {
         },
       ],
       // temporary: disabled until plugin ecosystem types improve
-      "@typescript-eslint/no-unused-vars": "off",
       // "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     } satisfies Rules,
   });

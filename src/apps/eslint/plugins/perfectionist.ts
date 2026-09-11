@@ -92,9 +92,7 @@ export async function perfectionist(): Promise<TypedFlatConfigItem[]> {
       plugins: {
         perfectionist: plugin.default,
       },
-      rules: {
-        "perfectionist/sort-objects": "off",
-      },
+      rules: {},
     },
   ];
 }

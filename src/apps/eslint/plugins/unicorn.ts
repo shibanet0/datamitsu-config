@@ -25,10 +25,6 @@ export async function unicorn(): Promise<TypedFlatConfigItem[]> {
       files: [GLOB_SRC],
       rules: {
         "unicorn/no-keyword-prefix": ["error", { disallowedPrefixes: ["new"] }],
-        "unicorn/no-unreadable-iife": "off",
-        "unicorn/prefer-add-event-listener": "off",
-        "unicorn/prefer-dom-node-text-content": "off",
-        "unicorn/prevent-abbreviations": "off",
       },
     },
   ];

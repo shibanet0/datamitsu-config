@@ -15,7 +15,6 @@ export async function vanillaExtract(): Promise<TypedFlatConfigItem[]> {
       },
       rules: {
         ...plugin.default.configs.recommended.rules,
-        "vanilla-extract/no-empty-style-blocks": "off",
       },
     },
   ];

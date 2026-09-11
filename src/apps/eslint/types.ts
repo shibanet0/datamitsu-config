@@ -88,9 +88,6 @@ export interface DefineConfigOptions {
     jsdoc?: {
       disabled?: boolean;
     };
-    json?: {
-      disabled?: boolean;
-    };
     "json-schema-validator"?: {
       disabled?: boolean;
     };

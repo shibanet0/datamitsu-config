@@ -15,10 +15,7 @@ export async function jsxA11y(): Promise<TypedFlatConfigItem[]> {
     },
 
     {
-      rules: {
-        "jsx-a11y-x/click-events-have-key-events": "off",
-        "jsx-a11y-x/interactive-supports-focus": "off",
-      },
+      rules: {},
     },
   ];
 }

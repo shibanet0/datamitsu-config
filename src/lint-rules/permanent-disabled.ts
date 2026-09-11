@@ -26,6 +26,11 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "@typescript-eslint/prefer-readonly-parameter-types":
     "every parameter would need a deep readonly type",
   /**
+   * Style opinions this codebase has already settled the other way, surfaced when the undocumented
+   * turn-offs in the plugin files were removed. Each was already off; only the reason is new.
+   */
+  "array-func/prefer-array-from": "43 hits — spread and Array.from are both fine",
+  /**
    * Style opinions this codebase has already settled the other way. Keeping them on would mean
    * rewriting working code to satisfy taste, not correctness.
    */
@@ -37,33 +42,43 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
    * them.
    */
   complexity: "cyclomatic complexity cap",
+  "fsecond/no-inline-interfaces": "27 hits — an inline object type is often the clearest signature",
+
+  "fsecond/prefer-destructured-optionals":
+    "39 hits — an optional parameter is not always an option bag",
   "func-names": "anonymous callbacks are fine",
   "func-style": "both declarations and expressions are used deliberately",
-
   "id-length": "identifier length cap",
+
+  /**
+   * Import resolution, decided the same way n/no-missing-import already was: this stack is
+   * bundler-resolved and these plugins resolve the way Node does.
+   */
+  "import-x/named": "resolution-based, and this stack is bundler-resolved",
+
+  "import-x/no-unresolved":
+    "219 hits, none real — extensionless and .ts-suffixed paths read as missing",
   "init-declarations": "declare-then-assign is fine",
+
   /**
    * JSDoc tags that restate what TypeScript already says. A `@returns` type in a comment is a
    * second, unchecked copy of the signature — exactly the duplication types exist to remove.
    */
   "jsdoc/require-returns":
     "TypeScript already states the return type; a `@returns` tag restates it and rots separately",
+
   "jsdoc/require-returns-type":
     "the type is in the signature \u{2014} writing it again in the comment is the thing TS removed",
-
   "jsdoc/require-throws-type": "same: a thrown type belongs in the code, not in a tag",
-
   "jsdoc/valid-types":
     "validates JSDoc type syntax, which this codebase does not use for types at all",
   "max-classes-per-file": "class count cap",
 
   "max-depth": "nesting depth cap",
-
   "max-lines": "file length cap",
   "max-lines-per-function": "function length cap",
   "max-params": "parameter count cap",
   "max-statements": "statement count cap",
-
   /**
    * Needs project-specific configuration this shared config cannot supply, and reports nonsense
    * without it rather than staying quiet.
@@ -78,6 +93,7 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
    */
   "no-duplicate-imports":
     "import-x/no-duplicates owns duplicate imports, and understands type-only imports",
+
   "no-else-return": "the symmetric branch often reads better",
   "no-eq-null": "`== null` is the idiomatic null-or-undefined check; eqeqeq covers the rest",
   /**
@@ -90,7 +106,6 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
     "generated config assigns onto the global object — goja has no module system",
   "no-inline-comments": "trailing comments are used deliberately",
   "no-lonely-if": "`else { if }` is sometimes the clearer shape",
-
   "no-magic-numbers": "forces a named constant for every literal",
   "no-negated-condition": "negated conditions are often the shorter path",
   "no-nested-ternary": "nested ternaries are used deliberately in expression position",
@@ -110,6 +125,15 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "oxc/no-rest-spread-properties": "generated config spreads the caller's overrides",
   "prefer-destructuring": "both forms are fine",
   "prefer-template": "concatenation is fine for two operands",
+  /**
+   * Caps and shapes already decided elsewhere in this list: complexity next to core complexity,
+   * nested-conditional next to no-nested-ternary, todo-tag next to no-warning-comments.
+   */
+  "sonarjs/cognitive-complexity": "cognitive complexity cap, same decision as core complexity",
+  "sonarjs/no-nested-conditional": "same as core no-nested-ternary",
+  "sonarjs/no-nested-template-literals": "nesting a template literal is sometimes the shorter read",
+  "sonarjs/no-os-command-from-path": "this package runs pnpm and node by name on purpose",
+  "sonarjs/todo-tag": "same as no-warning-comments — TODO is tracked in docs/backlog, not banned",
   "sort-imports": "perfectionist/sort-imports owns import order",
   "sort-keys": "perfectionist/sort-objects owns key order",
   "unicorn/empty-brace-spaces": "prettier / oxfmt own whitespace",

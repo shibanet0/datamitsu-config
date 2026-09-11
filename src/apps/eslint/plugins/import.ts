@@ -14,14 +14,7 @@ export async function pluginImport(): Promise<TypedFlatConfigItem[]> {
       },
     },
     {
-      rules: {
-        "import-x/extensions": "off",
-        "import-x/named": "off",
-        "import-x/no-extraneous-dependencies": "off",
-        "import-x/no-relative-packages": "off",
-        "import-x/no-unresolved": "off",
-        "import-x/order": "off",
-      },
+      rules: {},
     },
   ];
 }

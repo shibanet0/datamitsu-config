@@ -65,7 +65,7 @@ const UNTRANSLATABLE_OXLINT_PREFIX: Record<string, string> = {
 const PLACEHOLDER_REASON = /^(-|off|off in datamitsu-config|\d+ (eslint|oxlint) configs?)$/;
 
 interface Entry {
-  list: "permanent" | "temporary";
+  list: "permanent-disabled" | "temporary";
   reason: string;
   rule: string;
 }
@@ -78,7 +78,7 @@ interface Problem {
 
 const entries: Entry[] = [
   ...Object.entries(PERMANENTLY_DISABLED_RULES).map(([rule, reason]): Entry => ({
-    list: "permanent",
+    list: "permanent-disabled",
     reason: reason ?? "",
     rule,
   })),
@@ -95,6 +95,15 @@ const inventory = JSON.parse(
 
 function bareName(rule: string): string {
   return rule.slice(rule.lastIndexOf("/") + 1);
+}
+
+/**
+ * Whether a name is a rule at all, according to the census — which is the only thing here that
+ * knows. A plugin file also carries `linterOptions`, whose keys look identical to rule names when
+ * read line by line.
+ */
+function isKnownRule(name: string): boolean {
+  return name in inventory.eslint || toOxlintRuleName(name) in inventory.oxlint;
 }
 
 function toOxlintRuleName(name: string): string {
@@ -195,6 +204,14 @@ for (const file of (await fsPromise.readdir(pluginDirectory)).filter((f) => f.en
     const match = /^\s*"?([@a-zA-Z0-9_/-]+)"?:\s*(?:"off"|\[\s*"off")/.exec(line);
 
     if (!match?.[1]) {
+      return;
+    }
+
+    // `name: "off"` is also the shape of a linter option — `reportUnusedDisableDirectives: "off"`
+    // in `linterOptions` was reported here as a rule turned off outside the lists, which it is not.
+    // The census knows every real rule name, so ask it rather than trying to tell them apart by
+    // syntax.
+    if (!isKnownRule(match[1])) {
       return;
     }
 

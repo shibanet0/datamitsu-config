@@ -11,7 +11,6 @@ import type {
 import { disabledRulesForESLint, enabledRulesForESLint } from "../../lint-rules";
 import {
   GLOB_EXCLUDE,
-  GLOB_HTML,
   GLOB_JSON,
   GLOB_JSON5,
   GLOB_JSONC,
@@ -252,7 +251,6 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
       loader: () => import("./plugins/no-unsanitized").then((r) => r.noUnsanitized()),
       name: "no-unsanitized",
     },
-    { loader: () => import("./plugins/json").then((r) => r.json()), name: "json" },
     { loader: () => import("./plugins/jsdoc").then((r) => r.jsdoc()), name: "jsdoc" },
     {
       condition: hasBrowserTargets,
@@ -415,14 +413,13 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   //
   // That rule is also why neither it nor the marker is named here: it reads comment text, and the
   // rule's own name contains the token, so quoting either made this file report itself.
-  composer.setDefaultIgnores(() => [
-    GLOB_JSON,
-    GLOB_JSON5,
-    GLOB_JSONC,
-    GLOB_HTML,
-    GLOB_YAML,
-    GLOB_TOML,
-  ]);
+  // `GLOB_HTML` is deliberately absent. `eslint-plugin-html` ships no rules of its own — it extracts
+  // `<script>` bodies so the ordinary JavaScript blocks can lint them, and every one of those blocks
+  // is unscoped. Listing `.html` here therefore turned all of them off and left the plugin doing
+  // nothing at all: 632 rules resolved for an HTML file, every one of them off, against 519 on for a
+  // `.tsx`. The other five extensions have plugins that own them; HTML has a plugin that hands the
+  // work back.
+  composer.setDefaultIgnores(() => [GLOB_JSON, GLOB_JSON5, GLOB_JSONC, GLOB_YAML, GLOB_TOML]);
 
   composer.append(...raiseWarningsToErrors(resolved));
 

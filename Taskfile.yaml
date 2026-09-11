@@ -169,7 +169,7 @@ tasks:
       # and rightly: a catch-all hides whatever a future json2ts release starts tripping. Naming
       # the four sorting rules keeps the rest of the file linted. The member order here
       # is json2ts's, not ours, so those four cannot be satisfied.
-      - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts --bannerComment "/* eslint-disable perfectionist/sort-interfaces, perfectionist/sort-intersection-types, perfectionist/sort-modules, perfectionist/sort-object-types, perfectionist/sort-union-types, sonarjs/no-duplicate-in-composite, unicorn/prefer-type-literal-last */ /** Generated from oxlint_configuration_schema.json by \`task oxlint:codegen\` — do not edit. json2ts decides the member order, so the style rules cannot be satisfied here. */"
+      - pnpm exec json2ts --input oxlint_configuration_schema.json --output src/apps/oxlint/schema.d.ts --bannerComment "/* eslint-disable perfectionist/sort-interfaces, perfectionist/sort-intersection-types, perfectionist/sort-modules, perfectionist/sort-object-types, perfectionist/sort-union-types, sonarjs/no-duplicate-in-composite, sonarjs/redundant-type-aliases, unicorn/prefer-type-literal-last */ /** Generated from oxlint_configuration_schema.json by \`task oxlint:codegen\` — do not edit. json2ts decides the member order, so the style rules cannot be satisfied here. */"
     desc: Generate TypeScript types from oxlint JSON schema
   oxlint:sync:known-rules:
     cmds:
