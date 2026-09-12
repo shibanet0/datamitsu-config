@@ -73,6 +73,6 @@ Reference = [
   { Apps = "reference/apps.md" },
   { Tools = "reference/tools.md" },
   { "Project Types" = "reference/project-types.md" },
-  { "Setup Configs" = "reference/setup-configs.md" },
+  { "Managed Configs" = "reference/managed-configs.md" },
   { "TypeScript Configurations" = "reference/tsconfig.md" },
 ]

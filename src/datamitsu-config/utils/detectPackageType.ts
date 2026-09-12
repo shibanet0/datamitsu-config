@@ -19,7 +19,7 @@ const UNSET_TYPE_ECOSYSTEM_DEPENDENCIES = new Set([
 ]);
 
 // Returns the `type` value to write, or undefined to leave `type` unset (omitted
-// from package.json — see the consumer in setup/package_json.ts).
+// from package.json — see the consumer in managed-configs/package_json.ts).
 export const detectPackageType = (data: PackageJson): "module" | undefined => {
   const dependencyNames = [
     data.dependencies,

@@ -2,9 +2,9 @@
  * Fresh-init smoke test.
  *
  * Proves a brand-new consumer repo can adopt the _locally built_ config and run the full onboarding
- * — `datamitsu init` -> `setup` -> `check` — without errors. This catches regressions where a
- * config change breaks a from-scratch project (e.g. an invalid scaffolded pnpm-workspace.yaml, a
- * broken setup chain hash, or a tool that fails on an empty tree).
+ * — `datamitsu init` -> `config reconcile` -> `check` — without errors. This catches regressions
+ * where a config change breaks a from-scratch project (e.g. an invalid scaffolded
+ * pnpm-workspace.yaml, a broken managed-config chain hash, or a tool that fails on an empty tree).
  *
  * How it works, and two deliberate choices:
  *
@@ -13,11 +13,11 @@
  *    config-inheritance path a consumer uses, with no npm pack / install of the config package. It
  *    also lets the fixture layer `skip: true` onto prose/spell tools that a fresh project has not
  *    configured yet (vale, harper-cli, cspell) and knip (no source tree).
- * 2. Isolated pnpm store. `datamitsu setup`/`init` patch files inside the temp repo's node_modules,
- *    which hard-link into whatever pnpm store the install used. Pointing the store at a throwaway
- *    dir (npm_config_store_dir) keeps those writes off the developer's global store — otherwise a
- *    local run would poison it for every other repo. In CI the store is ephemeral, so this is a
- *    no-op there.
+ * 2. Isolated pnpm store. `datamitsu config reconcile`/`init` patch files inside the temp repo's
+ *    node_modules, which hard-link into whatever pnpm store the install used. Pointing the store at
+ *    a throwaway dir (npm_config_store_dir) keeps those writes off the developer's global store —
+ *    otherwise a local run would poison it for every other repo. In CI the store is ephemeral, so
+ *    this is a no-op there.
  *
  * Note: the temp repo is driven with a bare `pnpm exec datamitsu` on purpose. Unlike the `pnpm dm`
  * wrapper (which passes `--before-config`, and thereby makes datamitsu ignore
@@ -141,7 +141,7 @@ async function main(): Promise<void> {
   const storeDir = path.join(base, "store");
   await mkdir(work, { recursive: true });
   await mkdir(storeDir, { recursive: true });
-  // Isolated store keeps setup/init's node_modules patches off the global store.
+  // Isolated store keeps reconcile/init's node_modules patches off the global store.
   const env: NodeJS.ProcessEnv = { ...process.env, npm_config_store_dir: storeDir };
 
   try {
@@ -155,7 +155,7 @@ async function main(): Promise<void> {
     );
     // Acknowledge esbuild's (unused) native build so the initial install does not
     // error under ERR_PNPM_IGNORED_BUILDS; storeDir is redundant with the env var
-    // but harmless before setup overwrites this file.
+    // but harmless before reconcile overwrites this file.
     await writeFile(
       path.join(work, "pnpm-workspace.yaml"),
       `allowBuilds:\n  esbuild: false\nstoreDir: ${storeDir}\n`,
@@ -178,11 +178,23 @@ async function main(): Promise<void> {
     ); // cspell:disable-line
     assertOk("init", await run("datamitsu init", "pnpm", ["exec", "datamitsu", "init"], work, env));
     assertOk(
-      "setup",
-      await run("datamitsu setup", "pnpm", ["exec", "datamitsu", "setup"], work, env),
+      "reconcile",
+      await run(
+        "datamitsu config reconcile",
+        "pnpm",
+        ["exec", "datamitsu", "config", "reconcile"],
+        work,
+        env,
+      ),
     );
     await run("git add", "git", ["add", "-A"], work, env);
-    await run("git commit", "git", ["commit", "-qm", "chore: datamitsu setup"], work, env);
+    await run(
+      "git commit",
+      "git",
+      ["commit", "-qm", "chore: datamitsu config reconcile"],
+      work,
+      env,
+    );
     assertOk(
       "check",
       await run("datamitsu check", "pnpm", ["exec", "datamitsu", "check"], work, env),
@@ -198,7 +210,7 @@ async function main(): Promise<void> {
     ];
     for (const name of expected) {
       if (!(await exists(path.join(work, name)))) {
-        throw new Error(`expected setup to scaffold ${name}, but it is missing`);
+        throw new Error(`expected reconcile to scaffold ${name}, but it is missing`);
       }
     }
     console.log(`  ✓ scaffold present (${expected.join(", ")})`);

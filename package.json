@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.2.1",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260912.236fd42",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",
@@ -165,7 +165,7 @@
     "vitest": "4.1.7",
     "yaml": "2.9.0"
   },
-  "packageManager": "pnpm@11.22.0",
+  "packageManager": "pnpm@12.4.1",
   "engines": {
     "node": ">=22.12.0"
   },

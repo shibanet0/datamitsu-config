@@ -2,10 +2,10 @@
 
 const _getConfig = (config: config.Config): config.Config => ({
   ...config,
-  setup: {
-    ...config.setup,
+  managedConfigs: {
+    ...config.managedConfigs,
     "cspell.config.mjs": {
-      ...config.setup?.["cspell.config.mjs"],
+      ...config.managedConfigs?.["cspell.config.mjs"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((prev) => {
@@ -23,7 +23,7 @@ export default defineConfig((prev) => {
       expectChainHash: "xxh3:84e8fe2861e794390eb299da516f3d4b",
     },
     "eslint.config.mjs": {
-      ...config.setup?.["eslint.config.mjs"],
+      ...config.managedConfigs?.["eslint.config.mjs"],
       content: () => /* js */ `import { globalIgnores } from "@eslint/config-helpers";
 import { join } from "node:path";
 
@@ -65,7 +65,7 @@ export default [
       expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
     },
     "knip.config.js": {
-      ...config.setup?.["knip.config.js"],
+      ...config.managedConfigs?.["knip.config.js"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/knip.config.js";
 
 export default defineConfig((prev) => ({
@@ -112,8 +112,8 @@ export default defineConfig((prev) => ({
       expectChainHash: "xxh3:3367bb8a2b161dfca86bb5eaf61bb486",
     },
     "lefthook.yaml": {
-      ...config.setup?.["lefthook.yaml"],
-      content: () => /*yaml*/ `glob_matcher: "doublestar"
+      ...config.managedConfigs?.["lefthook.yaml"],
+      content: () => /*yaml*/ `glob_matcher: doublestar
 pre-commit:
   commands:
     datamitsu-init:
@@ -125,7 +125,7 @@ pre-commit:
       stage_fixed: true
     docs-generate:
       priority: 30
-      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md"
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/managed-configs.md"
       stage_fixed: true
     datamitsu-check:
       priority: 40
@@ -153,10 +153,10 @@ post-checkout:
       run: pnpm i -y
   parallel: false
     `,
-      expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
+      expectChainHash: "xxh3:7e1dbe8d0803d5ec010184d4fe062ac9",
     },
     "package.json": {
-      ...config.setup?.["package.json"],
+      ...config.managedConfigs?.["package.json"],
       content: () => {
         return (
           JSON.stringify(
@@ -245,7 +245,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.2.1",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260912.236fd42",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -336,7 +336,7 @@ post-checkout:
                 vitest: "4.1.7",
                 yaml: "2.9.0",
               },
-              packageManager: "pnpm@11.22.0",
+              packageManager: "pnpm@12.4.1",
               engines: {
                 node: ">=22.12.0",
               },
@@ -353,10 +353,10 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:90ba5596b1288529fd2dd90de31b27b3",
+      expectChainHash: "xxh3:5adb96dd5501e6cacef9c4ce9696ffcc",
     },
     "pnpm-workspace.yaml": {
-      ...config.setup?.["pnpm-workspace.yaml"],
+      ...config.managedConfigs?.["pnpm-workspace.yaml"],
       content: () => /*yaml*/ `allowBuilds:
   esbuild: false
   unrs-resolver: false
@@ -371,7 +371,6 @@ enableGlobalVirtualStore: true
 enablePrePostScripts: false
 engineStrict: true
 hoistPattern: []
-ignorePatchFailures: false
 lockfile: true
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
@@ -380,23 +379,21 @@ minimumReleaseAgeExclude:
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
-packageManagerStrict: true
-packageManagerStrictVersion: true
 preferFrozenLockfile: true
 resolutionMode: lowest-direct
 savePrefix: ""
 strictDepBuilds: true
 strictSsl: true
 trustLockfile: true
-trustPolicy:
-  allowDowngrade:
-    - semver@6.3.1
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@6.3.1
 unsafePerm: false
 updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:d6e94a4265385700f8f98b13822382af",
+      expectChainHash: "xxh3:8ca0a3befab542f90819df29a1f27de4",
     },
   },
 });
@@ -407,6 +404,8 @@ globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [
   "datetimez",
+  "frontmatter",
+  "triaging",
   "errmsg",
   "flynt",
   "perflint",
@@ -555,4 +554,5 @@ const cspellWords: string[] = [
   "runtimeconfig",
   "Kysely",
   "sqlc",
+  "ELIFECYCLE",
 ];

@@ -15,14 +15,12 @@ export const eslintApp: BinManager.App = {
         esbuild: false,
         "unrs-resolver": false,
       },
-      trustPolicy: {
-        allowDowngrade: [
-          // semver@6.3.1 (transitive dep of eslint-plugin-import) lost provenance
-          // attestation compared to earlier versions — pnpm flags this as a possible
-          // takeover. Package is legitimate; maintainer just didn't sign this release.
-          "semver@6.3.1",
-        ],
-      },
+      trustPolicyExclude: [
+        // semver@6.3.1 (transitive dep of eslint-plugin-import) lost provenance
+        // attestation compared to earlier versions — pnpm flags this as a possible
+        // takeover. Package is legitimate; maintainer just didn't sign this release.
+        "semver@6.3.1",
+      ],
     }),
   },
   links: {
