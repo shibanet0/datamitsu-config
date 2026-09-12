@@ -101,11 +101,11 @@ After installation, initialize datamitsu in your project:
 
 ```bash
 pnpm dm init
-pnpm dm setup
+pnpm dm config reconcile
 pnpm dm check
 ```
 
-`dm init` installs managed tool binaries. `dm setup` initializes configuration files. `dm check` runs all configured linters and formatters in one pass.
+`dm init` installs managed tool binaries. `dm config reconcile` writes the managed configuration files and runs `dm fix`. `dm check` runs all configured linters and formatters in one pass.
 
 ## What's Included
 

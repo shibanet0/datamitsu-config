@@ -2,10 +2,10 @@
 
 const _getConfig = (config: config.Config): config.Config => ({
   ...config,
-  setup: {
-    ...config.setup,
+  managedConfigs: {
+    ...config.managedConfigs,
     "cspell.config.mjs": {
-      ...config.setup?.["cspell.config.mjs"],
+      ...config.managedConfigs?.["cspell.config.mjs"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((prev) => {
@@ -23,7 +23,7 @@ export default defineConfig((prev) => {
       expectChainHash: "xxh3:84e8fe2861e794390eb299da516f3d4b",
     },
     "eslint.config.mjs": {
-      ...config.setup?.["eslint.config.mjs"],
+      ...config.managedConfigs?.["eslint.config.mjs"],
       content: () => /* js */ `import { globalIgnores } from "@eslint/config-helpers";
 import { join } from "node:path";
 
@@ -65,7 +65,7 @@ export default [
       expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
     },
     "knip.config.js": {
-      ...config.setup?.["knip.config.js"],
+      ...config.managedConfigs?.["knip.config.js"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/knip.config.js";
 
 export default defineConfig((prev) => ({
@@ -112,7 +112,7 @@ export default defineConfig((prev) => ({
       expectChainHash: "xxh3:3367bb8a2b161dfca86bb5eaf61bb486",
     },
     "lefthook.yaml": {
-      ...config.setup?.["lefthook.yaml"],
+      ...config.managedConfigs?.["lefthook.yaml"],
       content: () => /*yaml*/ `glob_matcher: "doublestar"
 pre-commit:
   commands:
@@ -125,7 +125,7 @@ pre-commit:
       stage_fixed: true
     docs-generate:
       priority: 30
-      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/setup-configs.md"
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/managed-configs.md"
       stage_fixed: true
     datamitsu-check:
       priority: 40
@@ -156,7 +156,7 @@ post-checkout:
       expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
     },
     "package.json": {
-      ...config.setup?.["package.json"],
+      ...config.managedConfigs?.["package.json"],
       content: () => {
         return (
           JSON.stringify(
@@ -245,7 +245,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.2.1",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260912.236fd42",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -356,7 +356,7 @@ post-checkout:
       expectChainHash: "xxh3:90ba5596b1288529fd2dd90de31b27b3",
     },
     "pnpm-workspace.yaml": {
-      ...config.setup?.["pnpm-workspace.yaml"],
+      ...config.managedConfigs?.["pnpm-workspace.yaml"],
       content: () => /*yaml*/ `allowBuilds:
   esbuild: false
   unrs-resolver: false
@@ -388,9 +388,9 @@ savePrefix: ""
 strictDepBuilds: true
 strictSsl: true
 trustLockfile: true
-trustPolicy:
-  allowDowngrade:
-    - semver@6.3.1
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@6.3.1
 unsafePerm: false
 updateNotifier: false
 verifyDepsBeforeRun: install

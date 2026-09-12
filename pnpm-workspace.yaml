@@ -29,9 +29,9 @@ savePrefix: ""
 strictDepBuilds: true
 strictSsl: true
 trustLockfile: true
-trustPolicy:
-  allowDowngrade:
-    - semver@6.3.1
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@6.3.1
 unsafePerm: false
 updateNotifier: false
 verifyDepsBeforeRun: install

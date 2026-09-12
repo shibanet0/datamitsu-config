@@ -349,16 +349,14 @@ const allApps: BinManager.MapOfApps = {
         allowBuilds: {
           "playwright-chromium": true,
         },
-        trustPolicy: {
-          allowDowngrade: [
-            // semver@6.3.1 and undici-types@6.21.0 (transitive deps of slidev)
-            // lost provenance attestation compared to earlier versions — pnpm
-            // flags this as a possible takeover. Both are legitimate; the
-            // maintainers just didn't sign these releases.
-            "semver@6.3.1",
-            "undici-types@6.21.0",
-          ],
-        },
+        trustPolicyExclude: [
+          // semver@6.3.1 and undici-types@6.21.0 (transitive deps of slidev)
+          // lost provenance attestation compared to earlier versions — pnpm
+          // flags this as a possible takeover. Both are legitimate; the
+          // maintainers just didn't sign these releases.
+          "semver@6.3.1",
+          "undici-types@6.21.0",
+        ],
       }),
     },
     lazy: true,
@@ -393,9 +391,7 @@ const allApps: BinManager.MapOfApps = {
     files: {
       "pnpm-workspace.yaml": YAML.stringify({
         allowBuilds: { "@scarf/scarf": false },
-        trustPolicy: {
-          allowDowngrade: ["rollup@2.80.0"],
-        },
+        trustPolicyExclude: ["rollup@2.80.0"],
       }),
     },
     node: {

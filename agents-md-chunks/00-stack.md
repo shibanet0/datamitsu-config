@@ -12,8 +12,8 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 
 Every datamitsu command follows the same rule:
 
-- Inside a pnpm monorepo wired with this config: `pnpm dm <command>` — `pnpm dm check`, `pnpm dm setup`, and managed tools via `pnpm dm exec <tool>` (`pnpm dm exec air`, `pnpm dm exec goose`, `pnpm dm exec task -- <task>`, …).
-- If the repo has no pnpm stack initialized: call the system-installed `datamitsu` binary directly — `datamitsu check`, `datamitsu setup`, `datamitsu exec <tool>`.
+- Inside a pnpm monorepo wired with this config: `pnpm dm <command>` — `pnpm dm check`, `pnpm dm config reconcile`, and managed tools via `pnpm dm exec <tool>` (`pnpm dm exec air`, `pnpm dm exec goose`, `pnpm dm exec task -- <task>`, …).
+- If the repo has no pnpm stack initialized: call the system-installed `datamitsu` binary directly — `datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`.
 
 ### Web
 
