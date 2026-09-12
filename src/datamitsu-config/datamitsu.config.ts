@@ -1,6 +1,6 @@
 import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents.md";
 import { mapOfApps } from "./apps";
-import { initCommands, setup } from "./cmdSetup";
+import { initCommands, managedConfigs } from "./cmdManagedConfigs";
 import { buildManagedGitleaksToml } from "./gitleaksDefaults";
 import { ociBundle } from "./oci";
 import { parsers } from "./parsers";
@@ -86,7 +86,7 @@ function getConfig(cfg: config.Config): config.Config {
     // datamitsu then seeds the tool store from the bundle on demand instead
     // of downloading every tool individually.
     ...(ociBundle ? { oci: ociBundle } : {}),
-    setup,
+    managedConfigs,
     sharedStorage: {
       ...cfg.sharedStorage,
     },

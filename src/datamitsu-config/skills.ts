@@ -984,7 +984,7 @@ Next steps:
 - Does NOT pick libraries outside the loaded Preferred Stack catalogue without telling the user. If a needed capability is not covered, surface it and ask.
 - Does NOT introduce Tailwind or anything built on it — it is banned.
 - Does NOT bump or change versions of libraries already pinned in the repo.
-- Does NOT run \`dm setup\` or mutate managed configs beyond what is proposed.
+- Does NOT run \`dm config reconcile\` or mutate managed configs beyond what is proposed.
 
 ---
 
@@ -1338,7 +1338,7 @@ export const SKILL_BACKLOG_ADAPTER_CODEX_HASH = "84ee9c13520e092e58b370bed9de566
 export const SKILL_CLEANUP_AGENTS_MD_INSTRUCTIONS_HASH = "622d852ca069742cf6dd803d5744b008e6f9480c75c74b42c4884b06bfddf3ce"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CLAUDE_HASH = "ba21e41a641e6c6f01309fe6563e0c961a4acbd9b55c9eabadb2c8459d55dda2"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "85dab71e883e003e2ee4a9d3f3728c30e0d4535c6062956b412e6e50a5287b9c"; // prettier-ignore
-export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "28a9581cf58b87bd81913b052637f4fd08b624c23f904acddb8492a31d224d1f"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "b7e7cb2678da239c6f7bbf7129bde578ceca44cfa7fc00a68e3525c53320a980"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "b0deeb09ffdc91f7ae267fecb849ca1dd9e530304502492601f6caa345ee22aa"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "c411af06bac7b2c18b68fc83941be0858245bddee75df40bb740cfd26d6341c0"; // prettier-ignore

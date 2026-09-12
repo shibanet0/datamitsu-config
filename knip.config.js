@@ -1,7 +1,7 @@
 import { defineConfig } from "./.datamitsu/knip.config.js";
 
-export default defineConfig((previous) => ({
-  ...previous,
+export default defineConfig((prev) => ({
+  ...prev,
   ignoreBinaries: ["bin/datamitsu.js"],
   ignoreDependencies: [
     "@e18e/eslint-plugin",

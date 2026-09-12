@@ -105,7 +105,7 @@ Next steps:
 - Does NOT pick libraries outside the loaded Preferred Stack catalogue without telling the user. If a needed capability is not covered, surface it and ask.
 - Does NOT introduce Tailwind or anything built on it — it is banned.
 - Does NOT bump or change versions of libraries already pinned in the repo.
-- Does NOT run `dm setup` or mutate managed configs beyond what is proposed.
+- Does NOT run `dm config reconcile` or mutate managed configs beyond what is proposed.
 
 ---
 

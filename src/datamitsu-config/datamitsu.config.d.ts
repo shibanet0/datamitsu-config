@@ -61,7 +61,7 @@ declare global {
   function getConfig(config: config.Config): config.Config;
 
   /**
-   * Recommended pnpm 11 workspace security defaults, injected by the Go engine. Read this object to
+   * Recommended pnpm workspace security defaults, injected by the Go engine. Read this object to
    * publish or extend the defaults — see `sharedStorage["pnpm-workspace-defaults"]` for the
    * canonical YAML output.
    */
@@ -338,7 +338,9 @@ declare global {
       ignoreRules?: string[];
 
       /**
-       * Init commands to run after setup
+       * Commands run by `datamitsu init` after managed tools, runtimes, bundles, and links have
+       * been provisioned. This is unrelated to `datamitsu config reconcile`, which manages
+       * project-owned configuration files.
        */
       initCommands?: MapOfInitCommands;
 
@@ -352,6 +354,13 @@ declare global {
        * entry name.
        */
       lsp?: MapOfLsp;
+
+      /**
+       * Project-owned configuration files managed by `datamitsu config reconcile`. The command
+       * writes these files and then runs `datamitsu fix` by default. Pass `--dry-run` to preview
+       * without writing or fixing, or `--skip-fix` to reconcile without the post-step.
+       */
+      managedConfigs?: MapOfManagedConfigs;
 
       /**
        * OCI bundle that seeds the tool store (pull without docker). Chains as a scalar: the last
@@ -390,18 +399,13 @@ declare global {
       runtimes?: BinManager.MapOfRuntimes;
 
       /**
-       * Config-file setup (managed files written by dm setup)
-       */
-      setup?: MapOfConfigSetup;
-
-      /**
        * Arbitrary key-value storage that flows through the config chain. Any config layer can
        * read/write values via input.sharedStorage. Useful for passing data between config layers
        * that doesn't fit the typed config structure.
        *
        * Well-known keys published by the default config: - `"datamitsu-agent-prompt"`: Markdown
        * guide for AI agents working in datamitsu-managed repos. - `"pnpm-workspace-defaults"`: YAML
-       * string of the recommended pnpm 11 workspace security defaults. Parse with `YAML.parse()`,
+       * string of the recommended pnpm workspace security defaults. Parse with `YAML.parse()`,
        * extend with org/repo-specific settings, and write into a project repo via a Bundle to
        * produce a secure `pnpm-workspace.yaml`. Separate from the auto-merge applied to
        * `App.files["pnpm-workspace.yaml"]` for node apps. See the Supply Chain Security guide for
@@ -476,7 +480,7 @@ declare global {
        * git-root scoped generator build per-directory, per-ecosystem output (e.g. dependabot
        * updates).
        *
-       * Only populated during `dm setup` (empty for other commands).
+       * Only populated during `datamitsu config reconcile` (empty for other commands).
        *
        * @example
        *   [{ type: "npm-package", path: "." }, { type: "golang-package", path: "service" }]
@@ -484,8 +488,8 @@ declare global {
       projectLocations: { path: string; type: string }[];
 
       /**
-       * Detected project types (deduplicated). Only populated during `dm setup` (empty for other
-       * commands).
+       * Detected project types (deduplicated). Only populated during `datamitsu config reconcile`
+       * (empty for other commands).
        */
       projectTypes: string[];
 
@@ -496,9 +500,92 @@ declare global {
     }
 
     /**
-     * Configuration file setup (managed files written by dm setup)
+     * Initialization command to run after clone/install
      */
-    interface ConfigSetup {
+    interface InitCommand {
+      /**
+       * Arguments
+       */
+      args: string[];
+
+      /**
+       * Command to execute (app name from MapOfApps)
+       */
+      command: string;
+
+      /**
+       * Description
+       */
+      description?: string;
+
+      /**
+       * Which project types this applies to Empty = all project types
+       */
+      projectTypes?: string[];
+
+      /**
+       * Only run if this file/directory exists
+       */
+      when?: string;
+    }
+
+    /**
+     * LSP derived declaration: reuse an existing tool's projectTypes/globs and its `outputParser`
+     * instead of declaring a standalone server. RESERVED for Phase 3+ — declaration only, no
+     * runtime behavior in this release.
+     */
+    interface LspDerived {
+      /**
+       * Optional precedence. Ties break alphabetically by entry name.
+       */
+      order?: number;
+
+      /**
+       * Name of the tool (in `tools`) whose projectTypes/globs and `outputParser` this entry
+       * inherits. Must reference an existing tool.
+       */
+      tool: string;
+
+      /**
+       * Discriminator: this entry is derived from an existing tool.
+       */
+      type: "derived";
+    }
+
+    // ========================================
+    // Tool Execution Configuration
+    // ========================================
+
+    /**
+     * LSP proxy declaration: wrap a standalone language server `app`, scoped to one or more project
+     * types. RESERVED for Phase 3+ — declaration only, no runtime behavior in this release.
+     */
+    interface LspProxy {
+      /**
+       * Name of the app (in `apps`) that provides the language server.
+       */
+      app: string;
+
+      /**
+       * Optional precedence. Ties break alphabetically by entry name.
+       */
+      order?: number;
+
+      /**
+       * Project types this server applies to. Must be non-empty.
+       */
+      projectTypes: string[];
+
+      /**
+       * Discriminator: this is a proxy over a standalone language-server app.
+       */
+      type: "proxy";
+    }
+
+    /**
+     * A project-owned configuration file managed by `datamitsu config reconcile`.
+     */
+    interface ManagedConfig {
       /**
        * Function that generates file content Receives context about the project including existing
        * file content if present Optional when deleteOnly is true or linkTarget is set
@@ -520,9 +607,9 @@ declare global {
       /**
        * Pins the XXH3-128 hash of the content entering THIS (root/topmost) config layer — i.e. the
        * output of the whole upstream chain (remote/before layers) before this layer transforms it.
-       * `datamitsu setup` recomputes that hash and aborts with a drift report when it diverges, so
-       * an upstream change to a pinned file surfaces before any overwrite instead of silently
-       * clobbering local overrides.
+       * `datamitsu config reconcile` recomputes that hash and aborts with a drift report when it
+       * diverges, so an upstream change to a pinned file surfaces before any overwrite instead of
+       * silently clobbering local overrides.
        *
        * Opt-in per file and verified only on the root layer (intermediate layers are ignored). The
        * content is hashed byte-for-byte, with no normalization. Format: "xxh3:<32-hex>" (a bare
@@ -567,10 +654,10 @@ declare global {
       scope?: "git-root" | "project";
 
       /**
-       * Tool name(s) this config file belongs to (must match keys in `tools`). `datamitsu setup
-       * --tools <names>` regenerates only configs whose `tools` intersect the selected set; all
-       * others are left untouched. Omit for infrastructure files (.gitignore, lefthook.yaml) not
-       * tied to a single tool — those are skipped whenever `--tools` is passed.
+       * Tool name(s) this config file belongs to (must match keys in `tools`). `datamitsu config
+       * reconcile --tools <names>` considers only configs whose `tools` intersect the selected set;
+       * all others are left untouched. Omit for infrastructure files (.gitignore, lefthook.yaml)
+       * not tied to a single tool — those are skipped whenever `--tools` is passed.
        *
        * @example
        *   ["golangci-lint"];
@@ -578,91 +665,12 @@ declare global {
       tools?: string[];
     }
 
-    /**
-     * Initialization command to run after clone/install
-     */
-    interface InitCommand {
-      /**
-       * Arguments
-       */
-      args: string[];
+    type MapOfInitCommands = Record<string, InitCommand>;
 
-      /**
-       * Command to execute (app name from MapOfApps)
-       */
-      command: string;
-
-      /**
-       * Description
-       */
-      description?: string;
-
-      /**
-       * Which project types this applies to Empty = all project types
-       */
-      projectTypes?: string[];
-
-      /**
-       * Only run if this file/directory exists
-       */
-      when?: string;
-    }
-
-    // ========================================
-    // Tool Execution Configuration
-    // ========================================
+    type MapOfLsp = Record<string, LspDerived | LspProxy>;
 
     /**
-     * LSP derived declaration: reuse an existing tool's projectTypes/globs and its `outputParser`
-     * instead of declaring a standalone server. RESERVED for Phase 3+ — declaration only, no
-     * runtime behavior in this release.
-     */
-    interface LspDerived {
-      /**
-       * Optional precedence. Ties break alphabetically by entry name.
-       */
-      order?: number;
-
-      /**
-       * Name of the tool (in `tools`) whose projectTypes/globs and `outputParser` this entry
-       * inherits. Must reference an existing tool.
-       */
-      tool: string;
-
-      /**
-       * Discriminator: this entry is derived from an existing tool.
-       */
-      type: "derived";
-    }
-
-    /**
-     * LSP proxy declaration: wrap a standalone language server `app`, scoped to one or more project
-     * types. RESERVED for Phase 3+ — declaration only, no runtime behavior in this release.
-     */
-    interface LspProxy {
-      /**
-       * Name of the app (in `apps`) that provides the language server.
-       */
-      app: string;
-
-      /**
-       * Optional precedence. Ties break alphabetically by entry name.
-       */
-      order?: number;
-
-      /**
-       * Project types this server applies to. Must be non-empty.
-       */
-      projectTypes: string[];
-
-      /**
-       * Discriminator: this is a proxy over a standalone language-server app.
-       */
-      type: "proxy";
-    }
-
-    /**
-     * Map of configuration setup with mainFilename as key
+     * Map of managed project configuration files with mainFilename as key
      *
      * @example
      *   {
@@ -671,11 +679,7 @@ declare global {
      *   ".vscode/settings.json": { content: () => "..." }
      *   }
      */
-    type MapOfConfigSetup = Record<string, ConfigSetup>;
-
-    type MapOfInitCommands = Record<string, InitCommand>;
-
-    type MapOfLsp = Record<string, LspDerived | LspProxy>;
+    type MapOfManagedConfigs = Record<string, ManagedConfig>;
 
     type MapOfParsers = Record<string, Parser>;
 
@@ -937,6 +941,16 @@ declare global {
       arity?: "dir" | "many" | "none" | "one";
 
       /**
+       * Controls result caching for this operation.
+       *
+       * File-granularity and unit-granularity operations cache successful results by default;
+       * `false` makes them run every time. Repository-granularity verdicts are deliberately opt-in
+       * because their key hashes every tracked repository file: set `true` only when the operation
+       * is deterministic and its declared inputs form a closed world.
+       */
+      cache?: boolean;
+
+      /**
        * Extra environment variables for this operation Merge priority: OS env < app env < tool
        * operation env
        *
@@ -997,7 +1011,13 @@ declare global {
       input?: "file" | "stdin";
 
       /**
-       * Files that should invalidate the cache when changed Paths are relative to project root
+       * Additional files that affect a unit- or repository-granularity verdict. Each path is
+       * resolved against the task's unit and every ancestor up to the git root, so a package can
+       * inherit a root-level config. Missing paths are ignored until they exist.
+       *
+       * This field does not affect file-granularity cache entries. If a formatter's result for one
+       * file depends on a shared config, use unit granularity so that config can be part of the
+       * verdict input set.
        *
        * @example
        *   ["eslint.config.js", "tsconfig.json"];
@@ -1083,18 +1103,20 @@ declare global {
       /**
        * Named archives to extract into the app's install directory. Archive names can be referenced
        * in Links to create symlinks. Archives are extracted before Files are written, allowing
-       * Files to override.
+       * Files to override. Only valid for Bun, UV, and Node apps; using this field on a binary,
+       * JVM, Go, or shell app is a configuration error.
        */
       archives?: Record<string, ArchiveSpec>;
       binary?: AppConfigBinary;
+      bun?: AppConfigBun;
       /**
        * Human-readable description of the app, shown in exec listing.
        */
       description?: string;
       /**
-       * Custom environment variables for this app, applied to all app kinds (binary, uv, node, jvm,
-       * go, shell). Injected both at install time (uv/node/go dependency install) and at run time
-       * (every app type).
+       * Custom environment variables for this app, applied to all app kinds (binary, bun, uv, node,
+       * jvm, go, shell). Injected both at install time (bun/uv/node/go dependency install) and at
+       * run time (every app type).
        *
        * Values support placeholder expansion (done in Go, never written into the committed config):
        *
@@ -1113,14 +1135,15 @@ declare global {
       env?: Record<string, string>;
       /**
        * Static file contents to write into the app's install directory before the package manager
-       * runs. Keys are filenames; values are file contents.
+       * runs. Keys are filenames; values are file contents. Only valid for Bun, UV, and Node apps;
+       * using this field on a binary, JVM, Go, or shell app is a configuration error.
        *
-       * Special handling for `pnpm-workspace.yaml` on node apps: the entry is NOT written verbatim.
-       * Instead, the installer parses it and shallow-merges it on top of the recommended pnpm 11
-       * workspace security defaults, then writes the merged result. User keys override defaults for
-       * the same top-level key. Use this to add `allowBuilds` for packages that need build scripts
-       * (e.g., puppeteer) without losing the security defaults. See the Supply Chain Security guide
-       * for the full default key list and rationale.
+       * Special handling for `pnpm-workspace.yaml` on Bun and Node apps: the entry is NOT written
+       * verbatim. Instead, the installer parses it and shallow-merges it on top of the recommended
+       * pnpm workspace security defaults, then writes the merged result. User keys override
+       * defaults for the same top-level key. Use this to add `allowBuilds` for packages that need
+       * build scripts (e.g., puppeteer) without losing the security defaults. See the Supply Chain
+       * Security guide for the full default key list and rationale.
        *
        * @example
        *   // Allow puppeteer build scripts; defaults still apply
@@ -1141,7 +1164,8 @@ declare global {
       lazy?: boolean;
       /**
        * Symlinks to create in .datamitsu/ directory, mapping link name to relative path in install
-       * directory.
+       * directory. Only valid for Bun, UV, and Node apps; using this field on a binary, JVM, Go, or
+       * shell app is a configuration error.
        */
       links?: Record<string, string>;
       node?: AppConfigNode;
@@ -1161,6 +1185,27 @@ declare global {
        * Version string for display purposes (e.g. from GitHub release tag).
        */
       version?: string;
+    }
+
+    interface AppConfigBun {
+      /**
+       * JavaScript entrypoint executed by Bun, relative to the app environment. Do not point this
+       * at a `node_modules/.bin` shell shim.
+       *
+       * @example
+       *   "node_modules/eslint/bin/eslint.js";
+       */
+      binPath: string;
+      dependencies?: Record<string, string>;
+      /**
+       * Pnpm-lock.yaml content for reproducible installs. Required for all Bun apps. When prefixed
+       * with "br:", the content is brotli-compressed and base64-encoded. Generate via: datamitsu
+       * config lockfile <appName>
+       */
+      lockFile: string;
+      packageName: string;
+      runtime?: string;
+      version: string;
     }
 
     interface AppConfigGo {
@@ -1315,7 +1360,7 @@ declare global {
       | "zip"
       | "zst";
 
-    type BinHashType = "md5" | "sha1" | "sha256" | "sha384" | "sha512";
+    type BinHashType = "sha256";
 
     interface Bundle {
       /**
@@ -1359,6 +1404,12 @@ declare global {
 
     interface RuntimeConfig {
       /**
+       * Bun-specific runtime configuration (bunVersion, pnpmRuntime). Required when kind is "bun".
+       * The referenced pnpm runtime installs dependencies while Bun executes the installed app and
+       * the `node` of lifecycle scripts.
+       */
+      bun?: RuntimeConfigBun;
+      /**
        * Go-specific runtime configuration (goVersion). Required when kind is "go".
        */
       go?: RuntimeConfigGo;
@@ -1370,16 +1421,34 @@ declare global {
       managed?: RuntimeConfigManaged;
       mode: RuntimeMode;
       /**
-       * Node-specific runtime configuration (nodeVersion, pnpmVersion, pnpmHash). Required when
-       * kind is "node". Node is acquired as a direct, hash-pinned archive (url + hash), like the
-       * jvm runtime.
+       * Node-specific runtime configuration (nodeVersion, pnpmRuntime). Required when kind is
+       * "node". Node is acquired as a direct, hash-pinned archive (url + hash), like the jvm
+       * runtime.
        */
       node?: RuntimeConfigNode;
+      /**
+       * Pnpm-specific runtime configuration (pnpmVersion). Required when kind is "pnpm". pnpm 12 is
+       * a native binary, so it is acquired like any runtime (per-platform `managed.binaries`, each
+       * SHA-256-pinned) and referenced by Node and Bun runtimes through `pnpmRuntime`. No app runs
+       * on it.
+       */
+      pnpm?: RuntimeConfigPNPM;
       system?: RuntimeConfigSystem;
       /**
        * UV-specific runtime configuration (pythonVersion). Optional when kind is "uv".
        */
       uv?: RuntimeConfigUV;
+    }
+
+    interface RuntimeConfigBun {
+      bunVersion: string;
+      /**
+       * Name of the runtime of kind "pnpm" that installs this runtime's apps.
+       *
+       * @example
+       *   "pnpm";
+       */
+      pnpmRuntime: string;
     }
 
     interface RuntimeConfigGo {
@@ -1403,11 +1472,22 @@ declare global {
     interface RuntimeConfigNode {
       nodeVersion: string;
       /**
-       * SHA-256 hash of the PNPM tarball for integrity verification. Required per security policy:
-       * all downloads must have a pinned hash.
+       * Name of the runtime of kind "pnpm" that installs this runtime's apps.
+       *
+       * @example
+       *   "pnpm";
        */
-      pnpmHash: string;
-      pnpmVersion: string;
+      pnpmRuntime: string;
+    }
+
+    interface RuntimeConfigPNPM {
+      /**
+       * Pinned pnpm version. Optional in system mode, where it only feeds cache invalidation.
+       *
+       * @example
+       *   "12.3.4";
+       */
+      pnpmVersion?: string;
     }
 
     interface RuntimeConfigSystem {
@@ -1422,7 +1502,7 @@ declare global {
       pythonVersion?: string;
     }
 
-    type RuntimeKind = "go" | "jvm" | "node" | "uv";
+    type RuntimeKind = "bun" | "go" | "jvm" | "node" | "pnpm" | "uv";
 
     type RuntimeMode = "managed" | "system";
   }
@@ -1454,11 +1534,13 @@ declare global {
     binaryPath: string;
 
     /**
-     * Environment variables with the package prefix (e.g., CHANGE_ME_*) Only includes variables
-     * that start with the prefix defined in ldflags.EnvPrefix
+     * The process environment available to configuration code, except observation-only datamitsu
+     * variables (`DATAMITSU_TRACE`, `DATAMITSU_TRACE_DIR`, and `DATAMITSU_CONFIG_CACHE`). The
+     * config-evaluation cache hashes this same observable environment, so branching on a value
+     * cannot reuse a result produced under a different value.
      *
      * @example
-     *   { "CHANGE_ME_DEBUG": "true", "CHANGE_ME_LOG_LEVEL": "info" }
+     *   { "CI": "true", "NODE_OPTIONS": "--max-old-space-size=4096" }
      */
     env: Record<string, string>;
 

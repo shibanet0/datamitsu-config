@@ -23,7 +23,7 @@ pnpm dm init
 This installs managed tool binaries. To initialize configuration files, run:
 
 ```bash
-pnpm dm setup
+pnpm dm config reconcile
 ```
 
 This creates all necessary configuration files for the managed tools in your project.
@@ -282,9 +282,9 @@ pnpm add -D @shibanet0/datamitsu-config
 pnpm dm init
 
 # Initialize configuration files
-pnpm dm setup
+pnpm dm config reconcile
 
-# Run all checks to verify setup
+# Run all checks to verify the configuration
 pnpm dm check
 ```
 
@@ -298,7 +298,7 @@ pnpm add -D @shibanet0/datamitsu-config
 pnpm dm init
 
 # Initialize configuration files
-pnpm dm setup
+pnpm dm config reconcile
 
 # Check for issues — expect some on first run
 pnpm dm check

@@ -7,10 +7,10 @@
  * updates the registry and the manifest; `sync:datamitsu-version` keeps exactly one entry aligned,
  * `@datamitsu/datamitsu`, and leaves the rest.
  *
- * Latent rather than live: the literal is only applied by `datamitsu setup`, which AGENTS.md
- * forbids in this repository. That is precisely what makes it worth a gate — drift accumulates
- * unobserved, and the day someone does run setup it silently reverts however many bumps have landed
- * since. It is already drifted today.
+ * Latent rather than live: the literal is only applied by `datamitsu config reconcile`, which
+ * AGENTS.md forbids in this repository. That is precisely what makes it worth a gate — drift
+ * accumulates unobserved, and the day someone does run setup it silently reverts however many bumps
+ * have landed since. It is already drifted today.
  *
  *     node scripts/validate-pins.ts    fail if the literal and package.json disagree
  */
@@ -98,7 +98,7 @@ for (const field of DEPENDENCY_FIELDS) {
 if (failed) {
   process.stdout.write(
     "\nThe dependency literal in datamitsu.config.ts manages package.json, so a disagreement\n" +
-      "means `datamitsu setup` would revert the manifest to whatever the literal says.\n" +
+      "means `datamitsu config reconcile` would revert the manifest to whatever the literal says.\n" +
       "Copy the manifest's versions into the literal.\n",
   );
   process.exit(1);
