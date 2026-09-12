@@ -674,14 +674,26 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "oxfmt",
-        args: ["--write", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        args: [
+          "--write",
+          "--no-error-on-unmatched-pattern",
+          "--config",
+          "{root}/oxfmt.config.ts",
+          "{files}",
+        ],
         globs: oxfmtGlobs,
         priority: fixPriority.oxfmt,
         scope: "repository",
       },
       lint: {
         app: "oxfmt",
-        args: ["--check", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        args: [
+          "--check",
+          "--no-error-on-unmatched-pattern",
+          "--config",
+          "{root}/oxfmt.config.ts",
+          "{files}",
+        ],
         globs: oxfmtGlobs,
         priority: lintPriority.oxfmt,
         scope: "repository",

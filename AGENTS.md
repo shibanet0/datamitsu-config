@@ -108,6 +108,10 @@ When wiring a formatter, reference `indentSettings.indentWidth` / `indentSetting
 
 Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.
 
+oxfmt operations must include `--no-error-on-unmatched-pattern`: a staged-file check can contain
+only files that oxfmt ignores (for example `pnpm-lock.yaml`). That is an empty check, not a
+formatter failure.
+
 ## Shared Lint Rule Lists
 
 [src/lint-rules/](src/lint-rules/) is the **single source of truth** for what ESLint and oxlint do with every rule. Both tools read the same three lists:
