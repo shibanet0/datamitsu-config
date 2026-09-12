@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import { spawn } from "node:child_process";
 import { realpathSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";

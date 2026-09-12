@@ -88,7 +88,7 @@ FROM rt-jvm AS app-ktlint
 COPY --link --from=config-split /slices/app-ktlint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ktlint
 
-FROM rt-node AS app-lefthook
+FROM rt-bun AS app-lefthook
 COPY --link --from=config-split /slices/app-lefthook.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook
 
@@ -465,7 +465,7 @@ COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.app
 COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
 COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
-COPY --link --from=app-lefthook /dm/store/.apps/node/lefthook /dm/store/.apps/node/lefthook
+COPY --link --from=app-lefthook /dm/store/.apps/bun/lefthook /dm/store/.apps/bun/lefthook
 COPY --link --from=app-lefthook-sort /dm/store/.apps/bun/lefthook-sort /dm/store/.apps/bun/lefthook-sort
 COPY --link --from=app-markdown-link-check /dm/store/.apps/node/markdown-link-check /dm/store/.apps/node/markdown-link-check
 COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2

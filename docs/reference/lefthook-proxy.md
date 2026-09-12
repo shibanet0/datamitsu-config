@@ -2,7 +2,7 @@
 
 # Lefthook Proxy
 
-The `lefthook` app in this configuration is **not** the upstream Lefthook binary. It is a small Datamitsu-owned Node wrapper that isolates the working tree, runs upstream Lefthook against that isolated state, and puts the working tree back. Upstream Lefthook is still installed — under the private name `dm-internal-lefthook-upstream` — and the proxy does nothing but forward to it for every command that has no isolation policy.
+The `lefthook` app in this configuration is **not** the upstream Lefthook binary. It is a small Datamitsu-owned wrapper running on managed Bun that isolates the working tree, runs upstream Lefthook against that isolated state, and puts the working tree back. Upstream Lefthook is still installed — under the private name `dm-internal-lefthook-upstream` — and the proxy does nothing but forward to it for every command that has no isolation policy.
 
 ## Why
 
@@ -71,4 +71,4 @@ Backups are scoped per worktree, so a crashed run in one linked worktree does no
 | `DATAMITSU_LEFTHOOK_PROXY_ACTIVE`     | set to `1` for the child process; suppresses nested isolation. Do not set by hand |
 | `LEFTHOOK_BIN`                        | standard Lefthook variable; the proxy writes its own path here in installed hooks |
 
-`lefthook install` additionally rewrites each installed hook to call the public proxy and to pin the upstream path, so hooks keep working even when the store is not on `PATH`. Running `lefthook --help` prints a summary of all of the above.
+`lefthook install` additionally rewrites each installed hook to call the public proxy and to pin the upstream path and managed Bun directory, so hooks keep working without a system Bun installation or the store on `PATH`. The hook also sets `BUN_OPTIONS` to disable project Bun configuration, automatic environment-file loading, and automatic package installation. Running `lefthook --help` prints a summary of all of the above.

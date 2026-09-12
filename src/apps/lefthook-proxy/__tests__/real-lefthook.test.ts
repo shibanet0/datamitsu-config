@@ -15,10 +15,12 @@ import { delimiter, dirname, join, resolve } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { apps as githubApps } from "../../../datamitsu-config/registries/githubApps.json";
+import { installedBunApp } from "../../test-support/managed-bun";
 import { resolveUpstream, upstreamName } from "../resolve.js";
 import { fixtureEnvironment, testUpstream } from "./env.js";
 
-const proxyBundle = resolve("dist-inline-lefthook-proxy-config/index.mjs");
+const app = installedBunApp("lefthook");
+const proxyBundle = app.artifact;
 const datamitsu = resolve("node_modules/.bin/datamitsu");
 const fixtureRoot = mkdtempSync(join(tmpdir(), "datamitsu-real-lefthook-"));
 
@@ -103,12 +105,7 @@ describe("real Lefthook integration", () => {
     const publicProxy = join(bin, "lefthook");
     const privateUpstream = join(bin, "dm-internal-lefthook-upstream");
     copyFileSync(realUpstream!, privateUpstream);
-    writeFileSync(
-      publicProxy,
-      `#!/bin/sh
-exec '${process.execPath}' '${proxyBundle}' "$@"
-`,
-    );
+    copyFileSync(proxyBundle, publicProxy);
     chmodSync(publicProxy, 0o755);
     chmodSync(privateUpstream, 0o755);
 
@@ -177,17 +174,22 @@ if (
     git(repository, ["commit", "--quiet", "-m", "initial"]);
 
     const proxyEnvironment = {
+      ...app.environment,
       DATAMITSU_LEFTHOOK_UPSTREAM: privateUpstream,
       DM_PUSH_CAPTURE: pushCapturePath,
       DM_REAL_CAPTURE: capturePath,
-      PATH: `${bin}:${process.env.PATH ?? ""}`,
+      PATH: `${bin}:${app.environment.PATH ?? ""}`,
     };
     const install = execute(publicProxy, ["install"], repository, proxyEnvironment);
     expect(install.status, install.stderr).toBe(0);
 
     const hookPath = join(repository, ".git/hooks/pre-commit");
     const hook = readFileSync(hookPath, "utf8");
-    expect(hook).toContain("lefthook");
+    expect(hook).toContain(`PATH='${dirname(app.command)}':"$PATH"`);
+    expect(hook).toContain("BUN_OPTIONS='--config=/dev/null --no-env-file --no-install'");
+    const reinstall = execute(publicProxy, ["install"], repository, proxyEnvironment);
+    expect(reinstall.status, reinstall.stderr).toBe(0);
+    expect(readFileSync(hookPath, "utf8").match(/# datamitsu-lefthook-proxy/g)).toHaveLength(1);
     expect(hook).toContain(`LEFTHOOK_BIN='${publicProxy}'`);
     expect(hook).toContain(`DATAMITSU_LEFTHOOK_UPSTREAM='${realpathSync(privateUpstream)}'`);
 

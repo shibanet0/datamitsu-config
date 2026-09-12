@@ -90,7 +90,7 @@
       "app": "ktlint"
     },
     {
-      "subtree": ".apps/node/lefthook",
+      "subtree": ".apps/bun/lefthook",
       "kind": "app",
       "app": "lefthook"
     },

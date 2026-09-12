@@ -1,3 +1,6 @@
+import { devNull } from "node:os";
+import { dirname } from "node:path";
+
 // cspell:ignore PATHEXT
 const keys = {
   active: "DATAMITSU_LEFTHOOK_PROXY_ACTIVE",
@@ -20,6 +23,13 @@ export interface ProxyEnvironment {
 
 export function childEnvironment(markActive: boolean): NodeJS.ProcessEnv {
   return markActive ? { ...process.env, [keys.active]: "1" } : process.env;
+}
+
+export function hookRuntimeSettings() {
+  return {
+    directory: dirname(process.execPath),
+    options: `--config=${devNull} --no-env-file --no-install`,
+  };
 }
 
 export function proxyEnvironment(source: NodeJS.ProcessEnv = process.env): ProxyEnvironment {

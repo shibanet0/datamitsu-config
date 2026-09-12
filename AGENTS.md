@@ -249,10 +249,12 @@ Do not use `datamitsu config reconcile` to regenerate this repository's configs.
 
 The proxy integration suite requires a POSIX shell and signals, the built proxy bundle, and the installed upstream Lefthook binary. Run `pnpm build` before `pnpm test`; missing artifacts fail the suite.
 
-Every fixture subprocess must use `fixtureEnvironment` from `src/apps/lefthook-proxy/__tests__/env.ts`. It removes inherited `GIT_*`, `LEFTHOOK*`, and `DATAMITSU_LEFTHOOK_*` values before applying explicit test overrides. Git hooks can export paths into the contributor's real repository, and nested proxy state can suppress isolation; inheriting either makes fixture tests unsafe.
+Every fixture subprocess must use `fixtureEnvironment` from `src/apps/test-support/env.ts`. It removes inherited `GIT_*`, `LEFTHOOK*`, and `DATAMITSU_LEFTHOOK_*` values before applying explicit test overrides. Git hooks can export paths into the contributor's real repository, and nested proxy state can suppress isolation; inheriting either makes fixture tests unsafe.
 
 ## Bun Helper Scripts
 
-`lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
+`lefthook-sort` and the public `lefthook` proxy are Bun apps. Their `bun` entries in `src/datamitsu-config/apps/lefthook-sort.ts` and `src/datamitsu-config/apps/lefthook-proxy.ts` select the pinned runtime from the registry; their entrypoints use Bun shebangs. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
 
 Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.
+
+Installed Lefthook hooks pin the managed Bun directory on `PATH` and set isolated `BUN_OPTIONS`, alongside the public proxy and upstream paths. Preserve this binding: Git may launch hooks without datamitsu or Bun on the ambient `PATH`. The real-hook integration test exercises that case.

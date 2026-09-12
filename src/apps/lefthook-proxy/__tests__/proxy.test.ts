@@ -11,16 +11,14 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve as resolvePath } from "node:path";
+import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { installedBunApp } from "../../test-support/managed-bun";
 import { fixtureEnvironment } from "./env.js";
 
-const packageRoot = resolvePath(import.meta.dirname, "..");
-const proxySource = join(packageRoot, "index.ts");
+const app = installedBunApp("lefthook");
 const fakeSource = join(import.meta.dirname, "fixtures/fake-upstream.mjs");
-const tsx = resolvePath("node_modules/.bin/tsx");
-const tsxEsm = import.meta.resolve("tsx/esm");
 const temporaryDirectories: string[] = [];
 
 interface RepositoryFixture {
@@ -83,9 +81,10 @@ function proxy(
   environment: NodeJS.ProcessEnv = {},
   input?: string,
 ): SpawnSyncReturns<string> {
-  return execute(tsx, [proxySource, ...args], {
+  return execute(app.command, [...app.runtimeArgs, app.artifact, ...args], {
     cwd: fixture.root,
     env: {
+      ...app.environment,
       DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
       ...environment,
     },
@@ -643,12 +642,10 @@ exec "$DM_REAL_GIT" "$@"
     write(fixture.root, "b.ts", "B unstaged\n");
     const readyPath = join(dirname(fixture.capturePath), "ready");
 
-    // Run the proxy under `node --import tsx/esm` rather than the `tsx` shim:
-    // the shim is a separate process that only relays some signals, so killing
-    // it would test tsx's relay instead of the proxy's.
-    const child = spawn(process.execPath, ["--import", tsxEsm, proxySource, "run", hook], {
+    const child = spawn(app.command, [...app.runtimeArgs, app.artifact, "run", hook], {
       cwd: fixture.root,
       env: fixtureEnvironment({
+        ...app.environment,
         DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
         DM_FAKE_MODE: "wait",
         DM_READY_PATH: readyPath,
@@ -678,11 +675,12 @@ exec "$DM_REAL_GIT" "$@"
     const readyPath = join(dirname(fixture.capturePath), "sigkill-ready");
 
     const proxyProcess = spawn(
-      process.execPath,
-      ["--import", tsxEsm, proxySource, "run", "pre-commit"],
+      app.command,
+      [...app.runtimeArgs, app.artifact, "run", "pre-commit"],
       {
         cwd: fixture.root,
         env: fixtureEnvironment({
+          ...app.environment,
           DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
           DM_FAKE_MODE: "wait",
           DM_READY_PATH: readyPath,
