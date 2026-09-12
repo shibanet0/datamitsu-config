@@ -90,6 +90,9 @@ docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable
 docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable-alpine
 ```
 
+The PR workflow builds both image variants and runs an offline smoke test for each.
+Each variant has its own build-cache scope; its smoke test reuses that same scope.
+
 **Docker image features:**
 
 - All tools pre-installed (via `datamitsu init --all`) — faster startup

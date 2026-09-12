@@ -258,3 +258,7 @@ The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.b
 ## pnpm Workspace Migration
 
 The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDowngrade: [...] }` into `trustPolicy: no-downgrade` and `trustPolicyExclude` during reconciliation. Merge existing exclusions without duplicates and preserve package selectors exactly. Modern scalar policies must retain their value. Keep this migration in the content callback so it applies to consuming projects; editing this repository's workspace file cannot migrate consumers. Test with isolated YAML inputs, including repeated reconciliation and malformed lists.
+
+## Docker CI Cache
+
+PR Docker builds use a separate GitHub Actions cache scope per image variant (`pr-docker-debian` and `pr-docker-alpine`). Smoke tests must read the same scope as their producer. Do not use the default shared `buildkit` scope: parallel image builds overwrite each other's cache.

@@ -79,8 +79,8 @@ jobs:
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=pr-docker-${{ matrix.variant }}
+          cache-to: type=gha,scope=pr-docker-${{ matrix.variant }},mode=max
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           platforms: linux/amd64,linux/arm64
@@ -111,7 +111,7 @@ jobs:
       - name: Build and load amd64 image
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
+          cache-from: type=gha,scope=pr-docker-${{ matrix.variant }}
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           load: true
