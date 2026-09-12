@@ -21,4 +21,7 @@ export const lefthookProxyApp: BinManager.App = {
     DATAMITSU_LEFTHOOK_UPSTREAM_VERSION: githubApps.lefthook.tag,
   },
   required: true,
+  versionCheck: {
+    args: ["--proxy-version"],
+  },
 };

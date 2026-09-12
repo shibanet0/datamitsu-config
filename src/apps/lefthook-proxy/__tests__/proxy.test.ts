@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { version } from "../../../../package.json";
 import { installedBunApp } from "../../test-support/managed-bun";
 import { fixtureEnvironment } from "./env.js";
 
@@ -117,6 +118,30 @@ afterEach(() => {
 });
 
 describe("lefthook proxy", () => {
+  it("reports its own version before upstream is installed", () => {
+    const root = temporaryDirectory("datamitsu-proxy-version-");
+    const env = {
+      ...app.environment,
+      DATAMITSU_LEFTHOOK_UPSTREAM: "",
+      DATAMITSU_LEFTHOOK_UPSTREAM_DIR: root,
+      PATH: root,
+    };
+    const result = execute(app.command, [...app.runtimeArgs, app.artifact, "--proxy-version"], {
+      cwd: root,
+      env,
+    });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe(`datamitsu-lefthook-proxy ${version}\n`);
+    expect(result.stderr).toBe("");
+
+    const upstream = execute(app.command, [...app.runtimeArgs, app.artifact, "--version"], {
+      cwd: root,
+      env,
+    });
+    expect(upstream.status).toBe(127);
+    expect(upstream.stderr).toContain("cannot find dm-internal-lefthook-upstream");
+  });
+
   it("keeps fixture commits and proxy execution isolated from the parent hook environment", () => {
     const parent = createRepository({ "parent.ts": "parent\n" });
     const parentHead = git(parent.root, ["rev-parse", "HEAD"]);

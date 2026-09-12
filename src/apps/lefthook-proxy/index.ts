@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import { realpathSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";
 
+import { version } from "../../../package.json";
 import { childEnvironment, proxyEnvironment } from "./env.js";
 import {
   hookBindingFailureExitCode,
@@ -51,6 +52,11 @@ async function recoverIsolationFailure(error: IsolationFailureError): Promise<vo
 }
 
 async function run(args: readonly string[] = process.argv.slice(2)): Promise<number> {
+  if (args.length === 1 && args[0] === "--proxy-version") {
+    process.stdout.write(`datamitsu-lefthook-proxy ${version}\n`);
+    return 0;
+  }
+
   const environment = proxyEnvironment();
   let upstream: string;
   try {

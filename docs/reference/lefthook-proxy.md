@@ -61,6 +61,14 @@ git stash drop <selector>        # only after verifying the result
 
 Backups are scoped per worktree, so a crashed run in one linked worktree does not block commits in another.
 
+## Installation verification
+
+`lefthook --proxy-version` prints the wrapper's package version and works before upstream
+Lefthook is installed. Datamitsu uses this command for the proxy's installation check,
+including isolated Docker app stages. The private upstream app is installed and verified
+in its own stage. `lefthook version` and `lefthook --version` still execute upstream;
+the final image's offline smoke test checks that both apps work together.
+
 ## Environment variables
 
 | Variable                              | Purpose                                                                           |
