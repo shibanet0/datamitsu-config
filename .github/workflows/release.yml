@@ -520,8 +520,12 @@ jobs:
           git init -q "$SMOKE"
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
           cd "$SMOKE"
+          # dm-internal-lefthook-upstream is named explicitly: the proxy reaches
+          # it through DATAMITSU_LEFTHOOK_UPSTREAM_DIR, which is an env value
+          # rather than a declared runtime dependency, so seeding cannot infer
+          # it from `lefthook` alone.
           "$DM_BIN" --config "$SMOKE/datamitsu.config.js" store seed "${{ steps.bundle.outputs.bundle_ref }}" \
-            --apps golangci-lint,lefthook
+            --apps golangci-lint,lefthook,dm-internal-lefthook-upstream
           echo "Seeded. Running a seeded tool fully offline:"
           DATAMITSU_OFFLINE=1 "$DM_BIN" --config "$SMOKE/datamitsu.config.js" exec golangci-lint -- version
           DATAMITSU_OFFLINE=1 "$DM_BIN" --config "$SMOKE/datamitsu.config.js" exec lefthook -- version
