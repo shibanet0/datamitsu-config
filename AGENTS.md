@@ -250,3 +250,7 @@ Do not use `datamitsu config reconcile` to regenerate this repository's configs.
 `lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
 
 Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.
+
+## Managed Linter Runtimes
+
+The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.

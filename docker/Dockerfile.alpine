@@ -68,7 +68,7 @@ FROM rt-uv AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install detect-secrets
 
-FROM rt-node AS app-eslint
+FROM rt-bun AS app-eslint
 COPY --link --from=config-split /slices/app-eslint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
 
@@ -112,11 +112,11 @@ FROM rt-jvm AS app-openapi-generator
 COPY --link --from=config-split /slices/app-openapi-generator.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install openapi-generator
 
-FROM rt-node AS app-oxfmt
+FROM rt-bun AS app-oxfmt
 COPY --link --from=config-split /slices/app-oxfmt.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxfmt
 
-FROM rt-node AS app-oxlint
+FROM rt-bun AS app-oxlint
 COPY --link --from=config-split /slices/app-oxlint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install oxlint
 
@@ -404,7 +404,7 @@ COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-
 COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
-COPY --link --from=app-eslint /dm/store/.apps/node/eslint /dm/store/.apps/node/eslint
+COPY --link --from=app-eslint /dm/store/.apps/bun/eslint /dm/store/.apps/bun/eslint
 COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.apps/go/govulncheck
 COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
 COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
@@ -416,8 +416,8 @@ COPY --link --from=app-mmdc /dm/store/.apps/node/mmdc /dm/store/.apps/node/mmdc
 COPY --link --from=app-mypy /dm/store/.apps/uv/mypy /dm/store/.apps/uv/mypy
 COPY --link --from=app-mypy /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-openapi-generator /dm/store/.apps/jvm/openapi-generator /dm/store/.apps/jvm/openapi-generator
-COPY --link --from=app-oxfmt /dm/store/.apps/node/oxfmt /dm/store/.apps/node/oxfmt
-COPY --link --from=app-oxlint /dm/store/.apps/node/oxlint /dm/store/.apps/node/oxlint
+COPY --link --from=app-oxfmt /dm/store/.apps/bun/oxfmt /dm/store/.apps/bun/oxfmt
+COPY --link --from=app-oxlint /dm/store/.apps/bun/oxlint /dm/store/.apps/bun/oxlint
 COPY --link --from=app-pnpm /dm/store/.apps/node/pnpm /dm/store/.apps/node/pnpm
 COPY --link --from=app-pre-commit /dm/store/.apps/uv/pre-commit /dm/store/.apps/uv/pre-commit
 COPY --link --from=app-pre-commit /dm/store/.uv/python /dm/store/.uv/python
