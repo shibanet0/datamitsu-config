@@ -288,11 +288,14 @@ jobs:
           GITHUB_TOKEN: ""
         name: Smoke test - seed the store from Docker Hub anonymously
         run: |
-          rm -f datamitsu.config.js
+          # The shipped datamitsu.config.js is what the image was built from
+          # (docker/Dockerfile COPYs it and passes it via --config). Seeding
+          # against any other chain computes different app identity hashes and
+          # matches no layer, so pin the same file here.
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-dockerhub-smoke"
-          node bin/datamitsu.js store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
+          node bin/datamitsu.js --config datamitsu.config.js store seed "index.docker.io/$DOCKERHUB_REPO@${{ needs.publish-oci-bundle.outputs.bundle_digest }}" \
             --apps golangci-lint
-          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js --config datamitsu.config.js exec golangci-lint -- version
   publish-github:
     if: |
       always() &&
@@ -494,13 +497,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Smoke test - seed the store from the bundle without docker
         run: |
-          rm -f datamitsu.config.js
+          # Seed against the very config the image was built from:
+          # docker/Dockerfile COPYs datamitsu.config.js and drives every stage
+          # with --config. Auto-discovery would instead pick up a locally
+          # regenerated datamitsu.config.base.js plus this repo's own
+          # datamitsu.config.ts, and an app whose identity is content-addressed
+          # from a locally built artifact (the inline lefthook proxy) then
+          # hashes differently and matches no layer in the bundle.
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-bundle-smoke"
-          node bin/datamitsu.js store seed "${{ steps.bundle.outputs.bundle_ref }}" \
+          node bin/datamitsu.js --config datamitsu.config.js store seed "${{ steps.bundle.outputs.bundle_ref }}" \
             --apps golangci-lint,lefthook
           echo "Seeded. Running a seeded tool fully offline:"
-          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec golangci-lint -- version
-          DATAMITSU_OFFLINE=1 node bin/datamitsu.js exec lefthook -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js --config datamitsu.config.js exec golangci-lint -- version
+          DATAMITSU_OFFLINE=1 node bin/datamitsu.js --config datamitsu.config.js exec lefthook -- version
   validate-stable:
     if: |
       always() &&
