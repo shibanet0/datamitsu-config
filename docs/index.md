@@ -12,7 +12,7 @@ Install via npm/pnpm:
 
 ```bash
 pnpm add -D @shibanet0/datamitsu-config
-pnpm dm init && pnpm dm setup && pnpm dm check
+pnpm dm init && pnpm dm config reconcile && pnpm dm check
 ```
 
 **Alternative installation methods:**

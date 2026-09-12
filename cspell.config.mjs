@@ -1,6 +1,6 @@
 import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
-export default defineConfig((previous) => {
+export default defineConfig((prev) => {
   const words = [
     "browserslistrc",
     "datetimez",
@@ -206,8 +206,8 @@ export default defineConfig((previous) => {
   ];
 
   return {
-    ...previous,
-    ignorePaths: [...(previous.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
-    words: [...(previous.words || []), ...words],
+    ...prev,
+    ignorePaths: [...(prev.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
+    words: [...(prev.words || []), ...words],
   };
 });

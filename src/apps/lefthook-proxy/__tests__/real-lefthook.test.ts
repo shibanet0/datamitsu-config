@@ -10,24 +10,17 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { devNull, tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { delimiter, dirname, join, resolve } from "node:path";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { apps as githubApps } from "../../../datamitsu-config/registries/githubApps.json";
 import { resolveUpstream, upstreamName } from "../resolve.js";
+import { fixtureEnvironment, testUpstream } from "./env.js";
 
 const proxyBundle = resolve("dist-inline-lefthook-proxy-config/index.mjs");
 const datamitsu = resolve("node_modules/.bin/datamitsu");
 const fixtureRoot = mkdtempSync(join(tmpdir(), "datamitsu-real-lefthook-"));
-
-/**
- * See the note on `isolatedGitConfig` in proxy.test.ts — the same reasoning applies here.
- */
-const isolatedGitConfig: NodeJS.ProcessEnv = {
-  GIT_CONFIG_GLOBAL: devNull,
-  GIT_CONFIG_SYSTEM: devNull,
-};
 
 afterAll(() => {
   rmSync(fixtureRoot, { force: true, recursive: true });
@@ -43,12 +36,15 @@ afterAll(() => {
  * variable.
  */
 function discoverUpstream(): string | undefined {
-  const override = process.env.DATAMITSU_TEST_LEFTHOOK_UPSTREAM;
+  const override = testUpstream();
   if (override) {
     return existsSync(override) ? override : undefined;
   }
 
-  const storePath = spawnSync(datamitsu, ["store", "path"], { encoding: "utf8" });
+  const storePath = spawnSync(datamitsu, ["store", "path"], {
+    encoding: "utf8",
+    env: fixtureEnvironment(),
+  });
   if (storePath.status !== 0) {
     return undefined;
   }
@@ -70,12 +66,12 @@ function execute(
   command: string,
   args: readonly string[],
   cwd: string,
-  environment: NodeJS.ProcessEnv = process.env,
+  environment: NodeJS.ProcessEnv = {},
 ) {
   return spawnSync(command, args, {
     cwd,
     encoding: "utf8",
-    env: { ...environment, ...isolatedGitConfig },
+    env: fixtureEnvironment(environment),
   });
 }
 
@@ -88,22 +84,13 @@ function git(root: string, args: readonly string[]): string {
 }
 
 const realUpstream = discoverUpstream();
-const hasBundle = existsSync(proxyBundle);
-const canRun = Boolean(realUpstream) && hasBundle;
+beforeAll(() => {
+  if (!realUpstream || !existsSync(proxyBundle)) {
+    throw new Error("Build the Lefthook proxy and install its upstream binary with pnpm build");
+  }
+});
 
-if (!canRun) {
-  // Loud on purpose: a silently skipped integration test is exactly how this
-  // one stopped running in the first place.
-  const reasons = [
-    realUpstream ? undefined : `no ${upstreamName} in the datamitsu store`,
-    hasBundle
-      ? undefined
-      : `missing ${proxyBundle} — run: pnpm dm exec task -- build:inline:lefthook-proxy`,
-  ].filter(Boolean);
-  console.warn(`skipping real Lefthook integration: ${reasons.join("; ")}`);
-}
-
-describe.skipIf(!canRun)("real Lefthook integration", () => {
+describe("real Lefthook integration", () => {
   it("runs install and an installed pre-commit hook back through the public proxy", () => {
     const repository = join(fixtureRoot, "repo");
     const remote = join(fixtureRoot, "remote.git");
@@ -190,10 +177,9 @@ if (
     git(repository, ["commit", "--quiet", "-m", "initial"]);
 
     const proxyEnvironment = {
-      ...process.env,
       DATAMITSU_LEFTHOOK_UPSTREAM: privateUpstream,
-      DM_REAL_CAPTURE: capturePath,
       DM_PUSH_CAPTURE: pushCapturePath,
+      DM_REAL_CAPTURE: capturePath,
       PATH: `${bin}:${process.env.PATH ?? ""}`,
     };
     const install = execute(publicProxy, ["install"], repository, proxyEnvironment);
@@ -263,7 +249,6 @@ if (
     git(repository, ["add", "a.ts", "lefthook.yml"]);
     rmSync(capturePath);
     const isolatedEnvironment: NodeJS.ProcessEnv = {
-      ...process.env,
       DM_REAL_CAPTURE: capturePath,
       PATH: [dirname(process.execPath), "/usr/bin", "/bin"].join(delimiter),
     };

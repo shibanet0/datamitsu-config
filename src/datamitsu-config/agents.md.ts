@@ -191,10 +191,10 @@ Keep \`.github/dependabot.yml\` accurate **only when this is a public GitHub rep
 
 When it is a public GitHub repo:
 
-1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` file with an empty \`updates:\` list is enough to opt in — \`dm setup\` fills in the rest.
+1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` file with an empty \`updates:\` list is enough to opt in — \`dm config reconcile\` fills in the rest.
 2. **Own the \`updates\` entries** (the "what"): the \`package-ecosystem\` values and their \`directory\`/\`directories\`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
-3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm setup\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
-4. **Run \`pnpm dm setup\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm config reconcile\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
+4. **Run \`pnpm dm config reconcile\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
 
 const CHUNK_00_PRIVACY = `## Privacy and Attribution
 
@@ -364,8 +364,8 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 
 Every datamitsu command follows the same rule:
 
-- Inside a pnpm monorepo wired with this config: \`pnpm dm <command>\` — \`pnpm dm check\`, \`pnpm dm setup\`, and managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
-- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly — \`datamitsu check\`, \`datamitsu setup\`, \`datamitsu exec <tool>\`.
+- Inside a pnpm monorepo wired with this config: \`pnpm dm <command>\` — \`pnpm dm check\`, \`pnpm dm config reconcile\`, and managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
+- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly — \`datamitsu check\`, \`datamitsu config reconcile\`, \`datamitsu exec <tool>\`.
 
 ### Web
 
@@ -496,10 +496,10 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
 export const CHUNK_00_BASE_HASH = "dc82caf6a6f273b7b87d967dc8ee3d46dadf7f02f02663bf15b9aae0a307bb25"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
-export const CHUNK_00_DEPENDABOT_HASH = "b05aca84224760df0b9dae1f499a911c7c6531dd4623a7e55ab4d50b4f93f115"; // prettier-ignore
+export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "d8be582e591eb438952dd4173019ddb1f0f194260b04d1146526b6bd6afbd9f3"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "bb04b25a48bec2084d5453936317e81529fdadd47d3b34e3d0c4cabcffebdb35"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "55e2fde384fab14ee92366f9d0eb4115e20f73ef97a892fcf2224706d71cf12e"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "babafc853c28c64fc881f395c2a221a9639a1e34bfd8f219a50221e91e40dd05"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "a9d1c1a59fa5b7ffd4c62819a84162113389675a4af72a7ab1e6eb0bfb325029"; // prettier-ignore

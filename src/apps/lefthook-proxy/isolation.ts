@@ -103,7 +103,7 @@ export async function isolateWorkingTree(
     const entries = await listStashes(root);
     const ownEntry = entries.find((entry) => entry.subject.endsWith(marker));
     transaction = ownEntry
-      ? { marker, target, oid: ownEntry.oid, repositoryRoot: root }
+      ? { marker, oid: ownEntry.oid, repositoryRoot: root, target }
       : undefined;
   } catch (error) {
     const detail = errorMessage(error);

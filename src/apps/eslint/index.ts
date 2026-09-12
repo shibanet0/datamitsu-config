@@ -463,7 +463,7 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   // from, so the entry points must be published by assigning onto the global object
   // (`globalThis.getConfig = getConfig`) — the shape `datamitsu init` generates and the runtime
   // requires. unicorn 73's no-global-object-property-assignment flags exactly that, which made
-  // `dm setup` fail on the config file datamitsu had just written. Scoped to those files only, so
+  // `dm config reconcile` fail on the config file datamitsu had just written. Scoped to those files only, so
   // the rule keeps working everywhere else. Appended before the caller's own config, so a
   // consumer can still override it.
   composer.append({

@@ -10,9 +10,11 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { devNull, tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve as resolvePath } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { fixtureEnvironment } from "./env.js";
 
 const packageRoot = resolvePath(import.meta.dirname, "..");
 const proxySource = join(packageRoot, "index.ts");
@@ -20,18 +22,6 @@ const fakeSource = join(import.meta.dirname, "fixtures/fake-upstream.mjs");
 const tsx = resolvePath("node_modules/.bin/tsx");
 const tsxEsm = import.meta.resolve("tsx/esm");
 const temporaryDirectories: string[] = [];
-const unixIt = process.platform === "win32" ? it.skip : it;
-
-/**
- * Fixture repositories must not inherit the developer's Git configuration. Commit signing,
- * `core.hooksPath` or `init.templateDir` in a global config would otherwise decide whether this
- * suite passes, making it green on CI and red on a real machine (or the other way round). Applied
- * last on every spawn so it also reaches the Git processes the proxy itself starts.
- */
-const isolatedGitConfig: NodeJS.ProcessEnv = {
-  GIT_CONFIG_GLOBAL: devNull,
-  GIT_CONFIG_SYSTEM: devNull,
-};
 
 interface RepositoryFixture {
   capturePath: string;
@@ -74,7 +64,7 @@ function execute(
   return spawnSync(command, args, {
     cwd: options.cwd,
     encoding: "utf8",
-    env: { ...(options.env ?? process.env), ...isolatedGitConfig },
+    env: fixtureEnvironment(options.env),
     input: options.input,
   });
 }
@@ -96,7 +86,6 @@ function proxy(
   return execute(tsx, [proxySource, ...args], {
     cwd: fixture.root,
     env: {
-      ...process.env,
       DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
       ...environment,
     },
@@ -121,6 +110,7 @@ function write(root: string, path: string, contents: string): void {
 }
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   for (const directory of temporaryDirectories) {
     rmSync(directory, { force: true, recursive: true });
   }
@@ -128,6 +118,30 @@ afterEach(() => {
 });
 
 describe("lefthook proxy", () => {
+  it("keeps fixture commits and proxy execution isolated from the parent hook environment", () => {
+    const parent = createRepository({ "parent.ts": "parent\n" });
+    const parentHead = git(parent.root, ["rev-parse", "HEAD"]);
+    vi.stubEnv("GIT_DIR", join(parent.root, ".git"));
+    vi.stubEnv("GIT_WORK_TREE", parent.root);
+    vi.stubEnv("GIT_INDEX_FILE", join(parent.root, ".git", "index"));
+    vi.stubEnv("GIT_AUTHOR_NAME", "Parent Hook");
+    vi.stubEnv("DATAMITSU_LEFTHOOK_PROXY_ACTIVE", "1");
+    vi.stubEnv("LEFTHOOK_BIN", join(parent.root, "missing-lefthook"));
+
+    const fixture = createRepository({ "fixture.ts": "fixture\n" });
+    expect(git(fixture.root, ["rev-parse", "--show-toplevel"]).trim()).toBe(
+      realpathSync(fixture.root),
+    );
+    expect(git(fixture.root, ["show", "HEAD:fixture.ts"])).toBe("fixture\n");
+    expect(git(fixture.root, ["log", "-1", "--format=%an"]).trim()).toBe("Spike");
+    expect(git(parent.root, ["rev-parse", "HEAD"])).toBe(parentHead);
+    expect(git(parent.root, ["status", "--porcelain"])).toBe("");
+
+    const result = proxy(fixture, ["run", "commit-msg"], { DM_FAKE_MODE: "passthrough" });
+    expect(result.status, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout).active).toBeNull();
+  });
+
   it("passes commands without an isolation policy through transparently", () => {
     const fixture = createRepository({ "a.ts": "A\n" });
     const result = proxy(
@@ -344,10 +358,10 @@ describe("lefthook proxy", () => {
     write(fixture.root, "b.ts", "B visible with alternate index\n");
 
     const result = proxy(fixture, ["run", "pre-commit"], {
-      GIT_INDEX_FILE: join(fixture.root, ".git", "next-index-test"),
       DM_CAPTURE_PATH: fixture.capturePath,
       DM_FAKE_MODE: "inspect",
       DM_INSPECT_PATHS: JSON.stringify(["a.ts", "b.ts"]),
+      GIT_INDEX_FILE: join(fixture.root, ".git", "next-index-test"),
     });
 
     expect(result.status, result.stderr).toBe(0);
@@ -368,10 +382,10 @@ describe("lefthook proxy", () => {
       write(fixture.root, "b.ts", "B visible under the staging lock\n");
 
       const result = proxy(fixture, ["run", "pre-commit"], {
-        GIT_INDEX_FILE: join(fixture.root, indexFile),
         DM_CAPTURE_PATH: fixture.capturePath,
         DM_FAKE_MODE: "inspect",
         DM_INSPECT_PATHS: JSON.stringify(["a.ts", "b.ts"]),
+        GIT_INDEX_FILE: join(fixture.root, indexFile),
       });
 
       expect(result.status, result.stderr).toBe(0);
@@ -393,10 +407,10 @@ describe("lefthook proxy", () => {
     write(fixture.root, "b.ts", "B hidden from the hook\n");
 
     const result = proxy(fixture, ["run", "pre-commit"], {
-      GIT_INDEX_FILE: ".git/index",
       DM_CAPTURE_PATH: fixture.capturePath,
       DM_FAKE_MODE: "inspect",
       DM_INSPECT_PATHS: JSON.stringify(["a.ts", "b.ts"]),
+      GIT_INDEX_FILE: ".git/index",
     });
 
     expect(result.status, result.stderr).toBe(0);
@@ -437,7 +451,7 @@ describe("lefthook proxy", () => {
     expect(stashList(fixture.root)).toBe("");
   });
 
-  unixIt("restores a transaction created by a failing stash push", () => {
+  it("restores a transaction created by a failing stash push", () => {
     const fixture = createRepository({ "a.ts": "A\n", "b.ts": "B\n" });
     write(fixture.root, "a.ts", "A staged\n");
     git(fixture.root, ["add", "a.ts"]);
@@ -536,7 +550,7 @@ exec "$DM_REAL_GIT" "$@"
     },
   );
 
-  unixIt.each([undefined, "23"])(
+  it.each([undefined, "23"])(
     "preserves the backup when the old working tree cannot be restored (child exit %s)",
     (childExitCode) => {
       const fixture = createRepository({ "a.ts": "A\n" });
@@ -615,7 +629,7 @@ exec "$DM_REAL_GIT" "$@"
     expect(stashList(fixture.root)).toBe(foreignStash);
   });
 
-  unixIt.each([
+  it.each([
     ["pre-commit", "SIGHUP", 129],
     ["pre-commit", "SIGINT", 130],
     ["pre-commit", "SIGTERM", 143],
@@ -634,13 +648,11 @@ exec "$DM_REAL_GIT" "$@"
     // it would test tsx's relay instead of the proxy's.
     const child = spawn(process.execPath, ["--import", tsxEsm, proxySource, "run", hook], {
       cwd: fixture.root,
-      env: {
-        ...process.env,
+      env: fixtureEnvironment({
         DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
         DM_FAKE_MODE: "wait",
         DM_READY_PATH: readyPath,
-        ...isolatedGitConfig,
-      },
+      }),
       stdio: "ignore",
     });
 
@@ -658,7 +670,7 @@ exec "$DM_REAL_GIT" "$@"
     expect(stashList(fixture.root)).toBe("");
   });
 
-  unixIt("leaves a recoverable transaction stash after SIGKILL", async () => {
+  it("leaves a recoverable transaction stash after SIGKILL", async () => {
     const fixture = createRepository({ "a.ts": "A\n", "b.ts": "B\n" });
     write(fixture.root, "a.ts", "A staged\n");
     git(fixture.root, ["add", "a.ts"]);
@@ -670,13 +682,11 @@ exec "$DM_REAL_GIT" "$@"
       ["--import", tsxEsm, proxySource, "run", "pre-commit"],
       {
         cwd: fixture.root,
-        env: {
-          ...process.env,
+        env: fixtureEnvironment({
           DATAMITSU_LEFTHOOK_UPSTREAM: fixture.fakeUpstream,
           DM_FAKE_MODE: "wait",
           DM_READY_PATH: readyPath,
-          ...isolatedGitConfig,
-        },
+        }),
         stdio: "ignore",
       },
     );
