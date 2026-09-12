@@ -240,3 +240,9 @@ Two things are deliberately outside `refresh`:
 - **`task rules:inventory`** accepts a changed rule set. Automating it inside `refresh` would defeat the review gate it exists to provide.
 
 Do not use `datamitsu config reconcile` to regenerate this repository's configs. It rewrites every managed config at once and refuses to run while any of them has drifted from its pinned upstream chain — `eslint.config.mjs` and `lefthook.yaml` are both pinned here. Nothing needs it: `oxlint.config.mts` imports `defineConfig` from `.datamitsu/oxlint.config.js`, so this repository consumes its own published rule list the same way any other project does, and tracks it with no regeneration step at all.
+
+## Bun Helper Scripts
+
+`lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
+
+Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.

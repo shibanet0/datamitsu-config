@@ -23,6 +23,10 @@ COPY --chown=datamitsu:datamitsu datamitsu.config.js ./
 RUN git init -q . && datamitsu --config /opt/datamitsu-config/datamitsu.config.js devtools split-config --output /slices
 
 # --- Runtime stages (one per managed runtime) ---
+FROM dm-build AS rt-bun
+COPY --link --from=config-split /slices/rt-bun.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install --runtime bun --runtime pnpm
+
 FROM dm-build AS rt-go
 COPY --link --from=config-split /slices/rt-go.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install --runtime go
@@ -84,7 +88,7 @@ FROM rt-jvm AS app-ktlint
 COPY --link --from=config-split /slices/app-ktlint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ktlint
 
-FROM rt-node AS app-lefthook-sort
+FROM rt-bun AS app-lefthook-sort
 COPY --link --from=config-split /slices/app-lefthook-sort.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook-sort
 
@@ -439,6 +443,7 @@ LABEL org.opencontainers.image.source="https://github.com/shibanet0/datamitsu-co
 LABEL org.opencontainers.image.title="datamitsu-config"
 LABEL org.opencontainers.image.url="https://github.com/shibanet0/datamitsu-config"
 LABEL org.opencontainers.image.vendor="shibanet0"
+COPY --link --from=rt-bun /dm/store/.runtimes/bun /dm/store/.runtimes/bun
 COPY --link --from=rt-jvm /dm/store/.runtimes/jvm /dm/store/.runtimes/jvm
 COPY --link --from=rt-node /dm/store/.runtimes/node /dm/store/.runtimes/node
 COPY --link --from=rt-uv /dm/store/.runtimes/uv /dm/store/.runtimes/uv
@@ -456,7 +461,7 @@ COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.app
 COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
 COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
-COPY --link --from=app-lefthook-sort /dm/store/.apps/node/lefthook-sort /dm/store/.apps/node/lefthook-sort
+COPY --link --from=app-lefthook-sort /dm/store/.apps/bun/lefthook-sort /dm/store/.apps/bun/lefthook-sort
 COPY --link --from=app-markdown-link-check /dm/store/.apps/node/markdown-link-check /dm/store/.apps/node/markdown-link-check
 COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2
 COPY --link --from=app-mmdc /dm/store/.apps/node/mmdc /dm/store/.apps/node/mmdc

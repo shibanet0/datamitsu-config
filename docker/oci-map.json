@@ -3,6 +3,11 @@
   "storeRoot": "/dm/store",
   "layers": [
     {
+      "subtree": ".runtimes/bun",
+      "kind": "runtime",
+      "app": "bun"
+    },
+    {
       "subtree": ".runtimes/jvm",
       "kind": "runtime",
       "app": "jvm"
@@ -85,7 +90,7 @@
       "app": "ktlint"
     },
     {
-      "subtree": ".apps/node/lefthook-sort",
+      "subtree": ".apps/bun/lefthook-sort",
       "kind": "app",
       "app": "lefthook-sort"
     },
