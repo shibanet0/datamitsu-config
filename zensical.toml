@@ -74,5 +74,6 @@ Reference = [
   { Tools = "reference/tools.md" },
   { "Project Types" = "reference/project-types.md" },
   { "Setup Configs" = "reference/setup-configs.md" },
+  { "Lefthook Proxy" = "reference/lefthook-proxy.md" },
   { "TypeScript Configurations" = "reference/tsconfig.md" },
 ]

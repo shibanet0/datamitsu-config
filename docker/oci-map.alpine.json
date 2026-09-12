@@ -85,6 +85,11 @@
       "app": "ktlint"
     },
     {
+      "subtree": ".apps/node/lefthook",
+      "kind": "app",
+      "app": "lefthook"
+    },
+    {
       "subtree": ".apps/node/lefthook-sort",
       "kind": "app",
       "app": "lefthook-sort"
@@ -259,6 +264,11 @@
       "app": "dasel"
     },
     {
+      "subtree": ".bin/dm-internal-lefthook-upstream",
+      "kind": "binary",
+      "app": "dm-internal-lefthook-upstream"
+    },
+    {
       "subtree": ".bin/dotenv-linter",
       "kind": "binary",
       "app": "dotenv-linter"
@@ -337,11 +347,6 @@
       "subtree": ".bin/kubeconform",
       "kind": "binary",
       "app": "kubeconform"
-    },
-    {
-      "subtree": ".bin/lefthook",
-      "kind": "binary",
-      "app": "lefthook"
     },
     {
       "subtree": ".bin/lychee",

@@ -362,6 +362,7 @@ const baseConfig = defineCspellConfig({
     "**/coverage/**",
     "**/node_modules/**",
     "**/dist/**",
+    "**/.git",
     "**/.gitignore",
     "**/.dockerignore",
     "**/.gitattributes",

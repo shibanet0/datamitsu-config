@@ -4,6 +4,7 @@ import { sanitizeDescription } from "./lib/sanitize-markdown.ts";
 import { writeAndFix } from "./lib/write-and-fix.ts";
 
 export interface AppConfig {
+  archives?: Record<string, unknown>;
   binary?: {
     binaries?: BinaryPlatforms;
   };
@@ -156,6 +157,11 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
 
   if (app.binary) {
     repository = extractRepositoryFromBinary(app);
+  } else if (shipsOwnArchive(app)) {
+    // The executable comes from a Datamitsu-built inline archive. Whatever node/uv package the app
+    // declares is only a dependency anchor for the runtime, so linking to that package's registry
+    // page would point readers at an unrelated project (e.g. `lefthook` → the `yaml` package).
+    repository = undefined;
   } else if (app.node) {
     repository = extractRepositoryFromNode(app);
   } else if (app.go) {
@@ -351,6 +357,10 @@ function formatRepositoryLink(repository: string | undefined): string {
     return "N/A";
   }
   return `[Info](${repository}){:target="_blank"}`;
+}
+
+function shipsOwnArchive(app: AppConfig): boolean {
+  return Object.keys(app.archives ?? {}).length > 0;
 }
 
 const isDirectRun =

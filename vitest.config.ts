@@ -3,7 +3,16 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     coverage: {
-      exclude: ["**/*.d.ts", "**/*.test.ts", "**/index.ts", "**/__tests__/**"],
+      exclude: [
+        "**/*.d.ts",
+        "**/*.test.ts",
+        "**/index.ts",
+        "**/__tests__/**",
+        // The Lefthook proxy is only ever exercised as a spawned process (it has
+        // to be — it manipulates a real repository), so v8 never instruments it.
+        // Excluded explicitly so its 0% does not read as untested code.
+        "src/apps/lefthook-proxy/**",
+      ],
       include: ["src/**/*.ts"],
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],

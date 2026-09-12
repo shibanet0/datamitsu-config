@@ -2,6 +2,7 @@ import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
 import { knipApp } from "./apps/knip";
+import { lefthookProxyApp } from "./apps/lefthook-proxy";
 import { lefthookSortApp } from "./apps/lefthook-sort";
 import { prettierApp } from "./apps/prettier";
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
@@ -88,9 +89,20 @@ const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapO
   },
   {},
 );
+
+// Upstream Lefthook is re-keyed to a private name so the public `lefthook` name can belong to the
+// Datamitsu proxy (see ./apps/lefthook-proxy.ts). `requiredGithubApps` above still lists it under
+// its registry key "lefthook", which is why the renamed app keeps `required: true` — the proxy is
+// useless without the binary it delegates to.
+const { lefthook: lefthookUpstreamApp, ...otherGithubApps } = githubApps;
+if (!lefthookUpstreamApp) {
+  throw new Error("githubApps registry no longer defines lefthook; the proxy has nothing to wrap");
+}
+
 const allApps: BinManager.MapOfApps = {
-  ...githubApps,
+  ...otherGithubApps,
   ...externalApps,
+  "dm-internal-lefthook-upstream": lefthookUpstreamApp,
   bandit: {
     description: uvVersions.bandit.description,
     uv: {
@@ -188,6 +200,7 @@ const allApps: BinManager.MapOfApps = {
       version: "1.8.0",
     },
   },
+  lefthook: lefthookProxyApp,
   "lefthook-sort": lefthookSortApp,
   "markdown-link-check": {
     description: nodeVersions["markdown-link-check"].description,

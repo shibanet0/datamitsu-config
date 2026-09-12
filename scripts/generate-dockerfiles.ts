@@ -88,7 +88,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "jq",
       "kube-linter",
       "kubeconform",
-      "lefthook",
+      "dm-internal-lefthook-upstream",
       "osv-scanner",
       "protoc",
       "protolint",

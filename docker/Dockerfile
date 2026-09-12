@@ -84,6 +84,10 @@ FROM rt-jvm AS app-ktlint
 COPY --link --from=config-split /slices/app-ktlint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ktlint
 
+FROM rt-node AS app-lefthook
+COPY --link --from=config-split /slices/app-lefthook.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook
+
 FROM rt-node AS app-lefthook-sort
 COPY --link --from=config-split /slices/app-lefthook-sort.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook-sort
@@ -221,6 +225,10 @@ FROM dm-build AS app-dasel
 COPY --link --from=config-split /slices/app-dasel.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dasel
 
+FROM dm-build AS app-dm-internal-lefthook-upstream
+COPY --link --from=config-split /slices/app-dm-internal-lefthook-upstream.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dm-internal-lefthook-upstream
+
 FROM dm-build AS app-dotenv-linter
 COPY --link --from=config-split /slices/app-dotenv-linter.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dotenv-linter
@@ -292,10 +300,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install kubecon
 FROM dm-build AS app-kubectl
 COPY --link --from=config-split /slices/app-kubectl.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install kubectl
-
-FROM dm-build AS app-lefthook
-COPY --link --from=config-split /slices/app-lefthook.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook
 
 FROM dm-build AS app-lychee
 COPY --link --from=config-split /slices/app-lychee.js /opt/datamitsu-config/datamitsu.config.js
@@ -456,6 +460,7 @@ COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.app
 COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
 COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
+COPY --link --from=app-lefthook /dm/store/.apps/node/lefthook /dm/store/.apps/node/lefthook
 COPY --link --from=app-lefthook-sort /dm/store/.apps/node/lefthook-sort /dm/store/.apps/node/lefthook-sort
 COPY --link --from=app-markdown-link-check /dm/store/.apps/node/markdown-link-check /dm/store/.apps/node/markdown-link-check
 COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2
@@ -496,6 +501,7 @@ COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
 COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
 COPY --link --from=app-d2 /dm/store/.bin/d2 /dm/store/.bin/d2
 COPY --link --from=app-dasel /dm/store/.bin/dasel /dm/store/.bin/dasel
+COPY --link --from=app-dm-internal-lefthook-upstream /dm/store/.bin/dm-internal-lefthook-upstream /dm/store/.bin/dm-internal-lefthook-upstream
 COPY --link --from=app-dotenv-linter /dm/store/.bin/dotenv-linter /dm/store/.bin/dotenv-linter
 COPY --link --from=app-editorconfig-checker /dm/store/.bin/editorconfig-checker /dm/store/.bin/editorconfig-checker
 COPY --link --from=app-fx /dm/store/.bin/fx /dm/store/.bin/fx
@@ -514,7 +520,6 @@ COPY --link --from=app-just /dm/store/.bin/just /dm/store/.bin/just
 COPY --link --from=app-kube-linter /dm/store/.bin/kube-linter /dm/store/.bin/kube-linter
 COPY --link --from=app-kubeconform /dm/store/.bin/kubeconform /dm/store/.bin/kubeconform
 COPY --link --from=app-kubectl /dm/store/.bin/kubectl /dm/store/.bin/kubectl
-COPY --link --from=app-lefthook /dm/store/.bin/lefthook /dm/store/.bin/lefthook
 COPY --link --from=app-lychee /dm/store/.bin/lychee /dm/store/.bin/lychee
 COPY --link --from=app-osv-scanner /dm/store/.bin/osv-scanner /dm/store/.bin/osv-scanner
 COPY --link --from=app-oxipng /dm/store/.bin/oxipng /dm/store/.bin/oxipng

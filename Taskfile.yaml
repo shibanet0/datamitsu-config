@@ -45,6 +45,7 @@ tasks:
       - task: build:inline:oxfmt
       - task: build:inline:oxlint
       - task: build:inline:lefthook-sort
+      - task: build:inline:lefthook-proxy
     desc: Build all inline configs in parallel
   build:inline:commitlint:
     cmds:
@@ -62,6 +63,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.knip.ts --config-loader unrun
     desc: Build inline knip config
+  build:inline:lefthook-proxy:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.lefthook-proxy.ts --config-loader unrun
+    desc: Build inline Lefthook proxy
   build:inline:lefthook-sort:
     cmds:
       - pnpm exec tsdown --config tsdown.config.lefthook-sort.ts --config-loader unrun
