@@ -4,10 +4,7 @@ import { defineConfig } from "tsdown";
 
 const execAsync = promisify(exec);
 
-// The lefthook-sort script runs under plain `node` (invoked by a lefthook job).
-// It is bundled as an ESM .mjs so node always loads it as a module regardless of
-// the app dir's package type, with `yaml` kept external — it is installed as the
-// app's main package and resolved from the app's node_modules at runtime.
+// Keep YAML external so the managed app owns the pinned parser dependency.
 export default defineConfig({
   dts: false,
   entry: ["src/apps/lefthook-sort/index.ts"],

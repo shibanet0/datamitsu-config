@@ -108,6 +108,10 @@ When wiring a formatter, reference `indentSettings.indentWidth` / `indentSetting
 
 Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.
 
+oxfmt operations must include `--no-error-on-unmatched-pattern`: a staged-file check can contain
+only files that oxfmt ignores (for example `pnpm-lock.yaml`). That is an empty check, not a
+formatter failure.
+
 ## Shared Lint Rule Lists
 
 [src/lint-rules/](src/lint-rules/) is the **single source of truth** for what ESLint and oxlint do with every rule. Both tools read the same three lists:
@@ -246,3 +250,9 @@ Do not use `datamitsu config reconcile` to regenerate this repository's configs.
 The proxy integration suite requires a POSIX shell and signals, the built proxy bundle, and the installed upstream Lefthook binary. Run `pnpm build` before `pnpm test`; missing artifacts fail the suite.
 
 Every fixture subprocess must use `fixtureEnvironment` from `src/apps/lefthook-proxy/__tests__/env.ts`. It removes inherited `GIT_*`, `LEFTHOOK*`, and `DATAMITSU_LEFTHOOK_*` values before applying explicit test overrides. Git hooks can export paths into the contributor's real repository, and nested proxy state can suppress isolation; inheriting either makes fixture tests unsafe.
+
+## Bun Helper Scripts
+
+`lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
+
+Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.

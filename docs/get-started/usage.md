@@ -383,3 +383,13 @@ This is expected when adding datamitsu to an existing project. Run `pnpm dm chec
 
 - [Apps](../reference/apps.md) — full list of managed apps with versions and links
 - [datamitsu documentation](https://datamitsu.com/) — comprehensive docs for the datamitsu tool manager
+
+## Lefthook configuration formatting
+
+`pnpm dm check` sorts Lefthook configuration files with `lefthook-sort`, which runs on the managed Bun runtime. Datamitsu provisions Bun automatically; a system Bun installation is unnecessary. To sort a configuration explicitly:
+
+```bash
+pnpm dm exec lefthook-sort -- lefthook.yaml
+```
+
+The sorter preserves comments and orders hooks by lifecycle and commands by priority. Configuration validation runs separately through `lefthook validate`.
