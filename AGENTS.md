@@ -258,3 +258,7 @@ Every fixture subprocess must use `fixtureEnvironment` from `src/apps/test-suppo
 Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.
 
 Installed Lefthook hooks pin the managed Bun directory on `PATH` and set isolated `BUN_OPTIONS`, alongside the public proxy and upstream paths. Preserve this binding: Git may launch hooks without datamitsu or Bun on the ambient `PATH`. The real-hook integration test exercises that case.
+
+## Managed Linter Runtimes
+
+The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.

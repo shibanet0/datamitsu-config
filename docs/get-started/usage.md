@@ -393,3 +393,9 @@ pnpm dm exec lefthook-sort -- lefthook.yaml
 ```
 
 The sorter preserves comments and orders hooks by lifecycle and commands by priority. Configuration validation runs separately through `lefthook validate`.
+
+## JavaScript and TypeScript tool runtimes
+
+`pnpm dm check` runs ESLint, oxlint, and oxfmt on the pinned Bun runtime. Datamitsu installs Bun and each tool's locked dependencies automatically. The same runtime is used when these managed apps run from Git hooks.
+
+With the pinned Bun 1.4.1, ESLint can report a shifted column for TypeScript syntax errors: `export const broken = ;` is reported at column 16 instead of 22. The error message and failure status are preserved.

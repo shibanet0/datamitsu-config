@@ -65,7 +65,7 @@
       "kind": "uv-python"
     },
     {
-      "subtree": ".apps/node/eslint",
+      "subtree": ".apps/bun/eslint",
       "kind": "app",
       "app": "eslint"
     },
@@ -129,12 +129,12 @@
       "app": "openapi-generator"
     },
     {
-      "subtree": ".apps/node/oxfmt",
+      "subtree": ".apps/bun/oxfmt",
       "kind": "app",
       "app": "oxfmt"
     },
     {
-      "subtree": ".apps/node/oxlint",
+      "subtree": ".apps/bun/oxlint",
       "kind": "app",
       "app": "oxlint"
     },

@@ -213,6 +213,7 @@ export function generateAppsMarkdown(apps: AppInfo[]): string {
     "1. Downloads and caches app binaries based on your project types",
     "2. Supports multiple runtimes:",
     "   - **binary** — Native executables (Go, Rust compiled tools)",
+    "   - **bun** — npm packages and bundled scripts executed via managed Bun",
     "   - **node** — npm packages executed via Node.js",
     "   - **python** — Python packages installed via pip/uv",
     "3. Apps are referenced by [Tools](tools.md) configurations",
