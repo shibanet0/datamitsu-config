@@ -262,3 +262,7 @@ Installed Lefthook hooks pin the managed Bun directory on `PATH` and set isolate
 ## Managed Linter Runtimes
 
 The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.
+
+## pnpm Workspace Migration
+
+The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDowngrade: [...] }` into `trustPolicy: no-downgrade` and `trustPolicyExclude` during reconciliation. Merge existing exclusions without duplicates and preserve package selectors exactly. Modern scalar policies must retain their value. Keep this migration in the content callback so it applies to consuming projects; editing this repository's workspace file cannot migrate consumers. Test with isolated YAML inputs, including repeated reconciliation and malformed lists.

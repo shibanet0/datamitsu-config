@@ -28,6 +28,28 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
+`trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
+
+```yaml
+# Before
+trustPolicy:
+  allowDowngrade:
+    - semver@6.3.1
+```
+
+```yaml
+# After
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@6.3.1
+```
+
+Existing `trustPolicyExclude` entries are retained and duplicates are removed when
+merging the lists. Package selectors keep their versions and ranges. Repeating
+reconciliation preserves the result; modern scalar `trustPolicy` values are left intact.
+Malformed exclusion lists stop reconciliation with an error.
+
 **When to use:**
 
 - Standard development workflow
