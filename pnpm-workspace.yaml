@@ -12,7 +12,6 @@ enableGlobalVirtualStore: true
 enablePrePostScripts: false
 engineStrict: true
 hoistPattern: []
-ignorePatchFailures: false
 lockfile: true
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
@@ -21,8 +20,6 @@ minimumReleaseAgeExclude:
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
-packageManagerStrict: true
-packageManagerStrictVersion: true
 preferFrozenLockfile: true
 resolutionMode: lowest-direct
 savePrefix: ""

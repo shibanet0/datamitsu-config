@@ -15,6 +15,16 @@ export const pnpmWorkspaceYaml: config.ManagedConfig = {
 
     delete allowBuilds["@shibanet0/datamitsu-config"];
 
+    // Removed in pnpm 12 with no replacement; pnpm now hard-errors on
+    // unrecognized workspace settings, so strip them from existing files too.
+    for (const removed of [
+      "ignorePatchFailures",
+      "packageManagerStrict",
+      "packageManagerStrictVersion",
+    ]) {
+      delete base[removed];
+    }
+
     // Single source of truth for the config package version: every package.json
     // references it as `catalog:`, so a bump only touches this one entry.
     const catalog = Object.fromEntries(
@@ -37,10 +47,7 @@ export const pnpmWorkspaceYaml: config.ManagedConfig = {
       enablePrePostScripts: false,
       engineStrict: true,
       hoistPattern: [],
-      ignorePatchFailures: false,
       optimisticRepeatInstall: true,
-      packageManagerStrict: true,
-      packageManagerStrictVersion: true,
       resolutionMode: "lowest-direct",
       savePrefix: "",
       strictSsl: true,

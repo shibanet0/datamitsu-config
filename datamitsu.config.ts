@@ -113,7 +113,7 @@ export default defineConfig((prev) => ({
     },
     "lefthook.yaml": {
       ...config.managedConfigs?.["lefthook.yaml"],
-      content: () => /*yaml*/ `glob_matcher: "doublestar"
+      content: () => /*yaml*/ `glob_matcher: doublestar
 pre-commit:
   commands:
     datamitsu-init:
@@ -153,7 +153,7 @@ post-checkout:
       run: pnpm i -y
   parallel: false
     `,
-      expectChainHash: "xxh3:44886d6a1d6cb1d51b18a626e13be783",
+      expectChainHash: "xxh3:7e1dbe8d0803d5ec010184d4fe062ac9",
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
@@ -336,7 +336,7 @@ post-checkout:
                 vitest: "4.1.7",
                 yaml: "2.9.0",
               },
-              packageManager: "pnpm@11.22.0",
+              packageManager: "pnpm@12.4.1",
               engines: {
                 node: ">=22.12.0",
               },
@@ -353,7 +353,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:90ba5596b1288529fd2dd90de31b27b3",
+      expectChainHash: "xxh3:5adb96dd5501e6cacef9c4ce9696ffcc",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -371,7 +371,6 @@ enableGlobalVirtualStore: true
 enablePrePostScripts: false
 engineStrict: true
 hoistPattern: []
-ignorePatchFailures: false
 lockfile: true
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
@@ -380,8 +379,6 @@ minimumReleaseAgeExclude:
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
-packageManagerStrict: true
-packageManagerStrictVersion: true
 preferFrozenLockfile: true
 resolutionMode: lowest-direct
 savePrefix: ""
@@ -396,7 +393,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:d6e94a4265385700f8f98b13822382af",
+      expectChainHash: "xxh3:8ca0a3befab542f90819df29a1f27de4",
     },
   },
 });
@@ -407,6 +404,8 @@ globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [
   "datetimez",
+  "frontmatter",
+  "triaging",
   "errmsg",
   "flynt",
   "perflint",
@@ -555,4 +554,5 @@ const cspellWords: string[] = [
   "runtimeconfig",
   "Kysely",
   "sqlc",
+  "ELIFECYCLE",
 ];

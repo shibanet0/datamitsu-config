@@ -1,4 +1,4 @@
-glob_matcher: "doublestar"
+glob_matcher: doublestar
 pre-commit:
   commands:
     datamitsu-init:
