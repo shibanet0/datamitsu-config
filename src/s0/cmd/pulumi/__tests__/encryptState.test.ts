@@ -33,6 +33,7 @@ describe("encryptState", () => {
     mockFs = {
       mkdir: vi.fn(),
       readFile: vi.fn(),
+      realpath: vi.fn(async (file: string) => file),
       rm: vi.fn(),
       writeFile: vi.fn(),
     };

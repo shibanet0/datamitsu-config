@@ -12,7 +12,11 @@ export const pulumiCommand = new Command("pulumi-sops")
       "cleanup-all-state",
     ] as const),
   )
-  .action(async (type: "cleanup-all-state" | "decrypt-all-state" | "encrypt-all-state") => {
+  .option(
+    "--force",
+    "decrypt-all-state: replace plaintext state that differs from its encrypted file (keeps a backup)",
+  )
+  .action(async (type, options) => {
     switch (type) {
       case "cleanup-all-state": {
         await pulumiCleanup();
@@ -20,7 +24,7 @@ export const pulumiCommand = new Command("pulumi-sops")
         break;
       }
       case "decrypt-all-state": {
-        await pulumiDecrypt();
+        await pulumiDecrypt({ force: options.force === true });
 
         break;
       }

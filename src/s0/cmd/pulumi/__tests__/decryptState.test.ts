@@ -1,13 +1,16 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { pulumiDecrypt } from "../decryptState.js";
 
-// Mock dependencies
 vi.mock("fast-glob");
 vi.mock("../../../../lib/index.js");
 vi.mock("../../../utils/tty.js");
 
 describe("decryptState", () => {
+  let root: string;
   let mockGlob: any;
   let mockDatamitsu: any;
   let mockGetGPGTTY: any;
@@ -15,76 +18,169 @@ describe("decryptState", () => {
   let consoleErrorSpy: any;
   let processExitSpy: any;
 
+  const stateFile = (name: string) => path.join(root, ".pulumi", "stacks", name);
+
   beforeEach(async () => {
-    // Setup console spies
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "pulumi-sops-decrypt-"));
+    await fs.mkdir(path.join(root, ".pulumi", "stacks"), { recursive: true });
+
     consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     processExitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
-    // Setup fast-glob mock
     const fastGlob = await import("fast-glob");
     mockGlob = vi.fn().mockResolvedValue([]);
     vi.mocked(fastGlob).default = { glob: mockGlob } as any;
 
-    // Setup Datamitsu mock
     const libModule = await import("../../../../lib/index.js");
     mockDatamitsu = {
-      exec: vi.fn().mockResolvedValue({ exitCode: 0, stderr: "", stdout: "" }),
+      exec: vi.fn().mockResolvedValue({ exitCode: 0, stderr: "", stdout: '{"version": 3}\n' }),
     };
     vi.mocked(libModule.Datamitsu).mockImplementation(function () {
       return mockDatamitsu;
     } as any);
 
-    // Setup getGPGTTY mock
     const ttyModule = await import("../../../utils/tty.js");
     mockGetGPGTTY = vi.fn().mockResolvedValue("/dev/ttys001");
     vi.mocked(ttyModule.getGPGTTY).mockImplementation(mockGetGPGTTY);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.clearAllMocks();
+    await fs.rm(root, { force: true, recursive: true });
   });
 
   describe("pulumiDecrypt", () => {
-    it("should decrypt files successfully", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+    it("should create a missing plaintext with the exact decrypted bytes", async () => {
+      const encrypted = stateFile("dev.json.enc");
+      mockGlob.mockResolvedValue([encrypted]);
 
       await pulumiDecrypt();
 
-      expect(mockGlob).toHaveBeenCalled();
-      expect(mockGetGPGTTY).toHaveBeenCalled();
-      expect(mockDatamitsu.exec).toHaveBeenCalled();
+      expect(await fs.readFile(stateFile("dev.json"), "utf8")).toBe('{"version": 3}\n');
+      const stat = await fs.stat(stateFile("dev.json"));
+      expect(stat.mode & 0o777).toBe(0o600);
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Decrypted:"));
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("1/1 succeeded"));
+      expect(processExitSpy).not.toHaveBeenCalled();
+    });
+
+    it("should leave an existing plaintext untouched when only formatting differs", async () => {
+      const plaintext = stateFile("dev.json");
+      await fs.writeFile(plaintext, '{\n    "version": 3\n}');
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+
+      await pulumiDecrypt();
+
+      expect(await fs.readFile(plaintext, "utf8")).toBe('{\n    "version": 3\n}');
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Unchanged:"));
+      expect(processExitSpy).not.toHaveBeenCalled();
+    });
+
+    it("should refuse to overwrite a plaintext that differs from the encrypted file", async () => {
+      const plaintext = stateFile("dev.json");
+      const newerState = '{"resources": [{"urn": "created-by-last-up"}]}';
+      await fs.writeFile(plaintext, newerState);
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: '{"resources": []}' });
+
+      await pulumiDecrypt();
+
+      expect(await fs.readFile(plaintext, "utf8")).toBe(newerState);
+      expect(await fs.readdir(path.dirname(plaintext))).toEqual(["dev.json"]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Decryption error"),
+        expect.objectContaining({ message: expect.stringContaining("refusing to overwrite") }),
+      );
+      expect(processExitSpy).toHaveBeenCalledWith(1);
+    });
+
+    it("should treat a reordered resource list as a difference", async () => {
+      const plaintext = stateFile("dev.json");
+      const topological = '{"resources": [{"urn": "dependency"}, {"urn": "dependent"}]}';
+      await fs.writeFile(plaintext, topological);
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+      mockDatamitsu.exec.mockResolvedValue({
+        exitCode: 0,
+        stdout: '{"resources": [{"urn": "dependent"}, {"urn": "dependency"}]}',
+      });
+
+      await pulumiDecrypt();
+
+      expect(await fs.readFile(plaintext, "utf8")).toBe(topological);
+      expect(processExitSpy).toHaveBeenCalledWith(1);
+    });
+
+    it("should replace a differing plaintext with --force and keep a backup", async () => {
+      const plaintext = stateFile("dev.json");
+      await fs.writeFile(plaintext, '{"resources": ["old"]}');
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: '{"resources": ["new"]}' });
+
+      await pulumiDecrypt({ force: true });
+
+      expect(await fs.readFile(plaintext, "utf8")).toBe('{"resources": ["new"]}');
+      const entries = await fs.readdir(path.dirname(plaintext));
+      const backups = entries.filter((entry) => entry.startsWith("dev.json.pre-decrypt-"));
+      expect(backups).toHaveLength(1);
+      expect(await fs.readFile(path.join(path.dirname(plaintext), backups[0]!), "utf8")).toBe(
+        '{"resources": ["old"]}',
+      );
+      expect(entries.filter((entry) => entry.endsWith(".tmp"))).toEqual([]);
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Replaced:"));
+      expect(processExitSpy).not.toHaveBeenCalled();
+    });
+
+    it("should compare YAML structurally", async () => {
+      const plaintext = path.join(root, ".pulumi", "meta.yaml");
+      await fs.writeFile(plaintext, "version: 1\n");
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: "version:   1" });
+
+      await pulumiDecrypt();
+
+      expect(await fs.readFile(plaintext, "utf8")).toBe("version: 1\n");
+      expect(processExitSpy).not.toHaveBeenCalled();
     });
 
     it("should handle no encrypted files found", async () => {
-      mockGlob.mockResolvedValue([]);
-
       await pulumiDecrypt();
 
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("0 encrypted file(s)"));
       expect(mockDatamitsu.exec).not.toHaveBeenCalled();
     });
 
-    it("should decrypt with --output flag", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+    it("should decrypt to stdout without --output", async () => {
+      const encrypted = stateFile("dev.json.enc");
+      mockGlob.mockResolvedValue([encrypted]);
 
       await pulumiDecrypt();
 
       expect(mockDatamitsu.exec).toHaveBeenCalledWith(
         "sops",
-        expect.arrayContaining([
-          "--decrypt",
-          "--output",
-          "/repo/.pulumi/stacks/dev.json",
-          "/repo/.pulumi/stacks/dev.json.enc",
-        ]),
-        expect.any(Object),
+        ["--decrypt", "--input-type", "json", "--output-type", "json", encrypted],
+        expect.objectContaining({
+          cwd: process.cwd(),
+          env: expect.objectContaining({ GPG_TTY: "/dev/ttys001" }),
+          stripFinalNewline: false,
+        }),
+      );
+    });
+
+    it("should search without following symlinks or entering node_modules", async () => {
+      await pulumiDecrypt();
+
+      expect(mockGlob).toHaveBeenCalledWith(
+        expect.any(Array),
+        expect.objectContaining({
+          followSymbolicLinks: false,
+          ignore: expect.arrayContaining(["**/node_modules/**"]),
+        }),
       );
     });
 
     it("should process files in batches of 5", async () => {
-      const files = Array.from({ length: 12 }, (_, i) => `/repo/stack${i}.json.enc`);
+      const files = Array.from({ length: 12 }, (_, i) => stateFile(`stack${i}.json.enc`));
       mockGlob.mockResolvedValue(files);
 
       await pulumiDecrypt();
@@ -95,9 +191,7 @@ describe("decryptState", () => {
     });
 
     it("should aggregate errors from multiple files", async () => {
-      const files = ["/repo/.pulumi/stacks/dev.json.enc", "/repo/.pulumi/stacks/prod.json.enc"];
-      mockGlob.mockResolvedValue(files);
-
+      mockGlob.mockResolvedValue([stateFile("dev.json.enc"), stateFile("prod.json.enc")]);
       mockDatamitsu.exec.mockRejectedValue(new Error("Decryption failed"));
 
       await pulumiDecrypt();
@@ -108,18 +202,15 @@ describe("decryptState", () => {
     });
 
     it("should handle partial batch failures", async () => {
-      const files = [
-        "/repo/.pulumi/stacks/dev.json.enc",
-        "/repo/.pulumi/stacks/prod.json.enc",
-        "/repo/.pulumi/stacks/staging.json.enc",
-      ];
-      mockGlob.mockResolvedValue(files);
-
-      // First call succeeds, second fails, third succeeds
+      mockGlob.mockResolvedValue([
+        stateFile("dev.json.enc"),
+        stateFile("prod.json.enc"),
+        stateFile("staging.json.enc"),
+      ]);
       mockDatamitsu.exec
-        .mockResolvedValueOnce({ exitCode: 0, stderr: "", stdout: "" })
+        .mockResolvedValueOnce({ exitCode: 0, stderr: "", stdout: "{}" })
         .mockRejectedValueOnce(new Error("Failed"))
-        .mockResolvedValueOnce({ exitCode: 0, stderr: "", stdout: "" });
+        .mockResolvedValueOnce({ exitCode: 0, stderr: "", stdout: "{}" });
 
       await pulumiDecrypt();
 
@@ -128,130 +219,32 @@ describe("decryptState", () => {
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
-    it("should detect JSON file type from .enc file", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+    it("should detect YAML file type for .yaml and .yml", async () => {
+      mockGlob.mockResolvedValue([
+        path.join(root, ".pulumi", "meta.yaml.enc"),
+        stateFile("dev.yml.enc"),
+      ]);
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: "version: 1\n" });
 
       await pulumiDecrypt();
 
-      const execCall = mockDatamitsu.exec.mock.calls[0];
-      expect(execCall[1]).toContain("--input-type");
-      expect(execCall[1]).toContain("json");
-    });
-
-    it("should detect YAML file type from .enc file", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/meta.yaml.enc"]);
-
-      await pulumiDecrypt();
-
-      const execCall = mockDatamitsu.exec.mock.calls[0];
-      expect(execCall[1]).toContain("--input-type");
-      expect(execCall[1]).toContain("yaml");
+      for (const call of mockDatamitsu.exec.mock.calls) {
+        expect(call[1]).toEqual(expect.arrayContaining(["--input-type", "yaml"]));
+      }
+      expect(await fs.readFile(stateFile("dev.yml"), "utf8")).toBe("version: 1\n");
     });
 
     it("should pass GPG_TTY to SOPS environment", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+      mockGlob.mockResolvedValue([stateFile("dev.json.enc")]);
       mockGetGPGTTY.mockResolvedValue("/dev/ttys002");
 
       await pulumiDecrypt();
 
-      const execCall = mockDatamitsu.exec.mock.calls[0];
-      const options = execCall[2];
-      expect(options.env.GPG_TTY).toBe("/dev/ttys002");
-    });
-
-    it("should generate correct output path (remove .enc)", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
-
-      await pulumiDecrypt();
-
-      const execCall = mockDatamitsu.exec.mock.calls[0];
-      const args = execCall[1];
-      const outputIndex = args.indexOf("--output");
-      const outputPath = args[outputIndex + 1];
-
-      expect(outputPath).toBe("/repo/.pulumi/stacks/dev.json");
-    });
-
-    it("should handle exactly one batch size of files", async () => {
-      const files = Array.from({ length: 5 }, (_, i) => `/repo/stack${i}.json.enc`);
-      mockGlob.mockResolvedValue(files);
-
-      await pulumiDecrypt();
-
-      expect(mockDatamitsu.exec).toHaveBeenCalledTimes(5);
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("5/5 succeeded"));
-    });
-
-    it("should handle single file", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/meta.yaml.enc"]);
-
-      await pulumiDecrypt();
-
-      expect(mockDatamitsu.exec).toHaveBeenCalledTimes(1);
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("1/1 succeeded"));
-    });
-
-    it("should not exit with error code if all succeeded", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
-
-      await pulumiDecrypt();
-
-      expect(processExitSpy).not.toHaveBeenCalled();
-    });
-
-    it("should use correct SOPS command structure", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
-
-      await pulumiDecrypt();
-
-      expect(mockDatamitsu.exec).toHaveBeenCalledWith(
-        "sops",
-        [
-          "--decrypt",
-          "--input-type",
-          "json",
-          "--output-type",
-          "json",
-          "--output",
-          "/repo/.pulumi/stacks/dev.json",
-          "/repo/.pulumi/stacks/dev.json.enc",
-        ],
-        expect.objectContaining({
-          cwd: process.cwd(),
-          env: expect.objectContaining({
-            GPG_TTY: "/dev/ttys001",
-          }),
-        }),
-      );
-    });
-
-    it("should handle .yml extension", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.yml.enc"]);
-
-      await pulumiDecrypt();
-
-      const execCall = mockDatamitsu.exec.mock.calls[0];
-      const args = execCall[1];
-
-      expect(args).toContain("--input-type");
-      expect(args).toContain("yaml");
-
-      const outputIndex = args.indexOf("--output");
-      expect(args[outputIndex + 1]).toBe("/repo/.pulumi/stacks/dev.yml");
-    });
-
-    it("should log relative paths correctly", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
-
-      await pulumiDecrypt();
-
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Decrypting:"));
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Decrypted:"));
+      expect(mockDatamitsu.exec.mock.calls[0][2].env.GPG_TTY).toBe("/dev/ttys002");
     });
 
     it("should handle GPG key not available error", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
-
+      mockGlob.mockResolvedValue([stateFile("dev.json.enc")]);
       const error = new Error("GPG key not found");
       mockDatamitsu.exec.mockRejectedValue(error);
 
@@ -262,18 +255,6 @@ describe("decryptState", () => {
         error,
       );
       expect(processExitSpy).toHaveBeenCalledWith(1);
-    });
-
-    it("should process meta.yaml files", async () => {
-      mockGlob.mockResolvedValue(["/repo/.pulumi/meta.yaml.enc"]);
-
-      await pulumiDecrypt();
-
-      expect(mockDatamitsu.exec).toHaveBeenCalledWith(
-        "sops",
-        expect.arrayContaining(["--output", "/repo/.pulumi/meta.yaml"]),
-        expect.any(Object),
-      );
     });
   });
 });

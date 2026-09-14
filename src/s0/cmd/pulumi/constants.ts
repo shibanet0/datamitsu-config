@@ -33,6 +33,12 @@ export const PULUMI_ENCRYPTED_EXCLUDE_PATTERNS = [
 ] as const;
 
 /**
+ * Directories never searched for state: dependency trees only contain symlinked aliases of
+ * workspace stacks.
+ */
+export const PULUMI_GLOB_IGNORE_PATTERNS = ["**/node_modules/**"] as const;
+
+/**
  * Concurrent SOPS operations limit (conservative for GPG agent)
  */
 export const DEFAULT_CONCURRENCY_LIMIT = 5;

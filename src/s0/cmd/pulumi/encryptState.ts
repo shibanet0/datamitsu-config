@@ -1,4 +1,3 @@
-import fastGlob from "fast-glob";
 import crypto, { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -16,16 +15,25 @@ import {
   PULUMI_ENCRYPTED_EXCLUDE_PATTERNS,
   PULUMI_STATE_PATTERNS,
 } from "./constants";
+import { stripInsignificantJsonWhitespace } from "./stateContent";
+import { findStateFiles } from "./stateFiles";
 
-const getEditorJS = async (buf: Buffer) => {
+export const getEditorJS = async (buf: Buffer) => {
   const encryptor = new Encryptor(crypto, util);
   const encryptionKey = encryptor.generateKey();
   const encryptionKeyName = randomUUID();
 
   const encryptedContentBuf = await encryptor.encrypt(buf, encryptionKey);
 
+  // The editor runs as a standalone script built with String(), so everything it uses is passed in
+  // as arguments: identifiers of this module may be renamed by the bundler or the test transform.
   // oxlint-disable-next-line consistent-function-scoping
-  const editor = async (contentEncryptedBase64: string, encryptionKeyBase64: string) => {
+  const editor = async (
+    contentEncryptedBase64: string,
+    encryptionKeyBase64: string,
+    EncryptorClass: typeof Encryptor,
+    stripWhitespace: typeof stripInsignificantJsonWhitespace,
+  ) => {
     const [fsInner, cryptoInner, utilInner] = await Promise.all([
       import("node:fs/promises"),
       import("node:crypto"),
@@ -35,53 +43,9 @@ const getEditorJS = async (buf: Buffer) => {
     const contentEncryptedBuffer = Buffer.from(contentEncryptedBase64, "base64");
     const decryptionKey = Buffer.from(encryptionKeyBase64, "base64");
 
-    const innerEncryptor = new Encryptor(cryptoInner, utilInner);
+    const innerEncryptor = new EncryptorClass(cryptoInner, utilInner);
 
     const contentBuf = await innerEncryptor.decrypt(contentEncryptedBuffer, decryptionKey);
-
-    // oxlint-disable-next-line consistent-function-scoping
-    const normalizeAndSortJSON = (inputBuf: Buffer): Buffer => {
-      try {
-        const str = inputBuf.toString("utf8");
-        const state = JSON.parse(str);
-
-        if (Array.isArray(state?.checkpoint?.latest?.resources)) {
-          state.checkpoint.latest.resources.sort((a: { urn: string }, b: { urn: string }) => {
-            const urnA = a?.urn || "";
-            const urnB = b?.urn || "";
-
-            // Stack must go first (it's the root parent)
-            const aIsStack = urnA.includes("::pulumi:pulumi:Stack::");
-            const bIsStack = urnB.includes("::pulumi:pulumi:Stack::");
-
-            if (aIsStack && !bIsStack) {
-              return -1;
-            }
-            if (!aIsStack && bIsStack) {
-              return 1;
-            }
-
-            // Then providers
-            const aIsProvider = urnA.includes("::pulumi:providers:");
-            const bIsProvider = urnB.includes("::pulumi:providers:");
-
-            if (aIsProvider && !bIsProvider) {
-              return -1;
-            }
-            if (!aIsProvider && bIsProvider) {
-              return 1;
-            }
-
-            // Within groups - by URN
-            return urnA.localeCompare(urnB);
-          });
-        }
-
-        return Buffer.from(JSON.stringify(state, null, 4));
-      } catch {
-        return inputBuf;
-      }
-    };
 
     const filePath = process.argv.at(2);
 
@@ -91,31 +55,20 @@ const getEditorJS = async (buf: Buffer) => {
     }
 
     const isJSON = filePath.endsWith(".json") || filePath.endsWith(".json.enc");
+    const currentBuf = await fsInner.readFile(filePath);
 
-    // Normalize both buffers the same way before comparing
-    const normalizedContentBuf = isJSON ? normalizeAndSortJSON(contentBuf) : contentBuf;
-    const unencryptedHash = cryptoInner
-      .createHash("sha512")
-      .update(normalizedContentBuf)
-      .digest("hex");
+    const isUnchanged = isJSON
+      ? stripWhitespace(contentBuf.toString("utf8")) ===
+        stripWhitespace(currentBuf.toString("utf8"))
+      : contentBuf.equals(currentBuf);
 
-    const sopsEncryptedDataBase64 = await fsInner.readFile(filePath, "base64");
-    const sopsEncryptedBuf = Buffer.from(sopsEncryptedDataBase64, "base64");
-    const normalizedSopsEncryptedBuf = isJSON
-      ? normalizeAndSortJSON(sopsEncryptedBuf)
-      : sopsEncryptedBuf;
-    const sopsEncryptedHash = cryptoInner
-      .createHash("sha512")
-      .update(normalizedSopsEncryptedBuf)
-      .digest("hex");
-
-    if (unencryptedHash === sopsEncryptedHash) {
+    if (isUnchanged) {
       console.log("File has not changed");
       process.exit(0);
     }
 
     try {
-      await fsInner.writeFile(filePath, normalizedContentBuf, "binary");
+      await fsInner.writeFile(filePath, contentBuf);
       process.exit(0);
     } catch (error) {
       console.error(error);
@@ -129,9 +82,10 @@ const getEditorJS = async (buf: Buffer) => {
       "#!/usr/bin/env node",
       `const encryptionKey = process.env[${JSON.stringify(encryptionKeyName)}];`,
       `const Encryptor = ${String(Encryptor)};`,
+      `const stripInsignificantJsonWhitespace = ${String(stripInsignificantJsonWhitespace)};`,
       `const editor = ${String(editor)};`,
       `const content = ${JSON.stringify(encryptedContentBuf.toString("base64"))};`,
-      "await editor(content, encryptionKey);",
+      "await editor(content, encryptionKey, Encryptor, stripInsignificantJsonWhitespace);",
       "",
     ].join("\n"),
   };
@@ -170,6 +124,8 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
           ...editorJS.env,
           EDITOR: editor,
           GPG_TTY,
+          // SOPS prefers SOPS_EDITOR over EDITOR; an inherited one would bypass the generated editor.
+          SOPS_EDITOR: editor,
         },
       },
     );
@@ -197,13 +153,7 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
 }
 
 export const pulumiEncrypt = async () => {
-  const { glob } = fastGlob;
-
-  const files = await glob([...PULUMI_STATE_PATTERNS], {
-    absolute: true,
-    cwd: process.cwd(),
-    ignore: [...PULUMI_ENCRYPTED_EXCLUDE_PATTERNS],
-  });
+  const files = await findStateFiles(PULUMI_STATE_PATTERNS, PULUMI_ENCRYPTED_EXCLUDE_PATTERNS);
 
   console.log(`\n🔐 Found ${files.length} Pulumi state file(s) to encrypt:\n`);
 

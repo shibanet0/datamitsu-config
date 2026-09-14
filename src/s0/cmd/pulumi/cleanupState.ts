@@ -1,5 +1,4 @@
 import { execa } from "execa";
-import fastGlob from "fast-glob";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -7,6 +6,8 @@ import { Datamitsu } from "../../../lib";
 import { hasMessage } from "../../../utils/typeGuards";
 import { getGPGTTY } from "../../utils/tty";
 import { detectFileType, getDecryptedPath, PULUMI_ENCRYPTED_STATE_PATTERNS } from "./constants";
+import { isSameStateContent } from "./stateContent";
+import { findStateFiles } from "./stateFiles";
 
 /**
  * Check Git repository safety before cleanup
@@ -62,15 +63,18 @@ async function checkGitSafety(): Promise<void> {
 }
 
 /**
- * Verify encrypted file is valid by attempting to decrypt
+ * Whether the plaintext can be deleted: the encrypted file must decrypt to the same state. An
+ * encrypted file that merely decrypts may be older than the plaintext, and deleting it would lose
+ * the newer state.
  */
-async function verifyEncryptedFile(
+async function isCoveredByEncryptedFile(
   encFile: string,
+  originalFile: string,
   datamitsu: Datamitsu,
   GPG_TTY: string,
 ): Promise<boolean> {
   try {
-    await datamitsu.exec(
+    const { stdout: decrypted } = await datamitsu.exec(
       "sops",
       [
         "--decrypt",
@@ -82,25 +86,21 @@ async function verifyEncryptedFile(
       ],
       {
         env: { ...process.env, GPG_TTY },
+        stripFinalNewline: false,
       },
     );
-    return true;
+    const plaintext = await fs.readFile(originalFile);
+    return isSameStateContent(plaintext, String(decrypted), detectFileType(encFile));
   } catch {
     return false;
   }
 }
 
 export const pulumiCleanup = async () => {
-  const { glob } = fastGlob;
-
   // Safety checks: ensure git repository is clean
   await checkGitSafety();
 
-  // Find all encrypted files
-  const encryptedFiles = await glob([...PULUMI_ENCRYPTED_STATE_PATTERNS], {
-    absolute: true,
-    cwd: process.cwd(),
-  });
+  const encryptedFiles = await findStateFiles(PULUMI_ENCRYPTED_STATE_PATTERNS);
 
   console.log(`\n🧹 Scanning for unencrypted files to clean up...\n`);
 
@@ -120,15 +120,14 @@ export const pulumiCleanup = async () => {
       .catch(() => false);
 
     if (originalExists) {
-      // Verify encrypted file is valid
       // oxlint-disable-next-line no-await-in-loop
-      const isValid = await verifyEncryptedFile(encFile, datamitsu, GPG_TTY);
+      const isCovered = await isCoveredByEncryptedFile(encFile, originalFile, datamitsu, GPG_TTY);
 
-      if (isValid) {
+      if (isCovered) {
         filesToRemove.push(originalFile);
       } else {
         console.warn(
-          `⚠️  Warning: ${path.relative(process.cwd(), encFile)} failed verification, keeping original`,
+          `⚠️  Warning: ${path.relative(process.cwd(), encFile)} does not decrypt to the current plaintext, keeping original`,
         );
       }
     }
@@ -161,4 +160,8 @@ export const pulumiCleanup = async () => {
   }
 
   console.log(`\n✨ Cleanup complete! (${removed}/${filesToRemove.length} removed)\n`);
+
+  if (removed < filesToRemove.length) {
+    process.exit(1);
+  }
 };

@@ -27,6 +27,8 @@ describe("pulumi command", () => {
     vi.mocked(cleanupModule.pulumiCleanup).mockImplementation(mockPulumiCleanup);
 
     vi.clearAllMocks();
+    // Commander keeps option values on the command instance between parses.
+    pulumiCommand.setOptionValue("force", undefined);
   });
 
   describe("command structure", () => {
@@ -62,8 +64,15 @@ describe("pulumi command", () => {
       await pulumiCommand.parseAsync(["decrypt-all-state"], { from: "user" });
 
       expect(mockPulumiDecrypt).toHaveBeenCalledTimes(1);
+      expect(mockPulumiDecrypt).toHaveBeenCalledWith({ force: false });
       expect(mockPulumiEncrypt).not.toHaveBeenCalled();
       expect(mockPulumiCleanup).not.toHaveBeenCalled();
+    });
+
+    it("should pass --force to pulumiDecrypt", async () => {
+      await pulumiCommand.parseAsync(["decrypt-all-state", "--force"], { from: "user" });
+
+      expect(mockPulumiDecrypt).toHaveBeenCalledWith({ force: true });
     });
 
     it("should call pulumiCleanup for cleanup-all-state", async () => {

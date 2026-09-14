@@ -1,4 +1,4 @@
-import fastGlob from "fast-glob";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 import { Datamitsu } from "../../../lib";
@@ -9,43 +9,89 @@ import {
   getDecryptedPath,
   PULUMI_ENCRYPTED_STATE_PATTERNS,
 } from "./constants";
+import { isSameStateContent } from "./stateContent";
+import { findStateFiles, writeFileAtomic } from "./stateFiles";
 
-async function decryptFile(file: string, datamitsu: Datamitsu, GPG_TTY: string): Promise<void> {
+export interface DecryptOptions {
+  /**
+   * Replace plaintext state that differs from its encrypted file. The previous plaintext is kept as
+   * a timestamped `.pre-decrypt-*` backup next to it.
+   */
+  force?: boolean;
+}
+
+type DecryptOutcome = "created" | "replaced" | "unchanged";
+
+async function decryptFile(
+  file: string,
+  datamitsu: Datamitsu,
+  GPG_TTY: string,
+  options: DecryptOptions,
+): Promise<DecryptOutcome> {
   const relativePath = path.relative(process.cwd(), file);
   console.log(`📄 Decrypting: ${relativePath}`);
 
   const outputFile = getDecryptedPath(file);
+  const relativeOutput = path.relative(process.cwd(), outputFile);
   const fileType = detectFileType(file);
 
-  // Let SOPS write the output file directly
-  await datamitsu.exec(
+  // Decrypt into memory instead of `--output`: SOPS truncates the target before writing, and the
+  // plaintext may be newer than the encrypted file (a `pulumi up` that was not encrypted yet).
+  const { stdout: decrypted } = await datamitsu.exec(
     "sops",
-    [
-      "--decrypt",
-      "--input-type",
-      fileType,
-      "--output-type",
-      fileType,
-      "--output",
-      outputFile,
-      file,
-    ],
+    ["--decrypt", "--input-type", fileType, "--output-type", fileType, file],
     {
       cwd: process.cwd(),
       env: { ...process.env, GPG_TTY },
+      stripFinalNewline: false,
     },
   );
+  const decryptedText = String(decrypted);
 
-  console.log(`   ✅ Decrypted: ${path.relative(process.cwd(), outputFile)}\n`);
+  const existing = await readIfExists(outputFile);
+
+  if (existing === undefined) {
+    await writeFileAtomic(outputFile, decryptedText);
+    console.log(`   ✅ Decrypted: ${relativeOutput}\n`);
+    return "created";
+  }
+
+  if (isSameStateContent(existing, decryptedText, fileType)) {
+    console.log(`   ⏭️  Unchanged: ${relativeOutput}\n`);
+    return "unchanged";
+  }
+
+  if (!options.force) {
+    throw new Error(
+      `${relativeOutput} differs from ${relativePath}; refusing to overwrite local state.\n` +
+        `   If the local file is newer, run encrypt-all-state.\n` +
+        `   If the encrypted file is authoritative, run decrypt-all-state --force (a backup is kept).`,
+    );
+  }
+
+  const backup = `${outputFile}.pre-decrypt-${new Date().toISOString().replaceAll(":", "-")}`;
+  await fs.copyFile(outputFile, backup);
+  await fs.chmod(backup, 0o600);
+  await writeFileAtomic(outputFile, decryptedText);
+  console.log(
+    `   ✅ Replaced: ${relativeOutput} (backup: ${path.relative(process.cwd(), backup)})\n`,
+  );
+  return "replaced";
 }
 
-export const pulumiDecrypt = async () => {
-  const { glob } = fastGlob;
+async function readIfExists(file: string): Promise<Buffer | undefined> {
+  try {
+    return await fs.readFile(file);
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return undefined;
+    }
+    throw error;
+  }
+}
 
-  const files = await glob([...PULUMI_ENCRYPTED_STATE_PATTERNS], {
-    absolute: true,
-    cwd: process.cwd(),
-  });
+export const pulumiDecrypt = async (options: DecryptOptions = {}) => {
+  const files = await findStateFiles(PULUMI_ENCRYPTED_STATE_PATTERNS);
 
   console.log(`\n🔓 Found ${files.length} encrypted file(s) to decrypt:\n`);
 
@@ -62,7 +108,7 @@ export const pulumiDecrypt = async () => {
 
     // oxlint-disable-next-line no-await-in-loop
     const results = await Promise.allSettled(
-      batch.map((file) => decryptFile(file, datamitsu, GPG_TTY)),
+      batch.map((file) => decryptFile(file, datamitsu, GPG_TTY, options)),
     );
 
     for (const result of results) {
