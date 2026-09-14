@@ -32,6 +32,7 @@ describe("Taskfile.yaml docs tasks", () => {
   });
 
   it("all task definitions should have desc fields", () => {
+    // eslint-disable-next-line sonarjs/slow-regex -- the input is this repository own Taskfile, not user data, so the backtracking this warns about has no vector here. The rule stays on everywhere else.
     const taskMatches = taskfileContent.matchAll(/^ {2}([\w:.-]+):\s*\n((?:^ {4,}.+\n|\s*\n)*)/gm);
     for (const match of taskMatches) {
       const taskName = match[1]!;

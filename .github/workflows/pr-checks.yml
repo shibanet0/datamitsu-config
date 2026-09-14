@@ -79,8 +79,8 @@ jobs:
       - name: Build Docker image (no push)
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=pr-docker-${{ matrix.variant }}
+          cache-to: type=gha,scope=pr-docker-${{ matrix.variant }},mode=max
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           platforms: linux/amd64,linux/arm64
@@ -111,7 +111,7 @@ jobs:
       - name: Build and load amd64 image
         uses: docker/build-push-action@v7
         with:
-          cache-from: type=gha
+          cache-from: type=gha,scope=pr-docker-${{ matrix.variant }}
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           load: true
@@ -151,8 +151,18 @@ jobs:
         uses: ./.github/actions/setup-environment
       - name: Run lint
         run: pnpm dm check
-      - name: Validate blocklist
-        run: pnpm dm exec task -- validate:blocklist
+      # `validate` rather than `validate:blocklist` alone: the parser pin and the rule-inventory
+      # census had no CI gate at all, and both are exactly the kind of drift a Dependabot bump
+      # produces. Without this, a plugin bump that adds or re-categorises a rule merges with a
+      # stale census — which is the one thing the committed inventory exists to prevent.
+      #
+      # It needs a build, because the census is taken from the built package rather than from the
+      # sources; `validate:rule-inventory` now refuses to answer against an older build instead of
+      # quietly reporting on the previous rule set.
+      - name: Build
+        run: pnpm dm exec task -- build
+      - name: Validate
+        run: pnpm dm exec task -- validate
   pr-title:
     if: github.event_name == 'pull_request'
     name: PR Title

@@ -6,10 +6,7 @@ export async function fsecond(): Promise<TypedFlatConfigItem[]> {
   return [
     plugin.default.configs.recommended,
     {
-      rules: {
-        "fsecond/no-inline-interfaces": "off",
-        "fsecond/prefer-destructured-optionals": "off",
-      },
+      rules: {},
     },
   ];
 }

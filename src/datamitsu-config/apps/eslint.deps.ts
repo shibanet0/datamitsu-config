@@ -11,13 +11,20 @@ export const eslintDeps = {
   "@eslint/js": nodeVersions["@eslint/js"].version,
   "@next/eslint-plugin-next": nodeVersions["@next/eslint-plugin-next"].version,
   "@stylistic/eslint-plugin": nodeVersions["@stylistic/eslint-plugin"].version,
+  // Not a plugin. @antebudimir/eslint-plugin-vanilla-extract imports it at runtime without
+  // declaring it as a dependency or a peer, so it only ever resolved by accident, through
+  // whatever else happened to pull it in. Pinned to the same minor as typescript-eslint so the
+  // tree stays single-versioned.
+  "@typescript-eslint/utils": nodeVersions["@typescript-eslint/utils"].version,
   "@vitest/eslint-plugin": nodeVersions["@vitest/eslint-plugin"].version,
+  // Same story: eslint-plugin-compat requires caniuse-lite at runtime and declares neither a
+  // dependency nor a peer on it.
+  "caniuse-lite": nodeVersions["caniuse-lite"].version,
   eslint: nodeVersions["eslint"].version,
   "eslint-config-prettier": nodeVersions["eslint-config-prettier"].version,
   "eslint-flat-config-utils": nodeVersions["eslint-flat-config-utils"].version,
   "eslint-import-resolver-typescript": nodeVersions["eslint-import-resolver-typescript"].version,
   "eslint-plugin-array-func": nodeVersions["eslint-plugin-array-func"].version,
-  "eslint-plugin-arrow-return-style": nodeVersions["eslint-plugin-arrow-return-style"].version,
   "eslint-plugin-baseline-js": nodeVersions["eslint-plugin-baseline-js"].version,
   "eslint-plugin-boundaries": nodeVersions["eslint-plugin-boundaries"].version,
   "eslint-plugin-clsx": nodeVersions["eslint-plugin-clsx"].version,
@@ -34,6 +41,9 @@ export const eslintDeps = {
   "eslint-plugin-i18next": nodeVersions["eslint-plugin-i18next"].version,
   "eslint-plugin-import-x": nodeVersions["eslint-plugin-import-x"].version,
   "eslint-plugin-jsdoc": nodeVersions["eslint-plugin-jsdoc"].version,
+  // Kept as a dependency although nothing imports it any more: the app installs against a frozen
+  // lockfile whose blob is generated elsewhere, so dropping the entry breaks the install until that
+  // blob is regenerated. The plugin itself is no longer loaded — jsonc owns .json now.
   "eslint-plugin-json": nodeVersions["eslint-plugin-json"].version,
   "eslint-plugin-json-schema-validator":
     nodeVersions["eslint-plugin-json-schema-validator"].version,

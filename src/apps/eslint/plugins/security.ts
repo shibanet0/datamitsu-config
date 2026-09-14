@@ -5,19 +5,12 @@ export async function security(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/security/rules",
+      name: "s0/security/rules",
       plugins: {
         security: plugin.default,
       },
       rules: {
         ...plugin.default.configs.recommended.rules,
-      },
-    },
-
-    {
-      rules: {
-        "security/detect-non-literal-fs-filename": "off",
-        "security/detect-object-injection": "off",
       },
     },
   ];

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * Lefthook-sort — reorder a lefthook config into reading order.
  *
@@ -9,7 +9,7 @@
  * Invoked by lefthook as the last job of the `fix` phase (see the generated `lefthook.yaml`),
  * typically as:
  *
- * Node .datamitsu/lefthook-sort.mjs {staged_files}
+ * Pnpm dm exec lefthook-sort -- lefthook.yaml
  *
  * With no file arguments it falls back to `lefthook.yaml` in the cwd. Writes are idempotent: a file
  * already in canonical order is left untouched (and its mtime is not bumped), so re-running never

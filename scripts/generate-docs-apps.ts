@@ -4,8 +4,13 @@ import { sanitizeDescription } from "./lib/sanitize-markdown.ts";
 import { writeAndFix } from "./lib/write-and-fix.ts";
 
 export interface AppConfig {
+  archives?: Record<string, unknown>;
   binary?: {
     binaries?: BinaryPlatforms;
+  };
+  bun?: {
+    packageName?: string;
+    version?: string;
   };
   description: string | undefined;
   go?: {
@@ -156,8 +161,13 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
 
   if (app.binary) {
     repository = extractRepositoryFromBinary(app);
-  } else if (app.node) {
-    repository = extractRepositoryFromNode(app);
+  } else if (shipsOwnArchive(app)) {
+    // The executable comes from a Datamitsu-built inline archive. Whatever node/uv package the app
+    // declares is only a dependency anchor for the runtime, so linking to that package's registry
+    // page would point readers at an unrelated project (e.g. `lefthook` → the `yaml` package).
+    repository = undefined;
+  } else if (app.bun || app.node) {
+    repository = extractRepositoryFromJavaScript(app);
   } else if (app.go) {
     repository = extractRepositoryFromGo(app);
   } else if (app.uv) {
@@ -186,7 +196,7 @@ export function generateAppsMarkdown(apps: AppInfo[]): string {
     "",
     "Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.",
     "",
-    `This configuration manages **${apps.length} apps** across multiple runtimes (binary, node, python).`,
+    `This configuration manages **${apps.length} apps** across multiple runtimes (binary, bun, node, python, go, jvm).`,
     "",
     "## Apps by Category",
     "",
@@ -203,6 +213,7 @@ export function generateAppsMarkdown(apps: AppInfo[]): string {
     "1. Downloads and caches app binaries based on your project types",
     "2. Supports multiple runtimes:",
     "   - **binary** — Native executables (Go, Rust compiled tools)",
+    "   - **bun** — npm packages and bundled scripts executed via managed Bun",
     "   - **node** — npm packages executed via Node.js",
     "   - **python** — Python packages installed via pip/uv",
     "3. Apps are referenced by [Tools](tools.md) configurations",
@@ -273,6 +284,9 @@ export function parseConfigJson(jsonStr: string): ConfigShowOutput {
 }
 
 function detectRuntime(app: AppConfig): string {
+  if (app.bun) {
+    return "bun";
+  }
   if (app.node) {
     return "node";
   }
@@ -318,20 +332,20 @@ function extractRepositoryFromGo(app: AppConfig): string | undefined {
   return `https://pkg.go.dev/${packageName}`;
 }
 
+function extractRepositoryFromJavaScript(app: AppConfig): string | undefined {
+  const packageName = app.bun?.packageName ?? app.node?.packageName;
+  if (!packageName) {
+    return undefined;
+  }
+  return `https://www.npmjs.com/package/${packageName}`;
+}
+
 function extractRepositoryFromJvm(app: AppConfig): string | undefined {
   const jarUrl = app.jvm?.jarUrl;
   if (!jarUrl) {
     return undefined;
   }
   return jarUrl;
-}
-
-function extractRepositoryFromNode(app: AppConfig): string | undefined {
-  const packageName = app.node?.packageName;
-  if (!packageName) {
-    return undefined;
-  }
-  return `https://www.npmjs.com/package/${packageName}`;
 }
 
 function extractRepositoryFromUv(app: AppConfig): string | undefined {
@@ -351,6 +365,10 @@ function formatRepositoryLink(repository: string | undefined): string {
     return "N/A";
   }
   return `[Info](${repository}){:target="_blank"}`;
+}
+
+function shipsOwnArchive(app: AppConfig): boolean {
+  return Object.keys(app.archives ?? {}).length > 0;
 }
 
 const isDirectRun =

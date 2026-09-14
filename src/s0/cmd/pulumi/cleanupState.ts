@@ -111,14 +111,12 @@ export const pulumiCleanup = async () => {
   for (const encFile of encryptedFiles) {
     const originalFile = getDecryptedPath(encFile);
 
-    // oxlint-disable-next-line no-await-in-loop
     const originalExists = await fs
       .access(originalFile)
       .then(() => true)
       .catch(() => false);
 
     if (originalExists) {
-      // oxlint-disable-next-line no-await-in-loop
       const isCovered = await isCoveredByEncryptedFile(encFile, originalFile, datamitsu, GPG_TTY);
 
       if (isCovered) {
@@ -146,7 +144,6 @@ export const pulumiCleanup = async () => {
   let removed = 0;
   for (const file of filesToRemove) {
     try {
-      // oxlint-disable-next-line no-await-in-loop
       await fs.unlink(file);
       console.log(`   ✅ Removed: ${path.relative(process.cwd(), file)}`);
       removed++;

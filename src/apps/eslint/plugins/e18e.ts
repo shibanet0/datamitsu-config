@@ -5,7 +5,7 @@ export async function e18e(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/e18e/rules",
+      name: "s0/e18e/rules",
       plugins: {
         e18e: plugin.default,
       },

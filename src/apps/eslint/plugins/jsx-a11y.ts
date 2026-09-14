@@ -5,7 +5,7 @@ export async function jsxA11y(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/jsx-a11y/rules",
+      name: "s0/jsx-a11y/rules",
       plugins: {
         "jsx-a11y-x": plugin.default,
       },
@@ -15,12 +15,7 @@ export async function jsxA11y(): Promise<TypedFlatConfigItem[]> {
     },
 
     {
-      rules: {
-        "jsx-a11y-x/click-events-have-key-events": "off",
-        "jsx-a11y-x/interactive-supports-focus": "off",
-        "jsx-a11y-x/no-autofocus": "off",
-        "jsx-a11y-x/tabindex-no-positive": "off",
-      },
+      rules: {},
     },
   ];
 }

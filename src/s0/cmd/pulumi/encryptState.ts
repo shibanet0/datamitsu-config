@@ -37,7 +37,6 @@ export const getEditorJS = async (buf: Buffer) => {
   // The editor runs as a standalone script built with String(), so everything it uses is passed in
   // as arguments: identifiers and dynamic imports inside it may be rewritten by the bundler or the
   // test transform.
-  // oxlint-disable-next-line consistent-function-scoping
   const editor = async (
     contentEncryptedBase64: string,
     encryptionKeyBase64: string,
@@ -194,7 +193,6 @@ export const pulumiEncrypt = async (options: EncryptOptions = {}) => {
   for (let i = 0; i < files.length; i += batchSize) {
     const batch = files.slice(i, i + batchSize);
 
-    // oxlint-disable-next-line no-await-in-loop
     const results = await Promise.allSettled(
       batch.map((file) => processFile(file, datamitsu, GPG_TTY, options)),
     );

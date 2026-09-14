@@ -5,6 +5,7 @@ import path from "node:path";
 
 export interface SyncResult {
   minVersionUpdated: boolean;
+  selfPinUpdated: boolean;
   skipped: boolean;
   skipReason?: string;
   version: string;
@@ -15,6 +16,10 @@ export interface SyncResult {
 const UNSTABLE_PATTERN = /^0\.0\.0-unstable\./;
 
 const MIN_VERSION_REGEX = /(return\s+")([\w.-]+)(")/;
+
+// The root config restates the pin inside the package.json it manages for this repo, so the same
+// version lives in two files and nothing was keeping them equal.
+const SELF_PIN_REGEX = /("@datamitsu\/datamitsu":\s*")([\w.-]+)(")/;
 
 // --- Exported functions (testable) ---
 
@@ -54,9 +59,17 @@ export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult>
 
   const version = await readDatamitsuVersion(packageJsonPath);
 
+  const rootConfigTsPath = path.join(rootDir, "datamitsu.config.ts");
+  const rootConfigTs = await fsPromise.readFile(rootConfigTsPath, "utf8");
+  const [updatedRootConfigTs, selfPinUpdated] = updateSelfPin(rootConfigTs, version);
+  if (selfPinUpdated) {
+    await fsPromise.writeFile(rootConfigTsPath, updatedRootConfigTs, "utf8");
+  }
+
   if (isUnstableVersion(version)) {
     return {
       minVersionUpdated: false,
+      selfPinUpdated,
       skipped: true,
       skipReason: `Unstable version ${version} — skipping min-version sync`,
       version,
@@ -71,6 +84,7 @@ export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult>
 
   return {
     minVersionUpdated,
+    selfPinUpdated,
     skipped: false,
     version,
   };
@@ -95,6 +109,24 @@ export function updateMinVersion(content: string, version: string): [string, boo
   return [replaced, true];
 }
 
+/**
+ * Update the `@datamitsu/datamitsu` pin the root datamitsu.config.ts writes into this repo's own
+ * package.json. Returns [updatedContent, wasChanged].
+ */
+export function updateSelfPin(content: string, version: string): [string, boolean] {
+  const match = content.match(SELF_PIN_REGEX);
+
+  if (!match) {
+    throw new Error('Could not find the "@datamitsu/datamitsu" pin in datamitsu.config.ts');
+  }
+
+  if (match[2] === version) {
+    return [content, false];
+  }
+
+  return [content.replace(SELF_PIN_REGEX, `$1${version}$3`), true];
+}
+
 // --- Direct run ---
 
 const isDirectRun =
@@ -105,6 +137,12 @@ if (isDirectRun) {
   try {
     const rootDir = path.join(import.meta.dirname, "..");
     const result = await syncDatamitsuVersion(rootDir);
+
+    if (result.selfPinUpdated) {
+      console.log(
+        `Synced the @datamitsu/datamitsu pin in datamitsu.config.ts to ${result.version}`,
+      );
+    }
 
     if (result.skipped) {
       console.log(result.skipReason);

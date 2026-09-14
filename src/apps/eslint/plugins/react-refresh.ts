@@ -5,7 +5,7 @@ export async function reactRefresh(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/react-refresh/rules",
+      name: "s0/react-refresh/rules",
       plugins: {
         "react-refresh": plugin.default,
       },

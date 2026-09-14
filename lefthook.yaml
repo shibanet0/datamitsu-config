@@ -6,7 +6,7 @@ pre-commit:
       run: node bin/datamitsu.js init
     sync-datamitsu-version:
       priority: 20
-      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu.config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
       stage_fixed: true
     docs-generate:
       priority: 30
@@ -16,9 +16,21 @@ pre-commit:
       priority: 40
       run: node bin/datamitsu.js check --file-scoped
       stage_fixed: true
+    build:
+      priority: 50
+      run: "node bin/datamitsu.js exec task -- build"
+      stage_fixed: false
     validate-blocklist:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    validate-parsers:
+      priority: 105
+      run: "node bin/datamitsu.js exec task -- validate:parsers"
+      stage_fixed: false
+    validate-rule-inventory:
+      priority: 110
+      run: "node bin/datamitsu.js exec task -- validate:rule-inventory"
       stage_fixed: false
     test:
       priority: 200

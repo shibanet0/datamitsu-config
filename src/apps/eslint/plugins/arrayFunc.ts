@@ -5,7 +5,7 @@ export async function arrayFunc(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/array-func/rules",
+      name: "s0/array-func/rules",
       plugins: {
         "array-func": plugin.default,
       },
@@ -14,10 +14,7 @@ export async function arrayFunc(): Promise<TypedFlatConfigItem[]> {
       },
     },
     {
-      rules: {
-        "array-func/from-map": "off",
-        "array-func/prefer-array-from": "off",
-      },
+      rules: {},
     },
   ];
 }

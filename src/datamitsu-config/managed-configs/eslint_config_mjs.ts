@@ -1,24 +1,18 @@
 export const eslintConfigMjs: config.ManagedConfig = {
   content: (context) => {
-    return `import { join } from "node:path";
+    // No `oxlint.configFilePath`. It used to point eslint-plugin-oxlint at the project's own
+    // `.oxlintrc.json`, which is a file that only ever said `extends` — and the plugin does not
+    // follow `extends`, so it read an empty rule set and suppressed 76 ESLint rules where the real
+    // config suppresses 304. Every one of the other 228 was a rule both tools were reporting.
+    // `defineConfig` now uses the shared config object directly, which is also the only thing that
+    // still works now that the oxlint config is a TypeScript module.
+    return `import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.mjs"))}";
 
-  import { defineConfig } from "${tools.Path.forImport(tools.Path.join(context.datamitsuDir, "eslint.config.mjs"))}";
+import packageJSON from "./package.json" with { type: "json" };
 
-  import packageJSON from "./package.json" with { type: "json" };
-
-  const config = await defineConfig(
+export default await defineConfig(
   /** @type {import("${facts().env.DATAMITSU_PACKAGE_NAME}/type-fest").PackageJson} */ (packageJSON),
-  undefined,
-  {
-    plugins: {
-      oxlint: {
-        configFilePath: join(import.meta.dirname, ".oxlintrc.json"),
-      },
-    },
-  },
 );
-
-export default config;
 `;
   },
   otherFileNameList: [

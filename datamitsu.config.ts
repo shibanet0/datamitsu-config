@@ -25,7 +25,6 @@ export default defineConfig((prev) => {
     "eslint.config.mjs": {
       ...config.managedConfigs?.["eslint.config.mjs"],
       content: () => /* js */ `import { globalIgnores } from "@eslint/config-helpers";
-import { join } from "node:path";
 
 import { defineConfig } from "./.datamitsu/eslint.config.mjs";
 import packageJSON from "./package.json" with { type: "json" };
@@ -40,9 +39,6 @@ const config = await defineConfig(
       e18e: {
         disabled: true,
       },
-      oxlint: {
-        configFilePath: join(import.meta.dirname, ".oxlintrc.json"),
-      },
       react: {
         version: "19.2.3",
       },
@@ -52,14 +48,11 @@ const config = await defineConfig(
 );
 
 export default [
-  globalIgnores([".datamitsu/"]),
+  // dist-* are this repo's build outputs (the inline config bundles and the goja bundle).
+  // GLOB_EXCLUDE covers "dist", not the "dist-<name>" convention used here, so they were being
+  // linted — six of the seven unused-variable reports came from generated .d.ts files.
+  globalIgnores([".datamitsu/", "dist-*/"]),
   ...config,
-  {
-    rules: {
-      "playwright/no-standalone-expect": "off",
-      "unicorn/no-object-as-default-parameter": "off",
-    },
-  },
 ];
 `,
       expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
@@ -121,7 +114,7 @@ pre-commit:
       run: node bin/datamitsu.js init
     sync-datamitsu-version:
       priority: 20
-      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && git add docker/Dockerfile docker/Dockerfile.alpine src/datamitsu-config/datamitsu.config.ts"
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu.config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
       stage_fixed: true
     docs-generate:
       priority: 30
@@ -131,9 +124,21 @@ pre-commit:
       priority: 40
       run: node bin/datamitsu.js check --file-scoped
       stage_fixed: true
+    build:
+      priority: 50
+      run: "node bin/datamitsu.js exec task -- build"
+      stage_fixed: false
     validate-blocklist:
       priority: 100
       run: "node bin/datamitsu.js exec task -- validate:blocklist"
+      stage_fixed: false
+    validate-parsers:
+      priority: 105
+      run: "node bin/datamitsu.js exec task -- validate:parsers"
+      stage_fixed: false
+    validate-rule-inventory:
+      priority: 110
+      run: "node bin/datamitsu.js exec task -- validate:rule-inventory"
       stage_fixed: false
     test:
       priority: 200
@@ -161,43 +166,7 @@ post-checkout:
         return (
           JSON.stringify(
             {
-              name: "@shibanet0/datamitsu-config",
-              version: "0.0.3-alpha-28",
-              description: "Shared datamitsu configuration with 79+ managed development tools",
-              keywords: [],
-              repository: {
-                type: "git",
-                url: "https://github.com/shibanet0/datamitsu-config",
-              },
-              license: "MIT",
               author: "Alexander Svinarev <shibanet0@gmail.com> (shibanet0.com)",
-              type: "module",
-              exports: {
-                ".": {
-                  types: "./dist/datamitsu-api/index.d.ts",
-                  default: "./dist/datamitsu-api/index.js",
-                },
-                "./package.json": "./package.json",
-                "./tsconfig/base.json": "./tsconfig/base.json",
-                "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
-                "./tsconfig/library.json": "./tsconfig/library.json",
-                "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
-                "./tsconfig/react-library.json": "./tsconfig/react-library.json",
-                "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
-                "./tsconfig/service.json": "./tsconfig/service.json",
-                "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
-                "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
-                "./type-fest": {
-                  import: {
-                    types: "./dist/type-fest/index.d.ts",
-                  },
-                },
-                "./type-fest/globals": {
-                  import: {
-                    types: "./dist/type-fest/globals/index.d.ts",
-                  },
-                },
-              },
               bin: {
                 datamitsu: "bin/datamitsu.js",
                 dm: "bin/datamitsu.js",
@@ -205,47 +174,9 @@ post-checkout:
                 tsc: "bin/tsc.js",
                 tsx: "bin/tsx.js",
               },
-              files: [
-                "datamitsu.config.base.js",
-                "datamitsu.config.js",
-                "datamitsu.config.oci-ghcr.js",
-                "datamitsu.config.oci-dockerhub.js",
-                "datamitsu.config.d.ts",
-                "tsconfig/**",
-                "dist/**",
-                "bin/**",
-              ],
-              scripts: {
-                build: "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
-                "build:local":
-                  "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
-                datamitsu:
-                  'DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME="./dist" bin/datamitsu.js --binary-command "node bin/datamitsu.js"',
-                dm: "pnpm --silent datamitsu",
-                "docker:build":
-                  "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
-                "docker:build:alpine:amd64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
-                "docker:build:alpine:arm64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
-                "docker:build:amd64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
-                "docker:build:arm64":
-                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
-                "docker:builder":
-                  "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
-                prepack:
-                  "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
-                postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
-                prepare: "pnpm build && pnpm datamitsu init",
-                test: "vitest run",
-                "test:coverage": "vitest run --coverage",
-                "test:update": "vitest run --update",
-                "test:watch": "vitest watch",
-              },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260912.236fd42",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260914.03e464b",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -253,6 +184,7 @@ post-checkout:
                 "type-fest": "5.6.0",
                 typescript: "6.0.3",
               },
+              description: "Shared datamitsu configuration with 79+ managed development tools",
               devDependencies: {
                 "@antebudimir/eslint-plugin-vanilla-extract": "1.17.0",
                 "@commitlint/cli": "21.2.2",
@@ -270,8 +202,14 @@ post-checkout:
                 "@stylistic/eslint-plugin": "5.10.0",
                 "@types/node": "25.9.1",
                 "@types/remove-markdown": "0.3.4",
+                // Not plugins. Two packages that import them at runtime without declaring either a
+                // dependency or a peer — @antebudimir/eslint-plugin-vanilla-extract needs
+                // @typescript-eslint/utils, eslint-plugin-compat needs caniuse-lite — so under
+                // pnpm's isolated layout they only ever resolved by accident.
+                "@typescript-eslint/utils": "8.67.0",
                 "@vitest/coverage-v8": "4.1.7",
                 "@vitest/eslint-plugin": "1.6.27",
+                "caniuse-lite": "1.0.30001760",
                 "conventional-changelog-conventionalcommits": "10.4.0",
                 cspell: "10.0.1",
                 eslint: "10.9.0",
@@ -279,7 +217,6 @@ post-checkout:
                 "eslint-flat-config-utils": "3.2.0",
                 "eslint-import-resolver-typescript": "4.4.5",
                 "eslint-plugin-array-func": "5.1.1",
-                "eslint-plugin-arrow-return-style": "1.3.1",
                 "eslint-plugin-baseline-js": "0.7.1",
                 "eslint-plugin-boundaries": "7.2.0",
                 "eslint-plugin-clsx": "0.1.0",
@@ -336,10 +273,6 @@ post-checkout:
                 vitest: "4.1.7",
                 yaml: "2.9.0",
               },
-              packageManager: "pnpm@12.4.1",
-              engines: {
-                node: ">=22.12.0",
-              },
               devEngines: {
                 runtime: {
                   name: "node",
@@ -347,6 +280,83 @@ post-checkout:
                   version: ">=26.8.1",
                 },
               },
+              engines: {
+                node: ">=22.12.0",
+              },
+              exports: {
+                ".": {
+                  default: "./dist/datamitsu-api/index.js",
+                  types: "./dist/datamitsu-api/index.d.ts",
+                },
+                "./package.json": "./package.json",
+                "./tsconfig/base.json": "./tsconfig/base.json",
+                "./tsconfig/infra-pulumi.json": "./tsconfig/infra-pulumi.json",
+                "./tsconfig/library.json": "./tsconfig/library.json",
+                "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
+                "./tsconfig/react-library.json": "./tsconfig/react-library.json",
+                "./tsconfig/service-worker.json": "./tsconfig/service-worker.json",
+                "./tsconfig/service.json": "./tsconfig/service.json",
+                "./tsconfig/shared-library.json": "./tsconfig/shared-library.json",
+                "./tsconfig/shared-react-library.json": "./tsconfig/shared-react-library.json",
+                "./type-fest": {
+                  import: {
+                    types: "./dist/type-fest/index.d.ts",
+                  },
+                },
+                "./type-fest/globals": {
+                  import: {
+                    types: "./dist/type-fest/globals/index.d.ts",
+                  },
+                },
+              },
+              files: [
+                "datamitsu.config.base.js",
+                "datamitsu.config.js",
+                "datamitsu.config.oci-ghcr.js",
+                "datamitsu.config.oci-dockerhub.js",
+                "datamitsu.config.d.ts",
+                "tsconfig/**",
+                "dist/**",
+                "bin/**",
+              ],
+              keywords: [],
+              license: "MIT",
+              name: "@shibanet0/datamitsu-config",
+              packageManager: "pnpm@12.4.1",
+              repository: {
+                type: "git",
+                url: "https://github.com/shibanet0/datamitsu-config",
+              },
+              scripts: {
+                build: "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
+                "build:local":
+                  "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
+                datamitsu:
+                  'DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME="./dist" bin/datamitsu.js --binary-command "node bin/datamitsu.js"',
+                dm: "pnpm --silent datamitsu",
+                "docker:build":
+                  "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
+                "docker:build:alpine:amd64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
+                "docker:build:alpine:arm64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts alpine:arm64",
+                "docker:build:amd64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts amd64",
+                "docker:build:arm64":
+                  "pnpm run docker:builder && node scripts/docker-build.ts arm64",
+                "docker:builder":
+                  "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
+                postpack: "clean-pkg-json restore && rm -f datamitsu.config.js",
+                prepack:
+                  "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
+                prepare: "pnpm build && pnpm datamitsu init",
+                test: "vitest run",
+                "test:coverage": "vitest run --coverage",
+                "test:update": "vitest run --update",
+                "test:watch": "vitest watch",
+              },
+              type: "module",
+              version: "0.0.3-alpha-28",
             },
             null,
             2,
@@ -403,7 +413,13 @@ const _getMinVersion = () => "0.0.0";
 globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [
+  // The dotfile browserslist reads, named in the comment that explains why `compat` and `escompat`
+  // are gated on the manifest field instead.
+  "browserslistrc",
   "datetimez",
+  // Plural of the shell glob form `?(a|b)`, which `toOxlintIgnorePatterns` expands because oxlint's
+  // matcher has no extglob support.
+  "extglobs",
   "frontmatter",
   "triaging",
   "errmsg",
