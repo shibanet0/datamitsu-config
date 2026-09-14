@@ -11,11 +11,12 @@ import {
 } from "./constants";
 import { isSameStateContent } from "./stateContent";
 import { findStateFiles, writeFileAtomic } from "./stateFiles";
+import { backupPlaintext, clearDecryptConflict, markDecryptConflict } from "./stateGuard";
 
 export interface DecryptOptions {
   /**
    * Replace plaintext state that differs from its encrypted file. The previous plaintext is kept as
-   * a timestamped `.pre-decrypt-*` backup next to it.
+   * a backup in the user cache (see `getStateGuardDir`).
    */
   force?: boolean;
 }
@@ -37,46 +38,70 @@ async function decryptFile(
 
   // Decrypt into memory instead of `--output`: SOPS truncates the target before writing, and the
   // plaintext may be newer than the encrypted file (a `pulumi up` that was not encrypted yet).
-  const { stdout: decrypted } = await datamitsu.exec(
-    "sops",
-    ["--decrypt", "--input-type", fileType, "--output-type", fileType, file],
-    {
-      cwd: process.cwd(),
-      env: { ...process.env, GPG_TTY },
-      stripFinalNewline: false,
-    },
-  );
-  const decryptedText = String(decrypted);
+  const decryptedText = await decryptToMemory(file, fileType, datamitsu, GPG_TTY);
 
   const existing = await readIfExists(outputFile);
 
   if (existing === undefined) {
     await writeFileAtomic(outputFile, decryptedText);
+    await clearDecryptConflict(outputFile);
     console.log(`   ✅ Decrypted: ${relativeOutput}\n`);
     return "created";
   }
 
   if (isSameStateContent(existing, decryptedText, fileType)) {
+    await clearDecryptConflict(outputFile);
     console.log(`   ⏭️  Unchanged: ${relativeOutput}\n`);
     return "unchanged";
   }
 
   if (!options.force) {
+    await markDecryptConflict(outputFile);
     throw new Error(
       `${relativeOutput} differs from ${relativePath}; refusing to overwrite local state.\n` +
-        `   If the local file is newer, run encrypt-all-state.\n` +
-        `   If the encrypted file is authoritative, run decrypt-all-state --force (a backup is kept).`,
+        `   Encryption of this file is blocked until the difference is resolved:\n` +
+        `   - local file is newer: encrypt-all-state --force\n` +
+        `   - encrypted file is authoritative: decrypt-all-state --force (a backup is kept)`,
     );
   }
 
-  const backup = `${outputFile}.pre-decrypt-${new Date().toISOString().replaceAll(":", "-")}`;
-  await fs.copyFile(outputFile, backup);
-  await fs.chmod(backup, 0o600);
+  const backup = await backupPlaintext(outputFile, existing);
   await writeFileAtomic(outputFile, decryptedText);
-  console.log(
-    `   ✅ Replaced: ${relativeOutput} (backup: ${path.relative(process.cwd(), backup)})\n`,
-  );
+  await clearDecryptConflict(outputFile);
+  console.log(`   ✅ Replaced: ${relativeOutput} (backup: ${backup})\n`);
   return "replaced";
+}
+
+/**
+ * SOPS stdout is the plaintext, and execa copies stdout into its error message; a failure (for
+ * example exceeding maxBuffer) must not print the state, so only non-sensitive fields are
+ * rethrown.
+ */
+async function decryptToMemory(
+  file: string,
+  fileType: "json" | "yaml",
+  datamitsu: Datamitsu,
+  GPG_TTY: string,
+): Promise<string> {
+  try {
+    const { stdout } = await datamitsu.exec(
+      "sops",
+      ["--decrypt", "--input-type", fileType, "--output-type", fileType, file],
+      {
+        cwd: process.cwd(),
+        env: { ...process.env, GPG_TTY },
+        stripFinalNewline: false,
+      },
+    );
+    return String(stdout);
+  } catch (error: unknown) {
+    const { exitCode, stderr } = (error ?? {}) as { exitCode?: number; stderr?: unknown };
+    const detail = typeof stderr === "string" && stderr.trim() ? `: ${stderr.trim()}` : "";
+    throw new Error(
+      `sops --decrypt failed for ${path.relative(process.cwd(), file)} (exit code ${exitCode ?? "unknown"})${detail}`,
+      { cause: error },
+    );
+  }
 }
 
 async function readIfExists(file: string): Promise<Buffer | undefined> {

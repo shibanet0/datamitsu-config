@@ -97,7 +97,6 @@ async function isCoveredByEncryptedFile(
 }
 
 export const pulumiCleanup = async () => {
-  // Safety checks: ensure git repository is clean
   await checkGitSafety();
 
   const encryptedFiles = await findStateFiles(PULUMI_ENCRYPTED_STATE_PATTERNS);
@@ -112,7 +111,6 @@ export const pulumiCleanup = async () => {
   for (const encFile of encryptedFiles) {
     const originalFile = getDecryptedPath(encFile);
 
-    // Check if original exists
     // oxlint-disable-next-line no-await-in-loop
     const originalExists = await fs
       .access(originalFile)
@@ -138,13 +136,11 @@ export const pulumiCleanup = async () => {
     return;
   }
 
-  // Show what will be removed
   console.log(`🗑️  Found ${filesToRemove.length} unencrypted file(s) to remove:\n`);
   for (const file of filesToRemove) {
     console.log(`   - ${path.relative(process.cwd(), file)}`);
   }
 
-  // Remove files
   console.log(`\n🧹 Cleaning up...\n`);
 
   let removed = 0;

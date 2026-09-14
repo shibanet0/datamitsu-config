@@ -15,12 +15,7 @@ async function runEditor(root: string, plaintext: string, sopsTemporaryContent: 
   const editor = path.join(root, "editor.mjs");
   const sopsTemporaryFile = path.join(root, "local.json.enc");
 
-  // Vitest's SSR transform rewrites `import()` inside the stringified editor to a helper that only
-  // exists in the test runtime; the bundled CLI keeps native `import()`.
-  await fs.writeFile(
-    editor,
-    editorJS.scriptContent.replaceAll("__vite_ssr_dynamic_import__", "import"),
-  );
+  await fs.writeFile(editor, editorJS.scriptContent);
   await fs.writeFile(sopsTemporaryFile, sopsTemporaryContent);
 
   const result = await execa(process.execPath, [editor, sopsTemporaryFile], {
@@ -34,6 +29,9 @@ async function runEditor(root: string, plaintext: string, sopsTemporaryContent: 
     stdout: result.stdout,
   };
 }
+
+const checkpointWithResources = (first: string, second: string) =>
+  JSON.stringify({ checkpoint: { latest: { resources: [{ urn: first }, { urn: second }] } } });
 
 describe("encrypt editor script", () => {
   let root: string;
@@ -91,9 +89,19 @@ describe("encrypt editor script", () => {
   });
 
   it("should rewrite an encrypted file whose only difference is resource order", async () => {
-    const plaintext = '{"resources": ["dependency", "dependent"]}';
+    const plaintext = checkpointWithResources(
+      "urn:pulumi:local::p::z:index:Dependency::z",
+      "urn:pulumi:local::p::a:index:Dependent::a",
+    );
 
-    const result = await runEditor(root, plaintext, '{"resources": ["dependent", "dependency"]}');
+    const result = await runEditor(
+      root,
+      plaintext,
+      checkpointWithResources(
+        "urn:pulumi:local::p::a:index:Dependent::a",
+        "urn:pulumi:local::p::z:index:Dependency::z",
+      ),
+    );
 
     expect(result.stdout).not.toContain("File has not changed");
     expect(result.content).toBe(plaintext);

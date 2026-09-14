@@ -43,9 +43,21 @@ describe("isSameStateContent", () => {
     );
   });
 
-  it("should compare YAML structurally", () => {
+  it("should compare YAML ignoring formatting", () => {
     expect(isSameStateContent("version: 1\n", "version:   1", "yaml")).toBe(true);
     expect(isSameStateContent("version: 1\n", "version: 2\n", "yaml")).toBe(false);
+  });
+
+  it("should compare YAML without losing integers, special floats or scalar types", () => {
+    expect(isSameStateContent("n: 9007199254740993\n", "n: 9007199254740992\n", "yaml")).toBe(
+      false,
+    );
+    expect(isSameStateContent("v: .nan\n", "v: null\n", "yaml")).toBe(false);
+    expect(isSameStateContent("s: '1'\n", "s: 1\n", "yaml")).toBe(false);
+  });
+
+  it("should treat reordered YAML keys as different", () => {
+    expect(isSameStateContent("a: 1\nb: 2\n", "b: 2\na: 1\n", "yaml")).toBe(false);
   });
 
   it("should fall back to text comparison for unparsable YAML", () => {

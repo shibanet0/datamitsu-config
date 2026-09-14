@@ -9,8 +9,8 @@ import { PULUMI_GLOB_IGNORE_PATTERNS } from "./constants";
  * Finds state files once per physical file.
  *
  * In a pnpm workspace a stack package is also reachable through `node_modules` symlinks of its
- * dependents. Visiting those aliases made SOPS read and write the same file from several concurrent
- * operations, so symlinks are not followed and results are deduplicated by real path.
+ * dependents. Visiting those aliases would run several concurrent SOPS operations on the same file,
+ * so symlinks are not followed and results are deduplicated by real path.
  */
 export async function findStateFiles(
   patterns: readonly string[],

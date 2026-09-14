@@ -14,7 +14,7 @@ export const pulumiCommand = new Command("pulumi-sops")
   )
   .option(
     "--force",
-    "decrypt-all-state: replace plaintext state that differs from its encrypted file (keeps a backup)",
+    "resolve a refused decryption: decrypt-all-state replaces the differing plaintext (keeping a backup), encrypt-all-state encrypts it anyway",
   )
   .action(async (type, options) => {
     switch (type) {
@@ -29,7 +29,7 @@ export const pulumiCommand = new Command("pulumi-sops")
         break;
       }
       case "encrypt-all-state": {
-        await pulumiEncrypt();
+        await pulumiEncrypt({ force: options.force === true });
 
         break;
       }

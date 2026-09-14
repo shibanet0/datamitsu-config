@@ -17,6 +17,15 @@ import {
 } from "./constants";
 import { stripInsignificantJsonWhitespace } from "./stateContent";
 import { findStateFiles } from "./stateFiles";
+import { clearDecryptConflict, hasDecryptConflict } from "./stateGuard";
+
+export interface EncryptOptions {
+  /**
+   * Encrypt files whose last decryption was refused because the plaintext differed, declaring the
+   * local plaintext authoritative.
+   */
+  force?: boolean;
+}
 
 export const getEditorJS = async (buf: Buffer) => {
   const encryptor = new Encryptor(crypto, util);
@@ -26,20 +35,18 @@ export const getEditorJS = async (buf: Buffer) => {
   const encryptedContentBuf = await encryptor.encrypt(buf, encryptionKey);
 
   // The editor runs as a standalone script built with String(), so everything it uses is passed in
-  // as arguments: identifiers of this module may be renamed by the bundler or the test transform.
+  // as arguments: identifiers and dynamic imports inside it may be rewritten by the bundler or the
+  // test transform.
   // oxlint-disable-next-line consistent-function-scoping
   const editor = async (
     contentEncryptedBase64: string,
     encryptionKeyBase64: string,
     EncryptorClass: typeof Encryptor,
     stripWhitespace: typeof stripInsignificantJsonWhitespace,
+    fsInner: typeof fs,
+    cryptoInner: typeof crypto,
+    utilInner: typeof util,
   ) => {
-    const [fsInner, cryptoInner, utilInner] = await Promise.all([
-      import("node:fs/promises"),
-      import("node:crypto"),
-      import("node:util"),
-    ]);
-
     const contentEncryptedBuffer = Buffer.from(contentEncryptedBase64, "base64");
     const decryptionKey = Buffer.from(encryptionKeyBase64, "base64");
 
@@ -80,22 +87,39 @@ export const getEditorJS = async (buf: Buffer) => {
     env: { [encryptionKeyName]: encryptionKey.toString("base64") },
     scriptContent: [
       "#!/usr/bin/env node",
+      'import fsModule from "node:fs/promises";',
+      'import cryptoModule from "node:crypto";',
+      'import utilModule from "node:util";',
       `const encryptionKey = process.env[${JSON.stringify(encryptionKeyName)}];`,
       `const Encryptor = ${String(Encryptor)};`,
       `const stripInsignificantJsonWhitespace = ${String(stripInsignificantJsonWhitespace)};`,
       `const editor = ${String(editor)};`,
       `const content = ${JSON.stringify(encryptedContentBuf.toString("base64"))};`,
-      "await editor(content, encryptionKey, Encryptor, stripInsignificantJsonWhitespace);",
+      "await editor(content, encryptionKey, Encryptor, stripInsignificantJsonWhitespace, fsModule, cryptoModule, utilModule);",
       "",
     ].join("\n"),
   };
 };
 
-async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string): Promise<void> {
+async function processFile(
+  file: string,
+  datamitsu: Datamitsu,
+  GPG_TTY: string,
+  options: EncryptOptions,
+): Promise<void> {
   const fileType = detectFileType(file);
   const relativePath = path.relative(process.cwd(), file);
 
   console.log(`📄 Processing: ${relativePath}`);
+
+  if (!options.force && (await hasDecryptConflict(file))) {
+    throw new Error(
+      `${relativePath} is blocked: its last decryption refused to overwrite it because it differs ` +
+        `from ${relativePath}.enc, so it may be older than the encrypted file.\n` +
+        `   - local file is newer: encrypt-all-state --force\n` +
+        `   - encrypted file is authoritative: decrypt-all-state --force (a backup is kept)`,
+    );
+  }
 
   const data = await fs.readFile(file, "base64");
   const dir = join(os.tmpdir(), "pulumi-sops", crypto.randomUUID());
@@ -130,6 +154,7 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
       },
     );
 
+    await clearDecryptConflict(file);
     console.log(`   ✅ Encrypted: ${relativePath}.enc\n`);
   } catch (error: unknown) {
     const isSopsFileUnchanged =
@@ -139,6 +164,7 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
       error.stdout?.includes("File has not changed");
 
     if (isSopsFileUnchanged) {
+      await clearDecryptConflict(file);
       console.log(`   ⏭️  Skipped: ${relativePath} (no changes)\n`);
     } else {
       throw error;
@@ -152,7 +178,7 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
   }
 }
 
-export const pulumiEncrypt = async () => {
+export const pulumiEncrypt = async (options: EncryptOptions = {}) => {
   const files = await findStateFiles(PULUMI_STATE_PATTERNS, PULUMI_ENCRYPTED_EXCLUDE_PATTERNS);
 
   console.log(`\n🔐 Found ${files.length} Pulumi state file(s) to encrypt:\n`);
@@ -170,7 +196,7 @@ export const pulumiEncrypt = async () => {
 
     // oxlint-disable-next-line no-await-in-loop
     const results = await Promise.allSettled(
-      batch.map((file) => processFile(file, datamitsu, GPG_TTY)),
+      batch.map((file) => processFile(file, datamitsu, GPG_TTY, options)),
     );
 
     for (const result of results) {

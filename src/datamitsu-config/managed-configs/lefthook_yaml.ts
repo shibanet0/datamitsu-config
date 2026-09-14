@@ -13,7 +13,9 @@ export const lefthookYaml: config.ManagedConfig = {
       },
       glob_matcher: "doublestar",
       "post-checkout": {
+        ...existing?.["post-checkout"],
         commands: {
+          ...existing?.["post-checkout"]?.commands,
           [`init ${facts().packageName}`]: {
             priority: 2,
             run: `${facts().binaryCommand} init`,

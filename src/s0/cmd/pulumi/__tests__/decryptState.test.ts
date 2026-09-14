@@ -11,6 +11,8 @@ vi.mock("../../../utils/tty.js");
 
 describe("decryptState", () => {
   let root: string;
+  let cacheHome: string;
+  let previousCacheHome: string | undefined;
   let mockGlob: any;
   let mockDatamitsu: any;
   let mockGetGPGTTY: any;
@@ -22,6 +24,9 @@ describe("decryptState", () => {
 
   beforeEach(async () => {
     root = await fs.mkdtemp(path.join(os.tmpdir(), "pulumi-sops-decrypt-"));
+    cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), "pulumi-sops-cache-"));
+    previousCacheHome = process.env.XDG_CACHE_HOME;
+    process.env.XDG_CACHE_HOME = cacheHome;
     await fs.mkdir(path.join(root, ".pulumi", "stacks"), { recursive: true });
 
     consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -47,7 +52,13 @@ describe("decryptState", () => {
 
   afterEach(async () => {
     vi.clearAllMocks();
+    if (previousCacheHome === undefined) {
+      delete process.env.XDG_CACHE_HOME;
+    } else {
+      process.env.XDG_CACHE_HOME = previousCacheHome;
+    }
     await fs.rm(root, { force: true, recursive: true });
+    await fs.rm(cacheHome, { force: true, recursive: true });
   });
 
   describe("pulumiDecrypt", () => {
@@ -88,6 +99,7 @@ describe("decryptState", () => {
 
       expect(await fs.readFile(plaintext, "utf8")).toBe(newerState);
       expect(await fs.readdir(path.dirname(plaintext))).toEqual(["dev.json"]);
+      expect(await fs.readdir(path.join(cacheHome, "pulumi-sops", "conflicts"))).toHaveLength(1);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining("Decryption error"),
         expect.objectContaining({ message: expect.stringContaining("refusing to overwrite") }),
@@ -120,15 +132,48 @@ describe("decryptState", () => {
       await pulumiDecrypt({ force: true });
 
       expect(await fs.readFile(plaintext, "utf8")).toBe('{"resources": ["new"]}');
-      const entries = await fs.readdir(path.dirname(plaintext));
-      const backups = entries.filter((entry) => entry.startsWith("dev.json.pre-decrypt-"));
+      expect(await fs.readdir(path.dirname(plaintext))).toEqual(["dev.json"]);
+      const backupDir = path.join(cacheHome, "pulumi-sops", "backups");
+      const backups = await fs.readdir(backupDir);
       expect(backups).toHaveLength(1);
-      expect(await fs.readFile(path.join(path.dirname(plaintext), backups[0]!), "utf8")).toBe(
+      expect(await fs.readFile(path.join(backupDir, backups[0]!), "utf8")).toBe(
         '{"resources": ["old"]}',
       );
-      expect(entries.filter((entry) => entry.endsWith(".tmp"))).toEqual([]);
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Replaced:"));
       expect(processExitSpy).not.toHaveBeenCalled();
+    });
+
+    it("should clear the conflict marker once the difference is resolved", async () => {
+      const plaintext = stateFile("dev.json");
+      await fs.writeFile(plaintext, '{"resources": ["old"]}');
+      mockGlob.mockResolvedValue([`${plaintext}.enc`]);
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: '{"resources": ["new"]}' });
+
+      await pulumiDecrypt();
+      const conflicts = path.join(cacheHome, "pulumi-sops", "conflicts");
+      expect(await fs.readdir(conflicts)).toHaveLength(1);
+
+      await pulumiDecrypt({ force: true });
+      expect(await fs.readdir(conflicts)).toEqual([]);
+    });
+
+    it("should not leak decrypted state through SOPS errors", async () => {
+      mockGlob.mockResolvedValue([stateFile("dev.json.enc")]);
+      mockDatamitsu.exec.mockRejectedValue(
+        Object.assign(new Error('Command failed: maxBuffer exceeded {"secret": "value"}'), {
+          exitCode: 1,
+          stderr: "maxBuffer exceeded",
+          stdout: '{"secret": "value"}',
+        }),
+      );
+
+      await pulumiDecrypt();
+
+      const reported = consoleErrorSpy.mock.calls[0][1];
+      expect(reported.message).toContain("sops --decrypt failed");
+      expect(reported.message).toContain("maxBuffer exceeded");
+      expect(JSON.stringify(consoleErrorSpy.mock.calls)).not.toContain("secret");
+      expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
     it("should compare YAML structurally", async () => {
@@ -252,7 +297,7 @@ describe("decryptState", () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining("Decryption error"),
-        error,
+        expect.objectContaining({ message: expect.stringContaining("sops --decrypt failed") }),
       );
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });

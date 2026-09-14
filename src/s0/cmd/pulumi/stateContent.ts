@@ -1,11 +1,12 @@
-import { parse as parseYaml } from "yaml";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 /**
  * Whether two serialized forms describe the same state, ignoring formatting only.
  *
  * SOPS re-serializes what it decrypts, so byte equality would report a difference for every file
- * whose indentation differs from Pulumi's. YAML is compared structurally because Pulumi's
- * `meta.yaml` carries no order-sensitive data.
+ * whose indentation differs from Pulumi's. YAML goes through a lossless round trip instead:
+ * integers stay exact, `.nan` and `null` stay distinct, and key order still counts, which only ever
+ * errs towards reporting a difference.
  */
 export function isSameStateContent(
   left: Buffer | string,
@@ -22,7 +23,7 @@ export function isSameStateContent(
   }
 
   try {
-    return JSON.stringify(parseYaml(leftText)) === JSON.stringify(parseYaml(rightText));
+    return canonicalYaml(leftText) === canonicalYaml(rightText);
   } catch {
     return leftText === rightText;
   }
@@ -63,4 +64,8 @@ export function stripInsignificantJsonWhitespace(text: string): string {
   }
 
   return result;
+}
+
+function canonicalYaml(text: string): string {
+  return stringifyYaml(parseYaml(text, { intAsBigInt: true }));
 }
