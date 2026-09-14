@@ -62,7 +62,7 @@ export function upgradeAgentsReference(content: string): string {
         const trimmed = line.trim();
 
         // Check if this line matches any old pattern
-        if (pattern.oldPatterns.some((oldPattern) => trimmed === oldPattern)) {
+        if (pattern.oldPatterns.includes(trimmed)) {
           lines[i] = pattern.canonical;
           return lines.join("\n");
         }

@@ -107,3 +107,158 @@ When wiring a formatter, reference `indentSettings.indentWidth` / `indentSetting
 - The bundled `defineConfig` sources in `src/apps/*/index.ts` (prettier, oxfmt) import it from `../../datamitsu-config/constants` and feed it into the tool's native config (`printWidth`, `tabWidth`, …). These bundle into the inline config archive, so the value is baked in at build time.
 
 Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.
+
+oxfmt operations must include `--no-error-on-unmatched-pattern`: a staged-file check can contain
+only files that oxfmt ignores (for example `pnpm-lock.yaml`). That is an empty check, not a
+formatter failure.
+
+## Shared Lint Rule Lists
+
+[src/lint-rules/](src/lint-rules/) is the **single source of truth** for what ESLint and oxlint do with every rule. Both tools read the same three lists:
+
+- [permanent-disabled.ts](src/lint-rules/permanent-disabled.ts) — decisions. The rule is wrong for this stack, or another tool already owns what it checks. Not coming back.
+- [temporary.ts](src/lint-rules/temporary.ts) — the migration backlog. The rule should be on and is off only until the code is ready. Shrinking this list is the work.
+- [permanent-enabled.ts](src/lint-rules/permanent-enabled.ts) — the third verdict, and the newest. Rules that must stay on, with the options they must stay on with.
+
+Why the third one exists: without it, "off" was a decision with a reason and "on" was a **residual** — whatever survived after the plugin presets and oxlint's categories had decided. A residual has no author and no protection, so a plugin bump that drops a rule from its `recommended` preset turns it off and leaves only a census-diff line for somebody to notice. It also gave options nowhere to live: `eqeqeq` needed `{ null: "ignore" }` to make `no-eq-null`'s reason true, so it was written by hand into both `src/apps/oxlint/index.ts` and `src/apps/eslint/plugins/javascript.ts` — and only the oxlint copy was ever read, because the handoff turns the ESLint one off.
+
+It is deliberately not a mirror of the other two:
+
+- **Small.** Writing down everything anyone is happy with would be a hand-maintained copy of `rule-inventory.json` that drifts from the census it duplicates. An entry belongs here when losing it silently should fail the build, when the defaults are wrong, or when a preset is likely to move it.
+- **Asserted, not assumed.** Off-in-both is idempotent, which is why the off-lists are shared blindly. On-in-both is not — that is one finding reported twice under two names. So `validate:lists` requires that **at least one** tool reports the rule at error; which one is the handoff's business.
+- **A declaration, not a fourth config site.** The options are emitted into both tools from here, and the gate reads the committed census, so the list cannot quietly disagree with what the tools do.
+
+Rules there are always written in the **ESLint** spelling (`@typescript-eslint/`, `import-x/`, `jsx-a11y-x/`, `@next/next/`). `index.ts` translates to oxlint's shorter prefixes and filters out what oxlint does not have.
+
+A prefix table cannot express every case: sometimes the plugin swap renamed the rule as well, and then the entry needs a line in `ESLINT_TO_OXLINT_RULE` instead. `@eslint-react/no-clone-element` is oxlint's `react/no-clone-element`; `react-refresh/only-export-components` is its `react/only-export-components`; unicorn renamed `no-array-for-each` to `no-for-each` and oxlint kept the old name. That table is deliberately narrow — it maps one rule to _the same rule_ under another name, never one plugin's rule to another plugin's implementation of the same idea. `sonarjs/no-unused-vars` and core `no-unused-vars` stay two entries, because parking one is not a decision about the other.
+
+`task validate:lists` is what keeps this honest. It reads the lists **as lists** — which nothing else does — and reports an entry written in oxlint's spelling (with the ESLint name to paste), an entry the filter drops while oxlint still has a rule of that name, a rule turned off somewhere other than these lists, one check appearing under two spellings with two verdicts, and a reason that only restates the observation. It is not in `task validate` yet: the lists do not pass it today. Put it there once they do — that is the point at which the corpus stops being able to drift back.
+
+Why both tools have to read one list: `eslint-plugin-oxlint` suppresses an ESLint rule only while oxlint is _reporting_ the equivalent. Turning a rule off in the oxlint config therefore hands it straight back to ESLint — same finding, same file, still failing, under a different rule name.
+
+Why the lists are asymmetric at the edges:
+
+- ESLint gets every name verbatim, including oxlint-only ones (`oxc/*`). ESLint ignores a rule name it does not know as long as the severity is `"off"` — even under a prefix whose plugin is loaded. Core rules are also emitted under `@typescript-eslint/` and `@stylistic/`, because a plugin that re-publishes a core rule otherwise keeps reporting it.
+- oxlint gets a filtered list. It rejects the **whole config file** over one unknown rule or plugin name, even at `"off"`. The allowlist in `oxlint-known-rules.generated.ts` is produced by probing the pinned binary — see [scripts/generate-oxlint-known-rules.ts](scripts/generate-oxlint-known-rules.ts) — and is regenerated by `task oxlint:sync:schema`, so it tracks oxlint version bumps.
+
+Do not turn a rule on or off in `src/apps/oxlint/index.ts`, in a plugin config under `src/apps/eslint/plugins/`, in this repository's own `oxlint.config.mts` / `eslint.config.mjs`, or in a consuming project's. Add it to one of the three lists with a reason, then run `task refresh`.
+
+A project that is already clean can opt out of the backlog with `defineConfig(pkg, config, { temporaryRules: false })` — and oxlint's `defineConfig` takes the same option, in the same position, so both tools answer the same question. It did not use to: oxlint had no such option at all, so opting out raised the bar in ESLint while oxlint kept all 226 backlog rules off.
+
+`reportUnusedDisableDirectives` is off in both tools for the duration of the batch park, and is coming back. "Unused" means "names a rule this config has off", so every rule moved into `temporary.ts` turns an existing `eslint-disable` for it into an error — the check is most valuable once the rule set has settled and most destructive while it is settling. Turn it back on **before** per-rule triage starts, not after: a stale directive on a rule coming back off the backlog is exactly what it catches.
+
+## The Two defineConfig Signatures
+
+Both halves take the consuming project's `package.json` first, and for the same reason: which framework plugins run is a question about the project, and the manifest is where the answer is written.
+
+```js
+// eslint.config.mjs
+export default await defineConfig(packageJSON, config, options);
+
+// oxlint.config.mts
+export default defineConfig(packageJSON, config, options);
+```
+
+oxlint's used to take the config first and consult no manifest, so its `nextjs`, `react`, `vue`, `jsx-a11y`, `react-perf` and `vitest` plugins ran in every project regardless of shape — a package with no Next.js in its tree still failed on `next/no-img-element` for an `<img>` in a plain React component. Passing nothing still yields every plugin, so a config generated before the parameter existed keeps working.
+
+Two things that follow from it:
+
+- Dropping a plugin does **not** require dropping its rules from the shared list. oxlint accepts a rule belonging to a plugin that is not enabled, as long as the severity is `"off"`; only an unknown _plugin_ name fails the config parse.
+- The census has to resolve both halves against the synthetic manifest, or it reports this repository's shape and 191 react/next/vue rules leave it silently.
+
+The object form of oxlint's `defineConfig` **adds** to the base. It used to spread, so `defineConfig(pkg, { rules: { … } })` — the shape anyone would write to silence one rule — replaced ~330 shared turn-offs with that one entry: measured at 3989 errors on this repository, including two rules that cannot both be satisfied. Objects merge key by key, arrays append, and the caller still wins where they name the same key. Replacing wholesale is the function form, where `base` is in hand and dropping it is visibly deliberate.
+
+A project that overrides anything in its own `oxlint.config.mts` should pass that object back to ESLint as `options.oxlintConfig`. `eslint-plugin-oxlint` turns an ESLint rule off on the premise oxlint reports it, and a rule the project turned off in its own oxlint config is then reported by **neither** tool.
+
+## No Warn Severity
+
+Every rule is `error` or `off`. Nothing is `warn`.
+
+datamitsu runs eslint with `--quiet`, so a warn-level rule reports nothing and fails nothing while still running on every file — off in every way that matters, minus the honesty of saying so. oxlint has no warn tier at all, which is the behavior being matched.
+
+`defineConfig` enforces it: `raiseWarningsToErrors` rewrites the severity of every warn a plugin preset leaves behind, in place, so plugin registration and `files` scoping survive and rule options are preserved. A plugin bump that introduces a warn-level rule is raised the moment it appears. `task validate:rule-inventory` fails if anything still resolves to `warn`.
+
+A rule that should not fail the build goes in `src/lint-rules` with a reason, not to a severity nobody sees.
+
+## Lint Rule Inventory
+
+[src/lint-rules/rule-inventory.json](src/lint-rules/rule-inventory.json) is a committed census of every rule ESLint and oxlint know about, with the severity this config gives it. Nothing reads it at runtime — its whole job is to be diffed.
+
+A plugin bump that adds, removes or re-categorises a rule is otherwise invisible until the new rule starts firing in whichever project upgrades first. With the inventory committed, the same bump lands as a reviewable diff, and the decision — leave it on, or park it in `permanent-disabled.ts` / `temporary.ts` — is made once, here, before any consumer is affected.
+
+- `task validate:rule-inventory` — fails when the live rule set has drifted from the committed one, printing added / removed / re-severitied rules. Runs in `task validate` (so `task refresh` covers it), in pre-commit and in CI, so a drifted rule set cannot be committed or merged.
+
+  Pre-commit therefore builds first, at priority 50. It has to: `datamitsu-check` runs before it with `stage_fixed`, so the formatter can rewrite a source after the last build, and the gate would then refuse to answer on every commit that reformatted anything.
+
+  It refuses to answer against a stale build. The census reads the built package, nothing in pre-commit builds, and the result was a gate that green-lit a changed `temporary.ts` by reporting on the previous rule set — a stale pass is worse than no gate, because it reads as a review. Two things that implementation gets wrong if written the obvious way: the reference has to be `dist-inline-eslint-config`, not the `.datamitsu` link, whose mtime is when that _content_ was first stored; and it must walk only the directories the lint config is built from, because `inline-config`, `apps/oxlint/schema.d.ts` and the census's own two outputs are outputs that happen to live under `src/`.
+
+- `task rules:inventory` — rebuilds, then regenerates the file: accepts the current rule set as reviewed. This is the one step `task refresh` deliberately leaves to you — run it _after_ deciding what the new rules should be, not to make the build pass.
+
+`build` carries no inventory gate, and that is deliberate. The census is taken _from_ the built package, so a gate inside `build` can only run after the build it is gating — which makes every intentional rule change fail the first build by construction, and leaves no command able to accept the change without building first. Gate in `validate` (so `refresh` and pre-commit still refuse a drifted set), build inside `rules:inventory` (so accepting is one command), and the cycle disappears.
+
+The drift report prints rule names in the ESLint spelling the lists use, not oxlint's — it is the place those names get copied from, and printing `typescript/x` there was teaching the spelling the lists reject.
+
+The same census is also emitted as [rule-names.generated.ts](src/lint-rules/rule-names.generated.ts) — string-literal unions of every rule name both tools know. `permanent-disabled.ts`, `permanent-enabled.ts` and `temporary.ts` are keyed by `KnownRuleName`, so a typo, or a rule a plugin dropped in an upgrade, is a `tsc` error instead of a line that silently stops doing anything. Types only, so `tsdown` strips them: a stale name breaks the typecheck without blocking the rebuild you need in order to regenerate the file.
+
+Coverage, and its limits — see [scripts/generate-rule-inventory.ts](scripts/generate-rule-inventory.ts):
+
+- Both halves resolve against one synthetic `package.json` that turns on every dependency-conditional plugin, so the census is the union across project shapes rather than this repo's own shape. Plugins datamitsu-config ships disabled by default are excluded — a rule that cannot fire is noise.
+- ESLint is resolved for eight shapes — `.tsx`, a test file, an e2e spec, `.cjs`, `package.json`, a story, `.storybook/main.ts` and `.css.ts` — because a block that scopes itself is invisible to a single probe. The last three were missing, which recorded 11 storybook rules as `off` while they ran at `error` and left the vanilla-extract plugin out of the census entirely: it registers itself _inside_ the `**/*.css.ts` block, so none of its rules had a name to be written down under.
+- Core ESLint rules are seeded from `builtinRules` in `eslint/use-at-your-own-risk`. The `@` entry in a resolved config — flat config's name for the core set — is a Proxy with zero own keys, so enumerating it returned nothing and all 292 core rules silently missed the census. 108 of them were absent from `KnownRuleName` entirely, which made `"camelcase"` or `"no-restricted-syntax"` in either list a `tsc` error, and an ESLint bump that added a recommended core rule produced no drift diff at all.
+- oxlint comes from `oxlint --print-config` against that same synthetic manifest, which reports severity after categories, plugin defaults and our rule list have all been applied. Not the repository root: oxlint's framework plugins are gated on dependencies, so a root run would census this project's shape and drop 191 react/next/vue rules that consumers still run.
+
+## Flat Config Block Names
+
+Config blocks this package appends are named `s0/*` (`s0/ignores`, `s0/disabled-rules`, `s0/config-file`). Use that prefix for new blocks: these are shibanet0's rules, not datamitsu's or a plugin's, and consumers select blocks by name when overriding.
+
+## Commands
+
+`task refresh` is the normal command. It regenerates everything derived from the sources in this repo and then checks the result — build, docs, and the guards. Reach past it only when you know which single task you want; `task --list` shows them all.
+
+    task refresh              build → docs:generate → validate
+    task refresh:registries   update every registry from upstream, then run `task refresh`
+    task build                produce the package (no gates — see Lint Rule Inventory)
+    task validate             blocklist + parsers + pins + rule-inventory
+    task validate:lists       read the three rule lists as lists — not in `validate` yet, see above
+    task rules:inventory      accept the current rule set as reviewed
+
+`task validate:pins` is the newest of them and the least obvious. The root `datamitsu.config.ts` restates every dependency and version, because that is how a datamitsu-managed `package.json` is declared — and nothing kept the two equal. `pull:node` updates the registry and the manifest; `sync:datamitsu-version` aligns exactly one entry and leaves the other ninety. It is latent, since only `datamitsu config reconcile` applies the literal and this repository does not run reconcile — which is what makes it worth a gate, because drift accumulates unobserved and reverts on the day someone does.
+
+## Pinning the datamitsu Build
+
+Bumping `@datamitsu/datamitsu` in `package.json` drags three other pins with it, and `task refresh` now carries all of them — `task sync:datamitsu-version` is where they live:
+
+- `getMinVersion()` in `src/datamitsu-config/datamitsu.config.ts`.
+- The `@datamitsu/datamitsu` entry in the package.json that the root `datamitsu.config.ts` manages for this repo — the same version stated twice, previously with nothing keeping the two equal.
+- `src/datamitsu-config/parsers.ts`, the WASM output-parser pin, generated by [scripts/sync-parsers.ts](scripts/sync-parsers.ts) from `node_modules/@datamitsu/datamitsu/parsers-oci.json` — the file the pinned build itself publishes, so the pin cannot disagree with the binary it targets.
+
+The parser pin is the one that used to rot silently: its digest and content hash change on **every** release, because the module's version string is compiled into it, and a stale pin still resolves and still verifies — it just serves the previous release's parser. `task validate:parsers` fails when it drifts, in `task validate` and now in pre-commit too.
+
+A fourth thing moves with the bump: the Dockerfiles, whose base image is `ghcr.io/datamitsu/datamitsu:<version>`. They are generated by [scripts/generate-dockerfiles.ts](scripts/generate-dockerfiles.ts), not by the sync, so the pre-commit hook runs `docker:generate` after `sync:datamitsu-version` and stages both together. It used to stage `docker/Dockerfile` and `docker/Dockerfile.alpine` without regenerating them — a leftover from when the sync script wrote the `FROM` lines itself, stale from the commit that introduced it, which says so in a comment — while `parsers.ts` and the root `datamitsu.config.ts`, the two files the sync actually writes, were not staged at all.
+
+Do not hand-edit `parsers.ts`.
+
+Two things are deliberately outside `refresh`:
+
+- **Registries** (`pull:*`) change because upstream published something, not because this repo did. Network access and a release-age policy make them a separate, deliberate step.
+- **`task rules:inventory`** accepts a changed rule set. Automating it inside `refresh` would defeat the review gate it exists to provide.
+
+Do not use `datamitsu config reconcile` to regenerate this repository's configs. It rewrites every managed config at once and refuses to run while any of them has drifted from its pinned upstream chain — `eslint.config.mjs` and `lefthook.yaml` are both pinned here. Nothing needs it: `oxlint.config.mts` imports `defineConfig` from `.datamitsu/oxlint.config.js`, so this repository consumes its own published rule list the same way any other project does, and tracks it with no regeneration step at all.
+
+## Bun Helper Scripts
+
+`lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
+
+Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.
+
+## Managed Linter Runtimes
+
+The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.
+
+## pnpm Workspace Migration
+
+The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDowngrade: [...] }` into `trustPolicy: no-downgrade` and `trustPolicyExclude` during reconciliation. Merge existing exclusions without duplicates and preserve package selectors exactly. Modern scalar policies must retain their value. Keep this migration in the content callback so it applies to consuming projects; editing this repository's workspace file cannot migrate consumers. Test with isolated YAML inputs, including repeated reconciliation and malformed lists.
+
+## Docker CI Cache
+
+PR Docker builds use a separate GitHub Actions cache scope per image variant (`pr-docker-debian` and `pr-docker-alpine`). Smoke tests must read the same scope as their producer. Do not use the default shared `buildkit` scope: parallel image builds overwrite each other's cache.

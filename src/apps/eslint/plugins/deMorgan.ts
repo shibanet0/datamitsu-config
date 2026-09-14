@@ -5,7 +5,7 @@ export async function deMorgan(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/de-morgan/rules",
+      name: "s0/de-morgan/rules",
       plugins: {
         "de-morgan": plugin.default,
       },

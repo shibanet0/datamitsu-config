@@ -23,8 +23,7 @@ export const trufflehogExcludePathsTxt: config.ManagedConfig = {
 
     // Strip previous managed block (if any) and keep user additions.
     const userContent = existing
-      // oxlint-disable-next-line unicorn/prefer-string-replace-all
-      .replace(
+      .replaceAll(
         new RegExp(`${escapeRegExp(MANAGED_BEGIN)}[\\s\\S]*?${escapeRegExp(MANAGED_END)}\\n?`, "g"),
         "",
       )

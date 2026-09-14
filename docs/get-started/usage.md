@@ -28,6 +28,28 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
+`trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
+
+```yaml
+# Before
+trustPolicy:
+  allowDowngrade:
+    - semver@6.3.1
+```
+
+```yaml
+# After
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - semver@6.3.1
+```
+
+Existing `trustPolicyExclude` entries are retained and duplicates are removed when
+merging the lists. Package selectors keep their versions and ranges. Repeating
+reconciliation preserves the result; modern scalar `trustPolicy` values are left intact.
+Malformed exclusion lists stop reconciliation with an error.
+
 **When to use:**
 
 - Standard development workflow
@@ -67,6 +89,9 @@ docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable
 # Latest unstable (Alpine)
 docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable-alpine
 ```
+
+The PR workflow builds both image variants and runs an offline smoke test for each.
+Each variant has its own build-cache scope; its smoke test reuses that same scope.
 
 **Docker image features:**
 
@@ -383,3 +408,19 @@ This is expected when adding datamitsu to an existing project. Run `pnpm dm chec
 
 - [Apps](../reference/apps.md) — full list of managed apps with versions and links
 - [datamitsu documentation](https://datamitsu.com/) — comprehensive docs for the datamitsu tool manager
+
+## Lefthook configuration formatting
+
+`pnpm dm check` sorts Lefthook configuration files with `lefthook-sort`, which runs on the managed Bun runtime. Datamitsu provisions Bun automatically; a system Bun installation is unnecessary. To sort a configuration explicitly:
+
+```bash
+pnpm dm exec lefthook-sort -- lefthook.yaml
+```
+
+The sorter preserves comments and orders hooks by lifecycle and commands by priority. Configuration validation runs separately through `lefthook validate`.
+
+## JavaScript and TypeScript tool runtimes
+
+`pnpm dm check` runs ESLint, oxlint, and oxfmt on the pinned Bun runtime. Datamitsu installs Bun and each tool's locked dependencies automatically. The same runtime is used when these managed apps run from Git hooks.
+
+With the pinned Bun 1.4.1, ESLint can report a shifted column for TypeScript syntax errors: `export const broken = ;` is reported at column 16 instead of 22. The error message and failure status are preserved.

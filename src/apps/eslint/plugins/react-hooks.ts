@@ -5,7 +5,7 @@ export async function reactHooks(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/react-hooks/rules",
+      name: "s0/react-hooks/rules",
       plugins: {
         "react-hooks": plugin.default,
       },

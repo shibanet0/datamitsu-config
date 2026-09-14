@@ -55,10 +55,3 @@ declare module "eslint-plugin-security" {
   };
   exports = { configs };
 }
-
-declare module "eslint-plugin-json" {
-  const configs: {
-    recommended: any;
-  };
-  exports = { configs };
-}

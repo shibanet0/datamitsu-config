@@ -9,6 +9,28 @@ export const pnpmWorkspaceYaml: config.ManagedConfig = {
       ...existing,
     };
 
+    const legacyTrustPolicy = base.trustPolicy;
+    if (
+      legacyTrustPolicy &&
+      typeof legacyTrustPolicy === "object" &&
+      "allowDowngrade" in legacyTrustPolicy
+    ) {
+      const legacyExclude = legacyTrustPolicy.allowDowngrade;
+      const currentExclude = base.trustPolicyExclude ?? [];
+      if (
+        !Array.isArray(legacyExclude) ||
+        legacyExclude.some((entry) => typeof entry !== "string") ||
+        !Array.isArray(currentExclude) ||
+        currentExclude.some((entry) => typeof entry !== "string")
+      ) {
+        throw new Error(
+          "Cannot migrate trustPolicy.allowDowngrade: it and trustPolicyExclude must be lists of package selectors",
+        );
+      }
+      base.trustPolicyExclude = [...new Set([...currentExclude, ...legacyExclude])];
+      base.trustPolicy = "no-downgrade";
+    }
+
     const allowBuilds = {
       ...base?.allowBuilds,
     };

@@ -60,7 +60,6 @@ export const pulumiDecrypt = async () => {
   for (let i = 0; i < files.length; i += batchSize) {
     const batch = files.slice(i, i + batchSize);
 
-    // oxlint-disable-next-line no-await-in-loop
     const results = await Promise.allSettled(
       batch.map((file) => decryptFile(file, datamitsu, GPG_TTY)),
     );

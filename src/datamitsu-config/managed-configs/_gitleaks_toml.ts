@@ -4,7 +4,6 @@ export const gitleaksToml: config.ManagedConfig = {
 
     const MANAGED_EXTEND_PATH = ".datamitsu/gitleaks-managed.toml";
 
-    // oxlint-disable-next-line unicorn/consistent-function-scoping
     const isPlainObject = (value: unknown): value is Record<string, unknown> =>
       typeof value === "object" && value !== null && !Array.isArray(value);
 

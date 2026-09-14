@@ -5,12 +5,13 @@ export async function unusedImports(): Promise<TypedFlatConfigItem[]> {
 
   return [
     {
-      name: "shibanet0/unused-imports/rules",
+      name: "s0/unused-imports/rules",
       plugins: {
         "unused-imports": plugin.default,
       },
       rules: {
-        "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
+        // `no-unused-vars` and its `@typescript-eslint` twin are turned off in `src/lint-rules`,
+        // where the reason is written down. Repeating it here made deleting the list entry a no-op.
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": [
           "warn",

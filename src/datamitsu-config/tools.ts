@@ -366,17 +366,36 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "eslint",
-        granularity: "file",
-        args: ["--quiet", "--fix", "-c", "{cwd}/eslint.config.mjs", "{files}"],
+        // `--fix-type` excludes `directive`, which is the fix type for an unused `eslint-disable`
+        // comment — and "unused" here means "names a rule this config has off", which is ~1600 of
+        // them. Without the flag, `--quiet --fix` deletes the comment and its reason text, prints
+        // nothing, and exits 0; pre-commit then stages the deletion.
+        //
+        // Two shapes of loss. A rule oxlint owns: the comment goes, oxlint still reports it, and
+        // nothing tells you the replacement is `oxlint-disable-next-line`. A rule parked in
+        // `temporary.ts`: the deletion is completely silent, and when that rule is triaged back on,
+        // the deliberate suppression that would have covered it is already gone.
+        //
+        // With the flag the directive is left alone and reported instead, so it is a decision.
+        args: [
+          "--quiet",
+          "--fix",
+          "--fix-type",
+          "problem,suggestion,layout",
+          "-c",
+          "{cwd}/eslint.config.mjs",
+          "{files}",
+        ],
         globs: eslintGlobs,
+        granularity: "file",
         priority: fixPriority.eslint,
         scope: "per-project",
       },
       lint: {
         app: "eslint",
-        granularity: "file",
         args: ["--quiet", "--format=json", "-c", "{cwd}/eslint.config.mjs", "{files}"],
         globs: eslintGlobs,
+        granularity: "file",
         priority: lintPriority.eslint,
         scope: "per-project",
       },
@@ -655,14 +674,26 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "oxfmt",
-        args: ["--write", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        args: [
+          "--write",
+          "--no-error-on-unmatched-pattern",
+          "--config",
+          "{root}/oxfmt.config.ts",
+          "{files}",
+        ],
         globs: oxfmtGlobs,
         priority: fixPriority.oxfmt,
         scope: "repository",
       },
       lint: {
         app: "oxfmt",
-        args: ["--check", "--config", "{root}/oxfmt.config.ts", "{files}"],
+        args: [
+          "--check",
+          "--no-error-on-unmatched-pattern",
+          "--config",
+          "{root}/oxfmt.config.ts",
+          "{files}",
+        ],
         globs: oxfmtGlobs,
         priority: lintPriority.oxfmt,
         scope: "repository",
@@ -674,14 +705,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "--fix", "{files}"],
+        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "--fix", "{files}"],
         globs: oxlintGlobs,
         priority: fixPriority.oxlint,
         scope: "per-project",
       },
       lint: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/.oxlintrc.json", "{files}"],
+        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "{files}"],
         globs: oxlintGlobs,
         priority: lintPriority.oxlint,
         scope: "per-project",
@@ -726,17 +757,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "prettier",
-        granularity: "file",
         args: ["-u", "--write", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
+        granularity: "file",
         priority: fixPriority.prettier,
         scope: "per-project",
       },
       lint: {
         app: "prettier",
-        granularity: "file",
         args: ["-u", "--check", "--config", "{cwd}/prettier.config.mjs", "{files}"],
         globs: prettierGlobs,
+        granularity: "file",
         priority: lintPriority.prettier,
         scope: "per-project",
       },
@@ -768,17 +799,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
-        granularity: "file",
         args: ["check", "--fix", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: fixPriority.ruff,
         scope: "per-project",
       },
       lint: {
         app: "ruff",
-        granularity: "file",
         args: ["check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: lintPriority.ruff,
         scope: "per-project",
       },
@@ -790,17 +821,17 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "ruff",
-        granularity: "file",
         args: ["format", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: fixPriority["ruff-format"],
         scope: "per-project",
       },
       lint: {
         app: "ruff",
-        granularity: "file",
         args: ["format", "--check", "--quiet", "{files}"],
         globs: ["**/*.py", "**/*.pyi"],
+        granularity: "file",
         priority: lintPriority["ruff-format"],
         scope: "per-project",
       },
@@ -886,16 +917,16 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "sqruff",
-        granularity: "file",
         args: ["fix", "{files}"],
         globs: sqlGlobs,
+        granularity: "file",
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        granularity: "file",
         args: ["lint", "{files}"],
         globs: sqlGlobs,
+        granularity: "file",
         scope: "per-project",
       },
     },
