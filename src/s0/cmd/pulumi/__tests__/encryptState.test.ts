@@ -34,8 +34,8 @@ describe("encryptState", () => {
       mkdir: vi.fn(),
       readFile: vi.fn(),
       realpath: vi.fn(async (file: string) => file),
-      stat: vi.fn().mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" })),
       rm: vi.fn(),
+      stat: vi.fn().mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" })),
       writeFile: vi.fn(),
     };
     const fs = await import("node:fs/promises");
