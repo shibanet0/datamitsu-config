@@ -259,6 +259,16 @@ Integration tests resolve installed Bun apps through `installedBunApp` in `src/a
 
 Installed Lefthook hooks pin the managed Bun directory on `PATH` and set isolated `BUN_OPTIONS`, alongside the public proxy and upstream paths. Preserve this binding: Git may launch hooks without datamitsu or Bun on the ambient `PATH`. The real-hook integration test exercises that case.
 
+The proxy declares its private upstream through `dependsOn` and binds its exact executable with
+`runtimeEnv.DATAMITSU_LEFTHOOK_UPSTREAM` using `${APP_BIN:dm-internal-lefthook-upstream}`.
+Neither app needs `required`: when `lefthook.yaml` exists, every init executes
+`lefthook install --force`, provisioning both apps and rebinding hooks to the current paths.
+Smart-init does not select the proxy by itself, because it declares no links. Init does not
+create `lefthook.yaml`; consuming projects must have the managed config before hooks are installed.
+An invalid exact upstream binding fails without PATH fallback to avoid switching versions.
+Integration tests obtain this binding from the managed app's `source status --json` environment;
+never scan the store or probe binaries to discover it.
+
 ## Managed Linter Runtimes
 
 The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.
@@ -271,4 +281,8 @@ The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDo
 
 PR Docker builds use a separate GitHub Actions cache scope per image variant (`pr-docker-debian` and `pr-docker-alpine`). Smoke tests must read the same scope as their producer. Do not use the default shared `buildkit` scope: parallel image builds overwrite each other's cache.
 
-The Lefthook proxy's `versionCheck.args` uses `--proxy-version`: Docker installs each app in an isolated stage, so the private upstream executable is unavailable while verifying the proxy. Keep that probe independent of upstream resolution. Ordinary `version`/`--version` calls and the final image smoke test must still execute the upstream binary.
+The Lefthook proxy's `versionCheck.args` uses `--proxy-version` to verify the proxy artifact itself.
+Dependency-aware Docker slices also provision the private upstream. Keep the proxy version probe
+independent of upstream resolution; ordinary `version`/`--version` calls and the final image smoke
+test must still execute the upstream binary. The Alpine generator force-includes the static
+private upstream because its registry entry only declares glibc; `dependsOn` does not add platform metadata.

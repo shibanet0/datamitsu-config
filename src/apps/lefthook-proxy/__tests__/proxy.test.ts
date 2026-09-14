@@ -8,10 +8,11 @@ import {
   readFileSync,
   realpathSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { delimiter, dirname, join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { version } from "../../../../package.json";
@@ -53,6 +54,12 @@ function createRepository(files: Record<string, string>): RepositoryFixture {
     fakeUpstream,
     root,
   };
+}
+
+function createResolutionFixture(): RepositoryFixture {
+  const fixture = createRepository({ "a.ts": "A\n" });
+  writeFileSync(fixture.fakeUpstream, '#!/bin/sh\nprintf "resolved upstream\\n"\n');
+  return fixture;
 }
 
 function execute(
@@ -123,7 +130,6 @@ describe("lefthook proxy", () => {
     const env = {
       ...app.environment,
       DATAMITSU_LEFTHOOK_UPSTREAM: "",
-      DATAMITSU_LEFTHOOK_UPSTREAM_DIR: root,
       PATH: root,
     };
     const result = execute(app.command, [...app.runtimeArgs, app.artifact, "--proxy-version"], {
@@ -140,6 +146,93 @@ describe("lefthook proxy", () => {
     });
     expect(upstream.status).toBe(127);
     expect(upstream.stderr).toContain("cannot find dm-internal-lefthook-upstream");
+    expect(upstream.stderr).toContain("datamitsu exec lefthook");
+    expect(upstream.stderr).toContain("datamitsu init");
+  });
+
+  it("uses the activated farm when no exact upstream is bound", () => {
+    const fixture = createResolutionFixture();
+    const result = proxy(fixture, ["version"], {
+      DATAMITSU_LEFTHOOK_UPSTREAM: "",
+      PATH: [dirname(fixture.fakeUpstream), app.environment.PATH].join(delimiter),
+    });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("resolved upstream\n");
+  });
+
+  it.each(["missing", "non-executable", "directory", "recursive"])(
+    "rejects a %s exact binding even when PATH has a working upstream",
+    (kind) => {
+      const fixture = createResolutionFixture();
+      const upstream = join(fixture.root, "invalid-upstream");
+      switch (kind) {
+        case "directory": {
+          mkdirSync(upstream);
+          break;
+        }
+        case "non-executable": {
+          writeFileSync(upstream, "#!/bin/sh\nexit 0\n", { mode: 0o644 });
+          break;
+        }
+        case "recursive": {
+          symlinkSync(app.artifact, upstream);
+          break;
+        }
+        default: {
+          expect(kind).toBe("missing");
+        }
+      }
+      const result = proxy(fixture, ["version"], {
+        DATAMITSU_LEFTHOOK_UPSTREAM: upstream,
+        PATH: [dirname(fixture.fakeUpstream), app.environment.PATH].join(delimiter),
+      });
+      expect(result.status).toBe(127);
+      expect(result.stdout).toBe("");
+      expect(result.stderr).toContain(
+        kind === "recursive" ? "proxy itself" : "missing or not executable",
+      );
+      expect(result.stderr).toContain("datamitsu init");
+    },
+  );
+
+  it("prefers the exact binding over a different upstream on PATH", () => {
+    const fixture = createResolutionFixture();
+    const bin = join(fixture.root, "other-bin");
+    mkdirSync(bin);
+    writeFileSync(join(bin, "dm-internal-lefthook-upstream"), "#!/bin/sh\nexit 42\n", {
+      mode: 0o755,
+    });
+    const result = proxy(fixture, ["version"], {
+      PATH: [bin, app.environment.PATH].join(delimiter),
+    });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("resolved upstream\n");
+  });
+
+  it.each([
+    "LEFTHOOK_BIN='/old/proxy'\nexport LEFTHOOK_BIN",
+    "LEFTHOOK_BIN='/old/proxy'\nDATAMITSU_LEFTHOOK_UPSTREAM='/old/upstream'\nexport LEFTHOOK_BIN DATAMITSU_LEFTHOOK_UPSTREAM",
+    "LEFTHOOK_BIN='/old/proxy'\nDATAMITSU_LEFTHOOK_UPSTREAM='/old/upstream'\nPATH='/old/bun':\"$PATH\"\nBUN_OPTIONS='--no-install'\nexport LEFTHOOK_BIN DATAMITSU_LEFTHOOK_UPSTREAM PATH BUN_OPTIONS",
+  ])("upgrades an existing hook binding in place: %s", (binding) => {
+    const fixture = createResolutionFixture();
+    const hookPath = join(fixture.root, ".git/hooks/pre-commit");
+    writeFileSync(
+      hookPath,
+      `#!/bin/sh\n# datamitsu-lefthook-proxy\n${binding}\ncall_lefthook() { :; }\ncall_lefthook run pre-commit\n`,
+      { mode: 0o755 },
+    );
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = proxy(fixture, ["version"], {
+        LEFTHOOK_BIN: app.artifact,
+      });
+      expect(result.status, result.stderr).toBe(0);
+      const hook = readFileSync(hookPath, "utf8");
+      expect(hook.match(/# datamitsu-lefthook-proxy/g)).toHaveLength(1);
+      expect(hook).not.toContain("/old/");
+      expect(hook).toContain(`DATAMITSU_LEFTHOOK_UPSTREAM='${realpathSync(fixture.fakeUpstream)}'`);
+      expect(hook).toContain(`PATH='${dirname(app.command)}':"$PATH"`);
+      expect(hook).toContain("BUN_OPTIONS='--config=/dev/null --no-env-file --no-install'");
+    }
   });
 
   it("keeps fixture commits and proxy execution isolated from the parent hook environment", () => {

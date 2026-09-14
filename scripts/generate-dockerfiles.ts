@@ -88,6 +88,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "jq",
       "kube-linter",
       "kubeconform",
+      // The static upstream runs on musl, but its registry entry only declares glibc.
       "dm-internal-lefthook-upstream",
       "osv-scanner",
       "protoc",

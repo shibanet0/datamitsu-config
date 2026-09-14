@@ -16,6 +16,7 @@ export async function bindInstalledHooksToProxy(
   const hooksPath = hooksPathOutput.trim();
   const hooksDirectory = isAbsolute(hooksPath) ? hooksPath : resolvePath(root, hooksPath);
   const runtime = hookRuntimeSettings();
+  // Git launches hooks outside datamitsu, so they must retain the resolved upstream and Bun runtime.
   const binding = `${installedHookMarker}\nLEFTHOOK_BIN=${shellQuote(publicProxy)}\nDATAMITSU_LEFTHOOK_UPSTREAM=${shellQuote(upstream)}\nPATH=${shellQuote(runtime.directory)}:"$PATH"\nBUN_OPTIONS=${shellQuote(runtime.options)}\nexport LEFTHOOK_BIN DATAMITSU_LEFTHOOK_UPSTREAM PATH BUN_OPTIONS`;
   let boundHooks = 0;
 

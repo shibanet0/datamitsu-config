@@ -11,58 +11,19 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { delimiter, dirname, join, resolve } from "node:path";
+import { delimiter, dirname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { apps as githubApps } from "../../../datamitsu-config/registries/githubApps.json";
 import { installedBunApp } from "../../test-support/managed-bun";
-import { resolveUpstream, upstreamName } from "../resolve.js";
 import { fixtureEnvironment, testUpstream } from "./env.js";
 
 const app = installedBunApp("lefthook");
 const proxyBundle = app.artifact;
-const datamitsu = resolve("node_modules/.bin/datamitsu");
 const fixtureRoot = mkdtempSync(join(tmpdir(), "datamitsu-real-lefthook-"));
 
 afterAll(() => {
   rmSync(fixtureRoot, { force: true, recursive: true });
 });
-
-/**
- * Locate a real upstream Lefthook binary without hard-coding a store path.
- *
- * `DATAMITSU_TEST_LEFTHOOK_UPSTREAM` still wins when set, but the default path asks datamitsu where
- * its store is and then resolves the binary with the proxy's own resolver. That keeps this test
- * runnable from a plain `pnpm test` — including on CI, where `prepare` has already built the bundle
- * and installed the required app — instead of silently skipping until someone remembers the
- * variable.
- */
-function discoverUpstream(): string | undefined {
-  const override = testUpstream();
-  if (override) {
-    return existsSync(override) ? override : undefined;
-  }
-
-  const storePath = spawnSync(datamitsu, ["store", "path"], {
-    encoding: "utf8",
-    env: fixtureEnvironment(),
-  });
-  if (storePath.status !== 0) {
-    return undefined;
-  }
-  try {
-    return resolveUpstream({
-      active: false,
-      noColor: true,
-      path: "",
-      pathExtensions: "",
-      upstreamDirectory: join(storePath.stdout.trim(), ".bin", upstreamName),
-      upstreamVersion: githubApps.lefthook.tag,
-    });
-  } catch {
-    return undefined;
-  }
-}
 
 function execute(
   command: string,
@@ -85,9 +46,10 @@ function git(root: string, args: readonly string[]): string {
   return result.stdout;
 }
 
-const realUpstream = discoverUpstream();
+// source status resolves runtimeEnv without installing or exposing store layout to fixtures.
+const realUpstream = testUpstream(app.environment);
 beforeAll(() => {
-  if (!realUpstream || !existsSync(proxyBundle)) {
+  if (!realUpstream || !existsSync(realUpstream) || !existsSync(proxyBundle)) {
     throw new Error("Build the Lefthook proxy and install its upstream binary with pnpm build");
   }
 });
@@ -192,6 +154,20 @@ if (
     expect(readFileSync(hookPath, "utf8").match(/# datamitsu-lefthook-proxy/g)).toHaveLength(1);
     expect(hook).toContain(`LEFTHOOK_BIN='${publicProxy}'`);
     expect(hook).toContain(`DATAMITSU_LEFTHOOK_UPSTREAM='${realpathSync(privateUpstream)}'`);
+
+    const replacementUpstream = join(bin, "replacement-upstream");
+    copyFileSync(realUpstream!, replacementUpstream);
+    chmodSync(replacementUpstream, 0o755);
+    proxyEnvironment.DATAMITSU_LEFTHOOK_UPSTREAM = replacementUpstream;
+    const rebind = execute(publicProxy, ["install", "--force"], repository, proxyEnvironment);
+    expect(rebind.status, rebind.stderr).toBe(0);
+    const reboundHook = readFileSync(hookPath, "utf8");
+    expect(reboundHook.match(/# datamitsu-lefthook-proxy/g)).toHaveLength(1);
+    expect(reboundHook).toContain(
+      `DATAMITSU_LEFTHOOK_UPSTREAM='${realpathSync(replacementUpstream)}'`,
+    );
+    expect(reboundHook).not.toContain(privateUpstream);
+    rmSync(privateUpstream);
 
     writeFileSync(join(repository, "a.ts"), "A staged\n");
     writeFileSync(join(repository, "partial.ts"), partial.replace("line 10", "line 10 staged"));

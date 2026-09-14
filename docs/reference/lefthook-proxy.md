@@ -63,20 +63,38 @@ Backups are scoped per worktree, so a crashed run in one linked worktree does no
 
 ## Installation verification
 
-`lefthook --proxy-version` prints the wrapper's package version and works before upstream
-Lefthook is installed. Datamitsu uses this command for the proxy's installation check,
-including isolated Docker app stages. The private upstream app is installed and verified
-in its own stage. `lefthook version` and `lefthook --version` still execute upstream;
-the final image's offline smoke test checks that both apps work together.
+The proxy declares `dependsOn: ["dm-internal-lefthook-upstream"]`. Datamitsu provisions
+that dependency when installing, executing, seeding, or repairing the proxy, including
+in Docker app slices. Neither app needs `required: true`.
+
+When `lefthook.yaml` exists, every `datamitsu init` runs `lefthook install --force`
+through the managed app executor. This provisions both apps and rebinds installed hooks
+to the currently resolved paths, even if the apps were already installed. Init does not
+create the managed `lefthook.yaml`; projects must create it before hooks can be installed.
+
+`lefthook --proxy-version` verifies the wrapper's package version independently of upstream
+resolution. Datamitsu uses this for the proxy's installation check. `lefthook version` and
+`lefthook --version` execute upstream; the final image's offline smoke test checks both apps together.
 
 ## Environment variables
 
-| Variable                              | Purpose                                                                           |
-| ------------------------------------- | --------------------------------------------------------------------------------- |
-| `DATAMITSU_LEFTHOOK_UPSTREAM`         | absolute path to the private upstream binary; overrides store lookup              |
-| `DATAMITSU_LEFTHOOK_UPSTREAM_DIR`     | store directory to search for it (set by the app definition)                      |
-| `DATAMITSU_LEFTHOOK_UPSTREAM_VERSION` | version to select when the directory holds several builds                         |
-| `DATAMITSU_LEFTHOOK_PROXY_ACTIVE`     | set to `1` for the child process; suppresses nested isolation. Do not set by hand |
-| `LEFTHOOK_BIN`                        | standard Lefthook variable; the proxy writes its own path here in installed hooks |
+| Variable                          | Purpose                                                                                |
+| --------------------------------- | -------------------------------------------------------------------------------------- |
+| `DATAMITSU_LEFTHOOK_UPSTREAM`     | exact executable path to the private upstream binary, supplied by datamitsu runtimeEnv |
+| `DATAMITSU_LEFTHOOK_PROXY_ACTIVE` | set to `1` for the child process; suppresses nested isolation. Do not set by hand      |
+| `LEFTHOOK_BIN`                    | standard Lefthook variable; the proxy writes its own path here in installed hooks      |
 
 `lefthook install` additionally rewrites each installed hook to call the public proxy and to pin the upstream path and managed Bun directory, so hooks keep working without a system Bun installation or the store on `PATH`. The hook also sets `BUN_OPTIONS` to disable project Bun configuration, automatic environment-file loading, and automatic package installation. Running `lefthook --help` prints a summary of all of the above.
+
+Datamitsu resolves `${APP_BIN:dm-internal-lefthook-upstream}` into the execution-only
+`DATAMITSU_LEFTHOOK_UPSTREAM` value. The proxy uses that exact executable and rejects a path
+that is missing, not executable, or points back to itself. An invalid binding fails with
+exit code `127` rather than silently switching upstream versions. Only when the variable
+is unset does the proxy look for `dm-internal-lefthook-upstream` on `PATH`.
+
+Run standalone commands with `datamitsu exec lefthook -- <args>` or an activated source
+farm. Git starts installed hooks outside datamitsu, so hooks retain the exact upstream
+path captured during installation. After a config upgrade or store cleanup, run
+`datamitsu init` to provision the current apps and rebind those paths. Until then a hook
+can retain an older executable, or fail if that executable was removed; the error points
+to these recovery commands.

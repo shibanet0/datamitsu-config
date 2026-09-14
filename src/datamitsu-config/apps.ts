@@ -18,8 +18,6 @@ import {
 import nodeVersions from "./registries/nodeVersions.json";
 import uvVersions from "./registries/uvVersions.json";
 
-const requiredGithubApps = new Set<keyof typeof githubBinariesJSON>(["lefthook"]);
-
 const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApps>(
   (accumulator, [key, element]) => {
     const binaries = element.binaries as unknown as BinManager.MapOfBinaries;
@@ -32,7 +30,6 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
         version: app.tag,
       },
       description: (element as any).description ?? undefined,
-      required: requiredGithubApps.has(key as keyof typeof githubBinariesJSON),
     };
 
     if (["air", "kubeconform"].includes(key)) {
@@ -90,10 +87,7 @@ const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapO
   {},
 );
 
-// Upstream Lefthook is re-keyed to a private name so the public `lefthook` name can belong to the
-// Datamitsu proxy (see ./apps/lefthook-proxy.ts). `requiredGithubApps` above still lists it under
-// its registry key "lefthook", which is why the renamed app keeps `required: true` — the proxy is
-// useless without the binary it delegates to.
+// The private name lets the proxy own `lefthook`; its dependsOn provisions this binary.
 const { lefthook: lefthookUpstreamApp, ...otherGithubApps } = githubApps;
 if (!lefthookUpstreamApp) {
   throw new Error("githubApps registry no longer defines lefthook; the proxy has nothing to wrap");

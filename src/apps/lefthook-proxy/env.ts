@@ -5,8 +5,6 @@ import { dirname } from "node:path";
 const keys = {
   active: "DATAMITSU_LEFTHOOK_PROXY_ACTIVE",
   upstream: "DATAMITSU_LEFTHOOK_UPSTREAM",
-  upstreamDirectory: "DATAMITSU_LEFTHOOK_UPSTREAM_DIR",
-  upstreamVersion: "DATAMITSU_LEFTHOOK_UPSTREAM_VERSION",
 } as const;
 
 export interface ProxyEnvironment {
@@ -17,8 +15,6 @@ export interface ProxyEnvironment {
   pathExtensions: string;
   publicProxy?: string;
   upstream?: string;
-  upstreamDirectory?: string;
-  upstreamVersion?: string;
 }
 
 export function childEnvironment(markActive: boolean): NodeJS.ProcessEnv {
@@ -36,8 +32,6 @@ export function proxyEnvironment(source: NodeJS.ProcessEnv = process.env): Proxy
   const gitIndexFile = source.GIT_INDEX_FILE;
   const publicProxy = source.LEFTHOOK_BIN;
   const upstream = source[keys.upstream];
-  const upstreamDirectory = source[keys.upstreamDirectory];
-  const upstreamVersion = source[keys.upstreamVersion];
   return {
     active: source[keys.active] === "1",
     ...(gitIndexFile ? { gitIndexFile } : {}),
@@ -46,7 +40,5 @@ export function proxyEnvironment(source: NodeJS.ProcessEnv = process.env): Proxy
     pathExtensions: source.PATHEXT ?? ".EXE;.CMD;.BAT;.COM",
     ...(publicProxy ? { publicProxy } : {}),
     ...(upstream ? { upstream } : {}),
-    ...(upstreamDirectory ? { upstreamDirectory } : {}),
-    ...(upstreamVersion ? { upstreamVersion } : {}),
   };
 }
