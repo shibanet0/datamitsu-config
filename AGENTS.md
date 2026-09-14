@@ -245,11 +245,29 @@ Two things are deliberately outside `refresh`:
 
 Do not use `datamitsu config reconcile` to regenerate this repository's configs. It rewrites every managed config at once and refuses to run while any of them has drifted from its pinned upstream chain — `eslint.config.mjs` and `lefthook.yaml` are both pinned here. Nothing needs it: `oxlint.config.mts` imports `defineConfig` from `.datamitsu/oxlint.config.js`, so this repository consumes its own published rule list the same way any other project does, and tracks it with no regeneration step at all.
 
+## Lefthook Proxy Tests
+
+The proxy integration suite requires a POSIX shell and signals, the built proxy bundle, and the installed upstream Lefthook binary. Run `pnpm build` before `pnpm test`; missing artifacts fail the suite.
+
+Every fixture subprocess must use `fixtureEnvironment` from `src/apps/test-support/env.ts`. It removes inherited `GIT_*`, `LEFTHOOK*`, and `DATAMITSU_LEFTHOOK_*` values before applying explicit test overrides. Git hooks can export paths into the contributor's real repository, and nested proxy state can suppress isolation; inheriting either makes fixture tests unsafe.
+
 ## Bun Helper Scripts
 
-`lefthook-sort` is a Bun app. Its `bun` entry in `src/datamitsu-config/apps/lefthook-sort.ts` selects the pinned runtime from the registry; its entrypoint uses a Bun shebang. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
+`lefthook-sort` and the public `lefthook` proxy are Bun apps. Their `bun` entries in `src/datamitsu-config/apps/lefthook-sort.ts` and `src/datamitsu-config/apps/lefthook-proxy.ts` select the pinned runtime from the registry; their entrypoints use Bun shebangs. Keep both aligned so managed execution and direct execution use the same runtime. Regenerate Dockerfiles and app documentation with `task refresh` after changing an app runtime.
 
 Integration tests resolve installed Bun apps through `installedBunApp` in `src/apps/test-support/managed-bun.ts`. It reads `datamitsu source status --json` without installing anything and preserves the managed runtime arguments and environment. Build first; do not substitute a system Bun executable in these tests.
+
+Installed Lefthook hooks pin the managed Bun directory on `PATH` and set isolated `BUN_OPTIONS`, alongside the public proxy and upstream paths. Preserve this binding: Git may launch hooks without datamitsu or Bun on the ambient `PATH`. The real-hook integration test exercises that case.
+
+The proxy declares its private upstream through `dependsOn` and binds its exact executable with
+`runtimeEnv.DATAMITSU_LEFTHOOK_UPSTREAM` using `${APP_BIN:dm-internal-lefthook-upstream}`.
+Neither app needs `required`: when `lefthook.yaml` exists, every init executes
+`lefthook install --force`, provisioning both apps and rebinding hooks to the current paths.
+Smart-init does not select the proxy by itself, because it declares no links. Init does not
+create `lefthook.yaml`; consuming projects must have the managed config before hooks are installed.
+An invalid exact upstream binding fails without PATH fallback to avoid switching versions.
+Integration tests obtain this binding from the managed app's `source status --json` environment;
+never scan the store or probe binaries to discover it.
 
 ## Managed Linter Runtimes
 
@@ -262,3 +280,9 @@ The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDo
 ## Docker CI Cache
 
 PR Docker builds use a separate GitHub Actions cache scope per image variant (`pr-docker-debian` and `pr-docker-alpine`). Smoke tests must read the same scope as their producer. Do not use the default shared `buildkit` scope: parallel image builds overwrite each other's cache.
+
+The Lefthook proxy's `versionCheck.args` uses `--proxy-version` to verify the proxy artifact itself.
+Dependency-aware Docker slices also provision the private upstream. Keep the proxy version probe
+independent of upstream resolution; ordinary `version`/`--version` calls and the final image smoke
+test must still execute the upstream binary. The Alpine generator force-includes the static
+private upstream because its registry entry only declares glibc; `dependsOn` does not add platform metadata.
