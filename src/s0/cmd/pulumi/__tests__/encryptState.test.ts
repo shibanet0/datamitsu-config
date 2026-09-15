@@ -33,7 +33,9 @@ describe("encryptState", () => {
     mockFs = {
       mkdir: vi.fn(),
       readFile: vi.fn(),
+      realpath: vi.fn(async (file: string) => file),
       rm: vi.fn(),
+      stat: vi.fn().mockRejectedValue(Object.assign(new Error("ENOENT"), { code: "ENOENT" })),
       writeFile: vi.fn(),
     };
     const fs = await import("node:fs/promises");
@@ -289,6 +291,43 @@ describe("encryptState", () => {
       await pulumiEncrypt();
 
       expect(mockDatamitsu.exec).toHaveBeenCalledTimes(2);
+    });
+
+    it("should refuse files whose last decryption was refused", async () => {
+      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json"]);
+      mockFs.stat.mockResolvedValue({});
+
+      await pulumiEncrypt();
+
+      expect(mockDatamitsu.exec).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Error during encryption"),
+        expect.objectContaining({ message: expect.stringContaining("is blocked") }),
+      );
+      expect(processExitSpy).toHaveBeenCalledWith(1);
+    });
+
+    it("should encrypt a blocked file with force and clear its conflict marker", async () => {
+      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json"]);
+      mockFs.stat.mockResolvedValue({});
+      mockFs.readFile.mockResolvedValue("e30=");
+
+      await pulumiEncrypt({ force: true });
+
+      expect(mockDatamitsu.exec).toHaveBeenCalledTimes(1);
+      expect(mockFs.rm).toHaveBeenCalledWith(expect.stringContaining("conflicts"), { force: true });
+      expect(processExitSpy).not.toHaveBeenCalled();
+    });
+
+    it("should set SOPS_EDITOR to the generated editor", async () => {
+      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json"]);
+      mockFs.readFile.mockResolvedValue("e30=");
+
+      await pulumiEncrypt();
+
+      const env = mockDatamitsu.exec.mock.calls[0][2].env;
+      expect(env.SOPS_EDITOR).toBe(env.EDITOR);
+      expect(env.SOPS_EDITOR).toMatch(/editor\.mjs$/);
     });
   });
 });

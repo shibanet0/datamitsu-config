@@ -64,4 +64,29 @@ describe("lefthookYaml", () => {
     expect(commands["datamitsu-check"]).toBeDefined();
     expect(commands["datamitsu-init"]).toBeDefined();
   });
+
+  it("preserves pre-existing post-checkout commands when merging", () => {
+    const existing = JSON.stringify({
+      "post-checkout": {
+        commands: { "restore state": { priority: 3, run: "echo restore {3}" } },
+        parallel: false,
+      },
+    });
+    const config = render(existing);
+    const commands = config["post-checkout"].commands as Record<string, any>;
+    expect(commands["restore state"]).toEqual({ priority: 3, run: "echo restore {3}" });
+    expect(commands["install deps"]).toBeDefined();
+    expect(commands["init datamitsu"]).toBeDefined();
+    expect(config["post-checkout"].parallel).toBe(false);
+  });
+
+  it("keeps rendering stable when applied to its own output", () => {
+    const existing = JSON.stringify({
+      "post-checkout": { commands: { "restore state": { priority: 3, run: "echo restore" } } },
+      "pre-commit": { commands: { "my-custom": { priority: 5, run: "echo hi" } } },
+    });
+    const once = render(existing);
+    const twice = render(JSON.stringify(once));
+    expect(twice).toEqual(once);
+  });
 });

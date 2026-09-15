@@ -18,6 +18,7 @@ describe("cleanupState", () => {
   let consoleWarnSpy: any;
   let consoleErrorSpy: any;
   let processCwdSpy: any;
+  let processExitSpy: any;
 
   beforeEach(async () => {
     // Setup console spies
@@ -27,6 +28,7 @@ describe("cleanupState", () => {
 
     // Mock process.cwd
     processCwdSpy = vi.spyOn(process, "cwd").mockReturnValue("/repo");
+    processExitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
     // Setup execa mock
     const execaModule = await import("execa");
@@ -41,6 +43,8 @@ describe("cleanupState", () => {
     // Setup fs mock
     mockFs = {
       access: vi.fn(),
+      readFile: vi.fn().mockResolvedValue(Buffer.from("decrypted")),
+      realpath: vi.fn(async (file: string) => file),
       unlink: vi.fn(),
     };
     const fs = await import("node:fs/promises");
@@ -210,8 +214,35 @@ describe("cleanupState", () => {
 
       await pulumiCleanup();
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining("failed verification"));
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("does not decrypt to the current plaintext"),
+      );
       expect(mockFs.unlink).not.toHaveBeenCalled();
+    });
+
+    it("should keep original when the encrypted file decrypts to older state", async () => {
+      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+      mockFs.access.mockResolvedValue();
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: '{"resources": []}' });
+      mockFs.readFile.mockResolvedValue(Buffer.from('{"resources": [{"urn": "new"}]}'));
+
+      await pulumiCleanup();
+
+      expect(mockFs.unlink).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("does not decrypt to the current plaintext"),
+      );
+    });
+
+    it("should remove original when only formatting differs from the encrypted file", async () => {
+      mockGlob.mockResolvedValue(["/repo/.pulumi/stacks/dev.json.enc"]);
+      mockFs.access.mockResolvedValue();
+      mockDatamitsu.exec.mockResolvedValue({ exitCode: 0, stdout: '{\n    "a": [1, 2]\n}\n' });
+      mockFs.readFile.mockResolvedValue(Buffer.from('{"a":[1,2]}'));
+
+      await pulumiCleanup();
+
+      expect(mockFs.unlink).toHaveBeenCalledWith("/repo/.pulumi/stacks/dev.json");
     });
 
     it("should handle no encrypted files found", async () => {
@@ -271,6 +302,7 @@ describe("cleanupState", () => {
         expect.any(Error),
       );
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("0/1 removed"));
+      expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
     it("should verify each encrypted file with SOPS", async () => {

@@ -1,4 +1,3 @@
-import fastGlob from "fast-glob";
 import crypto, { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -16,70 +15,43 @@ import {
   PULUMI_ENCRYPTED_EXCLUDE_PATTERNS,
   PULUMI_STATE_PATTERNS,
 } from "./constants";
+import { stripInsignificantJsonWhitespace } from "./stateContent";
+import { findStateFiles } from "./stateFiles";
+import { clearDecryptConflict, hasDecryptConflict } from "./stateGuard";
 
-const getEditorJS = async (buf: Buffer) => {
+export interface EncryptOptions {
+  /**
+   * Encrypt files whose last decryption was refused because the plaintext differed, declaring the
+   * local plaintext authoritative.
+   */
+  force?: boolean;
+}
+
+export const getEditorJS = async (buf: Buffer) => {
   const encryptor = new Encryptor(crypto, util);
   const encryptionKey = encryptor.generateKey();
   const encryptionKeyName = randomUUID();
 
   const encryptedContentBuf = await encryptor.encrypt(buf, encryptionKey);
 
-  const editor = async (contentEncryptedBase64: string, encryptionKeyBase64: string) => {
-    const [fsInner, cryptoInner, utilInner] = await Promise.all([
-      import("node:fs/promises"),
-      import("node:crypto"),
-      import("node:util"),
-    ]);
-
+  // The editor runs as a standalone script built with String(), so everything it uses is passed in
+  // as arguments: identifiers and dynamic imports inside it may be rewritten by the bundler or the
+  // test transform.
+  const editor = async (
+    contentEncryptedBase64: string,
+    encryptionKeyBase64: string,
+    EncryptorClass: typeof Encryptor,
+    stripWhitespace: typeof stripInsignificantJsonWhitespace,
+    fsInner: typeof fs,
+    cryptoInner: typeof crypto,
+    utilInner: typeof util,
+  ) => {
     const contentEncryptedBuffer = Buffer.from(contentEncryptedBase64, "base64");
     const decryptionKey = Buffer.from(encryptionKeyBase64, "base64");
 
-    const innerEncryptor = new Encryptor(cryptoInner, utilInner);
+    const innerEncryptor = new EncryptorClass(cryptoInner, utilInner);
 
     const contentBuf = await innerEncryptor.decrypt(contentEncryptedBuffer, decryptionKey);
-
-    const normalizeAndSortJSON = (inputBuf: Buffer): Buffer => {
-      try {
-        const str = inputBuf.toString("utf8");
-        const state = JSON.parse(str);
-
-        if (Array.isArray(state?.checkpoint?.latest?.resources)) {
-          state.checkpoint.latest.resources.sort((a: { urn: string }, b: { urn: string }) => {
-            const urnA = a?.urn || "";
-            const urnB = b?.urn || "";
-
-            // Stack must go first (it's the root parent)
-            const aIsStack = urnA.includes("::pulumi:pulumi:Stack::");
-            const bIsStack = urnB.includes("::pulumi:pulumi:Stack::");
-
-            if (aIsStack && !bIsStack) {
-              return -1;
-            }
-            if (!aIsStack && bIsStack) {
-              return 1;
-            }
-
-            // Then providers
-            const aIsProvider = urnA.includes("::pulumi:providers:");
-            const bIsProvider = urnB.includes("::pulumi:providers:");
-
-            if (aIsProvider && !bIsProvider) {
-              return -1;
-            }
-            if (!aIsProvider && bIsProvider) {
-              return 1;
-            }
-
-            // Within groups - by URN
-            return urnA.localeCompare(urnB);
-          });
-        }
-
-        return Buffer.from(JSON.stringify(state, null, 4));
-      } catch {
-        return inputBuf;
-      }
-    };
 
     const filePath = process.argv.at(2);
 
@@ -89,31 +61,20 @@ const getEditorJS = async (buf: Buffer) => {
     }
 
     const isJSON = filePath.endsWith(".json") || filePath.endsWith(".json.enc");
+    const currentBuf = await fsInner.readFile(filePath);
 
-    // Normalize both buffers the same way before comparing
-    const normalizedContentBuf = isJSON ? normalizeAndSortJSON(contentBuf) : contentBuf;
-    const unencryptedHash = cryptoInner
-      .createHash("sha512")
-      .update(normalizedContentBuf)
-      .digest("hex");
+    const isUnchanged = isJSON
+      ? stripWhitespace(contentBuf.toString("utf8")) ===
+        stripWhitespace(currentBuf.toString("utf8"))
+      : contentBuf.equals(currentBuf);
 
-    const sopsEncryptedDataBase64 = await fsInner.readFile(filePath, "base64");
-    const sopsEncryptedBuf = Buffer.from(sopsEncryptedDataBase64, "base64");
-    const normalizedSopsEncryptedBuf = isJSON
-      ? normalizeAndSortJSON(sopsEncryptedBuf)
-      : sopsEncryptedBuf;
-    const sopsEncryptedHash = cryptoInner
-      .createHash("sha512")
-      .update(normalizedSopsEncryptedBuf)
-      .digest("hex");
-
-    if (unencryptedHash === sopsEncryptedHash) {
+    if (isUnchanged) {
       console.log("File has not changed");
       process.exit(0);
     }
 
     try {
-      await fsInner.writeFile(filePath, normalizedContentBuf, "binary");
+      await fsInner.writeFile(filePath, contentBuf);
       process.exit(0);
     } catch (error) {
       console.error(error);
@@ -125,21 +86,39 @@ const getEditorJS = async (buf: Buffer) => {
     env: { [encryptionKeyName]: encryptionKey.toString("base64") },
     scriptContent: [
       "#!/usr/bin/env node",
+      'import fsModule from "node:fs/promises";',
+      'import cryptoModule from "node:crypto";',
+      'import utilModule from "node:util";',
       `const encryptionKey = process.env[${JSON.stringify(encryptionKeyName)}];`,
       `const Encryptor = ${String(Encryptor)};`,
+      `const stripInsignificantJsonWhitespace = ${String(stripInsignificantJsonWhitespace)};`,
       `const editor = ${String(editor)};`,
       `const content = ${JSON.stringify(encryptedContentBuf.toString("base64"))};`,
-      "await editor(content, encryptionKey);",
+      "await editor(content, encryptionKey, Encryptor, stripInsignificantJsonWhitespace, fsModule, cryptoModule, utilModule);",
       "",
     ].join("\n"),
   };
 };
 
-async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string): Promise<void> {
+async function processFile(
+  file: string,
+  datamitsu: Datamitsu,
+  GPG_TTY: string,
+  options: EncryptOptions,
+): Promise<void> {
   const fileType = detectFileType(file);
   const relativePath = path.relative(process.cwd(), file);
 
   console.log(`📄 Processing: ${relativePath}`);
+
+  if (!options.force && (await hasDecryptConflict(file))) {
+    throw new Error(
+      `${relativePath} is blocked: its last decryption refused to overwrite it because it differs ` +
+        `from ${relativePath}.enc, so it may be older than the encrypted file.\n` +
+        `   - local file is newer: encrypt-all-state --force\n` +
+        `   - encrypted file is authoritative: decrypt-all-state --force (a backup is kept)`,
+    );
+  }
 
   const data = await fs.readFile(file, "base64");
   const dir = join(os.tmpdir(), "pulumi-sops", crypto.randomUUID());
@@ -168,10 +147,13 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
           ...editorJS.env,
           EDITOR: editor,
           GPG_TTY,
+          // SOPS prefers SOPS_EDITOR over EDITOR; an inherited one would bypass the generated editor.
+          SOPS_EDITOR: editor,
         },
       },
     );
 
+    await clearDecryptConflict(file);
     console.log(`   ✅ Encrypted: ${relativePath}.enc\n`);
   } catch (error: unknown) {
     const isSopsFileUnchanged =
@@ -181,6 +163,7 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
       error.stdout?.includes("File has not changed");
 
     if (isSopsFileUnchanged) {
+      await clearDecryptConflict(file);
       console.log(`   ⏭️  Skipped: ${relativePath} (no changes)\n`);
     } else {
       throw error;
@@ -194,14 +177,8 @@ async function processFile(file: string, datamitsu: Datamitsu, GPG_TTY: string):
   }
 }
 
-export const pulumiEncrypt = async () => {
-  const { glob } = fastGlob;
-
-  const files = await glob([...PULUMI_STATE_PATTERNS], {
-    absolute: true,
-    cwd: process.cwd(),
-    ignore: [...PULUMI_ENCRYPTED_EXCLUDE_PATTERNS],
-  });
+export const pulumiEncrypt = async (options: EncryptOptions = {}) => {
+  const files = await findStateFiles(PULUMI_STATE_PATTERNS, PULUMI_ENCRYPTED_EXCLUDE_PATTERNS);
 
   console.log(`\n🔐 Found ${files.length} Pulumi state file(s) to encrypt:\n`);
 
@@ -217,7 +194,7 @@ export const pulumiEncrypt = async () => {
     const batch = files.slice(i, i + batchSize);
 
     const results = await Promise.allSettled(
-      batch.map((file) => processFile(file, datamitsu, GPG_TTY)),
+      batch.map((file) => processFile(file, datamitsu, GPG_TTY, options)),
     );
 
     for (const result of results) {
