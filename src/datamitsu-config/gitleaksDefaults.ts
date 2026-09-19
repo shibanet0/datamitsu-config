@@ -1,4 +1,4 @@
-export const gitleaksDefaultPaths: string[] = [
+const gitleaksDefaultPaths: string[] = [
   // Lock files — #1 source of false positives (integrity hashes)
   "(?:^|/)package-lock\\.json$",
   "(?:^|/)pnpm-lock\\.yaml$",
@@ -25,12 +25,12 @@ export const gitleaksDefaultPaths: string[] = [
   "(?:^|/)fixtures?/",
 ];
 
-export const gitleaksDefaultRegexes: string[] = [
+const gitleaksDefaultRegexes: string[] = [
   "(?i)(?:xxx+|yyy+|zzz+|example|dummy|sample|placeholder|changeme|your[-_]?(?:token|key|secret)|<[^>]+>)",
   "(?i)(?:aaaa|bbbb|1234|abcd){3,}",
 ];
 
-export const gitleaksDefaultStopwords: string[] = [
+const gitleaksDefaultStopwords: string[] = [
   "example",
   "sample",
   "dummy",

@@ -330,6 +330,10 @@ const words: string[] = [
   "gofmt",
   "gofumpt",
   "goimports",
+
+  // The JSDoc tag knip's base config excludes, written in consuming source as
+  // `/** @knipignore */` — see src/apps/knip/index.ts.
+  "knipignore",
 ];
 
 const baseConfig = defineCspellConfig({

@@ -180,6 +180,115 @@ datamitsu runs eslint with `--quiet`, so a warn-level rule reports nothing and f
 
 A rule that should not fail the build goes in `src/lint-rules` with a reason, not to a severity nobody sees.
 
+knip's 17 issue types answer to the same rule: [src/apps/knip/index.ts](src/apps/knip/index.ts) emits every one of them as `error` or `off`, overriding knip's own default of `warn` for `cycles`.
+
+## Knip
+
+knip's base config has three jobs beyond picking globs, and all of them are invisible until you know why they are there.
+
+**It tells knip that datamitsu exists.** A knip plugin can activate several ways, but the one that matters here is the dependency predicate: the eslint, prettier, oxlint, commitlint and cspell plugins look for their tool in the workspace's manifest, and datamitsu hands the whole toolchain over as managed binaries outside `node_modules`. So in a consuming project none of them activate — every managed config file reads as an unused file, and the plugins those files import are attributed to nobody. (Plugins that key off a file or a different manifest field, such as GitHub Actions and pnpm, are unaffected.) Naming the managed configs as entry points restores ordinary import reachability — measured on a private pnpm/Turborepo monorepo (~60 workspaces): 183 fewer unused files, 86 fewer unused devDependencies. What it does not restore is plugin-specific interpretation: a plugin named as a string inside a config is still invisible, which is what `ignoreDependencies` is for. The list is split by the `scope` each managed config declares, because a git-root config listed per workspace costs one "Refine entry pattern" hint per workspace that lacks it — 391 hints against 83 on the same repository.
+
+**It works around knip's root-workspace resolution.** The moment a config carries a `workspaces` key, knip resolves the root through it too, matching by workspace name — and `"**"` does not match the root's name, `.`. A config carrying only `"**"` therefore drops the root back to knip's built-in defaults instead of the top-level options, which reads as "my entry patterns are being ignored". `defineConfig` moves the workspace-scoped options under `"."` as its last step, so a top-level `entry` keeps meaning what everyone reads it as.
+
+Which options move is not a matter of taste — check against the installed knip before adding one. `entry`, `project`, `paths` and `ignoreMembers` are read _only_ from the workspace config, so they have to move. `ignoreExportsUsedInFile` and `includeEntryExports` are read as `workspace ?? top-level`, and `ignore`/`ignoreFiles` are registered globally from the top-level config: moving either kind would turn a default every workspace inherits into a root-only one. `ignoreBinaries`, `ignoreDependencies` and `ignoreUnresolved` are explicitly combined with the top-level values for the root, and `ignoreIssues` aggregation skips `"."` entirely — leave all four alone.
+
+knip also picks exactly one `workspaces` key per workspace, the most specific, and merges nothing into it. So `defineConfig` folds the shared `"**"` block into every concrete workspace key a caller adds; without that, configuring one package silently drops the managed-config entry points from the one place they matter most.
+
+**It does not compensate for a broken Playwright config, and that is the newest decision here.** knip loads a `playwright.config` by executing it, and its loader cannot parse JSX at all — a one-line `.tsx` fails. One component anywhere in a config's import chain therefore takes the whole plugin down, defaults included, and every test file in the repository reads as unreachable: 576 unused files against 86 on the monorepo above, 81% of them tests.
+
+The base carried a blanket `*.test.*`/`*.spec.*` entry glob for exactly that, and it is gone. Two reasons, and the second is the one that settles it:
+
+- **It charged every consumer for one consumer's defect.** Where the config loads, the plugin joins `testMatch` to `testDir` and scopes discovery to what Playwright actually runs; a repository-wide glob does not. A stranded spec outside `testDir`, and whatever only it imports, then reads as reachable when knip alone would have reported it.
+- **It made the failure silent.** A compensated run looks clean while the plugin is contributing nothing, and nobody goes looking. Without it the same repository reports 576 unused files, which is impossible to ignore and one search away from the fix. A loud wrong answer beats a quiet one.
+
+The failure is a defect in the project, not a standing condition — measured on that monorepo, it was a package barrel dragging a generated `.tsx` into the config's import chain, and importing the config module directly instead fixed all nine configs. Afterwards the plugin found the tests itself, with and without the glob giving identical results, and nine findings that the glob had been hiding came back.
+
+So a project that needs the fallback writes it in its own `knip.config.js`, where the debt is visible:
+
+```js
+export default defineConfig({
+  playwright: { entry: ["**/*.@(spec|test).?(c|m)[jt]s?(x)"] },
+});
+```
+
+Narrowest patterns that cover what Playwright runs, and removed once the config loads — keeping it is not neutral, because it hides the difference between what Playwright runs and what merely looks like a test. A blanket glob also matches `*.spec.*` belonging to another runner, whose own knip plugin already finds those; covering them twice only means an abandoned one stops being reported.
+
+The check is `datamitsu exec knip`, looking for `Error loading …playwright.config.ts`. It cannot be `datamitsu check`: knip prints the load failure from its human reporter and carries nothing into the JSON the pipeline reads. None of this is in the usage guide, deliberately — see below.
+
+Whatever patterns a project writes there carry no `!`, matching the plugin. Only patterns suffixed with `!` count in `knip --production`, so test entry points exist in the default analysis only. Code that is alive solely because a test imports it is still reported by a production run — 249 files against 86 on the same repository. Making tests entry points does not hide dead production code; it moves that question to a different command.
+
+### The default is the bar, and `adopted` only narrows
+
+`defineConfig(overrides, { adopted })` names the issue groups a project reports; everything outside the list is `off` unless the config names that issue type in `rules`, which still wins per type.
+
+The default is every group knip reports on its own terms. This package states the bar; a project declares its distance from it, in its own repository, where that decision has an author and a date. The opposite arrangement was tried first and is a trap: a default that quietly withholds twelve of seventeen checks reads as a clean codebase, and the project never learns what it is not checking. It is the same residual with no author behind it that `permanent-enabled.ts` exists to prevent.
+
+So the ladder runs the other way. A project adopting knip over existing code writes `{ adopted: ["correctness"] }` — the one group whose findings are defects rather than debt, and small at any age: 16 findings against 734 on the monorepo above. That line lives in the project's `knip.config.js`, is visible in its review, and is meant to shrink until it can go. Once most of the codebase passes a group, prefer knip's `ignoreIssues` — paths × issue types — over dropping the whole group again: it keeps new code covered, and it shrinks the way `src/lint-rules/temporary.ts` shrinks.
+
+Two groups are off by default, and neither out of leniency — they are exactly the two knip itself withholds, and each is left out for a cost that is stated rather than assumed.
+
+`cycles` is off because of what turning it on costs everything else, not because circular imports are unimportant. See the `include` paragraph below: the only lever that enables it also disables every command-line filter, on the one path by which these findings are read by a person. It is one line to adopt where that trade is worth making. The findings themselves are real but thin — on the monorepo above, exactly **one**, a cycle four files long, with no time penalty distinguishable from run-to-run noise. Of twenty-one knip configs read across the projects knip lists as its users, none turns `cycles` on and one turns it off by name.
+
+`namespaces` is off for a different reason. knip does follow an explicit member access through an `import * as`; what it cannot resolve is the namespace object passed around whole, and `nsExports`/`nsTypes` fire for the export that is only reachable that way. The finding then asks for restructured imports rather than naming dead code, which is a style position this package does not hold.
+
+**Severities are not the lever for turning a check on**, and they are not independent of each other either. knip feeds the types set to `off` into its `exclude` and never reads severities into its `include`, so a type it withholds from its own default set — `cycles`, `nsExports`, `nsTypes` — stays unreported however loudly `rules` asks for it.
+
+The coupling is the sharper trap. knip expands an excluded `dependencies` into excluding `devDependencies` and `optionalPeerDependencies` as well, and exclusion is applied last, so no `include` undoes it: `defineConfig({ rules: { devDependencies: "error" } }, { adopted: ["correctness"] })` emitted exactly what was asked for and reported nothing, on a config that looked right and a run that exited zero. `rulesFor` now throws on that combination rather than producing a config that lies.
+
+`defineConfig` therefore emits an `include` whenever one of those is adopted — and nothing adopted by default is one of them, so by default it emits none. Whether naming a type there replaces knip's default set or adds to it depends on the type: `nsExports` and `nsTypes` are add-ons and the defaults are appended behind them, everything else — `cycles` included — replaces. The emitted list is therefore every reported type, not only the withheld one, because listing `cycles` alone would report nothing but cycles.
+
+**That `include` is why `cycles` is not on by default, and the cost is worth understanding before adopting it.** knip **merges** a config's `include` with the command line's, taking the union. A config carrying one makes `--files`, `--exports`, `--dependencies` and `--include <type>` stop narrowing anything — the union is still every reported type, so a run meant to look at one kind of finding fails on the other fourteen. Reproduced against knip 6.32.2: with an emitted `include`, `knip --files` returned all fifteen. That lands squarely on `datamitsu exec knip`, which since `skip: !isCI` is the only way a person reads these findings, and narrowing a several-hundred-finding report is the first thing anyone does. `--exclude` still works; it is applied last and wins.
+
+The `include` machinery is this package's own invention, and worth knowing as such: of twenty-one knip configs read across the projects knip lists as its users, not one names `include` in the config file. They use it on the command line, and only to narrow.
+
+An entry in `ignoreDependencies` or `ignoreIssues` carries a reason, and the reason says which of two things it is: something knip structurally cannot see, or debt nobody is paying down yet. Do not mix the two in one block.
+
+### What belongs in the usage guide, which is almost none of this
+
+The guide exists so that a new project can install the package and get on with its work. Everything in it should be true of that project. knip once had 108 lines there — three subsections, 20% of the whole guide, for one tool out of sixty, when no other tool has a section at all. It was written while the investigation was fresh, not because a reader needed it, and a chapter that long says the opposite of what the package claims: that this tool has to be studied first.
+
+What survives is `adopted`, and only because it is **this package's invention rather than knip's**, and a project cannot discover it by reading an error message. Without it, adopting knip over an existing codebase means a gate that is red on day one with no visible way forward.
+
+What was cut — the Playwright fallback, production mode, the issue-group table — is either knip's own documentation restated, or the archaeology of an existing codebase. The second kind is real knowledge and it lives here, where whoever maintains this config will look. Adding it back to the guide needs the same test: would a new project, installing today, ever read this?
+
+### Suppressing one export: `@knipignore`, not `ignoreIssues`
+
+The base config sets `tags: ["-knipignore"]`, so `/** @knipignore */` above an export drops it from the report. Prefer it to an `ignoreIssues` entry whenever the subject is a single export, for one reason that has nothing to do with taste: knip emits a **tag hint** once a tagged export is used again, so the suppression reports itself as obsolete, while a path in `ignoreIssues` goes on excusing a file forever. `ignoreIssues` remains right for a whole generated surface, where the point is the file rather than any export in it.
+
+The tag name is one unbroken run of letters. knip matches `/[a-zA-Z]+/` against the entry and keeps only the first match, so `-knip-ignore` silently means `@knip`, and `-knipIgnore` is a different tag from `-knipignore`.
+
+knip's own `@public`, `@internal`, `@beta` and `@alias` need no configuration and are always active. `@internal` is the production-mode counterpart: it marks an export that exists for tests, so `knip --production` stops reporting it.
+
+Neither `treatConfigHintsAsErrors` nor `treatTagHintsAsErrors` is set, and neither should be. Both raise the exit code, and **neither hint appears in the JSON reporter** — the only output datamitsu parses. Turning either on produces a failing run with an empty report, which reads as a parser bug rather than a finding.
+
+### Cache, and why there is no fix operation
+
+`--cache --cache-location {toolCache}/.knipcache` is on. The cache is keyed on each file's size and mtime — knip's `FileEntryCache` compares those two and nothing else, not a content hash — so a checkout restoring identical bytes still invalidates it. It holds only what knip extracted per file, and the graph is rebuilt every run. A discount, not a short-circuit — 32s cold against 23s warm on the monorepo above, for 18 MB.
+
+**There is no `fix` operation, and that is a decision rather than an omission.** knip's own documentation is "run Knip as you normally would, and _if the report looks good_ then run it again with the `--fix` flag". Its findings are a static analysis with false positives — which is what `@knipignore`, `ignoreIssues`, `ignoreDependencies` and `ignoreUnresolved` all exist to correct — so acting on them is a judgement, not a formatting pass. Wiring it as an operation would put it inside `datamitsu fix` and `datamitsu check`, where it would strip `export` keywords across the whole repository with nobody having read the report: 295 unused exports plus 141 unused types on the monorepo above, so 436 declarations in one go.
+
+Acting on a report stays a deliberate command:
+
+    dm exec knip -- --fix --fix-type exports,types
+
+`--fix-type exports,types` even there. knip's unrestricted `--fix` also rewrites `package.json` and the pnpm catalog, which leaves the lockfile describing a manifest that no longer exists, and a fixer cannot run the installer that would reconcile the two. Removing files needs `--allow-remove-files` on top of that. `--format` is out as well: knip would resolve a formatter of its own through Formatly, while prettier and oxfmt run from the configuration that decides.
+
+### Why `scope: "repository"`, and what the globs are for instead
+
+The scope is not a choice. knip takes no file arguments at all — its usage is `knip [options]`, with `-W/--workspace` and `-D/--directory` and nothing that accepts a list of files — so `per-file` cannot be expressed. `per-project` can, and is worse: it would start knip once per workspace, and each of those runs would see one workspace's graph, so an export used only by a sibling package would read as unused. knip already walks the workspaces itself from the root, in one pass.
+
+So the lever is not `scope` but `globs`, which for a repository-scoped operation never become a file list — they only decide **whether** the whole-repository run happens for a given selection. They are empty, which the type documents as "match all discovered files", and they stay that way.
+
+An enumerated list was tried and removed. It existed to spare the pre-commit hook a whole-repository scan, and knip then left that hook, so the saving went with it — while the failure mode stayed: naming one input too few does not make knip slower, it makes it silently **pass**, because a run whose only changed file is unlisted never performs the check that would have failed. knip reads HTML, stylesheets, extensionless configs (`.prettierrc`, `.swcrc`, `.graphqlrc`), lock files that activate plugins, and whatever a consumer's compilers add, so no list stays complete. Slow and right beats fast and silent.
+
+### `skip: !isCI` — knip runs in CI and on demand, never in a hook
+
+Of twenty-one knip configs read across the projects knip lists as its users, **none** run knip from a git hook. grafana and n8n both have long `lefthook.yml` pre-commit blocks — a dozen commands between them, every one `glob:`-scoped to `{staged_files}` — and knip is in neither; typescript-eslint, babel and storybook have husky pre-commits without it. astro runs it in a dedicated CI lint job with a five-minute timeout.
+
+The implicit rule is that a hook runs what can be narrowed to the staged files, and knip cannot be: `--file-scoped` does nothing to a tool that accepts no file arguments, so in pre-commit it scanned the whole repository on every commit — 11.9s of it on the monorepo above.
+
+`skip: !isCI` with `skipReason: "runs in CI only"` is the same pair trufflehog uses, and it needs nothing new. The cost is that `skip` is one boolean for the tool, so `datamitsu lint --tools knip` stops working locally too. The replacement is `dm exec knip`, which resolves `knip.config.js` through knip's own config discovery and prints the symbols reporter — more readable for a human than the JSON the parser consumes anyway.
+
 ## Lint Rule Inventory
 
 [src/lint-rules/rule-inventory.json](src/lint-rules/rule-inventory.json) is a committed census of every rule ESLint and oxlint know about, with the severity this config gives it. Nothing reads it at runtime — its whole job is to be diffed.

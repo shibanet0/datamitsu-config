@@ -43,6 +43,7 @@ type Tool =
   | "hadolint"
   | "harper-cli"
   | "helm"
+  | "knip"
   | "lefthook-sort"
   | "lefthook-validate"
   | "lychee"
@@ -148,6 +149,9 @@ const _lintPriority: Tool[] = [
   "yamlfmt",
   "yamllint",
   "lefthook-validate",
+  // Last of the source analyses: whole-repository scope and tens of seconds, so
+  // everything that can fail on one file gets to fail first.
+  "knip",
   "lychee",
   "grype",
   "trivy",
@@ -552,12 +556,60 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "knip",
-        args: ["--config", "{root}/knip.config.js"],
+        // `--no-progress` is belt and braces: knip already suppresses the
+        // progress stream when stdout is not a TTY, and under datamitsu it never
+        // is — but the stream writes ANSI escapes to stdout, which is where the
+        // report the parser reads comes from.
+        //
+        // The cache is keyed on each file's size and mtime, not its contents —
+        // knip's FileEntryCache compares those two and nothing else — so a
+        // checkout that restores identical bytes still invalidates. It only
+        // holds what knip extracted per file; the graph is rebuilt every run,
+        // which is why this is a discount and not a short-circuit — measured at
+        // 32s cold against 23s warm on a private pnpm/Turborepo monorepo (~60
+        // workspaces), for 18 MB.
+        args: [
+          "--config",
+          "{root}/knip.config.js",
+          "--reporter",
+          "json",
+          "--no-progress",
+          "--cache",
+          "--cache-location",
+          "{toolCache}/.knipcache",
+        ],
+        // No globs, which for a repository-scoped operation means "run whenever
+        // anything is selected" rather than "look at every file". An enumerated
+        // list was tried and removed: it existed to spare the pre-commit hook a
+        // whole-repository scan, and knip left that hook. What remained was only
+        // the failure mode — knip reads HTML, stylesheets, extensionless configs
+        // (.prettierrc, .swcrc, .graphqlrc), lock files that activate plugins,
+        // and whatever a consumer's compilers add, so a selection of one unlisted
+        // file skipped the run and passed. Slow and right beats fast and silent.
         globs: [],
+        priority: lintPriority.knip,
         scope: "repository",
       },
     },
+    outputParser: { module: "core", parser: "knip" },
     projectTypes: ["npm-package", "typescript-project"],
+    // knip takes no file arguments at all, so `--file-scoped` cannot narrow it:
+    // in pre-commit it scans the whole repository on every commit, 11.9s of it
+    // on a private pnpm/Turborepo monorepo (~60 workspaces). None of the
+    // twenty-one knip configs surveyed across the projects knip lists as its
+    // users runs knip from a git hook either; a hook runs what can be narrowed
+    // to the staged files, and CI runs what cannot.
+    //
+    // No `fix` operation, and that is deliberate rather than pending. knip's
+    // own documentation is "run Knip as you normally would, and if the report
+    // looks good then run it again with the `--fix` flag" — its findings are a
+    // static analysis with false positives, which is what `@knipignore`,
+    // `ignoreIssues` and `ignoreDependencies` all exist to correct. Removing
+    // 436 `export` keywords on the strength of an unread report is not a thing
+    // to automate. Acting on one is a deliberate command:
+    //   dm exec knip -- --fix --fix-type exports,types
+    skip: !isCI,
+    skipReason: "runs in CI only",
   },
   kubeconform: {
     name: "kubeconform - Kubernetes manifest validation",
@@ -1022,18 +1074,6 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["terraform-project"],
   },
-  // knip: {
-  //   name: "Knip",
-  //   operations: {
-  //     lint: {
-  //       args: ["--config", tools.Path.join(facts().gitRoot, "knip.config.js")],
-  //       app: "knip",
-  //       globs: [],
-  //       mode: "whole-project",
-  //     },
-  //   },
-  //   projectTypes: ["npm-package","typescript-project"],
-  // },
   "tofu-fmt": {
     name: "OpenTofu fmt",
     operations: {

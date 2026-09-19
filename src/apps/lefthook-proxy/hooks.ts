@@ -5,7 +5,7 @@ import { isAbsolute, join, resolve as resolvePath } from "node:path";
 import { hookRuntimeSettings } from "./env.js";
 import { gitOutput, repositoryRoot } from "./git.js";
 
-export const installedHookMarker = "# datamitsu-lefthook-proxy";
+const installedHookMarker = "# datamitsu-lefthook-proxy";
 
 export async function bindInstalledHooksToProxy(
   publicProxy: string,

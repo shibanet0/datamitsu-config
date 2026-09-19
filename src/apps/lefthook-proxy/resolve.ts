@@ -6,12 +6,12 @@ import { proxyEnvironment, type ProxyEnvironment } from "./env.js";
 /**
  * Name of the private upstream binary, kept off the public `lefthook` name on purpose.
  */
-export const upstreamName = "dm-internal-lefthook-upstream";
+const upstreamName = "dm-internal-lefthook-upstream";
 
 /**
  * Name the proxy itself is installed under, and the one Git hooks must call back into.
  */
-export const publicName = "lefthook";
+const publicName = "lefthook";
 
 const resolutionHelp =
   "run through datamitsu exec lefthook -- <args> or an activated Datamitsu source farm; " +

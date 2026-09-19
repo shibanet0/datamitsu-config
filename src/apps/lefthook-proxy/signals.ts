@@ -10,7 +10,7 @@ export type RelaySignal = "SIGHUP" | "SIGINT" | "SIGTERM";
 // SIGHUP matters as much as SIGINT here: closing the terminal during a hook
 // would otherwise kill the proxy before it restores the working tree, leaving
 // the user's changes buried in a transaction stash they have to find by hand.
-export const relaySignals: readonly RelaySignal[] = ["SIGHUP", "SIGINT", "SIGTERM"];
+const relaySignals: readonly RelaySignal[] = ["SIGHUP", "SIGINT", "SIGTERM"];
 
 export const signalExitCodes: Record<RelaySignal, number> = {
   SIGHUP: 129,
@@ -59,13 +59,13 @@ export class SignalRelay {
   }
 }
 
-export function isRelaySignal(signal: NodeJS.Signals | null): signal is RelaySignal {
-  return signal !== null && signal in signalExitCodes;
-}
-
 export function resultForSignal(signal: NodeJS.Signals | null): ChildResult {
   if (isRelaySignal(signal)) {
     return { code: signalExitCodes[signal], error: new Error(`terminated by ${signal}`) };
   }
   return { code: 1, error: new Error(signal ? `terminated by ${signal}` : "terminated") };
+}
+
+function isRelaySignal(signal: NodeJS.Signals | null): signal is RelaySignal {
+  return signal !== null && signal in signalExitCodes;
 }
