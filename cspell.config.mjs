@@ -203,6 +203,16 @@ export default defineConfig((prev) => {
     "mischeck",
     "incdec",
     "unthrown",
+
+    // knip's cache directory under {toolCache}, and the package it resolves a
+    // formatter through for `--fix --format` — both named in the Knip section.
+    "knipcache",
+    "Formatly",
+
+    // Extensionless tool configs, named in the knip operation's comment as
+    // examples of inputs an enumerated glob list cannot cover.
+    "swcrc",
+    "graphqlrc",
   ];
 
   return {

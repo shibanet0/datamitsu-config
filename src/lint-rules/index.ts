@@ -4,11 +4,7 @@ import { PERMANENTLY_ENABLED_RULES } from "./permanent-enabled";
 import { TEMPORARILY_DISABLED_RULES } from "./temporary";
 
 export { PERMANENTLY_DISABLED_RULES } from "./permanent-disabled";
-export {
-  enabledRulesForESLint,
-  PERMANENTLY_ENABLED_RULES,
-  type PermanentlyEnabledRule,
-} from "./permanent-enabled";
+export { enabledRulesForESLint } from "./permanent-enabled";
 export { TEMPORARILY_DISABLED_RULES } from "./temporary";
 
 export interface DisabledRulesOptions {

@@ -44,8 +44,6 @@ import { rustfmtToml } from "./managed-configs/rustfmt_toml";
 import { turboJson } from "./managed-configs/turbo_json";
 import { tyToml } from "./managed-configs/ty_toml";
 
-export { trufflehogExcludePaths } from "./managed-configs/_trufflehog_exclude_paths_txt";
-
 export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
   ".datamitsu/scripts/check-empty-files.sh": checkEmptyFilesSh,

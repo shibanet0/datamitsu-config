@@ -293,7 +293,34 @@ Individual tools (ESLint, Prettier, cspell, etc.) can be customized through thei
 - `eslint.config.mjs` — ESLint configuration
 - `.prettierrc` / `prettier.config.mjs` — Prettier configuration
 - `cspell.json` — cspell dictionary and settings
-- `knip.json` — Knip unused code configuration
+- `knip.config.js` — Knip unused code configuration
+
+### Adopting Knip on an existing codebase
+
+Everything here works on a new project with no configuration. The exception is Knip, and only
+because it reports debt that predates it: on a codebase that has never run it, unused files and
+exports arrive by the hundred, and the gate is red from day one.
+
+`adopted` phases that in. Everything outside the list is switched off, so the gate stays green while
+the debt is still there:
+
+```js
+export default defineConfig(undefined, { adopted: ["correctness"] });
+```
+
+`correctness` reports defects rather than debt — imports that do not resolve, dependencies used but
+never declared — and stays small at any age. Widen it one group at a time (`dependencies`, `files`,
+`exports`) until the option can go. Once most of a group passes, prefer `ignoreIssues` over dropping
+the group again, so new code stays covered:
+
+```js
+export default defineConfig({
+  ignoreIssues: { "packages/legacy/**": ["exports", "files"] },
+});
+```
+
+Overrides **extend** the shared configuration rather than replacing it. To replace something
+instead, pass a function — it receives the base configuration and returns the final one.
 
 ## Common Workflows
 

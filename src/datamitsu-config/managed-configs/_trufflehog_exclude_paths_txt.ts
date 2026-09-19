@@ -1,4 +1,4 @@
-export const trufflehogExcludePaths: string[] = [
+const trufflehogExcludePaths: string[] = [
   "(?:^|/)(?:package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|npm-shrinkwrap\\.json|bun\\.lockb?|go\\.sum|Cargo\\.lock|poetry\\.lock|uv\\.lock|Pipfile\\.lock|Gemfile\\.lock|composer\\.lock|mix\\.lock|flake\\.lock|pubspec\\.lock|Podfile\\.lock)$",
   "(?:^|/)__snapshots__/",
   "(?:^|/)testdata/",
