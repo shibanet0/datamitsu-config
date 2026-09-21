@@ -19,6 +19,9 @@ export const droastToml: config.ManagedConfig = {
 
     return TOML.stringify({ ...data, ...policy });
   },
+  // Only where droast runs: the file is one of droast's own lint inputs, so writing it into a
+  // project with no Dockerfile would be the thing that starts a run with nothing to lint.
+  projectTypes: ["docker-project"],
   scope: "git-root",
   tools: ["droast"],
 };

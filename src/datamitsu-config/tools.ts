@@ -393,6 +393,12 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     outputParser: { module: "core", parser: "droast" },
+    // Its globs deliberately include inputs that are not Dockerfiles — a Compose file, an ignore
+    // file, its own config — because each of them changes a verdict. Any of those alone would
+    // otherwise start a repository-scoped run in a project that has no Dockerfile at all, where
+    // droast exits 1 with "No Dockerfile(s) found" before it lints anything, which no --no-fail
+    // covers. The project type is the gate: it is exactly "this repository has a Dockerfile".
+    projectTypes: ["docker-project"],
   },
   "editorconfig-checker": {
     name: "EditorConfig Checker",
