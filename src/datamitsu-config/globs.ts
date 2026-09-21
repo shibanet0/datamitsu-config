@@ -18,6 +18,25 @@ export const composeGlobs: string[] = [
   "**/compose.*.yaml",
 ];
 
+// Every input that changes a droast verdict, not only the Dockerfiles it reports on: compose and
+// bake files decide each Dockerfile's build context, and the ignore files decide DF033/DF077. A
+// change to an unlisted input skips the run and the check silently passes.
+export const droastGlobs: string[] = [
+  ...dockerfileGlobs,
+  ...composeGlobs,
+  "**/Containerfile",
+  "**/Containerfile.*",
+  "**/*.containerfile",
+  "**/docker-bake.hcl",
+  "**/docker-bake.json",
+  "**/docker-bake.*.hcl",
+  "**/docker-bake.*.json",
+  "**/.dockerignore",
+  "**/*.dockerignore",
+  "**/.containerignore",
+  "droast.toml",
+];
+
 // Rust: Cargo manifests + sources (cargo-deny re-checks the whole crate graph).
 export const cargoGlobs: string[] = ["**/Cargo.toml", "**/Cargo.lock", "**/*.rs"];
 
