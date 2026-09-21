@@ -1,0 +1,13 @@
+fail-on = "info"
+inline-suppressions = true
+max-suppression-days = 90
+no-roast = true
+report-unused-suppressions = true
+require-suppression-expiration = true
+require-suppression-reason = true
+
+# The published images are CLI toolchains run per command, not services: there is no process to
+# health-check and no port to document.
+[[overrides]]
+paths = ["docker/Dockerfile", "docker/Dockerfile.*"]
+skip = ["DF012", "DF022"]

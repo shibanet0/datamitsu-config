@@ -5,6 +5,7 @@ import {
   composeGlobs,
   dockerfileGlobs,
   dotenvLinterGlobs,
+  droastGlobs,
   eslintGlobs,
   goGlobs,
   helmGlobs,
@@ -34,7 +35,9 @@ type Tool =
   | "bearer"
   | "checkmake"
   | "cspell"
+  | "dclint"
   | "dotenv-linter"
+  | "droast"
   | "editorconfig-checker"
   | "eslint"
   | "golangci-lint"
@@ -104,11 +107,14 @@ const _fixPriority: Tool[] = [
   "dotenv-linter",
   "shfmt",
   "rustfmt",
+  "droast",
   "toml",
   "tflint",
   "terraform-fmt",
   "terragrunt-fmt",
   "terraform-docs",
+  // Reorders compose keys and services, so it runs before yamlfmt settles the style.
+  "dclint",
   "yq-yaml",
   // Orders lefthook configs before yamlfmt reformats them, so the formatter
   // always gets the last word on style.
@@ -141,6 +147,8 @@ const _lintPriority: Tool[] = [
   "rustfmt",
   "shellcheck",
   "hadolint",
+  "droast",
+  "dclint",
   "checkmake",
   "helm",
   "toml",
@@ -290,19 +298,32 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "dclint",
-        args: ["--fix", "{files}"],
+        args: ["-c", "{root}/.dclint.yaml", "--fix", "{files}"],
         globs: composeGlobs,
+        priority: fixPriority.dclint,
         scope: "repository",
       },
       lint: {
         app: "dclint",
-        args: ["{files}"],
+        // dclint exits 0 on warnings, and this config sets every rule it knows to error. A rule
+        // added by a dclint release starts at its own default level, so without the cap a new
+        // warning-level rule would run on every file and fail nothing.
+        args: [
+          "-c",
+          "{root}/.dclint.yaml",
+          "--formatter",
+          "json",
+          "--max-warnings",
+          "0",
+          "--color=false",
+          "{files}",
+        ],
         globs: composeGlobs,
+        priority: lintPriority.dclint,
         scope: "repository",
       },
     },
-    skip: true,
-    skipReason: optInSkip,
+    outputParser: { module: "core", parser: "dclint" },
   },
   deptry: {
     name: "deptry - find unused/missing Python dependencies",
@@ -341,17 +362,37 @@ export const toolsConfig: config.MapOfTools = {
   droast: {
     name: "dockerfile-roast - opinionated Dockerfile linter",
     operations: {
-      // Repository scope (not per-file like hadolint): droast draws value from
-      // the whole build context, so it runs once from the git root.
-      lint: {
+      // Only droast's safe fixers (instruction casing, EXPOSE protocol case, AS casing, a redundant
+      // --platform). The run reports nothing and fails nothing: every finding belongs to lint.
+      fix: {
         app: "droast",
-        args: ["{root}"],
-        globs: dockerfileGlobs,
+        args: ["-c", "{root}/droast.toml", "--fix", "--no-fail", "--shellcheck", "off", "{root}"],
+        globs: droastGlobs,
+        priority: fixPriority.droast,
+        scope: "repository",
+      },
+      // Repository scope (not per-file like hadolint): droast resolves each Dockerfile's build
+      // context from compose and bake files, so it runs once from the git root. A Dockerfile
+      // linted on its own is measured against its own directory and reports a false DF033.
+      lint: {
+        // `required`: the app's dependsOn puts the managed ShellCheck on PATH, so a missing one is
+        // a broken install to report, not a check to skip.
+        app: "droast",
+        args: [
+          "-c",
+          "{root}/droast.toml",
+          "--format",
+          "json",
+          "--shellcheck",
+          "required",
+          "{root}",
+        ],
+        globs: droastGlobs,
+        priority: lintPriority.droast,
         scope: "repository",
       },
     },
-    skip: true,
-    skipReason: optInSkip,
+    outputParser: { module: "core", parser: "droast" },
   },
   "editorconfig-checker": {
     name: "EditorConfig Checker",
@@ -1318,7 +1359,9 @@ export const toolsConfig: config.MapOfTools = {
         app: "yq",
         args: ["-i", "sort_keys(..)", "{file}"],
         arity: "one",
-        excludeGlobs: [...yamlExcludeGlobs, ...lefthookConfigGlobs],
+        // dclint owns key order in Compose files (Compose's own order, not alphabetical); sorting
+        // them here undoes `dclint --fix` on every run and fails its order rules.
+        excludeGlobs: [...yamlExcludeGlobs, ...lefthookConfigGlobs, ...composeGlobs],
         globs: yamlGlobs,
         priority: fixPriority["yq-yaml"],
         scope: "per-file",

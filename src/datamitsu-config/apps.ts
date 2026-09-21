@@ -164,6 +164,18 @@ const allApps: BinManager.MapOfApps = {
     },
   },
   "dm-internal-lefthook-upstream": lefthookUpstreamApp,
+  // droast finds ShellCheck only as `shellcheck` on PATH; dependsOn is what puts the managed one
+  // there under that name.
+  droast: {
+    ...otherGithubApps.droast,
+    dependsOn: ["shellcheck"],
+    runtimeEnv: {
+      // ShellCheck's optional checks are off by default, and droast has no setting for them; it
+      // passes no --norc either, so ShellCheck reads this from the inherited environment. A
+      // project drops one check with `[shellcheck] exclude` in droast.toml.
+      SHELLCHECK_OPTS: "--enable=all",
+    },
+  },
   eslint: eslintApp,
   govulncheck: {
     // https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck
@@ -465,7 +477,8 @@ const allApps: BinManager.MapOfApps = {
 // limit (docker-smoke builds the image with --load and runs it). The docker
 // generator (scripts/generate-dockerfiles.ts) sets DATAMITSU_OCI_MINIMAL=1 to
 // drop these apps from the image only — they stay installable on demand for
-// every other command. Keep in sync with the opt-in tool batch in tools.ts.
+// every other command. The list began as the opt-in tool batch in tools.ts; dclint and droast have
+// since left that batch but stay excluded here, since adding them back costs image layers.
 const ociExcludedApps = new Set([
   "alint",
   "blint",

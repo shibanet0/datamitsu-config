@@ -8,6 +8,8 @@ const words: string[] = [
   "alint",
   "asamarts",
   "blint",
+  "containerfile",
+  "containerignore",
   "dclint",
   "dclintrc",
   "deptry",

@@ -29,6 +29,7 @@ import { commitlintConfigMjs } from "./managed-configs/commitlint_config_mjs";
 import { cspellConfigMjs } from "./managed-configs/cspell_config_mjs";
 import { denyToml } from "./managed-configs/deny_toml";
 import { deprecatedConfigs } from "./managed-configs/deprecated_configs";
+import { droastToml } from "./managed-configs/droast_toml";
 import { eslintConfigMjs } from "./managed-configs/eslint_config_mjs";
 import { hadolintYaml } from "./managed-configs/hadolint_yaml";
 import { knipConfigJs } from "./managed-configs/knip_config_js";
@@ -75,6 +76,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "cspell.config.mjs": cspellConfigMjs,
   "deny.toml": denyToml,
   "deprecated-configs": deprecatedConfigs,
+  "droast.toml": droastToml,
   "eslint.config.mjs": eslintConfigMjs,
   "hadolint.yaml": hadolintYaml,
   "knip.config.js": knipConfigJs,
