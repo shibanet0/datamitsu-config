@@ -4,7 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PULUMI_STATE_PATTERNS } from "../constants.js";
-import { findStateFiles, writeFileAtomic } from "../stateFiles.js";
+import { findStateFiles, writeFileAtomic } from "../state-files.js";
 
 describe("stateFiles", () => {
   let root: string;

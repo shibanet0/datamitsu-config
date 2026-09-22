@@ -1,7 +1,9 @@
 import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents.md";
+import { buildManagedAlintYaml } from "./alint-defaults";
 import { mapOfApps } from "./apps";
-import { initCommands, managedConfigs } from "./cmdManagedConfigs";
-import { buildManagedGitleaksToml } from "./gitleaksDefaults";
+import { initCommands, managedConfigs } from "./cmd-managed-configs";
+import { buildManagedGitleaksToml } from "./gitleaks-defaults";
+import { buildManagedLsLintYaml } from "./ls-lint-defaults";
 import { ociBundle } from "./oci";
 import { parsers } from "./parsers";
 import { projectTypes } from "./project";
@@ -37,12 +39,28 @@ function getConfig(cfg: config.Config): config.Config {
           "ai/agents/agents-docs-website.md": "agents-docs-website.md",
         },
       },
+      "alint-managed": {
+        files: {
+          "alint-managed.yml": withTrailingNewline(buildManagedAlintYaml()),
+        },
+        links: {
+          "alint-managed.yml": "alint-managed.yml",
+        },
+      },
       "gitleaks-managed": {
         files: {
           "gitleaks-managed.toml": withTrailingNewline(buildManagedGitleaksToml()),
         },
         links: {
           "gitleaks-managed.toml": "gitleaks-managed.toml",
+        },
+      },
+      "ls-lint-managed": {
+        files: {
+          "ls-lint-managed.yml": withTrailingNewline(buildManagedLsLintYaml()),
+        },
+        links: {
+          "ls-lint-managed.yml": "ls-lint-managed.yml",
         },
       },
       skills: {

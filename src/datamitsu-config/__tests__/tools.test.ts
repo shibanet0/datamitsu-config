@@ -3,6 +3,18 @@ import { describe, expect, it } from "vitest";
 import { toolsConfig } from "../tools.js";
 
 describe("tools", () => {
+  describe("YAML formatting", () => {
+    const isYaml = (glob: string) => /\.ya?ml$|\.y\*ml$/u.test(glob);
+
+    it("has one owner: yamlfmt formats YAML and oxfmt does not", () => {
+      for (const operation of ["fix", "lint"] as const) {
+        const oxfmtGlobs = toolsConfig.oxfmt!.operations[operation]!.globs ?? [];
+        expect(oxfmtGlobs.filter(isYaml), `oxfmt ${operation}`).toEqual([]);
+      }
+      expect(toolsConfig.yamlfmt!.operations.fix!.globs).toEqual(["**/*.yaml", "**/*.yml"]);
+    });
+  });
+
   describe("prettierGlobs", () => {
     const prettierGlobs = toolsConfig.prettier!.operations.lint!.globs;
     const eslintGlobs = toolsConfig.eslint!.operations.lint!.globs;

@@ -1,11 +1,7 @@
-const trufflehogExcludePaths: string[] = [
-  "(?:^|/)(?:package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|npm-shrinkwrap\\.json|bun\\.lockb?|go\\.sum|Cargo\\.lock|poetry\\.lock|uv\\.lock|Pipfile\\.lock|Gemfile\\.lock|composer\\.lock|mix\\.lock|flake\\.lock|pubspec\\.lock|Podfile\\.lock)$",
-  "(?:^|/)__snapshots__/",
-  "(?:^|/)testdata/",
-  "(?:^|/)fixtures?/",
-  "\\.min\\.(?:js|css)$",
-  "\\.bundle\\.(?:js|css)$",
-];
+import { resolve } from "../../ignore/profile";
+import { trufflehogProfile } from "../../ignore/profiles/trufflehog";
+
+export const trufflehogExcludePaths: string[] = resolve(trufflehogProfile);
 
 function escapeRegExp(string: string): string {
   // oxlint-disable-next-line unicorn/prefer-string-replace-all

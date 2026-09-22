@@ -1,3 +1,7 @@
+import { resolve } from "../ignore/profile";
+import { jsonExcludeProfile } from "../ignore/profiles/json-exclude";
+import { yamlExcludeProfile } from "../ignore/profiles/yaml-exclude";
+
 export const actionlintGlobs: string[] = [
   "**/.github/workflows/*.yml",
   "**/.github/workflows/*.yaml",
@@ -80,7 +84,7 @@ export const jsonGlobs: string[] = ["**/*.json"];
 export const makefileGlobs: string[] = ["**/Makefile", "**/GNUmakefile", "**/*.mk"];
 
 export const markdownGlobs: string[] = ["**/*.md", "**/*.markdown"];
-export const jsonExcludeGlobs: string[] = ["**/package.json", "**/package-lock.json"];
+export const jsonExcludeGlobs: string[] = resolve(jsonExcludeProfile);
 
 export const oxlintGlobs: string[] = [
   "**/*.js",
@@ -99,6 +103,9 @@ export const oxlintGlobs: string[] = [
 // oxfmt formats by file type, independent of project type. Covers the languages
 // oxfmt supports out of the box (https://oxc.rs/compatibility.html). Svelte and
 // Astro are intentionally omitted — they require extra deps/plugins to format.
+// YAML is omitted because yamlfmt owns it: the two disagree on flow-mapping spacing (`{ a: 1 }`
+// against `{a: 1}`, which yq's key sorter also writes), so with both on a file `dm fix` leaves one
+// form and the other's check fails.
 export const oxfmtGlobs: string[] = [
   "**/*.js",
   "**/*.jsx",
@@ -121,8 +128,6 @@ export const oxfmtGlobs: string[] = [
   "**/*.gql",
   "**/*.md",
   "**/*.mdx",
-  "**/*.yaml",
-  "**/*.yml",
   "**/*.toml",
 ];
 
@@ -149,7 +154,7 @@ export const typescriptGlobs: string[] = [
 export const typstGlobs: string[] = ["**/*.typ"];
 
 export const yamlGlobs: string[] = ["**/*.yaml", "**/*.yml"];
-export const yamlExcludeGlobs: string[] = ["**/pnpm-lock.yaml"];
+export const yamlExcludeGlobs: string[] = resolve(yamlExcludeProfile);
 
 // Lefthook config files. Their command order is meaningful (execution order is
 // by `priority`), so the `lefthook-sort` job owns their ordering — they are

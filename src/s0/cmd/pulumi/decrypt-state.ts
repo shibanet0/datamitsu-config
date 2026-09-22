@@ -9,9 +9,9 @@ import {
   getDecryptedPath,
   PULUMI_ENCRYPTED_STATE_PATTERNS,
 } from "./constants";
-import { isSameStateContent } from "./stateContent";
-import { findStateFiles, writeFileAtomic } from "./stateFiles";
-import { backupPlaintext, clearDecryptConflict, markDecryptConflict } from "./stateGuard";
+import { isSameStateContent } from "./state-content";
+import { findStateFiles, writeFileAtomic } from "./state-files";
+import { backupPlaintext, clearDecryptConflict, markDecryptConflict } from "./state-guard";
 
 export interface DecryptOptions {
   /**

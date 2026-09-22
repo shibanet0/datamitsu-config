@@ -2,7 +2,7 @@ import type { PackageJson } from "type-fest";
 
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { detectPackageType } from "../../utils/detectPackageType.js";
+import { detectPackageType } from "../../utils/detect-package-type.js";
 
 const SELF_DEP = "@shibanet0/datamitsu-config";
 

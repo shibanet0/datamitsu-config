@@ -1,5 +1,7 @@
 import { defineConfig as defineCspellConfig } from "cspell";
 
+import { ignorePaths } from "./ignore";
+
 type CSpellConfig = Parameters<typeof defineCspellConfig>[0];
 
 const words: string[] = [
@@ -364,25 +366,7 @@ const baseConfig = defineCspellConfig({
     "Subdeps",
   ],
   failFast: false,
-  ignorePaths: [
-    "**/coverage/**",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/.git",
-    "**/.gitignore",
-    "**/.dockerignore",
-    "**/.gitattributes",
-    "**/__tests__/**",
-    "**/out/**",
-    "**/*.cast",
-    "**/storybook-static/**",
-    "**/vendor/**",
-    "cspell.config.js",
-    "datamitsu.config.js",
-    "pnpm-lock.yaml",
-    "go.mod", // Go module file
-    "go.sum", // Go module file
-  ],
+  ignorePaths,
   ignoreRegExpList: [
     // Go module paths: github.com/username/repo
     /github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+/g,

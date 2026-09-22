@@ -137,7 +137,7 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "sort-imports": "perfectionist/sort-imports owns import order",
   "sort-keys": "perfectionist/sort-objects owns key order",
   "unicorn/empty-brace-spaces": "prettier / oxfmt own whitespace",
-  "unicorn/filename-case": "filename convention differs per directory in this repo",
+  "unicorn/filename-case": "alint owns file names and ls-lint directory names, for every language",
   "unicorn/import-style": "generated config picks the import style datamitsu needs",
   "unicorn/max-nested-calls": "call nesting cap",
   "unicorn/no-array-for-each": "`forEach` is fine",

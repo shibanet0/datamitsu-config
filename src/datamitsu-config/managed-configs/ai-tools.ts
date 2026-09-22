@@ -1,4 +1,4 @@
-import { AGENTS_MD, upgradeAgentsReference } from "../agentsUpgrade";
+import { AGENTS_MD, upgradeAgentsReference } from "../agents-upgrade";
 import { REMOVED_SKILLS, SKILLS } from "../skills";
 import { withTrailingNewline } from "../utils";
 

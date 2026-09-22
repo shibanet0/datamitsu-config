@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { pulumiEncrypt } from "../encryptState.js";
+import { pulumiEncrypt } from "../encrypt-state.js";
 
 // Mock dependencies
 vi.mock("fast-glob");

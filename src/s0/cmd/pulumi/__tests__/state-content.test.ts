@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isSameStateContent, stripInsignificantJsonWhitespace } from "../stateContent.js";
+import { isSameStateContent, stripInsignificantJsonWhitespace } from "../state-content.js";
 
 describe("stripInsignificantJsonWhitespace", () => {
   it("should remove indentation and newlines outside strings", () => {

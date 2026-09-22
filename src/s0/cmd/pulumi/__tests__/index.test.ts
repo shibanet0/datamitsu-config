@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pulumiCommand } from "../index.js";
 
 // Mock the action handlers
-vi.mock("../encryptState");
-vi.mock("../decryptState");
-vi.mock("../cleanupState");
+vi.mock("../encrypt-state");
+vi.mock("../decrypt-state");
+vi.mock("../cleanup-state");
 
 describe("pulumi command", () => {
   let mockPulumiEncrypt: any;
@@ -14,15 +14,15 @@ describe("pulumi command", () => {
 
   beforeEach(async () => {
     // Setup mocks
-    const encryptModule = await import("../encryptState");
+    const encryptModule = await import("../encrypt-state");
     mockPulumiEncrypt = vi.fn().mockResolvedValue(null);
     vi.mocked(encryptModule.pulumiEncrypt).mockImplementation(mockPulumiEncrypt);
 
-    const decryptModule = await import("../decryptState");
+    const decryptModule = await import("../decrypt-state");
     mockPulumiDecrypt = vi.fn().mockResolvedValue(null);
     vi.mocked(decryptModule.pulumiDecrypt).mockImplementation(mockPulumiDecrypt);
 
-    const cleanupModule = await import("../cleanupState");
+    const cleanupModule = await import("../cleanup-state");
     mockPulumiCleanup = vi.fn().mockResolvedValue(null);
     vi.mocked(cleanupModule.pulumiCleanup).mockImplementation(mockPulumiCleanup);
 

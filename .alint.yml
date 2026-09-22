@@ -1,2 +1,14 @@
+allow_out_of_root: true
 extends:
-  - oss-baseline
+  - alint://bundled/oss-baseline@v1
+  - .datamitsu/alint-managed.yml
+rules:
+  - id: s0-js-ts-file-names
+    paths:
+      exclude:
+        - src/datamitsu-config/managed-configs/**
+        - src/datamitsu-config/inline-config/**
+      include:
+        - "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
+    pattern: "^\\.?[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9-]+)*\\.(js|jsx|mjs|cjs|ts|tsx|mts|cts)$"
+version: 1

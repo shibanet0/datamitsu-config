@@ -205,13 +205,13 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
       loader: () => import("./plugins/clsx").then((r) => r.clsx()),
       name: "clsx",
     },
-    { loader: () => import("./plugins/deMorgan").then((r) => r.deMorgan()), name: "deMorgan" },
+    { loader: () => import("./plugins/de-morgan").then((r) => r.deMorgan()), name: "deMorgan" },
     {
       loader: () => import("./plugins/perfectionist").then((r) => r.perfectionist()),
       name: "perfectionist",
     },
     {
-      loader: () => import("./plugins/arrayFunc").then((r) => r.arrayFunc()),
+      loader: () => import("./plugins/array-func").then((r) => r.arrayFunc()),
       name: "eslint-plugin-array-func",
     },
     {

@@ -1,12 +1,6 @@
-/**
- * The one list of paths no linter should look at.
- *
- * It lives outside `src/apps/*` because both halves read it: ESLint takes it verbatim through
- * `globalIgnores`, and oxlint gets it translated by {@link toOxlintIgnorePatterns}. Before that the
- * ESLint half had this list and oxlint's `ignorePatterns` was empty — invisible under `dm lint`,
- * which passes an explicit file list, and very visible in an editor, where the oxlint LSP would
- * happily lint `dist/` and `generated/`.
- */
+import { resolve } from "../ignore/profile";
+import { eslintProfile } from "../ignore/profiles/eslint";
+
 /**
  * What counts as a test file, in the shape oxlint's `overrides` matcher takes.
  *
@@ -20,55 +14,16 @@
  */
 export const GLOB_TESTS_OXLINT = ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"];
 
-export const GLOB_EXCLUDE = [
-  "**/node_modules",
-  "**/dist",
-  "**/package-lock.json",
-  "**/yarn.lock",
-  "**/pnpm-lock.yaml",
-  "**/bun.lockb",
-  "**/generated/**",
-  "**/output",
-  "**/coverage",
-  "**/temp",
-  "**/.temp",
-  "**/tmp",
-  "**/build",
-  "**/.tmp",
-  "**/.history",
-  "**/.vitepress/cache",
-  "**/.nuxt",
-  "**/.turbo/**",
-  "**/playwright-report-html/**",
-  "**/playwright-report-allure/**",
-  "**/playwright-report-*/**",
-  "**/.git/**",
-  "**/.next",
-  "**/out/**",
-  "**/storybook-static/**",
-  "**/.svelte-kit",
-  "**/.vercel",
-  "**/.changeset",
-  "**/.idea",
-  "**/.cache",
-  "**/.output",
-  "**/.vite-inspect",
-  "**/.yarn",
-  "**/vite.config.*.timestamp-*",
-
-  "**/CHANGELOG*.md",
-  "**/*.min.*",
-  "**/LICENSE*",
-  "**/__snapshots__",
-  "**/auto-import?(s).d.ts",
-  "**/components.d.ts",
-
-  "**/.datamitsu",
-
-  "**/*.json.enc",
-  "**/*.yaml.enc",
-  "**/*.yml.enc",
-];
+/**
+ * The one list of paths no linter should look at.
+ *
+ * It lives outside `src/apps/*` because both halves read it: ESLint takes it verbatim through
+ * `globalIgnores`, and oxlint gets it translated by {@link toOxlintIgnorePatterns}. Before that the
+ * ESLint half had this list and oxlint's `ignorePatterns` was empty — invisible under `dm lint`,
+ * which passes an explicit file list, and very visible in an editor, where the oxlint LSP would
+ * happily lint `dist/` and `generated/`.
+ */
+export const GLOB_EXCLUDE = resolve(eslintProfile);
 
 /**
  * The same list in the shape oxlint accepts.
@@ -88,24 +43,23 @@ export function toOxlintIgnorePatterns(patterns: string[]): string[] {
  * first leaves the rest in place — where oxlint's glob engine reads them as literal characters and
  * the pattern quietly matches nothing.
  *
- * `!(…)` is negation, which no list of alternatives can express. It throws rather than silently
- * emitting a pattern that means something else: this runs at build time, so a pattern that cannot
- * be expanded is a failed build here instead of a directory that stops being ignored in every
- * consumer.
+ * Only `?(…)` (zero or one, so the empty alternative is part of the expansion) and `@(…)` (exactly
+ * one) are expanded. `*(…)` and `+(…)` repeat, and `!(…)` negates; none of them is a finite list of
+ * alternatives. They throw rather than silently emitting a pattern that means something else: this
+ * runs at build time, so a pattern that cannot be expanded is a failed build here instead of a
+ * directory that stops being ignored in every consumer.
  */
 function expandExtglobs(pattern: string): string[] {
-  const negated = /!\([^()]*\)/u.exec(pattern);
+  const unsupported = /[!*+]\([^()]*\)/u.exec(pattern);
 
-  if (negated) {
+  if (unsupported) {
     throw new Error(
-      `GLOB_EXCLUDE pattern ${JSON.stringify(pattern)} uses the extglob ${JSON.stringify(negated[0])}, ` +
+      `GLOB_EXCLUDE pattern ${JSON.stringify(pattern)} uses the extglob ${JSON.stringify(unsupported[0])}, ` +
         "which has no gitignore-style equivalent and cannot be handed to oxlint.",
     );
   }
 
-  // `?(a)` and `*(a)` are "zero or more", so the empty alternative is part of the expansion;
-  // `@(a)` and `+(a)` are "exactly one" and "one or more", so it is not.
-  const extglob = /(?<quantifier>[?*@+])\((?<inner>[^()]*)\)/u.exec(pattern);
+  const extglob = /(?<quantifier>[?@])\((?<inner>[^()]*)\)/u.exec(pattern);
   const inner = extglob?.groups?.["inner"];
   const quantifier = extglob?.groups?.["quantifier"];
 
@@ -114,8 +68,7 @@ function expandExtglobs(pattern: string): string[] {
   }
 
   const alternatives = inner.split("|");
-  const expansions =
-    quantifier === "?" || quantifier === "*" ? ["", ...alternatives] : alternatives;
+  const expansions = quantifier === "?" ? ["", ...alternatives] : alternatives;
 
   return expansions.flatMap((alternative) =>
     expandExtglobs(pattern.replace(extglob[0], alternative)),

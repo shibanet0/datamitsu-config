@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { upgradeAgentsReference } from "../agentsUpgrade.js";
+import { upgradeAgentsReference } from "../agents-upgrade.js";
 
 describe("upgradeAgentsReference", () => {
   it("upgrades v1 base pattern to canonical", () => {

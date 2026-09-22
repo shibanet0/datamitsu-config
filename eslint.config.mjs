@@ -21,4 +21,9 @@ const config = await defineConfig(
   },
 );
 
-export default [globalIgnores([".datamitsu/", "dist-*/"]), ...config];
+export default [
+  // dist-* are this repo's build outputs (the inline config bundles and the goja bundle), and
+  // GLOB_EXCLUDE covers "dist", not the "dist-<name>" convention used here.
+  globalIgnores([".datamitsu/", "dist-*/"]),
+  ...config,
+];
