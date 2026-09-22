@@ -33,9 +33,26 @@ interface PluginEntry {
  * rules sit outside the inventory, so a bump can change them with nobody noticing. A rule that is
  * not wanted is turned off by name in `src/lint-rules`, where the reason is written down — a whole
  * plugin switched off silently is the thing that list exists to replace.
+ *
+ * One exception, and it is a departure: `eslint-plugin-json-schema-validator` is off, and its one
+ * rule — `no-invalid` — was running at `error`. This turns off a real check, not an idle plugin.
+ * What it validated: a JSON file against whatever schema schemastore maps its name to, which the
+ * plugin config narrows to `.json`/`.jsonc`/`.json5` (852 of the catalogue's 1364 entries).
+ *
+ * Off at the plugin rather than by rule name because the rule is the plugin's entire contribution,
+ * so loading it to report nothing is weight every consumer downloads for no check. The cost of that
+ * shape is that the rule leaves the census — `KnownRuleName` drops it, so it cannot be listed in
+ * `temporary.ts` while the plugin is off, and the decision lives here instead.
+ *
+ * Temporary, and the two halves have to move together. Turning it back on restores the rule to the
+ * census at `error` — the decision to make, not a side effect to absorb — so park it in
+ * `temporary.ts` with a reason (or leave it on deliberately) in the same change, then `task
+ * rules:inventory`. Parked 2026-09-22 at the maintainer's request.
  */
 const defaultOptions: DefineConfigOptions = {
-  plugins: {},
+  plugins: {
+    "json-schema-validator": { disabled: true },
+  },
 };
 
 /**
@@ -156,6 +173,13 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   const isI18nextEnabled = has("i18next", "next-i18next", "react-i18next");
   const isClsxEnabled = has("clsx");
   const isNextEnabled = has("next");
+  /**
+   * `svelte` itself, because `eslint-plugin-svelte` and `svelte-eslint-parser` both load
+   * `svelte/compiler` the moment the config is evaluated — a project that has neither has nothing
+   * for them to parse. `@sveltejs/kit` is here for the same reason `next` is in the react test: a
+   * SvelteKit app has svelte whether or not it depends on it directly.
+   */
+  const isSvelteEnabled = has("@sveltejs/kit", "svelte");
 
   /**
    * Both browser-compatibility plugins are gated on the project declaring browser targets.
@@ -278,6 +302,11 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
       condition: isVitestEnabled,
       loader: () => import("./plugins/vitest").then((r) => r.vitest()),
       name: "vitest",
+    },
+    {
+      condition: isSvelteEnabled,
+      loader: () => import("./plugins/svelte").then((r) => r.svelte()),
+      name: "svelte",
     },
     {
       loader: () => import("./plugins/stylistic").then((r) => r.stylistic()),

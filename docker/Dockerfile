@@ -160,6 +160,10 @@ FROM rt-uv AS app-sqlfluff
 COPY --link --from=config-split /slices/app-sqlfluff.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqlfluff
 
+FROM rt-node AS app-stylelint
+COPY --link --from=config-split /slices/app-stylelint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install stylelint
+
 FROM rt-node AS app-syncpack
 COPY --link --from=config-split /slices/app-syncpack.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install syncpack
@@ -487,6 +491,7 @@ COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json 
 COPY --link --from=app-spectral /dm/store/.apps/node/spectral /dm/store/.apps/node/spectral
 COPY --link --from=app-sqlfluff /dm/store/.apps/uv/sqlfluff /dm/store/.apps/uv/sqlfluff
 COPY --link --from=app-sqlfluff /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-stylelint /dm/store/.apps/node/stylelint /dm/store/.apps/node/stylelint
 COPY --link --from=app-syncpack /dm/store/.apps/node/syncpack /dm/store/.apps/node/syncpack
 COPY --link --from=app-tsc /dm/store/.apps/node/tsc /dm/store/.apps/node/tsc
 COPY --link --from=app-yamllint /dm/store/.apps/uv/yamllint /dm/store/.apps/uv/yamllint

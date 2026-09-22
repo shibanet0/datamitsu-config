@@ -80,6 +80,10 @@ const SYNTHETIC_PACKAGE_JSON = {
     playwright: "*",
     react: "*",
     storybook: "*",
+    // Gates `eslint-plugin-svelte`. The plugin and its parser both load `svelte/compiler` when the
+    // config is evaluated, so this entry is what makes the 37 svelte rules exist in the census at
+    // all — and what makes a plugin bump that adds one land as a reviewable diff.
+    svelte: "*",
     vitest: "*",
     // oxlint-only, and load-bearing for the same reason the rest are: its `vue` plugin is gated on
     // this dependency, so without it the census loses 46 rules and a vue plugin bump lands
@@ -112,6 +116,12 @@ const ESLINT_PROBES = [
   "probe.stories.tsx",
   ".storybook/main.ts",
   "probe.css.ts",
+  // The svelte block scopes itself the same way, to `**/*.svelte` and the rune modules. The probe
+  // content is `export const probe = 1;` for every shape, which `svelte-eslint-parser` accepts as a
+  // component with no markup — the census reads the resolved config, not a lint result, so nothing
+  // here needs to be a realistic component.
+  "probe.svelte",
+  "probe.svelte.ts",
 ];
 
 const SEVERITY_RANK: Record<Severity, number> = { error: 2, off: 0, warn: 1 };

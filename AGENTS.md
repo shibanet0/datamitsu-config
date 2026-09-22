@@ -178,6 +178,13 @@ export default await defineConfig(packageJSON, config, options);
 export default defineConfig(packageJSON, config, options);
 ```
 
+oxfmt briefly made it three. `svelte` was gated on the manifest, because enabling it loads `prettier-plugin-svelte`, which requires `svelte/compiler`. That was the wrong shape for the question: the managed oxfmt app ships `svelte` in its own `dependencies` (see `apps.ts`), the plugin loads only when a `.svelte` file is actually formatted — 0.03s either way on a TypeScript-only run, measured — and the gate answered from the git root, so a monorepo whose svelte lived in a workspace had to turn it on by hand. A question every consumer had to answer, to save a load that never happens. The option is on for everyone now and `oxfmt.config.ts` is back to `defineConfig()`.
+
+Two things it left behind, both deliberate:
+
+- **`defineConfig` still discards a manifest passed first.** `datamitsu config reconcile` generated `defineConfig(packageJSON)` during that window, and those files exist in repositories that reconciled then; read as an overrides object, a manifest would spread `name`, `version` and `dependencies` into the oxfmt config. A manifest and an oxfmt config share no key, so the two are distinguishable rather than guessed at. Removable once no consumer generates that call.
+- **A per-project managed config was tried and reverted.** It would have let each workspace answer for itself, but oxfmt carries no `projectTypes` — it formats by file type, so it has to reach a Go module's markdown — and the managed config therefore landed in _every_ detected project: measured on a bare fixture, `oxfmt.config.ts` appeared in `.github/workflows/` and `docker/` as well as the root. Splitting the runs costs nothing and was kept; splitting the config file did not pay for itself. A related finding from that fixture, worth knowing on its own: `datamitsu init` writes `.datamitsu/` links and no managed configs at all — `reconcile` is the only command that generates them.
+
 oxlint's used to take the config first and consult no manifest, so its `nextjs`, `react`, `vue`, `jsx-a11y`, `react-perf` and `vitest` plugins ran in every project regardless of shape — a package with no Next.js in its tree still failed on `next/no-img-element` for an `<img>` in a plain React component. Passing nothing still yields every plugin, so a config generated before the parameter existed keeps working.
 
 Two things that follow from it:
@@ -185,9 +192,70 @@ Two things that follow from it:
 - Dropping a plugin does **not** require dropping its rules from the shared list. oxlint accepts a rule belonging to a plugin that is not enabled, as long as the severity is `"off"`; only an unknown _plugin_ name fails the config parse.
 - The census has to resolve both halves against the synthetic manifest, or it reports this repository's shape and 191 react/next/vue rules leave it silently.
 
-The object form of oxlint's `defineConfig` **adds** to the base. It used to spread, so `defineConfig(pkg, { rules: { … } })` — the shape anyone would write to silence one rule — replaced ~330 shared turn-offs with that one entry: measured at 3989 errors on this repository, including two rules that cannot both be satisfied. Objects merge key by key, arrays append, and the caller still wins where they name the same key. Replacing wholesale is the function form, where `base` is in hand and dropping it is visibly deliberate.
+The object form of a `defineConfig` **adds** to the base — oxlint's, stylelint's and oxfmt's alike. Each of them spread at first, and the shape anyone would write to adjust one thing then deleted a shared decision:
+
+- oxlint: `defineConfig(pkg, { rules: { … } })` replaced ~330 shared turn-offs with that one entry — measured at 3989 errors on this repository, including two rules that cannot both be satisfied.
+- stylelint: `defineConfig({ overrides: [ … ] })` dropped the `postcss-html` wiring, because everything that makes a component parse lives in `overrides` — `.svelte` then fails with `Unknown word <script>`, `.vue` with `Unknown word </style>`, `.scss` with `Invalid double-slash CSS comment`.
+- oxfmt: the same key, milder consequence — losing `jsonAlwaysExpandedOverride` reformats every JSON file in the project.
+
+Objects merge key by key, arrays append, and the caller still wins where they name the same key. Replacing wholesale is the function form, where `base` is in hand and dropping it is visibly deliberate. A new JS-configurable tool follows this shape; the spread is the bug it looks like a shortcut for.
 
 A project that overrides anything in its own `oxlint.config.mts` should pass that object back to ESLint as `options.oxlintConfig`. `eslint-plugin-oxlint` turns an ESLint rule off on the premise oxlint reports it, and a rule the project turned off in its own oxlint config is then reported by **neither** tool.
+
+## Stylelint
+
+CSS had a formatter and no linter. stylelint fills that half and only that half: everything
+stylistic left the tool in 16 — removed, not deprecated — so `stylelint-config-standard` and oxfmt
+make no claim on the same thing and need no `-config-prettier` between them. It runs by default,
+`fix` before the formatters so oxfmt settles the whitespace its fixes leave behind.
+
+Three things that are not obvious from the config:
+
+- **A bare name in `extends` cannot work here.** stylelint resolves those against the _config file_,
+  which is the consuming project's `stylelint.config.mjs`, so `extends: ["stylelint-config-standard"]`
+  sends it looking in the project's `node_modules` — where the preset is not installed and is not
+  meant to be. `src/apps/stylelint/index.ts` resolves each preset to an absolute path in the managed
+  app's own install instead. It is the mirror of the `svelte/compiler` problem in the Svelte section
+  below: the tool's dependencies live with the tool.
+- **`import.meta.resolve`, not `createRequire(...).resolve`.** `stylelint-config-standard-scss`
+  publishes `exports: { ".": { "import": "./index.js" } }` — an ESM condition and nothing else — so
+  CJS resolution fails on that one preset with `ERR_PACKAGE_PATH_NOT_EXPORTED` while the rest
+  resolve fine.
+- **`no-empty-source` is off for the `<style>`-carrying shapes**, and not as a style preference:
+  `postcss-html` hands stylelint an empty document for every component with no `<style>` block, so
+  left on, the rule reports one finding per styleless component — a fact about the extraction, not
+  about the file. The vue preset already does this; html and svelte have no preset that does.
+
+**All four disable reports are on**, which ESLint's equivalent is not. `reportUnscopedDisables`,
+`reportDescriptionlessDisables`, `reportNeedlessDisables` and `reportInvalidScopeDisables` turn a
+blanket `/* stylelint-disable */`, a disable with no `-- reason`, a disable that no longer suppresses
+anything, and one naming a rule this config never enables into errors. `reportUnusedDisableDirectives`
+is off for ESLint because moving a rule into `temporary.ts` turns an existing `eslint-disable` for it
+into an error, and the check is most destructive while the rule set is settling — stylelint arrives
+with no backlog and no disables written against it anywhere, so the strict reading costs nothing now
+and would cost a migration later. Measured: a scoped, described, still-needed disable reports nothing.
+
+`.less` is deliberately outside `stylelintGlobs`. stylelint 17 bundles no syntax but its own CSS
+parser, so Less needs `postcss-less` and a preset of its own; pointing stylelint at a `.less` file
+without them fails to parse rather than reporting nothing. oxfmt still formats it — the gap is
+linting, and it is stated in `globs.ts` rather than hidden behind a glob that cannot work.
+
+## Svelte
+
+Three tools see `.svelte`, and each one had a different reason for not seeing it before.
+
+- **oxlint** already did, and needed nothing: `.svelte` has been in `oxlintGlobs` all along and oxlint parses the `<script>` block natively — measured, it reports `eqeqeq` inside a component.
+- **ESLint** did not: `eslintGlobs` listed only js/ts/html/json, and there was no plugin. `eslint-plugin-svelte` is now registered, gated on `svelte` or `@sveltejs/kit` in the manifest, with the TypeScript parser attached for `<script lang="ts">` and no `projectService` — `plugins/typescript.ts` runs `recommended`, not `recommendedTypeChecked`, so nothing needs a program, and building one for `.svelte` is where this setup gets slow.
+- **stylelint** reads the `<style>` block, through `postcss-html` — see the Stylelint section above.
+- **No formatter claimed it.** prettier still does not: it has no parser for `.svelte` and fails with "No parser could be inferred" rather than skipping, which is why `prettierGlobs` is no longer derived from `eslintGlobs` — both now come from a shared `scriptGlobs`, and svelte is added to the ESLint half only. oxfmt owns it instead, with `svelte: true` on for every project.
+
+Two runtime facts that are easy to get wrong, both measured rather than assumed:
+
+- **`svelte` has to be installed next to the tool, not next to the code.** `eslint-plugin-svelte` and `svelte-eslint-parser` both load `svelte/compiler` when the config is evaluated, and oxfmt's bundled `prettier-plugin-svelte` does the same; all three resolve from their managed app's install in the datamitsu store, where the consuming project's own copy is not on the path. Hence `svelte` in both `eslintDeps` and the oxfmt app's `dependencies` — and hence a pinned `lockFile` regeneration (`dm config lockfile <app>`) whenever either list changes.
+- **The plugin's `recommended` rules block carries no `files`, and that is deliberate upstream.** Scoping it to `**/*.svelte` was tried and reverted: the premise — every rule matches Svelte-only AST nodes, so scoping loses nothing — is false. `svelte/no-store-async` reports on a plain `.ts` store module (`readable(0, async () => {})`, measured), and `svelte/no-svelte-internal` is the same shape. Only the TypeScript-parser block is scoped to components.
+- **`svelte/no-unused-props` needs a TypeScript program**, asks typescript-eslint for type tools and returns an empty visitor without one — so at `error` with no `projectService` it reported nothing, measured on a component with an unused typed prop. It is parked in `temporary.ts` rather than left configured and inert; it comes back if the svelte block ever gets type-aware linting.
+
+The census sees svelte only because `scripts/generate-rule-inventory.ts` adds `svelte` to the synthetic manifest and `probe.svelte` / `probe.svelte.ts` to the probe list — the same reason storybook and vanilla-extract needed their own shapes. 86 svelte rules, 37 at error.
 
 ## No Warn Severity
 

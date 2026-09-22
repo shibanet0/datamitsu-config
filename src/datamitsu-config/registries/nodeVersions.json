@@ -318,6 +318,11 @@
     "packageName": "eslint-plugin-storybook",
     "version": "10.5.10"
   },
+  "eslint-plugin-svelte": {
+    "description": "ESLint plugin for Svelte using AST",
+    "packageName": "eslint-plugin-svelte",
+    "version": "3.23.0"
+  },
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
@@ -383,6 +388,11 @@
     "packageName": "pnpm",
     "version": "11.22.0"
   },
+  "postcss-html": {
+    "description": "PostCSS syntax for parsing HTML (and HTML-like)",
+    "packageName": "postcss-html",
+    "version": "2.0.0"
+  },
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
     "packageName": "prettier",
@@ -422,6 +432,41 @@
     "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
     "packageName": "@stoplight/spectral-cli",
     "version": "6.16.3"
+  },
+  "stylelint": {
+    "description": "A mighty CSS linter that helps you avoid errors and enforce conventions",
+    "packageName": "stylelint",
+    "version": "17.15.0"
+  },
+  "stylelint-config-html": {
+    "description": "The shareable HTML config for Stylelint",
+    "packageName": "stylelint-config-html",
+    "version": "2.0.0"
+  },
+  "stylelint-config-recommended-vue": {
+    "description": "The recommended shareable Vue config for Stylelint",
+    "packageName": "stylelint-config-recommended-vue",
+    "version": "2.0.0"
+  },
+  "stylelint-config-standard": {
+    "description": "Standard shareable config for Stylelint",
+    "packageName": "stylelint-config-standard",
+    "version": "40.0.0"
+  },
+  "stylelint-config-standard-scss": {
+    "description": "The standard shareable SCSS config for Stylelint",
+    "packageName": "stylelint-config-standard-scss",
+    "version": "17.0.0"
+  },
+  "svelte": {
+    "description": "Cybernetically enhanced web apps",
+    "packageName": "svelte",
+    "version": "5.57.0"
+  },
+  "svelte-eslint-parser": {
+    "description": "Svelte parser for ESLint",
+    "packageName": "svelte-eslint-parser",
+    "version": "1.8.1"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",

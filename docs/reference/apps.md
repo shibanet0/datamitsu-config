@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **112 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **113 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **112 apps** across multiple runtimes (binary, bun, n
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (63 apps): actionlint, age, air, etc.
+- **Utilities** (64 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -110,6 +110,7 @@ This configuration manages **112 apps** across multiple runtimes (binary, bun, n
 | sqlc                          | binary  | [Info](https://github.com/sqlc-dev/sqlc){:target="_blank"}                                                                              | Generate type-safe code from SQL                                                                                                                                                                          |
 | sqlfluff                      | python  | [Info](https://pypi.org/project/sqlfluff){:target="_blank"}                                                                             | The SQL Linter for Humans                                                                                                                                                                                 |
 | sqruff                        | binary  | [Info](https://github.com/quarylabs/sqruff){:target="_blank"}                                                                           | Fast SQL formatter/linter                                                                                                                                                                                 |
+| stylelint                     | node    | N/A                                                                                                                                     | A mighty CSS linter that helps you avoid errors and enforce conventions                                                                                                                                   |
 | swag                          | binary  | [Info](https://github.com/swaggo/swag){:target="_blank"}                                                                                | Automatically generate RESTful API documentation with Swagger 2.0 for Go.                                                                                                                                 |
 | syft                          | binary  | [Info](https://github.com/anchore/syft){:target="_blank"}                                                                               | CLI tool and library for generating a Software Bill of Materials from container images and filesystems                                                                                                    |
 | syncpack                      | node    | [Info](https://www.npmjs.com/package/syncpack){:target="_blank"}                                                                        | Consistent dependency versions in large JavaScript Monorepos                                                                                                                                              |

@@ -463,3 +463,9 @@ The sorter preserves comments and orders hooks by lifecycle and commands by prio
 `pnpm dm check` runs ESLint, oxlint, and oxfmt on the pinned Bun runtime. Datamitsu installs Bun and each tool's locked dependencies automatically. The same runtime is used when these managed apps run from Git hooks.
 
 With the pinned Bun 1.4.1, ESLint can report a shifted column for TypeScript syntax errors: `export const broken = ;` is reported at column 16 instead of 22. The error message and failure status are preserved.
+
+## Svelte
+
+`.svelte` needs nothing configured. oxfmt formats components in every project, and oxlint reads the `<script>` block; ESLint adds `eslint-plugin-svelte` as soon as `svelte` (or `@sveltejs/kit`) is in the project's `package.json`, because its rules only mean something where components exist. stylelint lints the `<style>` block too, so a Svelte project gets CSS checks without naming anything either.
+
+The svelte compiler all of them need ships with the managed tools rather than being resolved from the project.

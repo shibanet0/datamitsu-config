@@ -308,6 +308,7 @@ post-checkout:
                 "eslint-plugin-security": "4.0.1",
                 "eslint-plugin-sonarjs": "4.2.0",
                 "eslint-plugin-storybook": "10.5.10",
+                "eslint-plugin-svelte": "3.23.0",
                 "eslint-plugin-turbo": "2.10.11",
                 "eslint-plugin-unicorn": "73.0.0",
                 "eslint-plugin-unused-imports": "4.4.1",
@@ -322,6 +323,8 @@ post-checkout:
                 "prettier-plugin-jsdoc": "1.8.1",
                 "prettier-plugin-sql": "0.20.0",
                 "remove-markdown": "0.6.4",
+                stylelint: "17.15.0",
+                svelte: "5.57.0",
                 tsdown: "0.22.14",
                 "typescript-eslint": "8.67.0",
                 unrun: "0.3.0",
@@ -418,7 +421,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:d4302ae7226e5395bf29f9854bbc64d4",
+      expectChainHash: "xxh3:2f2bce8c164ed347a933bf3522f8e3a9",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -496,6 +499,7 @@ catalog:
   eslint-plugin-security: 4.0.1
   eslint-plugin-sonarjs: 4.2.0
   eslint-plugin-storybook: 10.5.10
+  eslint-plugin-svelte: 3.23.0
   eslint-plugin-turbo: 2.10.11
   eslint-plugin-unicorn: 73.0.0
   eslint-plugin-unused-imports: 4.4.1
@@ -512,6 +516,8 @@ catalog:
   prettier-plugin-jsdoc: 1.8.1
   prettier-plugin-sql: 0.20.0
   remove-markdown: 0.6.4
+  stylelint: 17.15.0
+  svelte: 5.57.0
   tsdown: 0.22.14
   tsx: 4.22.3
   type-fest: 5.6.0

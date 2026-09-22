@@ -42,6 +42,7 @@ import { pnpmWorkspaceYaml } from "./managed-configs/pnpm_workspace_yaml";
 import { prettierConfigMjs } from "./managed-configs/prettier_config_mjs";
 import { pyprojectToml } from "./managed-configs/pyproject_toml";
 import { rustfmtToml } from "./managed-configs/rustfmt_toml";
+import { stylelintConfigMjs } from "./managed-configs/stylelint_config_mjs";
 import { turboJson } from "./managed-configs/turbo_json";
 import { tyToml } from "./managed-configs/ty_toml";
 
@@ -89,6 +90,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "prettier.config.mjs": prettierConfigMjs,
   "pyproject.toml": pyprojectToml,
   "rustfmt.toml": rustfmtToml,
+  "stylelint.config.mjs": stylelintConfigMjs,
   "turbo.json": turboJson,
   "ty.toml": tyToml,
   ...aiTools,
