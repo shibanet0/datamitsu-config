@@ -97,6 +97,17 @@ export default defineConfig((prev) => ({
     "@cspell/dict-ru_ru",
     "caniuse-lite",
 
+    // Named by \`src/apps/stylelint/index.ts\` and resolved out of the managed
+    // stylelint app's node_modules, never from this repository — the same shape
+    // as the cspell dictionary above. They surface here and not in a consuming
+    // project because this repository puts \`src/apps/*/index.ts\` in the entry
+    // graph, so knip reads the source that names them rather than the bundle.
+    // Verified on a fixture consumer: no such finding there.
+    "stylelint-config-html",
+    "stylelint-config-recommended-vue",
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss",
+
     // Installed to mirror a managed app's dependency list, but nothing in this
     // configuration loads them: the bundled prettier config declares no
     // \`plugins\`, and @commitlint/cli belongs to the managed commitlint app.
