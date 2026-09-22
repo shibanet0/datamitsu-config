@@ -18,7 +18,7 @@ export type GitignoreProfile<Id extends string = IgnoreId> = {
   syntax: "gitignore";
 };
 export type Profile<Id extends string = IgnoreId> = FlatProfile<Id> | GitignoreProfile<Id>;
-export type Ref<Id extends string = IgnoreId> = Id | { as: string; id: Id };
+type Ref<Id extends string = IgnoreId> = Id | { as: string; id: Id };
 
 export function resolve<Id extends string = IgnoreId>(
   profile: GitignoreProfile<Id>,

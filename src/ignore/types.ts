@@ -17,7 +17,7 @@ export type IgnoreEntry = {
   regex: string | undefined;
 };
 
-export type IgnoreKind =
+type IgnoreKind =
   | "build"
   | "cache"
   | "dependency"
