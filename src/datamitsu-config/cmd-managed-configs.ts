@@ -24,7 +24,7 @@ import { vscodeExtensionsJson } from "./managed-configs/_vscode_extensions_json"
 import { vscodeSettingsJson } from "./managed-configs/_vscode_settings_json";
 import { yamlfmtYaml } from "./managed-configs/_yamlfmt_yaml";
 import { yamllintYaml } from "./managed-configs/_yamllint_yaml";
-import { aiTools } from "./managed-configs/aiTools";
+import { aiTools } from "./managed-configs/ai-tools";
 import { commitlintConfigMjs } from "./managed-configs/commitlint_config_mjs";
 import { cspellConfigMjs } from "./managed-configs/cspell_config_mjs";
 import { denyToml } from "./managed-configs/deny_toml";

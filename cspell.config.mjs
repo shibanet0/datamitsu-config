@@ -156,10 +156,6 @@ export default defineConfig((prev) => {
     "Kysely",
     "sqlc",
     "ELIFECYCLE",
-    // Rule names that appear in the generated src/lint-rules/rule-inventory.json.
-    // The second group arrived with the 292 core ESLint rules the census had been missing, plus the
-    // storybook and vanilla-extract probes: environment names from `globals`, and the deliberate
-    // misspellings that typo-detection rules are named after.
     "applescript",
     "atomtest",
     "autofixers",
@@ -181,7 +177,6 @@ export default defineConfig((prev) => {
     "charcode",
     "lookarounds",
     "extensionless",
-
     "classlist",
     "categorises",
     "severitied",
@@ -203,14 +198,8 @@ export default defineConfig((prev) => {
     "mischeck",
     "incdec",
     "unthrown",
-
-    // knip's cache directory under {toolCache}, and the package it resolves a
-    // formatter through for `--fix --format` — both named in the Knip section.
     "knipcache",
     "Formatly",
-
-    // Extensionless tool configs, named in the knip operation's comment as
-    // examples of inputs an enumerated glob list cannot cover.
     "swcrc",
     "graphqlrc",
   ];

@@ -5,7 +5,7 @@ import path, { join } from "node:path";
 import util from "node:util";
 
 import { Datamitsu } from "../../../lib";
-import { isExecaError } from "../../../utils/typeGuards";
+import { isExecaError } from "../../../utils/type-guards";
 import { Encryptor } from "../../utils/encryption";
 import { getGPGTTY } from "../../utils/tty";
 import {
@@ -15,9 +15,9 @@ import {
   PULUMI_ENCRYPTED_EXCLUDE_PATTERNS,
   PULUMI_STATE_PATTERNS,
 } from "./constants";
-import { stripInsignificantJsonWhitespace } from "./stateContent";
-import { findStateFiles } from "./stateFiles";
-import { clearDecryptConflict, hasDecryptConflict } from "./stateGuard";
+import { stripInsignificantJsonWhitespace } from "./state-content";
+import { findStateFiles } from "./state-files";
+import { clearDecryptConflict, hasDecryptConflict } from "./state-guard";
 
 export interface EncryptOptions {
   /**

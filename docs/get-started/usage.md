@@ -295,6 +295,18 @@ Individual tools (ESLint, Prettier, cspell, etc.) can be customized through thei
 - `cspell.json` — cspell dictionary and settings
 - `knip.config.js` — Knip unused code configuration
 
+Naming checks are opt-in and split between two tools: alint checks file names, ls-lint checks
+directory names. Enable either with `tools["alint"].skip: false` or `tools["ls-lint"].skip: false`,
+then run `pnpm dm init` and `pnpm dm config reconcile` so both the managed base in `.datamitsu/`
+and your own file exist.
+
+- `.alint.yml` extends `.datamitsu/alint-managed.yml`. Redefine a rule by its `id` (for example
+  `s0-js-ts-file-names`) to narrow it. Keep `allow_out_of_root: true`: the managed file is linked
+  from outside the repository.
+- `.ls-lint.yml` layers over `.datamitsu/ls-lint-managed.yml`. `ignore` adds exclusions, and a
+  literal path such as `apps/web/src/generated` is free. Redefining `.dir` replaces the base rule,
+  so include `regex:\.[a-z0-9_-]+` to keep dot-directories valid.
+
 ### Adopting Knip on an existing codebase
 
 Everything here works on a new project with no configuration. The exception is Knip, and only

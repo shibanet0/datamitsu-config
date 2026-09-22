@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { pulumiDecrypt } from "../decryptState.js";
+import { pulumiDecrypt } from "../decrypt-state.js";
 
 vi.mock("fast-glob");
 vi.mock("../../../../lib/index.js");

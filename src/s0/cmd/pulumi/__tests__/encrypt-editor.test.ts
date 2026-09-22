@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { getEditorJS } from "../encryptState.js";
+import { getEditorJS } from "../encrypt-state.js";
 
 /**
  * Runs the generated SOPS editor the way SOPS does: with the decrypted temporary file as its only

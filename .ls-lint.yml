@@ -1,6 +1,6 @@
+# Layers over .datamitsu/ls-lint-managed.yml.
+# Redefining .dir replaces the base rule; restate regex:\.[a-z0-9_-]+ for dot-directories.
+# ignore adds exclusions to the base.
 ignore:
-  - .git
-  - node_modules
-  - dist
-ls:
-  .dir: kebab-case | snake_case
+  - dist-inline-eslint-config
+ls: {}

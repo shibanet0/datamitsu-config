@@ -1,9 +1,12 @@
 import { defineConfig } from "./.datamitsu/knip.config.js";
 
 // No `adopted`: this repository holds the bar the shared config states, so it
-// has nothing to narrow.
-export default defineConfig({
+// has nothing to narrow. The function form replaces what it names, so every
+// list below extends the base rather than dropping the managed entries.
+export default defineConfig((prev) => ({
+  ...prev,
   entry: [
+    ...(prev.entry ?? []),
     // One tsdown config per inline-config bundle; see tsdown.config.*.ts.
     "src/apps/*/index.ts",
     "src/datamitsu-api/index.ts",
@@ -20,11 +23,13 @@ export default defineConfig({
   ],
 
   ignore: [
+    ...(prev.ignore ?? []),
     // Spawned by path from proxy.test.ts, never imported.
     "src/apps/lefthook-proxy/__tests__/fixtures/fake-upstream.mjs",
   ],
 
   ignoreDependencies: [
+    ...(prev.ignoreDependencies ?? []),
     // Required at runtime by code no import reaches. The bundled cspell config
     // resolves its dictionary out of the managed cspell app's node_modules, and
     // eslint-plugin-compat — which apps/eslint/plugins/compat.ts does register —
@@ -62,6 +67,7 @@ export default defineConfig({
   ],
 
   ignoreIssues: {
+    ...prev.ignoreIssues,
     // The pnpm catalog duplicates versions that datamitsu.config.ts states as
     // literals, and nothing references `catalog:` — a real finding, but fixing
     // it is a decision about how this repository pins dependencies. Nothing
@@ -88,5 +94,9 @@ export default defineConfig({
   // knip resolves a script's paths against the file that names it, so
   // `bin/datamitsu.js` in a package.json script is looked for under scripts/;
   // the s0 one is written relative to the bundle in dist/, not to its source.
-  ignoreUnresolved: ["bin/datamitsu.js", "../../bin/datamitsu.js"],
-});
+  ignoreUnresolved: [
+    ...(prev.ignoreUnresolved ?? []),
+    "bin/datamitsu.js",
+    "../../bin/datamitsu.js",
+  ],
+}));

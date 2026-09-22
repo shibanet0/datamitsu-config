@@ -9,7 +9,7 @@ import {
   getStateGuardDir,
   hasDecryptConflict,
   markDecryptConflict,
-} from "../stateGuard.js";
+} from "../state-guard.js";
 
 describe("stateGuard", () => {
   let cacheHome: string;

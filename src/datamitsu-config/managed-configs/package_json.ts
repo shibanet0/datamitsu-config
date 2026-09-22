@@ -3,8 +3,8 @@ import type { PackageJson } from "type-fest";
 import { name as packageJsonName } from "../../../package.json";
 import { NODE_SUPPORT_FLOOR, runtimeVersions } from "../constants";
 import nodeVersions from "../registries/nodeVersions.json";
-import { cleanDependencies } from "../utils/cleanDependencies";
-import { detectPackageType } from "../utils/detectPackageType";
+import { cleanDependencies } from "../utils/clean-dependencies";
+import { detectPackageType } from "../utils/detect-package-type";
 
 // Collapse an all-undefined object to undefined so JSON.stringify drops the key
 // entirely instead of emitting an empty `{}`.

@@ -188,7 +188,13 @@ const OXLINT_TO_ESLINT_PREFIX: [string, string][] = [
  *   listing exceptions is not — the next generated file added under `src/` would silently break the
  *   gate again.
  */
-const LINT_CONFIG_SOURCES = ["src/apps/eslint", "src/apps/oxlint", "src/globs", "src/lint-rules"];
+const LINT_CONFIG_SOURCES = [
+  "src/apps/eslint",
+  "src/apps/oxlint",
+  "src/globs",
+  "src/ignore",
+  "src/lint-rules",
+];
 
 /**
  * Generated files inside those directories. Neither can change the built config: `schema.d.ts` and

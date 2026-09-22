@@ -1,7 +1,7 @@
 /**
  * Type guards for safe error handling with unknown types
  *
- * @module utils/typeGuards
+ * @module utils/type-guards
  */
 
 /**

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { pulumiCleanup } from "../cleanupState.js";
+import { pulumiCleanup } from "../cleanup-state.js";
 
 // Mock dependencies
 vi.mock("execa");

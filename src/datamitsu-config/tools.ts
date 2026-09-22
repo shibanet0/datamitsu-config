@@ -708,10 +708,14 @@ export const toolsConfig: config.MapOfTools = {
   "ls-lint": {
     name: "ls-lint - directory & filename linter",
     operations: {
-      // Reads .ls-lint.yml from the git root; author that config before enabling.
       lint: {
         app: "ls-lint",
-        args: [],
+        args: [
+          "-config",
+          "{root}/.datamitsu/ls-lint-managed.yml",
+          "-config",
+          "{root}/.ls-lint.yml",
+        ],
         globs: ["**/*"],
         scope: "repository",
       },

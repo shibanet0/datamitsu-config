@@ -1,8 +1,8 @@
 import { Argument, Command } from "@commander-js/extra-typings";
 
-import { pulumiCleanup } from "./cleanupState";
-import { pulumiDecrypt } from "./decryptState";
-import { pulumiEncrypt } from "./encryptState";
+import { pulumiCleanup } from "./cleanup-state";
+import { pulumiDecrypt } from "./decrypt-state";
+import { pulumiEncrypt } from "./encrypt-state";
 
 export const pulumiCommand = new Command("pulumi-sops")
   .addArgument(

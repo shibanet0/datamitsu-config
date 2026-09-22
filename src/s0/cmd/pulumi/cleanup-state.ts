@@ -3,11 +3,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { Datamitsu } from "../../../lib";
-import { hasMessage } from "../../../utils/typeGuards";
+import { hasMessage } from "../../../utils/type-guards";
 import { getGPGTTY } from "../../utils/tty";
 import { detectFileType, getDecryptedPath, PULUMI_ENCRYPTED_STATE_PATTERNS } from "./constants";
-import { isSameStateContent } from "./stateContent";
-import { findStateFiles } from "./stateFiles";
+import { isSameStateContent } from "./state-content";
+import { findStateFiles } from "./state-files";
 
 /**
  * Check Git repository safety before cleanup

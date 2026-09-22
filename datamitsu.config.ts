@@ -48,58 +48,113 @@ const config = await defineConfig(
 );
 
 export default [
-  // dist-* are this repo's build outputs (the inline config bundles and the goja bundle).
-  // GLOB_EXCLUDE covers "dist", not the "dist-<name>" convention used here, so they were being
-  // linted — six of the seven unused-variable reports came from generated .d.ts files.
+  // dist-* are this repo's build outputs (the inline config bundles and the goja bundle), and
+  // GLOB_EXCLUDE covers "dist", not the "dist-<name>" convention used here.
   globalIgnores([".datamitsu/", "dist-*/"]),
   ...config,
 ];
 `,
-      expectChainHash: "xxh3:7d316c3fb6014fdcb5991a9d506385af",
+      expectChainHash: "xxh3:ea24f762083724bd24ff7b682423d630",
     },
     "knip.config.js": {
       ...config.managedConfigs?.["knip.config.js"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/knip.config.js";
 
+// No \`adopted\`: this repository holds the bar the shared config states, so it
+// has nothing to narrow. The function form replaces what it names, so every
+// list below extends the base rather than dropping the managed entries.
 export default defineConfig((prev) => ({
   ...prev,
-  ignoreBinaries: ["bin/datamitsu.js"],
+  entry: [
+    ...(prev.entry ?? []),
+    // One tsdown config per inline-config bundle; see tsdown.config.*.ts.
+    "src/apps/*/index.ts",
+    "src/datamitsu-api/index.ts",
+    "src/datamitsu-config/datamitsu.config.ts",
+    "src/s0/index.ts",
+    "src/type-fest/index.ts",
+    "src/type-fest/globals/index.ts",
+    // Build-time generators, run from Taskfile.yaml rather than imported.
+    "scripts/*.ts",
+    "bin/*.js",
+    "tsdown.config*.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts",
+  ],
+
+  ignore: [
+    ...(prev.ignore ?? []),
+    // Spawned by path from proxy.test.ts, never imported.
+    "src/apps/lefthook-proxy/__tests__/fixtures/fake-upstream.mjs",
+  ],
+
   ignoreDependencies: [
-    "@e18e/eslint-plugin",
+    ...(prev.ignoreDependencies ?? []),
+    // Required at runtime by code no import reaches. The bundled cspell config
+    // resolves its dictionary out of the managed cspell app's node_modules, and
+    // eslint-plugin-compat — which apps/eslint/plugins/compat.ts does register —
+    // requires caniuse-lite without declaring it. See apps/eslint.deps.ts.
+    "@cspell/dict-ru_ru",
+    "caniuse-lite",
+
+    // Installed to mirror a managed app's dependency list, but nothing in this
+    // configuration loads them: the bundled prettier config declares no
+    // \`plugins\`, and @commitlint/cli belongs to the managed commitlint app.
+    // Debt, not blindness — they are here until someone decides whether the
+    // managed apps should keep offering them at all.
     "@commitlint/cli",
-    "syncpack",
-    "type-fest",
-    "yaml",
-    "@octokit/rest",
-    "publint",
-    "sort-package-json",
-    "eslint-config-prettier",
-    "eslint-plugin-array-func",
-    "eslint-plugin-import-x",
-    "eslint-plugin-json",
-    "eslint-plugin-json-schema-validator",
-    "eslint-plugin-jsx-a11y-x",
-    "eslint-plugin-n",
-    "eslint-plugin-no-use-extend-native",
-    "eslint-plugin-perfectionist",
-    "eslint-plugin-playwright",
-    "eslint-plugin-promise",
-    "@eslint-react/eslint-plugin",
-    "eslint-plugin-react-hooks",
+    "@prettier/plugin-xml",
     "prettier-plugin-embed",
     "prettier-plugin-jsdoc",
     "prettier-plugin-sql",
-    "eslint-plugin-react-prefer-function-component",
-    "eslint-plugin-react-refresh",
-    "eslint-plugin-security",
-    "eslint-plugin-sonarjs",
-    "eslint-plugin-storybook",
-    "eslint-plugin-turbo",
-    "@prettier/plugin-xml",
-    "eslint-plugin-unicorn",
-    "eslint-plugin-unused-imports",
-    "@antebudimir/eslint-plugin-vanilla-extract",
+
+    // Unused: nothing under apps/eslint/plugins/ registers them, and no rule of
+    // theirs appears in src/lint-rules or in the committed rule inventory.
+    // Parked rather than removed because dropping one also means editing
+    // apps/eslint.deps.ts and regenerating the eslint app's pinned lockFile.
+    // Two exceptions to that reasoning: eslint-plugin-es-x is only unused as a
+    // *direct* pin — eslint-plugin-n resolves its own copy for
+    // n/no-unsupported-features/es-syntax, so its rules do run; and
+    // eslint-typegen is absent from apps/eslint.deps.ts, so removing it needs no
+    // lockFile regeneration at all. It survives only in a commented-out import
+    // in scripts/eslint-typegen.ts.
+    "eslint-plugin-baseline-js",
+    "eslint-plugin-decorator-position",
+    "eslint-plugin-es-x",
+    "eslint-plugin-functional",
+    "eslint-plugin-json",
+    "eslint-typegen",
   ],
+
+  ignoreIssues: {
+    ...prev.ignoreIssues,
+    // The pnpm catalog duplicates versions that datamitsu.config.ts states as
+    // literals, and nothing references \`catalog:\` — a real finding, but fixing
+    // it is a decision about how this repository pins dependencies. Nothing
+    // gates it today: \`task validate:pins\` compares datamitsu.config.ts against
+    // package.json and never looks at the catalog.
+    "pnpm-workspace.yaml": ["catalog"],
+
+    // Generated surfaces, here and in the three files below. Their generators
+    // emit a complete set — every chunk and skill hash — while datamitsu.config.ts
+    // imports only the content exports beside them. Debt in the generators, not
+    // something knip is failing to see.
+    "src/**/*.generated.ts": ["exports", "types"],
+
+    // A vocabulary of file-type globs, deliberately complete: a plugin added
+    // later needs the glob to already exist, and the set is what makes the
+    // scoping decisions in apps/eslint/index.ts readable.
+    "src/apps/eslint/globs.ts": ["exports"],
+
+    "src/datamitsu-config/agents.md.ts": ["exports"],
+    "src/datamitsu-config/skills.ts": ["exports"],
+    "src/datamitsu-config/tsconfig.md.ts": ["exports"],
+  },
+
+  // knip resolves a script's paths against the file that names it, so
+  // \`bin/datamitsu.js\` in a package.json script is looked for under scripts/;
+  // the s0 one is written relative to the bundle in dist/, not to its source.
+  ignoreUnresolved: [...(prev.ignoreUnresolved ?? []), "bin/datamitsu.js", "../../bin/datamitsu.js"],
 }));
 `,
       expectChainHash: "xxh3:3367bb8a2b161dfca86bb5eaf61bb486",
@@ -158,7 +213,7 @@ post-checkout:
       run: pnpm i -y
   parallel: false
     `,
-      expectChainHash: "xxh3:7e1dbe8d0803d5ec010184d4fe062ac9",
+      expectChainHash: "xxh3:1124e9bc6be737f22c501e7582f6fbda",
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
@@ -363,7 +418,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:5adb96dd5501e6cacef9c4ce9696ffcc",
+      expectChainHash: "xxh3:d4302ae7226e5395bf29f9854bbc64d4",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -374,6 +429,97 @@ audit: {}
 auditLevel: high
 autoInstallPeers: true
 blockExoticSubdeps: true
+catalog:
+  "@antebudimir/eslint-plugin-vanilla-extract": 1.17.0
+  "@commander-js/extra-typings": 14.0.0
+  "@commitlint/cli": 21.2.2
+  "@commitlint/config-conventional": 21.2.2
+  "@commitlint/format": 21.2.2
+  "@commitlint/types": 21.2.0
+  "@datamitsu/datamitsu": 0.2.2
+  "@e18e/eslint-plugin": 0.8.0
+  "@eslint-community/eslint-plugin-eslint-comments": 4.7.2
+  "@eslint-react/eslint-plugin": 5.18.6
+  "@eslint/config-helpers": 0.7.0
+  "@eslint/js": 10.0.1
+  "@next/eslint-plugin-next": 16.3.2
+  "@ovineko/clean-pkg-json": 0.0.4
+  "@prettier/plugin-xml": 3.4.2
+  "@stylistic/eslint-plugin": 5.10.0
+  "@types/node": 25.9.1
+  "@types/remove-markdown": 0.3.4
+  "@typescript-eslint/utils": 8.67.0
+  "@vitest/coverage-v8": 4.1.7
+  "@vitest/eslint-plugin": 1.6.27
+  caniuse-lite: 1.0.30001760
+  commander: 14.0.3
+  conventional-changelog-conventionalcommits: 10.4.0
+  cspell: 10.0.1
+  eslint: 10.9.0
+  eslint-config-prettier: 10.1.8
+  eslint-flat-config-utils: 3.2.0
+  eslint-import-resolver-typescript: 4.4.5
+  eslint-plugin-array-func: 5.1.1
+  eslint-plugin-baseline-js: 0.7.1
+  eslint-plugin-boundaries: 7.2.0
+  eslint-plugin-clsx: 0.1.0
+  eslint-plugin-command: 4.0.0
+  eslint-plugin-compat: 7.0.2
+  eslint-plugin-de-morgan: 2.1.3
+  eslint-plugin-decorator-position: 6.1.1
+  eslint-plugin-depend: 1.5.0
+  eslint-plugin-es-x: 10.0.0
+  eslint-plugin-escompat: 3.11.4
+  eslint-plugin-fsecond: 1.5.0
+  eslint-plugin-functional: 10.0.0
+  eslint-plugin-html: 8.1.4
+  eslint-plugin-i18next: 6.1.5
+  eslint-plugin-import-x: 4.17.1
+  eslint-plugin-jsdoc: 64.2.1
+  eslint-plugin-json: 5.0.0
+  eslint-plugin-json-schema-validator: 6.3.1
+  eslint-plugin-jsonc: 3.4.1
+  eslint-plugin-jsx-a11y-x: 0.2.0
+  eslint-plugin-n: 18.3.0
+  eslint-plugin-no-unsanitized: 4.1.5
+  eslint-plugin-no-use-extend-native: 0.7.3
+  eslint-plugin-oxlint: 1.79.0
+  eslint-plugin-perfectionist: 5.10.1
+  eslint-plugin-playwright: 2.11.0
+  eslint-plugin-pnpm: 1.8.0
+  eslint-plugin-promise: 7.3.0
+  eslint-plugin-react-hooks: 7.1.1
+  eslint-plugin-react-prefer-function-component: 5.0.0
+  eslint-plugin-react-refresh: 0.5.4
+  eslint-plugin-react-you-might-not-need-an-effect: 1.0.2
+  eslint-plugin-regexp: 3.2.0
+  eslint-plugin-security: 4.0.1
+  eslint-plugin-sonarjs: 4.2.0
+  eslint-plugin-storybook: 10.5.10
+  eslint-plugin-turbo: 2.10.11
+  eslint-plugin-unicorn: 73.0.0
+  eslint-plugin-unused-imports: 4.4.1
+  eslint-typegen: 2.3.1
+  execa: 9.6.1
+  fast-glob: 3.3.3
+  globals: 17.11.0
+  json-schema-to-typescript: 15.0.4
+  knip: 6.32.2
+  oxfmt: 0.64.0
+  oxlint: 1.79.0
+  prettier: 3.9.6
+  prettier-plugin-embed: 0.5.1
+  prettier-plugin-jsdoc: 1.8.1
+  prettier-plugin-sql: 0.20.0
+  remove-markdown: 0.6.4
+  tsdown: 0.22.14
+  tsx: 4.22.3
+  type-fest: 5.6.0
+  typescript: 6.0.3
+  typescript-eslint: 8.67.0
+  unrun: 0.3.0
+  vitest: 4.1.7
+  yaml: 2.9.0
 dangerouslyAllowAllBuilds: false
 dedupeDirectDeps: true
 dedupePeerDependents: true
@@ -389,6 +535,17 @@ minimumReleaseAgeExclude:
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
+packageExtensions:
+  # Both packages import these at runtime and declare neither a dependency nor a peer on them, so
+  # under pnpm's isolated layout they simply cannot resolve. They only ever worked by accident,
+  # through whatever else happened to drag the package into the tree — which is why enabling the
+  # plugins surfaced a crash rather than a lint result.
+  "@antebudimir/eslint-plugin-vanilla-extract":
+    dependencies:
+      "@typescript-eslint/utils": "*"
+  eslint-plugin-compat:
+    dependencies:
+      caniuse-lite: "*"
 preferFrozenLockfile: true
 resolutionMode: lowest-direct
 savePrefix: ""
@@ -403,7 +560,18 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:8ca0a3befab542f90819df29a1f27de4",
+      expectChainHash: "xxh3:7edd11a2c000f70ef0b8f6cedb35abe9",
+    },
+  },
+  tools: {
+    ...config.tools,
+    alint: {
+      ...config.tools!["alint"]!,
+      skip: false,
+    },
+    "ls-lint": {
+      ...config.tools!["ls-lint"]!,
+      skip: false,
     },
   },
 });
@@ -571,4 +739,59 @@ const cspellWords: string[] = [
   "Kysely",
   "sqlc",
   "ELIFECYCLE",
+  // Rule names that appear in the generated src/lint-rules/rule-inventory.json: environment names
+  // from `globals`, and the deliberate misspellings that typo-detection rules are named after.
+  "applescript",
+  "atomtest",
+  "autofixers",
+  "bject",
+  "destructurings",
+  "duplicative",
+  "embertest",
+  "esmodule",
+  "formart",
+  "gnored",
+  "mymethod",
+  "nashorn",
+  "prototypejs",
+  "rray",
+  "serviceworker",
+  "strnig",
+  "thenables",
+  "canparse",
+  "charcode",
+  "lookarounds",
+  "extensionless",
+
+  "classlist",
+  "categorises",
+  "severitied",
+  "proptypes",
+  "polyfillio",
+  "nonconstructor",
+  "nonoctal",
+  "misrefactored",
+  "uninvoked",
+  "textnodes",
+  "innerhtml",
+  "multilines",
+  "chunkname",
+  "backet",
+  "networkidle",
+  "flowtype",
+  "opensearchservice",
+  "httponly",
+  "mischeck",
+  "incdec",
+  "unthrown",
+
+  // knip's cache directory under {toolCache}, and the package it resolves a
+  // formatter through for `--fix --format` — both named in the Knip section.
+  "knipcache",
+  "Formatly",
+
+  // Extensionless tool configs, named in the knip operation's comment as
+  // examples of inputs an enumerated glob list cannot cover.
+  "swcrc",
+  "graphqlrc",
 ];

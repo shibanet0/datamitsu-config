@@ -1,5 +1,5 @@
 exclude:
-  - pnpm-lock.yaml
+  - "**/pnpm-lock.yaml"
   - "**/*.sops.yaml"
   - "**/.sops.yml"
 formatter:

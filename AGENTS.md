@@ -109,8 +109,27 @@ When wiring a formatter, reference `indentSettings.indentWidth` / `indentSetting
 Do not add new keys to `indentSettings` for one-off tools — keep it a single shared setting.
 
 oxfmt operations must include `--no-error-on-unmatched-pattern`: a staged-file check can contain
-only files that oxfmt ignores (for example `pnpm-lock.yaml`). That is an empty check, not a
+only files that oxfmt ignores (for example `package-lock.json`). That is an empty check, not a
 formatter failure.
+
+YAML has one formatter, yamlfmt (with `yq-yaml` sorting keys); `oxfmtGlobs` deliberately leaves it
+out. oxfmt and yamlfmt disagree on flow-mapping spacing, so with both on a file `dm fix` leaves one
+form and the other's check fails.
+
+## Shared Ignore List
+
+[src/ignore/catalog.ts](src/ignore/catalog.ts) is the **single source of truth** for every path a managed tool skips. Each consumer is an **ordered profile** in [src/ignore/profiles/](src/ignore/profiles/) that lists catalog IDs in the syntax it reads: gitignore (`.gitignore`, `.dockerignore`), glob (ESLint and oxlint via `GLOB_EXCLUDE`, cspell, yamllint/yamlfmt, ls-lint) or regex (trufflehog). Do not write an ignore list into a tool config by hand.
+
+To skip a path: add one catalog row, then reference its ID from each profile that needs it. Profiles are typed against the catalog, so a mistyped or removed ID is a `tsc` error. `task refresh` and the pins in `src/ignore/__tests__/pins.test.ts` show exactly what every consumer receives; a changed pin is a behavior change and needs a reason.
+
+- **Profiles, not kinds.** `kind` records why a path is skipped and never selects anything. Consumers differ on purpose: git must not ignore lock files, and trufflehog keeps its own narrower lockfile and minified-file policy.
+- **Negations are gitignore-only.** `.claude/*` with `!.claude/skills/` exists only in the gitignore profile. Other profiles list what they skip explicitly; being tracked by git does not make a file suitable for linting.
+- **Globs use `**/x`, not `**/x/**`.** Both are equivalent in ESLint and cspell (measured, root and nested), and only `**/x` names the directory itself, which ls-lint needs to skip it (the ls-lint base then renders it as `x`, `*/x`, …, never as `**`). The exception is a wildcard name: `**/playwright-report-*` would also match a source file such as `playwright-report-parser.ts`, so it keeps `/**`. `src/ignore/__tests__/eslint-traversal.test.ts` runs ESLint's real traversal with look-alike source files; extend it when adding a directory entry.
+- **The catalog is a table.** Every `IgnoreEntry` field is required (`undefined` when absent) so the columns line up, the object sits under `// prettier-ignore`, and a file-level inline `@stylistic/key-spacing` `align: "value"` keeps the ID column aligned. The inner columns are aligned by hand when a wider value lands. Keep `catalog.ts` free of anything but the table: an inline rule config applies to the whole file.
+- **The planner excludes come from it too.** `jsonExcludeGlobs` and `yamlExcludeGlobs` in [src/datamitsu-config/globs.ts](src/datamitsu-config/globs.ts) resolve the `json-exclude` and `yaml-exclude` profiles. They keep the key sorters (`yq-json`, `yq-yaml`) and the YAML formatters off files whose byte order is load-bearing: a lock file, a manifest `sort-package-json` owns, and a SOPS document, whose MAC covers the values in the order they appear.
+- **Naming is split between two tools.** alint owns file names: the managed rules in `src/datamitsu-config/alint-defaults.ts` render to `.datamitsu/alint-managed.yml`, which the project's `.alint.yml` extends with `allow_out_of_root: true`, because datamitsu links that file from its store and alint otherwise refuses a local `extends` outside the tree. alint honors `.gitignore`, so it needs no ignore list. ls-lint owns directory names only: its base `.datamitsu/ls-lint-managed.yml` is rendered from its profile with every `**/x` expanded to fixed depths (`x`, `*/x`, … up to `LS_LINT_IGNORE_DEPTH`) and never a `**` pattern. ls-lint expands each glob `ignore` entry over the whole tree before walking (upstream issue #246): one `**/node_modules` took over 7 minutes on a pnpm monorepo, depth 3 takes 1.5s. Never pass ls-lint a path argument either: it silently drops errors (upstream issue #365).
+
+A consuming project skips paths in every datamitsu-run tool with `ignoreRules` in its config layer or a `.datamitsuignore` file; both are native datamitsu and need nothing from this package. Tools that walk the tree themselves (ls-lint, editor extensions, a direct `dm exec eslint .`) never see those rules and are extended through their own config.
 
 ## Shared Lint Rule Lists
 
