@@ -129,7 +129,7 @@ This config manages tools across multiple runtimes (Node.js, Go binaries, Python
 - **Security scanners** — Semgrep, Trivy, Grype, Gitleaks, detect-secrets
 - **Build tools** — TypeScript, protobuf (buf, protoc), OpenAPI generators
 - **Git hooks** — commitlint, lefthook
-- **Spelling & docs** — cspell, Vale, markdownlint, Mermaid CLI
+- **Spelling & docs** — cspell, markdownlint, lychee (links); Vale, Harper and Mermaid CLI on request
 
 See the [documentation site](https://datamitsu-config.shibanet0.com/) for complete information, or browse [docs/reference/tools.md](docs/reference/tools.md) for the full list of configured tools.
 

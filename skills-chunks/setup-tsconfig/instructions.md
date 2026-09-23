@@ -122,11 +122,12 @@ Build a report and present it to the user. Do not write yet.
 
 Structure the report exactly like this:
 
-```
+```markdown
 ## tsconfig setup plan
 
 Detected project type: <human-readable label, e.g. "React library inside a pnpm monorepo">
 Signals:
+
 - <signal 1, e.g. "package.json peerDependencies: react ^19">
 - <signal 2, e.g. "parent pnpm-workspace.yaml at ../../pnpm-workspace.yaml">
 - <signal 3, e.g. "no next.config.* or vite.config.* found">
@@ -148,6 +149,7 @@ Why: <one-sentence justification, citing the row in the table>
 ### Warnings
 
 <list any of these that apply; omit section if none:>
+
 - TypeScript version is `<x.y.z>`, preset requires >= 6.0.0. Update with `pnpm add -D typescript@^6`.
 - <if @typescript/native-preview or a tsgo script is present:> `@typescript/native-preview` is superseded by TypeScript 7 and can be dropped.
 - Source imports `node:*` but `types: ["node"]` was not previously set. Will add it.
@@ -186,13 +188,14 @@ Do not touch any other tsconfig files in the repo (`tsconfig.eslint.json`, `tsco
 
 After writing, print a final summary:
 
-```
+```markdown
 Done.
 
 tsconfig.json: <created | updated>
 Preset: `@shibanet0/datamitsu-config/tsconfig/<preset>.json`
 
 Next steps:
+
 - Run `pnpm tsc --noEmit` to verify the new config compiles.
 - <if monorepo + shared-*:> Add a `references` entry from consumer packages to this package.
 - <if TS version was flagged:> Update TypeScript: `pnpm add -D typescript@^6`.

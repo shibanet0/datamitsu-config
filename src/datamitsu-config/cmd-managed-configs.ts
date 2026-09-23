@@ -11,6 +11,7 @@ import { gitignore } from "./managed-configs/_gitignore";
 import { gitleaksToml } from "./managed-configs/_gitleaks_toml";
 import { golangciYaml } from "./managed-configs/_golangci_yaml";
 import { lsLintYml } from "./managed-configs/_ls_lint_yml";
+import { markdownlintCli2Mjs } from "./managed-configs/_markdownlint_cli2_mjs";
 import { nodeVersion } from "./managed-configs/_node_version";
 import { npmrc } from "./managed-configs/_npmrc";
 import { pinactYaml } from "./managed-configs/_pinact_yaml";
@@ -19,6 +20,7 @@ import { syncpackrcJson } from "./managed-configs/_syncpackrc_json";
 import { tflintHcl } from "./managed-configs/_tflint_hcl";
 import { tombiToml } from "./managed-configs/_tombi_toml";
 import { trufflehogExcludePathsTxt } from "./managed-configs/_trufflehog_exclude_paths_txt";
+import { typosToml } from "./managed-configs/_typos_toml";
 import { valeIni } from "./managed-configs/_vale_ini";
 import { vscodeExtensionsJson } from "./managed-configs/_vscode_extensions_json";
 import { vscodeSettingsJson } from "./managed-configs/_vscode_settings_json";
@@ -34,6 +36,7 @@ import { eslintConfigMjs } from "./managed-configs/eslint_config_mjs";
 import { hadolintYaml } from "./managed-configs/hadolint_yaml";
 import { knipConfigJs } from "./managed-configs/knip_config_js";
 import { lefthookYaml } from "./managed-configs/lefthook_yaml";
+import { lycheeToml } from "./managed-configs/lychee_toml";
 import { mdsfJson } from "./managed-configs/mdsf_json";
 import { oxfmtConfigTs } from "./managed-configs/oxfmt_config_ts";
 import { oxlintConfigMts } from "./managed-configs/oxlint_config_mts";
@@ -44,7 +47,6 @@ import { pyprojectToml } from "./managed-configs/pyproject_toml";
 import { rustfmtToml } from "./managed-configs/rustfmt_toml";
 import { stylelintConfigMjs } from "./managed-configs/stylelint_config_mjs";
 import { turboJson } from "./managed-configs/turbo_json";
-import { tyToml } from "./managed-configs/ty_toml";
 
 export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
@@ -60,6 +62,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".gitleaks.toml": gitleaksToml,
   ".golangci.yaml": golangciYaml,
   ".ls-lint.yml": lsLintYml,
+  ".markdownlint-cli2.mjs": markdownlintCli2Mjs,
   ".node-version": nodeVersion,
   ".npmrc": npmrc,
   ".pinact.yaml": pinactYaml,
@@ -68,6 +71,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".tflint.hcl": tflintHcl,
   ".tombi.toml": tombiToml,
   ".trufflehog-exclude-paths.txt": trufflehogExcludePathsTxt,
+  ".typos.toml": typosToml,
   ".vale.ini": valeIni,
   ".vscode/extensions.json": vscodeExtensionsJson,
   ".vscode/settings.json": vscodeSettingsJson,
@@ -82,6 +86,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "hadolint.yaml": hadolintYaml,
   "knip.config.js": knipConfigJs,
   "lefthook.yaml": lefthookYaml,
+  "lychee.toml": lycheeToml,
   "mdsf.json": mdsfJson,
   "oxfmt.config.ts": oxfmtConfigTs,
   "oxlint.config.mts": oxlintConfigMts,
@@ -92,7 +97,6 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "rustfmt.toml": rustfmtToml,
   "stylelint.config.mjs": stylelintConfigMjs,
   "turbo.json": turboJson,
-  "ty.toml": tyToml,
   ...aiTools,
 };
 

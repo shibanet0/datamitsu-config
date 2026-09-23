@@ -1,0 +1,24 @@
+# Words typos must not correct. A key mapped to itself is an allowlist entry.
+
+[default.extend-words]
+# golangci-lint linters, named after what they do rather than spelled from a dictionary.
+decorder = "decorder"
+importas = "importas"
+
+# The company that publishes Harper.
+Automattic = "Automattic"
+
+# A Dockerfile instruction, named in the registry blocklist.
+CPY = "CPY"
+
+# Fragments of rule names and settings keys, not words: `acn` and `ist` come from VS Code extension
+# identifiers, `mis` from a glob that matches `*.mis*`.
+acn = "acn"
+ist = "ist"
+mis = "mis"
+
+# Dictionary entries this repository ships for cspell, which are themselves fragments.
+bject = "bject"
+gnored = "gnored"
+backet = "backet"
+formart = "formart"

@@ -61,16 +61,7 @@ export function categorizeApps(apps: AppInfo[]): Map<string, AppInfo[]> {
 
   const categoryMap: Record<string, string[]> = {
     "Build Tools": ["tsc", "buf", "protoc", "swag", "openapi-generator", "quicktype", "sqlc"],
-    "Documentation & Spelling": [
-      "cspell",
-      "vale",
-      "markdown-link-check",
-      "mmdc",
-      "lychee",
-      "slidev",
-      "zensical",
-      "typst",
-    ],
+    "Documentation & Spelling": ["cspell", "vale", "mmdc", "lychee", "slidev", "zensical", "typst"],
     "Git Hooks": ["commitlint", "lefthook", "pre-commit"],
     "Linters & Formatters": [
       "eslint",

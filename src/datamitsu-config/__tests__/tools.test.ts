@@ -41,9 +41,19 @@ describe("tools", () => {
       expect(toolsConfig.oxfmt!.operations.fix!.globs).toContain("**/*.svelte");
     });
 
-    it("should contain d.ts and md patterns", () => {
+    it("should contain the d.ts pattern", () => {
       expect(prettierGlobs).toContain("**/*.d.ts");
-      expect(prettierGlobs).toContain("**/*.md");
+    });
+
+    /**
+     * Markdown has one formatter, and it is oxfmt. Both of them reach the fenced code inside a
+     * document and write it identically — measured over js, ts, tsx, json, css, yaml and graphql —
+     * so prettier was a second writer that added nothing, on file types oxfmt already covers in
+     * every project type rather than only in npm ones.
+     */
+    it("leaves markdown to oxfmt", () => {
+      expect(prettierGlobs).not.toContain("**/*.md");
+      expect(toolsConfig.oxfmt!.operations.fix!.globs).toContain("**/*.md");
     });
 
     it("should not contain duplicate patterns", () => {
@@ -144,12 +154,23 @@ describe("tools", () => {
         "yamlfmt",
         "yamllint",
         "yq-json",
-        "yq-properties",
-        "yq-yaml",
       ];
       for (const tool of expectedTools) {
         expect(toolsConfig).toHaveProperty(tool);
       }
+    });
+
+    /**
+     * Key sorting for YAML and `.properties` moved off `yq`, which lost data doing it: sorting a
+     * YAML mapping moved an alias above its anchor, and the `.properties` round-trip through YAML
+     * folded `a.b` into `a`, dropping whichever key sorted second. Both were reproduced against the
+     * pinned binary; `sort-keys` replaces them and is covered in src/apps/sort-keys.
+     */
+    it("sorts yaml and properties keys with sort-keys, not yq", () => {
+      expect(toolsConfig).not.toHaveProperty("yq-yaml");
+      expect(toolsConfig).not.toHaveProperty("yq-properties");
+      expect(toolsConfig["sort-keys-yaml"]!.operations.fix!.app).toBe("sort-keys");
+      expect(toolsConfig["sort-keys-properties"]!.operations.fix!.app).toBe("sort-keys");
     });
 
     it("should have at least one operation for every tool", () => {

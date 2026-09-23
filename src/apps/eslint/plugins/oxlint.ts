@@ -3,6 +3,7 @@ import type { TypedFlatConfigItem } from "../types";
 
 import { toOxlintRuleName } from "../../../lint-rules";
 import { oxlintConfigFor } from "../../oxlint";
+import { GLOB_SRC, GLOB_SVELTE } from "../globs";
 
 /**
  * Eslint-plugin-oxlint emits its "already covered by oxlint" turn-offs under the rule names of the
@@ -57,18 +58,27 @@ export async function oxlint(
       .map(([name]) => name),
   );
 
-  return remapPrefixes(
-    dropSuppressionsOxlintDoesNotEarn(
-      [
-        ...plugin.default.buildFromOxlintConfig(
-          config as Parameters<typeof plugin.default.buildFromOxlintConfig>[0],
-        ),
-      ],
-      silentInOxlint,
+  return scopeToWhatOxlintReads(
+    remapPrefixes(
+      dropSuppressionsOxlintDoesNotEarn(
+        [
+          ...plugin.default.buildFromOxlintConfig(
+            config as Parameters<typeof plugin.default.buildFromOxlintConfig>[0],
+          ),
+        ],
+        silentInOxlint,
+      ),
+      reactHooks,
     ),
-    reactHooks,
   );
 }
+
+/**
+ * The file types oxlint is actually given. `oxlintGlobs` in the planner lists these plus `.vue` and
+ * `.astro`, which ESLint has no parser for here — a suppression there would be a turn-off with
+ * nothing on either side of it.
+ */
+const OXLINT_READS = [GLOB_SRC, GLOB_SVELTE];
 
 /**
  * Removes emitted suppressions for rules oxlint is not actually reporting.
@@ -108,6 +118,22 @@ function dropSuppressionsOxlintDoesNotEarn(
 
     return { ...config, rules };
   });
+}
+
+/**
+ * The narrower of two glob lists, expressed the way flat config expresses "both": an array entry
+ * that is itself an array is an AND of its patterns, so a file has to match one of ours and one of
+ * theirs.
+ */
+function intersect(
+  emitted: TypedFlatConfigItem["files"],
+  ours: string[],
+): NonNullable<TypedFlatConfigItem["files"]> {
+  if (emitted === undefined) {
+    return ours;
+  }
+
+  return emitted.flatMap((entry) => ours.map((glob) => [glob, ...[entry].flat()]));
 }
 
 /**
@@ -165,4 +191,31 @@ function remapRuleName(name: string, reactHooks: Set<string>): string {
   }
 
   return name;
+}
+
+/**
+ * Confines the suppressions to the files oxlint lints.
+ *
+ * Every emitted block is a claim that oxlint reports the rule instead, and the blocks arrive with
+ * no `files`, so the claim was being made for every file ESLint reads — including `.html`, `.json`,
+ * `.jsonc` and `.json5`, which the planner never hands to oxlint at all.
+ *
+ * Measured on a `<script>` holding `if (1 == "1")`: ESLint reported nothing, and with the handoff
+ * removed it reported `eqeqeq` and `no-constant-condition`. Neither tool was looking — ESLint
+ * because it had been told oxlint would, oxlint because `.html` is not in its globs. Embedded
+ * script is the whole reason ESLint reads HTML here, so the gap covered exactly the rules that
+ * exist for it.
+ */
+function scopeToWhatOxlintReads(configs: TypedFlatConfigItem[]): TypedFlatConfigItem[] {
+  return configs.map((config) => {
+    if (!config.rules) {
+      return config;
+    }
+
+    // A block that already carries `files` is scoped too — by intersection, not by leaving it
+    // alone. `buildFromOxlintConfig` emits one per `overrides` entry in the project's own oxlint
+    // config, and a project whose override says `files: ["**/*"]` put the suppressions back on
+    // `.html` and the HTML gap with them.
+    return { ...config, files: intersect(config.files, OXLINT_READS) };
+  });
 }

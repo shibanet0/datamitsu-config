@@ -923,23 +923,27 @@ For every library you intend to add, apply the Version Policy:
 
 Present a plan and do not write yet. Structure it:
 
-\`\`\`
+\`\`\`markdown
 ## scaffold plan
 
 Building: <e.g. "Vite + React + TS web app inside the existing pnpm monorepo">
 Invocation: <pnpm dm exec | direct datamitsu>
 
 Libraries (catalogue → resolved version):
+
 - <lib> — <version> (<reused from repo | latest stable>)
 - …
 
 Structure:
+
 - <files/dirs to create, package.json wrapper, standard scripts, Taskfile tasks, turbo wiring>
 
 Config inputs (per the Single Source rule):
+
 - <env module / constants module / build-flag module to create, if any>
 
 Commands to run:
+
 - <exact install/scaffold commands>
 
 Apply? Reply: yes / no / show details
@@ -964,7 +968,7 @@ After explicit \`yes\`:
 
 ## Step 6 — Report
 
-\`\`\`
+\`\`\`markdown
 Done.
 
 Scaffolded: <what>
@@ -972,6 +976,7 @@ Libraries: <lib@version, …>
 Invocation: <mode>
 
 Next steps:
+
 - Run \`pnpm dm check\` (or \`datamitsu check\`) to fix + lint.
 - <if monorepo:> add the new package to the workspace / turbo pipeline if needed.
 - <if a runtime like Go/Rust is required:> ensure the toolchain is installed.
@@ -1148,11 +1153,12 @@ Build a report and present it to the user. Do not write yet.
 
 Structure the report exactly like this:
 
-\`\`\`
+\`\`\`markdown
 ## tsconfig setup plan
 
 Detected project type: <human-readable label, e.g. "React library inside a pnpm monorepo">
 Signals:
+
 - <signal 1, e.g. "package.json peerDependencies: react ^19">
 - <signal 2, e.g. "parent pnpm-workspace.yaml at ../../pnpm-workspace.yaml">
 - <signal 3, e.g. "no next.config.* or vite.config.* found">
@@ -1174,6 +1180,7 @@ Why: <one-sentence justification, citing the row in the table>
 ### Warnings
 
 <list any of these that apply; omit section if none:>
+
 - TypeScript version is \`<x.y.z>\`, preset requires >= 6.0.0. Update with \`pnpm add -D typescript@^6\`.
 - <if @typescript/native-preview or a tsgo script is present:> \`@typescript/native-preview\` is superseded by TypeScript 7 and can be dropped.
 - Source imports \`node:*\` but \`types: ["node"]\` was not previously set. Will add it.
@@ -1212,13 +1219,14 @@ Do not touch any other tsconfig files in the repo (\`tsconfig.eslint.json\`, \`t
 
 After writing, print a final summary:
 
-\`\`\`
+\`\`\`markdown
 Done.
 
 tsconfig.json: <created | updated>
 Preset: \`@shibanet0/datamitsu-config/tsconfig/<preset>.json\`
 
 Next steps:
+
 - Run \`pnpm tsc --noEmit\` to verify the new config compiles.
 - <if monorepo + shared-*:> Add a \`references\` entry from consumer packages to this package.
 - <if TS version was flagged:> Update TypeScript: \`pnpm add -D typescript@^6\`.
@@ -1338,9 +1346,9 @@ export const SKILL_BACKLOG_ADAPTER_CODEX_HASH = "84ee9c13520e092e58b370bed9de566
 export const SKILL_CLEANUP_AGENTS_MD_INSTRUCTIONS_HASH = "622d852ca069742cf6dd803d5744b008e6f9480c75c74b42c4884b06bfddf3ce"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CLAUDE_HASH = "ba21e41a641e6c6f01309fe6563e0c961a4acbd9b55c9eabadb2c8459d55dda2"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "85dab71e883e003e2ee4a9d3f3728c30e0d4535c6062956b412e6e50a5287b9c"; // prettier-ignore
-export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "b7e7cb2678da239c6f7bbf7129bde578ceca44cfa7fc00a68e3525c53320a980"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "962b799e2cbafcae04fd096d331e193194e6d7a0251472efb7581a545858decb"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "b0deeb09ffdc91f7ae267fecb849ca1dd9e530304502492601f6caa345ee22aa"; // prettier-ignore
-export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "c411af06bac7b2c18b68fc83941be0858245bddee75df40bb740cfd26d6341c0"; // prettier-ignore
+export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "db4dfb22d2e3e211e494826d9da9ecf365b68cfa1b44682fd67e40b50fa8c617"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CLAUDE_HASH = "923a388c3ec8d1ab8bb8859c2c4ed13ead607d253aec01a428d0df654bc23911"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX_HASH = "b47e306d7f1804b6907cd262893d71b39ba82c13f7cdbb810fc695526f4a519c"; // prettier-ignore

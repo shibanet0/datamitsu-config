@@ -26,14 +26,14 @@ Every datamitsu command follows the same rule:
 - i18n: i18next.
 - Component catalogue: Storybook.
 - Emails: react-email. PDF: `@react-pdf/renderer` to generate, `react-pdf` to view.
-- Prefer the ovineko ecosystem — consult https://ovineko.com/llms.txt first.
+- Prefer the ovineko ecosystem — consult <https://ovineko.com/llms.txt> first.
 - **Banned: Tailwind CSS and anything built on top of it. Never introduce it.**
 
 ### Node
 
 - Web framework: Fastify.
-- Schemas/validation: `typebox` — the npm package `typebox` (https://www.npmjs.com/package/typebox), NOT `@sinclair/typebox`.
-- Database: Kysely, a type-safe query builder (https://kysely.dev). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
+- Schemas/validation: `typebox` — the npm package `typebox` (<https://www.npmjs.com/package/typebox>), NOT `@sinclair/typebox`.
+- Database: Kysely, a type-safe query builder (<https://kysely.dev>). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
 - CLI: commander with `@commander-js/extra-typings`.
 
 ### Go
@@ -52,7 +52,7 @@ Every datamitsu command follows the same rule:
 ### Testing
 
 - Unit: Vitest.
-- E2E: Testcontainers (https://testcontainers.com); browser E2E → Playwright (https://playwright.dev).
+- E2E: Testcontainers (<https://testcontainers.com>); browser E2E → Playwright (<https://playwright.dev>).
 
 ### Monorepo
 

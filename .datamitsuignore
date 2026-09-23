@@ -1,4 +1,9 @@
-**/*: vale, harper-cli, typos, lychee, grype, trivy, osv-scanner, bearer, actionlint
+# One SCA scanner, not four. grype, trivy and bearer each bring their own vulnerability database and
+# their own walk of the tree, over the same pnpm lockfile that osv-scanner — which stays on, and
+# reports nothing today — already covers. A project that needs container or SBOM scanning enables
+# the one that answers that question, in its own config, rather than paying for three in CI.
+**/*: grype, trivy, bearer
+
 # Generated layer→subtree maps (devtools dockerfile --emit-oci-map): raw
 # generator output must stay byte-stable for the Dockerfile drift gate.
 docker/oci-map*.json: *
