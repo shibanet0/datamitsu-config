@@ -81,6 +81,9 @@ function getConfig(cfg: config.Config): config.Config {
       },
     },
     initCommands,
+    // Display metadata only: the inspector header and its exported atlas name the configuration by
+    // this. A consuming project inherits it until a layer of its own sets one — the last layer wins.
+    name: "@shibanet0/datamitsu-config",
     parsers,
     projectTypes,
     runtimes: {

@@ -55,6 +55,10 @@ jobs:
         # recreate it from the baseline so the artifact (consumed by the publish jobs)
         # carries it.
         run: cp datamitsu.config.base.js datamitsu.config.js
+      - name: Export the Config Inspector manifest
+        # Attached to the GitHub Release below, so the datamitsu showcase can read this config's
+        # composition from releases/latest/download/datamitsu-inspector-manifest.json.
+        run: node scripts/export-inspector.ts --out-dir inspector
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -62,6 +66,7 @@ jobs:
           path: |
             datamitsu.config.js
             dist/
+            inspector/
             package.json
             bin/
             tsconfig/
@@ -378,6 +383,7 @@ jobs:
             datamitsu.config.oci-ghcr.js
             datamitsu.config.oci-dockerhub.js
             dist-datamitsu-config/datamitsu.config.d.ts
+            inspector/datamitsu-inspector-manifest.json
           name: Release ${{ needs.validate-stable.outputs.version }}
           prerelease: ${{ contains(needs.validate-stable.outputs.version, '-rc.') || contains(needs.validate-stable.outputs.version, '-alpha.') }}
           tag_name: ${{ github.ref_name }}
