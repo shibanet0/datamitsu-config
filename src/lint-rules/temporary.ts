@@ -433,6 +433,11 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "sonarjs/super-linear-regex": "2 eslint configs",
   "sonarjs/updated-loop-counter": "1 eslint config",
   "sonarjs/void-use": "3 eslint configs",
+  // Needs type information to do anything: the rule asks for typescript-eslint's type tools and
+  // returns an empty visitor when there is no program, so at `error` and without `projectService`
+  // it reported nothing — measured on a component with an unused typed prop. Off by name rather
+  // than left configured and inert; back on when the svelte block gets type-aware linting.
+  "svelte/no-unused-props": "needs a TypeScript program this config does not build",
   "turbo/no-undeclared-env-vars": "7 in the repo",
   // unicorn
   "unicorn/better-dom-traversing": "1 eslint config",

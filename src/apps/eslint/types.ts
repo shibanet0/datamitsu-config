@@ -147,6 +147,9 @@ export interface DefineConfigOptions {
     stylistic?: {
       disabled?: boolean;
     };
+    svelte?: {
+      disabled?: boolean;
+    };
     turbo?: {
       disabled?: boolean;
     };

@@ -196,6 +196,11 @@
       "kind": "uv-python"
     },
     {
+      "subtree": ".apps/node/stylelint",
+      "kind": "app",
+      "app": "stylelint"
+    },
+    {
       "subtree": ".apps/node/syncpack",
       "kind": "app",
       "app": "syncpack"

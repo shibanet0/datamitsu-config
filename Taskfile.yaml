@@ -44,6 +44,7 @@ tasks:
       - task: build:inline:cspell
       - task: build:inline:oxfmt
       - task: build:inline:oxlint
+      - task: build:inline:stylelint
       - task: build:inline:lefthook-sort
       - task: build:inline:lefthook-proxy
     desc: Build all inline configs in parallel
@@ -83,6 +84,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
     desc: Build inline prettier config
+  build:inline:stylelint:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.stylelint.ts --config-loader unrun
+    desc: Build inline stylelint config
   build:lib:
     cmds:
       - task: build:lib:datamitsu-types

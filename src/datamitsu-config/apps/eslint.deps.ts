@@ -67,9 +67,25 @@ export const eslintDeps = {
   "eslint-plugin-security": nodeVersions["eslint-plugin-security"].version,
   "eslint-plugin-sonarjs": nodeVersions["eslint-plugin-sonarjs"].version,
   "eslint-plugin-storybook": nodeVersions["eslint-plugin-storybook"].version,
+  "eslint-plugin-svelte": nodeVersions["eslint-plugin-svelte"].version,
   "eslint-plugin-turbo": nodeVersions["eslint-plugin-turbo"].version,
   "eslint-plugin-unicorn": nodeVersions["eslint-plugin-unicorn"].version,
   "eslint-plugin-unused-imports": nodeVersions["eslint-plugin-unused-imports"].version,
   globals: nodeVersions["globals"].version,
+  /**
+   * Not a plugin, and not optional either: `svelte-eslint-parser` declares `svelte` as a peer and
+   * loads `svelte/compiler` to parse a component. The managed app installs into the datamitsu
+   * store, where the consuming project's own `svelte` is not on the resolution path — so without
+   * this entry every `.svelte` file fails to parse in a project that has svelte installed. Pinned
+   * rather than left to `autoInstallPeers` so the compiler version is the one this config was
+   * tested against.
+   */
+  svelte: nodeVersions["svelte"].version,
+  /**
+   * A dependency of `eslint-plugin-svelte` already. Pinned here as well because the plugin's own
+   * range is a caret, and the parser is what decides whether a component parses at all — a minor
+   * bump of it that nobody read is a change to the AST every svelte rule reads.
+   */
+  "svelte-eslint-parser": nodeVersions["svelte-eslint-parser"].version,
   "typescript-eslint": nodeVersions["typescript-eslint"].version,
 } as const;

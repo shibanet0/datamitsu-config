@@ -22,6 +22,7 @@ import {
   protoGlobs,
   shellGlobs,
   sqlGlobs,
+  stylelintGlobs,
   tomlGlobs,
   tyGlobs,
   typescriptGlobs,
@@ -62,6 +63,7 @@ type Tool =
   | "shellcheck"
   | "shfmt"
   | "sort-package-json"
+  | "stylelint"
   | "syncpack"
   | "terraform-docs"
   | "terraform-fmt"
@@ -97,6 +99,9 @@ const _fixPriority: Tool[] = [
   "yq-json",
   "yq-properties",
   "eslint",
+  // Before the formatters: its fixes rewrite declarations, and oxfmt settles the
+  // resulting whitespace afterwards rather than fighting it.
+  "stylelint",
   "prettier",
   "oxfmt",
   "sort-package-json",
@@ -135,6 +140,7 @@ const _lintPriority: Tool[] = [
   "harper-cli",
   "vale",
   "eslint",
+  "stylelint",
   "prettier",
   "oxfmt",
   "sort-package-json",
@@ -772,6 +778,33 @@ export const toolsConfig: config.MapOfTools = {
     skip: !isCI,
     skipReason: "runs in CI only",
   },
+  /**
+   * Per-project runs, one config at the git root.
+   *
+   * The runs are split because a repository-scoped operation is one process over the whole tree,
+   * and every other JS/TS tool here is already per project. The config stays at the root because
+   * oxfmt carries no `projectTypes` — it formats by file type, so it reaches a Go module's markdown
+   * — and a project-scoped managed config therefore lands in every detected project: measured on a
+   * bare fixture, `oxfmt.config.ts` in `.github/workflows/` and `docker/` as well as the root.
+   *
+   * Nothing stops being formatted, and nothing is formatted twice. A file outside every workspace
+   * belongs to the root project, so the root run still covers the docs, the workflows and the
+   * dotfiles — measured on a pnpm monorepo: the same 270 files as under the repository scope, split
+   * across its 11 projects, 270 of them distinct, and zero files in the root run that live inside a
+   * child project.
+   *
+   * Two things about the binary that the scope makes worth stating, both measured:
+   *
+   * - **`{files}` is not optional.** Given no positional paths oxfmt formats the current directory
+   *   recursively — so a path-less root run in a monorepo would walk into every package with the
+   *   root's settings. It cannot happen here: the token always carries the matched set, and a
+   *   selection that matches nothing schedules no run at all ("No applicable tools found") rather
+   *   than a run with an empty list.
+   * - **An explicit `--config` beats nested discovery.** oxfmt otherwise picks up a config from a
+   *   subdirectory; with `--config` named, a stray `.oxfmtrc.json` inside the project does not
+   *   override it. That is why there is no `--disable-nested-config` here the way oxlint has one —
+   *   it would be a flag that changes nothing.
+   */
   oxfmt: {
     name: "oxfmt - The JavaScript Oxidation Compiler Formatter",
     operations: {
@@ -786,7 +819,7 @@ export const toolsConfig: config.MapOfTools = {
         ],
         globs: oxfmtGlobs,
         priority: fixPriority.oxfmt,
-        scope: "repository",
+        scope: "per-project",
       },
       lint: {
         app: "oxfmt",
@@ -799,7 +832,7 @@ export const toolsConfig: config.MapOfTools = {
         ],
         globs: oxfmtGlobs,
         priority: lintPriority.oxfmt,
-        scope: "repository",
+        scope: "per-project",
       },
     },
   },
@@ -1035,6 +1068,43 @@ export const toolsConfig: config.MapOfTools = {
     },
     skip: true,
     skipReason: optInSkip,
+  },
+  stylelint: {
+    name: "Stylelint - CSS Linter",
+    operations: {
+      fix: {
+        app: "stylelint",
+        args: [
+          "--fix",
+          "--config",
+          "{cwd}/stylelint.config.mjs",
+          "--allow-empty-input",
+          "--cache",
+          "--cache-location",
+          "{toolCache}/.stylelintcache",
+          "{files}",
+        ],
+        globs: stylelintGlobs,
+        priority: fixPriority.stylelint,
+        scope: "per-project",
+      },
+      lint: {
+        app: "stylelint",
+        args: [
+          "--config",
+          "{cwd}/stylelint.config.mjs",
+          "--allow-empty-input",
+          "--cache",
+          "--cache-location",
+          "{toolCache}/.stylelintcache",
+          "{files}",
+        ],
+        globs: stylelintGlobs,
+        priority: lintPriority.stylelint,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["npm-package", "typescript-project"],
   },
   syncpack: {
     name: "syncpack",

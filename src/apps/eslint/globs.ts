@@ -49,6 +49,18 @@ export const GLOB_E2E = [
 ];
 
 export const GLOB_HTML = "**/*.html";
+
+export const GLOB_SVELTE = "**/*.svelte";
+
+/**
+ * Svelte 5's rune modules — plain JS/TS that may use `$state` and friends, which
+ * `svelte-eslint-parser` has to see to resolve them.
+ *
+ * Kept separate from {@link GLOB_SVELTE} because these files are also matched by `GLOB_SRC`: the
+ * TypeScript block reaches them too, and the svelte parser is attached on top rather than instead.
+ */
+export const GLOB_SVELTE_SCRIPT = ["**/*.svelte.js", "**/*.svelte.ts"];
+
 export const GLOB_JSON = "**/*.json";
 export const GLOB_JSON5 = "**/*.json5";
 export const GLOB_JSONC = "**/*.jsonc";

@@ -49,13 +49,37 @@ export const goGlobs: string[] = ["**/*.go", "**/go.mod"];
 
 export const sqlGlobs: string[] = ["**/*.sql"];
 
+/**
+ * What stylelint lints. Stylesheets, plus the three shapes that carry a `<style>` block — the
+ * overrides that attach `postcss-html` to those live in src/apps/stylelint/index.ts.
+ *
+ * `.less` is deliberately absent. stylelint 17 bundles no syntax but its own CSS parser, so a
+ * `.less` file needs `postcss-less` and a preset of its own, neither of which is adopted here — and
+ * pointing stylelint at one without them fails to parse rather than reporting nothing. oxfmt still
+ * formats `.less`; it is linting that is missing, and the gap is here rather than hidden behind a
+ * glob that cannot work.
+ */
+export const stylelintGlobs: string[] = [
+  "**/*.css",
+  "**/*.scss",
+  "**/*.html",
+  "**/*.htm",
+  "**/*.xhtml",
+  "**/*.vue",
+  "**/*.svelte",
+];
+
 // ty type-checks Python sources, stubs, and Jupyter notebooks (NOT markdown —
 // ty's markdown support is only its internal `mdtest` format, not a user input).
 export const tyGlobs: string[] = ["**/*.py", "**/*.pyi", "**/*.ipynb"];
 
 export const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
 
-export const eslintGlobs: string[] = [
+// The file types ESLint and prettier both read. Kept separate from `eslintGlobs` because the two
+// tools diverge at exactly one extension: ESLint parses `.svelte` through `svelte-eslint-parser`,
+// and prettier has no parser for it at all — `prettier --check a.svelte` fails with "No parser could
+// be inferred", so a shared list would hand every component to a tool that cannot read it.
+const scriptGlobs: string[] = [
   "**/*.js",
   "**/*.jsx",
   "**/*.mjs",
@@ -69,6 +93,8 @@ export const eslintGlobs: string[] = [
   "**/*.jsonc",
   "**/*.json5",
 ];
+
+export const eslintGlobs: string[] = [...scriptGlobs, "**/*.svelte"];
 
 // Files whose edits should re-trigger `helm lint` for the enclosing chart.
 export const helmGlobs: string[] = [
@@ -100,12 +126,18 @@ export const oxlintGlobs: string[] = [
   "**/*.svelte",
 ];
 
-// oxfmt formats by file type, independent of project type. Covers the languages
-// oxfmt supports out of the box (https://oxc.rs/compatibility.html). Svelte and
-// Astro are intentionally omitted — they require extra deps/plugins to format.
-// YAML is omitted because yamlfmt owns it: the two disagree on flow-mapping spacing (`{ a: 1 }`
-// against `{a: 1}`, which yq's key sorter also writes), so with both on a file `dm fix` leaves one
-// form and the other's check fails.
+// oxfmt formats by file type, independent of project type. This is every extension the pinned
+// oxfmt understands (https://oxc.rs/docs/guide/usage/formatter/language-support.html), minus two
+// exclusions:
+//
+// - Astro, which oxfmt does not support at all — there is no `.astro` in its extension table.
+// - YAML, which yamlfmt owns: the two disagree on flow-mapping spacing (`{ a: 1 }` against
+//   `{a: 1}`, which yq's key sorter also writes), so with both on a file `dm fix` leaves one form
+//   and the other's check fails.
+//
+// `.svelte` is formatted by every project: the managed oxfmt app ships `svelte/compiler` and
+// src/apps/oxfmt/index.ts sets `svelte: true` unconditionally. A repository with no components
+// pays nothing for the glob — the plugin loads only when a `.svelte` file is actually formatted.
 export const oxfmtGlobs: string[] = [
   "**/*.js",
   "**/*.jsx",
@@ -122,18 +154,28 @@ export const oxfmtGlobs: string[] = [
   "**/*.css",
   "**/*.scss",
   "**/*.less",
+  "**/*.pcss",
+  "**/*.postcss",
   "**/*.html",
+  "**/*.htm",
+  "**/*.xhtml",
   "**/*.vue",
+  "**/*.svelte",
+  "**/*.hbs",
+  "**/*.handlebars",
+  "**/*.mjml",
   "**/*.graphql",
   "**/*.gql",
+  "**/*.graphqls",
   "**/*.md",
+  "**/*.markdown",
   "**/*.mdx",
   "**/*.toml",
 ];
 
 export const packageJsonGlobs: string[] = ["**/package.json"];
 
-export const prettierGlobs: string[] = [...eslintGlobs, "**/*.d.ts", "**/*.md"];
+export const prettierGlobs: string[] = [...scriptGlobs, "**/*.d.ts", "**/*.md"];
 
 export const propertiesGlobs: string[] = ["**/*.properties"];
 
