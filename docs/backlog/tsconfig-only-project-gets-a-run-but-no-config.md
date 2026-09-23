@@ -1,35 +1,35 @@
 ---
 worth: yes
-where: src/datamitsu-config/managed-configs/prettier_config_mjs.ts:32
+where: src/datamitsu-config/managed-configs/oxlint_config_mts.ts:43
 added: 2026-09-23
 ---
 
-# eslint, oxlint and prettier run in a `typescript-project` whose config they never generate
+# oxlint runs in a `typescript-project` whose config it never generates
 
-The three tools declare `projectTypes: ["npm-package", "typescript-project"]`, so datamitsu
-schedules a run for any directory holding a `tsconfig.json`. Their managed configs declare
+The oxlint tool declares `projectTypes: ["npm-package", "typescript-project"]`, so datamitsu
+schedules it for any directory holding a `tsconfig.json`. Its managed config declares
 `projectTypes: ["npm-package"]` alone, so `datamitsu config reconcile` writes nothing there. A
-directory with a `tsconfig.json` and no `package.json` therefore gets a run that loads a config
-which does not exist — and no amount of reconciling fixes it.
+directory with a `tsconfig.json` and no `package.json` gets a run that loads
+`{cwd}/oxlint.config.mts`, which does not exist — and no amount of reconciling fixes it.
 
 Reproduced on a fixture: a root npm package with a `types/` subdirectory containing only
-`tsconfig.json`, `api.ts` and `style.css`. After `config reconcile --skip-fix` and `init`:
+`tsconfig.json`, `api.ts` and `style.css`. The planner schedules oxlint in `types/` with
+`-c …/types/oxlint.config.mts`.
 
-```text
-prettier -u --check --config .../types/prettier.config.mjs api.ts …
-[error] Cannot find module '.../types/prettier.config.mjs'
-```
+prettier had the same shape and was widened to both project types; stylelint was aligned when it
+was added. eslint never had it: its tool is `npm-package` only. oxlint cannot take the prettier fix,
+because `oxlint.config.mts` imports `./package.json`, which such a directory does not have — the
+widened config would fail to load instead of being missing. The two ways out:
 
-`stylelint` is the same shape and was aligned when it was added (its managed config declares both
-types), which is what made the gap in the other three visible. The anchors are
-`prettier_config_mjs.ts:32`, `eslint_config_mjs.ts:32` and `oxlint_config_mts.ts:43`.
+- narrow the tool to `npm-package`, as eslint is, which silently loses linting in those
+  directories;
+- let the generator drop the manifest import where the location's project types do not include
+  `npm-package` (`context.projectTypes` carries them during reconciliation).
 
-Not fixed in passing because the two ways out differ in who pays. Widening the managed configs to
-`typescript-project` is one line each, but it changes what reconcile writes in every consuming
-repository — new config files appear in directories that never had them. Narrowing the tools to
-`npm-package` instead is equally small and loses linting for those directories, silently. Which is
-right depends on whether a `tsconfig.json` without a manifest is a project anyone means to lint, and
-that question was not worth answering in the middle of adding stylelint.
+Which is right depends on whether a `tsconfig.json` without a manifest is a project anyone means to
+lint.
 
-Note that `sort-package-json` and `knip` also declare both types; neither was checked, because
-neither reads a per-project config file of this kind.
+knip and syncpack show the same mismatch with a git-root config: their tools run in both project
+types while `knip.config.js` and `.syncpackrc.json` are generated for `npm-package` only. That can
+only bite a repository whose root has a `tsconfig.json` and no `package.json`, where neither tool
+has anything to do; it was not reproduced.

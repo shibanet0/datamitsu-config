@@ -29,6 +29,7 @@ export const yamlfmtYaml: config.ManagedConfig = {
       ),
     );
   },
+  ejectable: true,
   otherFileNameList: [".yamlfmt", "yamlfmt.yml", "yamlfmt.yaml", ".yamlfmt.yml"],
   scope: "git-root",
   tools: ["yamlfmt"],

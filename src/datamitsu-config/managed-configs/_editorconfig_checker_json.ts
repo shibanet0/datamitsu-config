@@ -17,6 +17,7 @@ export const editorconfigCheckerJson: config.ManagedConfig = {
       ) + "\n"
     );
   },
+  ejectable: true,
   scope: "git-root",
   tools: ["editorconfig-checker"],
 };

@@ -27,6 +27,7 @@ export const trufflehogExcludePathsTxt: config.ManagedConfig = {
 
     return userContent.length > 0 ? `${managedBlock}\n\n${userContent}\n` : `${managedBlock}\n`;
   },
+  ejectable: true,
   scope: "git-root",
   tools: ["trufflehog"],
 };

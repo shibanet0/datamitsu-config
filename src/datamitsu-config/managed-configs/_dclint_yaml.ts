@@ -56,6 +56,7 @@ export const dclintYaml: config.ManagedConfig = {
 
     return YAML.stringify({ ...data, rules: { ...rules, ...data.rules } });
   },
+  ejectable: true,
   otherFileNameList: [
     ".dclint.yml",
     ".dclintrc",

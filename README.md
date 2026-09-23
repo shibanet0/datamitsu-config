@@ -107,6 +107,20 @@ pnpm dm check
 
 `dm init` installs managed tool binaries. `dm config reconcile` writes the managed configuration files and runs `dm fix`. `dm check` runs all configured linters and formatters in one pass.
 
+Configs that only their tool reads — gitleaks, yamlfmt, yamllint, hadolint and a few more — are not written into your repository: `dm init` keeps them in `.datamitsu/configs/`. To change one, name its tool in your `datamitsu.config.*` and reconcile it into the repository:
+
+```javascript
+function getConfig(config) {
+  return { ...config, ejectConfigs: ["gitleaks"] };
+}
+
+globalThis.getConfig = getConfig;
+```
+
+```bash
+pnpm dm config reconcile --tools gitleaks
+```
+
 ## What's Included
 
 This config manages tools across multiple runtimes (Node.js, Go binaries, Python):

@@ -36,6 +36,7 @@ export const sqruff: config.ManagedConfig = {
         .map(([name, properties]) => ({ name, properties })),
     ]);
   },
+  ejectable: true,
   scope: "git-root",
   tools: ["sqruff"],
 };

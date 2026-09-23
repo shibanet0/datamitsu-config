@@ -115,6 +115,14 @@ describe("alint configuration", () => {
       });
     });
 
+    it("points the managed extends at .datamitsu/ from wherever the file is rendered", () => {
+      const internal = alintYml.content!({
+        datamitsuDirFromOutput: "..",
+        placement: "internal",
+      } as never)!;
+      expect(parse(internal).extends).toEqual([OSS_BASELINE, "../alint-managed.yml"]);
+    });
+
     it("rewrites the bare `oss-baseline` alint reads as a missing local path", () => {
       expect(parse(render(stringify({ extends: ["oss-baseline"] }))).extends).toEqual([
         OSS_BASELINE,

@@ -84,7 +84,7 @@ describe("ls-lint configuration", () => {
             "-config",
             "{root}/.datamitsu/ls-lint-managed.yml",
             "-config",
-            "{root}/.ls-lint.yml",
+            "{managedConfig:.ls-lint.yml}",
           ],
           globs: ["**/*"],
           scope: "repository",

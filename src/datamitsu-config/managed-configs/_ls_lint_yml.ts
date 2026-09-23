@@ -23,6 +23,7 @@ export const lsLintYml: config.ManagedConfig = {
 ` + YAML.stringify({ ...data, ls })
     );
   },
+  ejectable: true,
   otherFileNameList: [".ls-lint.yaml"],
   scope: "git-root",
   tools: ["ls-lint"],

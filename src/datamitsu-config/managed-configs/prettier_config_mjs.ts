@@ -29,6 +29,7 @@ export const prettierConfigMjs: config.ManagedConfig = {
     "prettier.config.cts",
     ".prettierrc.toml",
   ],
-  projectTypes: ["npm-package"],
+  // The tool's own types: its runs name `{cwd}/prettier.config.mjs` in a tsconfig-only directory too.
+  projectTypes: ["npm-package", "typescript-project"],
   tools: ["prettier"],
 };

@@ -5,7 +5,9 @@ export const valeIni: config.ManagedConfig = {
   // of datamitsu. Add Packages/BasedOnStyles overrides per-project if richer styles
   // are wanted.
   content: (context) => {
-    const existing = INI.toRecord(INI.parse(context.originalContent || ""));
+    const sections = INI.parse(context.originalContent || "");
+    const existing = INI.toRecord(sections);
+    const managed = new Set(["*.{md,markdown}", "DEFAULT"]);
 
     const data: INI.SectionEntry[] = [
       {
@@ -22,10 +24,12 @@ export const valeIni: config.ManagedConfig = {
           ...existing["*.{md,markdown}"],
         },
       },
+      ...sections.filter((section) => !managed.has(section.name)),
     ];
 
     return INI.stringify(data);
   },
+  ejectable: true,
   otherFileNameList: ["_vale.ini", "vale.ini"],
   scope: "git-root",
   tools: ["vale"],
