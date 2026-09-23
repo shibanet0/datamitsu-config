@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "14.0.0",
-    "@datamitsu/datamitsu": "0.0.0-unstable.20260922.684bf2c",
+    "@datamitsu/datamitsu": "0.0.0-unstable.20260923.38e96c5",
     "commander": "14.0.3",
     "execa": "9.6.1",
     "fast-glob": "3.3.3",

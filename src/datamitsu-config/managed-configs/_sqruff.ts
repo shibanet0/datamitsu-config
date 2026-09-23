@@ -3,16 +3,18 @@
 // to tune. Existing sections/keys are preserved on reconcile.
 export const sqruff: config.ManagedConfig = {
   content: (context) => {
-    const existing = INI.toRecord(INI.parse(context.originalContent || ""));
+    const sections = INI.parse(context.originalContent || "");
+    const existing = INI.toRecord(sections);
 
     return INI.stringify([
       {
         name: "sqruff",
         properties: { dialect: "ansi", ...existing["sqruff"] },
       },
+      ...sections.filter((section) => section.name !== "sqruff"),
     ]);
   },
-  otherFileNameList: [".sqruffignore"],
+  ejectable: true,
   scope: "git-root",
   tools: ["sqruff"],
 };

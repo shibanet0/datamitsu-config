@@ -31,6 +31,7 @@ export const yamllintYaml: config.ManagedConfig = {
       ),
     );
   },
+  ejectable: true,
   otherFileNameList: [".yamllint", ".yamllint.yml"],
   scope: "git-root",
   tools: ["yamllint"],

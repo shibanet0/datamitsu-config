@@ -25,6 +25,7 @@ export const gitleaksToml: config.ManagedConfig = {
       useDefault: undefined,
     });
   },
+  ejectable: true,
   otherFileNameList: ["gitleaks.toml"],
   scope: "git-root",
   tools: ["gitleaks"],

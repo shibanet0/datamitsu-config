@@ -209,7 +209,7 @@ export const toolsConfig: config.MapOfTools = {
       // Ships bundled rulesets; layer/override via its config before enabling.
       lint: {
         app: "alint",
-        args: [],
+        args: ["--config", "{managedConfig:.alint.yml}"],
         globs: ["**/*"],
         scope: "repository",
       },
@@ -283,7 +283,7 @@ export const toolsConfig: config.MapOfTools = {
         args: [
           "lint",
           "-c",
-          "{root}/cspell.config.mjs",
+          "{managedConfig:cspell.config.mjs}",
           "--quiet",
           "--no-must-find-files",
           "--unique",
@@ -304,7 +304,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "dclint",
-        args: ["-c", "{root}/.dclint.yaml", "--fix", "{files}"],
+        args: ["-c", "{managedConfig:.dclint.yaml}", "--fix", "{files}"],
         globs: composeGlobs,
         priority: fixPriority.dclint,
         scope: "repository",
@@ -316,7 +316,7 @@ export const toolsConfig: config.MapOfTools = {
         // warning-level rule would run on every file and fail nothing.
         args: [
           "-c",
-          "{root}/.dclint.yaml",
+          "{managedConfig:.dclint.yaml}",
           "--formatter",
           "json",
           "--max-warnings",
@@ -372,7 +372,15 @@ export const toolsConfig: config.MapOfTools = {
       // --platform). The run reports nothing and fails nothing: every finding belongs to lint.
       fix: {
         app: "droast",
-        args: ["-c", "{root}/droast.toml", "--fix", "--no-fail", "--shellcheck", "off", "{root}"],
+        args: [
+          "-c",
+          "{managedConfig:droast.toml}",
+          "--fix",
+          "--no-fail",
+          "--shellcheck",
+          "off",
+          "{root}",
+        ],
         globs: droastGlobs,
         priority: fixPriority.droast,
         scope: "repository",
@@ -386,7 +394,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "droast",
         args: [
           "-c",
-          "{root}/droast.toml",
+          "{managedConfig:droast.toml}",
           "--format",
           "json",
           "--shellcheck",
@@ -411,7 +419,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "editorconfig-checker",
-        args: ["-config", ".editorconfig-checker.json"],
+        args: ["-config", "{managedConfig:.editorconfig-checker.json}"],
         globs: ["**/*"],
         priority: lintPriority["editorconfig-checker"],
         scope: "repository",
@@ -440,7 +448,7 @@ export const toolsConfig: config.MapOfTools = {
           "--fix-type",
           "problem,suggestion,layout",
           "-c",
-          "{cwd}/eslint.config.mjs",
+          "{managedConfig:eslint.config.mjs}",
           "{files}",
         ],
         globs: eslintGlobs,
@@ -450,7 +458,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "eslint",
-        args: ["--quiet", "--format=json", "-c", "{cwd}/eslint.config.mjs", "{files}"],
+        args: ["--quiet", "--format=json", "-c", "{managedConfig:eslint.config.mjs}", "{files}"],
         globs: eslintGlobs,
         granularity: "file",
         priority: lintPriority.eslint,
@@ -473,7 +481,7 @@ export const toolsConfig: config.MapOfTools = {
           "--exit-code",
           "1",
           "--config",
-          "{root}/.gitleaks.toml",
+          "{managedConfig:.gitleaks.toml}",
           // `gitleaks dir` takes a single path and silently ignores extras,
           // scanning the working directory instead — so the file list never
           // reached it. {target} says what it actually scans.
@@ -570,7 +578,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "hadolint",
-        args: ["-c", "{root}/hadolint.yaml", "--format=json", "{file}"],
+        args: ["-c", "{managedConfig:hadolint.yaml}", "--format=json", "{file}"],
         globs: dockerfileGlobs,
         priority: lintPriority.hadolint,
         scope: "per-file",
@@ -623,7 +631,7 @@ export const toolsConfig: config.MapOfTools = {
         // workspaces), for 18 MB.
         args: [
           "--config",
-          "{root}/knip.config.js",
+          "{managedConfig:knip.config.js}",
           "--reporter",
           "json",
           "--no-progress",
@@ -720,7 +728,7 @@ export const toolsConfig: config.MapOfTools = {
           "-config",
           "{root}/.datamitsu/ls-lint-managed.yml",
           "-config",
-          "{root}/.ls-lint.yml",
+          "{managedConfig:.ls-lint.yml}",
         ],
         globs: ["**/*"],
         scope: "repository",
@@ -750,13 +758,13 @@ export const toolsConfig: config.MapOfTools = {
       // formatter set when enabling.
       fix: {
         app: "mdsf",
-        args: ["format", "{files}"],
+        args: ["format", "--config", "{managedConfig:mdsf.json}", "{files}"],
         globs: markdownGlobs,
         scope: "repository",
       },
       lint: {
         app: "mdsf",
-        args: ["verify", "{files}"],
+        args: ["verify", "--config", "{managedConfig:mdsf.json}", "{files}"],
         globs: markdownGlobs,
         scope: "repository",
       },
@@ -814,7 +822,7 @@ export const toolsConfig: config.MapOfTools = {
           "--write",
           "--no-error-on-unmatched-pattern",
           "--config",
-          "{root}/oxfmt.config.ts",
+          "{managedConfig:oxfmt.config.ts}",
           "{files}",
         ],
         globs: oxfmtGlobs,
@@ -827,7 +835,7 @@ export const toolsConfig: config.MapOfTools = {
           "--check",
           "--no-error-on-unmatched-pattern",
           "--config",
-          "{root}/oxfmt.config.ts",
+          "{managedConfig:oxfmt.config.ts}",
           "{files}",
         ],
         globs: oxfmtGlobs,
@@ -841,14 +849,20 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "--fix", "{files}"],
+        args: [
+          "--disable-nested-config",
+          "-c",
+          "{managedConfig:oxlint.config.mts}",
+          "--fix",
+          "{files}",
+        ],
         globs: oxlintGlobs,
         priority: fixPriority.oxlint,
         scope: "per-project",
       },
       lint: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{cwd}/oxlint.config.mts", "{files}"],
+        args: ["--disable-nested-config", "-c", "{managedConfig:oxlint.config.mts}", "{files}"],
         globs: oxlintGlobs,
         priority: lintPriority.oxlint,
         scope: "per-project",
@@ -861,13 +875,13 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "pinact",
-        args: ["run", "{files}"],
+        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "{files}"],
         globs: actionlintGlobs,
         scope: "repository",
       },
       lint: {
         app: "pinact",
-        args: ["run", "--check", "{files}"],
+        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "--check", "{files}"],
         globs: actionlintGlobs,
         scope: "repository",
       },
@@ -893,7 +907,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "prettier",
-        args: ["-u", "--write", "--config", "{cwd}/prettier.config.mjs", "{files}"],
+        args: ["-u", "--write", "--config", "{managedConfig:prettier.config.mjs}", "{files}"],
         globs: prettierGlobs,
         granularity: "file",
         priority: fixPriority.prettier,
@@ -901,7 +915,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "prettier",
-        args: ["-u", "--check", "--config", "{cwd}/prettier.config.mjs", "{files}"],
+        args: ["-u", "--check", "--config", "{managedConfig:prettier.config.mjs}", "{files}"],
         globs: prettierGlobs,
         granularity: "file",
         priority: lintPriority.prettier,
@@ -1053,14 +1067,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "sqruff",
-        args: ["fix", "{files}"],
+        args: ["fix", "--config", "{managedConfig:.sqruff}", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        args: ["lint", "{files}"],
+        args: ["lint", "--config", "{managedConfig:.sqruff}", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",
@@ -1077,7 +1091,7 @@ export const toolsConfig: config.MapOfTools = {
         args: [
           "--fix",
           "--config",
-          "{cwd}/stylelint.config.mjs",
+          "{managedConfig:stylelint.config.mjs}",
           "--allow-empty-input",
           "--cache",
           "--cache-location",
@@ -1092,7 +1106,7 @@ export const toolsConfig: config.MapOfTools = {
         app: "stylelint",
         args: [
           "--config",
-          "{cwd}/stylelint.config.mjs",
+          "{managedConfig:stylelint.config.mjs}",
           "--allow-empty-input",
           "--cache",
           "--cache-location",
@@ -1111,14 +1125,14 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "syncpack",
-        args: ["fix", "--config", "{root}/.syncpackrc.json"],
+        args: ["fix", "--config", "{managedConfig:.syncpackrc.json}"],
         globs: packageJsonGlobs,
         priority: fixPriority.syncpack,
         scope: "repository",
       },
       lint: {
         app: "syncpack",
-        args: ["lint", "--config", "{root}/.syncpackrc.json"],
+        args: ["lint", "--config", "{managedConfig:.syncpackrc.json}"],
         globs: packageJsonGlobs,
         priority: lintPriority.syncpack,
         scope: "repository",
@@ -1169,7 +1183,7 @@ export const toolsConfig: config.MapOfTools = {
           "--fix",
           "--recursive",
           "--config",
-          "{root}/.tflint.hcl",
+          "{managedConfig:.tflint.hcl}",
           "--color",
           "--minimum-failure-severity=notice",
           "--call-module-type=none",
@@ -1183,7 +1197,7 @@ export const toolsConfig: config.MapOfTools = {
         args: [
           "--recursive",
           "--config",
-          "{root}/.tflint.hcl",
+          "{managedConfig:.tflint.hcl}",
           "--color",
           "--minimum-failure-severity=notice",
           "--call-module-type=none",
@@ -1269,7 +1283,7 @@ export const toolsConfig: config.MapOfTools = {
           "--fail",
           "--no-update",
           "--exclude-paths",
-          "{root}/.trufflehog-exclude-paths.txt",
+          "{managedConfig:.trufflehog-exclude-paths.txt}",
         ],
         globs: ["**/*"],
         scope: "repository",
@@ -1362,7 +1376,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "vale",
-        args: ["--config", "{root}/.vale.ini", "--output", "JSON", "{files}"],
+        args: ["--config", "{managedConfig:.vale.ini}", "--output", "JSON", "{files}"],
         globs: markdownGlobs,
         priority: lintPriority.vale,
         scope: "repository",
@@ -1375,7 +1389,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "yamlfmt",
-        args: ["-conf", "{root}/.yamlfmt.yaml", "{files}"],
+        args: ["-conf", "{managedConfig:.yamlfmt.yaml}", "{files}"],
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
         priority: fixPriority.yamlfmt,
@@ -1383,7 +1397,7 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "yamlfmt",
-        args: ["-conf", "{root}/.yamlfmt.yaml", "-lint", "{files}"],
+        args: ["-conf", "{managedConfig:.yamlfmt.yaml}", "-lint", "{files}"],
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
         priority: lintPriority.yamlfmt,
@@ -1396,7 +1410,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       lint: {
         app: "yamllint",
-        args: ["-c", "{root}/.yamllint.yaml", "--strict", "-f", "parsable", "{files}"],
+        args: ["-c", "{managedConfig:.yamllint.yaml}", "--strict", "-f", "parsable", "{files}"],
         excludeGlobs: yamlExcludeGlobs,
         globs: yamlGlobs,
         priority: lintPriority.yamllint,
@@ -1455,7 +1469,14 @@ export const toolsConfig: config.MapOfTools = {
       // → enable as `skip: !isCI` if you want the online pass in CI.
       lint: {
         app: "zizmor",
-        args: ["--offline", "--format", "plain", "{target}"],
+        args: [
+          "--offline",
+          "--config",
+          "{managedConfig:.github/zizmor.yml}",
+          "--format",
+          "plain",
+          "{target}",
+        ],
         globs: actionlintGlobs,
         scope: "repository",
       },

@@ -2,6 +2,9 @@
 
 const _getConfig = (config: config.Config): config.Config => ({
   ...config,
+  // These carry rules of this repository's own, so they stay in the repository; every other
+  // ejectable config lives in .datamitsu/configs/.
+  ejectConfigs: ["alint", "droast", "ls-lint", "yamlfmt"],
   managedConfigs: {
     ...config.managedConfigs,
     "cspell.config.mjs": {
@@ -242,7 +245,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260922.684bf2c",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260923.38e96c5",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",

@@ -7,6 +7,7 @@ export const mdsfJson: config.ManagedConfig = {
 
     return `${JSON.stringify({ ...data, languages: data.languages ?? {} }, null, 2)}\n`;
   },
+  ejectable: true,
   otherFileNameList: ["mdsf.toml", "mdsf.yaml"],
   scope: "git-root",
   tools: ["mdsf"],

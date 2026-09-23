@@ -17,6 +17,7 @@ export const hadolintYaml: config.ManagedConfig = {
       ),
     );
   },
+  ejectable: true,
   otherFileNameList: [
     ".hadolint.yaml",
     "hadolint.yaml",

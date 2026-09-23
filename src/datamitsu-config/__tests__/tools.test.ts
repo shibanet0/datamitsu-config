@@ -65,7 +65,8 @@ describe("tools", () => {
       for (const operation of ["fix", "lint"] as const) {
         const op = toolsConfig.oxfmt!.operations[operation]!;
         expect(op.scope, operation).toBe("per-project");
-        expect(op.args, operation).toContain("{root}/oxfmt.config.ts");
+        // Resolves to the git root because the managed config is git-root scoped.
+        expect(op.args, operation).toContain("{managedConfig:oxfmt.config.ts}");
         expect(op.args, operation).not.toContain("{cwd}/oxfmt.config.ts");
       }
     });

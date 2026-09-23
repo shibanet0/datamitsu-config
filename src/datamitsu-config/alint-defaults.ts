@@ -1,4 +1,5 @@
-export const ALINT_MANAGED_PATH = ".datamitsu/alint-managed.yml";
+export const ALINT_MANAGED_FILE = "alint-managed.yml";
+export const ALINT_MANAGED_PATH = `.datamitsu/${ALINT_MANAGED_FILE}`;
 
 interface NamingRule {
   id: string;
