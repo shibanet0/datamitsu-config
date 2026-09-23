@@ -38,7 +38,7 @@ See [Apps](reference/apps.md) for the complete list.
 
 Browse the resolved configuration — every app, its runtime and pinned version, every tool with its
 scope, patterns and priorities, and the managed files — in datamitsu's
-[Config Inspector](https://datamitsu.com/docs/guides/config-inspector). It is exported from the same
+[Config Inspector](https://datamitsu.com/). It is exported from the same
 build as this site.
 
 [Open the Config Inspector](https://datamitsu-config.shibanet0.com/atlas){ .md-button .md-button--primary }

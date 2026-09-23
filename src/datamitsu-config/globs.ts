@@ -197,13 +197,10 @@ export const shellGlobs: string[] = ["**/*.sh", "**/*.bash"];
 
 export const tomlGlobs: string[] = ["**/*.toml"];
 
-export const typescriptGlobs: string[] = [
-  "**/*.d.ts",
-  "**/*.ts",
-  "**/*.mts",
-  "**/*.cts",
-  "**/*.tsx",
-];
+/**
+ * Not exported: `tscGlobs` below is the only consumer, and knip reports an export nobody imports.
+ */
+const typescriptGlobs: string[] = ["**/*.d.ts", "**/*.ts", "**/*.mts", "**/*.cts", "**/*.tsx"];
 
 /**
  * What changes a `tsc` verdict, which is more than the TypeScript files themselves: `tsconfig.json`

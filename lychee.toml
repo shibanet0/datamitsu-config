@@ -12,7 +12,18 @@ exclude_all_private = true
 # Only a success is a success: 3xx that never lands and 4xx both stay failures.
 accept = ["200..=299"]
 
-# This repository's own exceptions.
+# This repository's own exceptions. Each one says why, and the last two say when they go away.
+
+# npm answers an automated request with 403 whatever the package is — every one of these opens in a
+# browser. A bot wall says nothing about whether the link is good.
+exclude = [
+  "^https://www\\.npmjs\\.com/",
+  # Published by the docs deploy, which has not run since the Config Inspector was added. Remove
+  # this line once https://datamitsu-config.shibanet0.com/atlas answers.
+  "^https://datamitsu-config\\.shibanet0\\.com/atlas$",
+  # Attached to a release by the release workflow; 404 until the first release that carries it.
+  "datamitsu-inspector-manifest\\.json$",
+]
 
 # The shared AGENTS.md chunks are templates: their links resolve inside the project that installs
 # them (`.datamitsu/tsconfig.md` is written there by `datamitsu init`), never here.
