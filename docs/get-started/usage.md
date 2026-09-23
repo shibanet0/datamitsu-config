@@ -121,8 +121,8 @@ docker run --rm -v "$(pwd):/workspace" \
 docker run --rm -v "$(pwd):/workspace" \
   ghcr.io/shibanet0/datamitsu-config:latest exec eslint -- src/
 
-# Use in CI with version pinning
-docker run --rm -v "$(pwd):/workspace" \
+# Use in CI with version pinning (CI=true: see "CI/CD integration" below)
+docker run --rm -e CI=true -v "$(pwd):/workspace" \
   ghcr.io/shibanet0/datamitsu-config:0.0.4 check
 
 # Override with local project config (config merging)
@@ -392,9 +392,14 @@ datamitsu handles binary installation during `pnpm dm init`, which runs automati
 # GitHub Actions example with Docker
 - name: Run datamitsu checks
   run: |
-    docker run --rm -v "${{ github.workspace }}:/workspace" \
+    docker run --rm -e CI=true -v "${{ github.workspace }}:/workspace" \
       ghcr.io/shibanet0/datamitsu-config:0.0.4 check
 ```
+
+`-e CI=true` is not optional. Some tools run only in CI — their status in the
+[tools reference](../reference/tools.md) reads "runs in CI only" — and they recognize CI by the `CI`
+variable, which `docker run` does not forward from the runner. Without it they are skipped, in CI
+as well as locally.
 
 **Docker advantages in CI:**
 
