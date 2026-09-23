@@ -29,11 +29,40 @@ type Mode = keyof typeof MODES;
 const isMode = (value: string | undefined): value is Mode =>
   value === "yaml" || value === "properties";
 
+/**
+ * The package version, replaced at build time — see tsdown.config.sort-keys.ts.
+ */
+declare const __SORT_KEYS_VERSION__: string;
+
+const USAGE = [
+  "sort-keys — alphabetical key order for YAML and .properties",
+  "",
+  "  sort-keys yaml <file>…        sort mapping keys; documents with anchors, aliases or a merge",
+  "                                key are left untouched",
+  "  sort-keys properties <file>…  sort records by key, without parsing values",
+  "",
+  "Both modes rewrite a file only when the order changes.",
+].join("\n");
+
 function main(): void {
   const [mode, ...files] = process.argv.slice(2);
 
+  if (mode === "--version" || mode === "-v") {
+    process.stdout.write(`sort-keys ${__SORT_KEYS_VERSION__} (@shibanet0/datamitsu-config)\n`);
+
+    return;
+  }
+
+  if (mode === "--help" || mode === "-h") {
+    process.stdout.write(`${USAGE}\n`);
+
+    return;
+  }
+
   if (!isMode(mode)) {
-    process.stderr.write(`sort-keys: expected "yaml" or "properties" as the first argument\n`);
+    process.stderr.write(
+      `sort-keys: expected "yaml" or "properties" as the first argument\n${USAGE}\n`,
+    );
     process.exitCode = 2;
 
     return;
