@@ -126,6 +126,20 @@ export const PERMANENTLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "prefer-destructuring": "both forms are fine",
   "prefer-template": "concatenation is fine for two operands",
   /**
+   * The one check three plugins implement. `@eslint-react` reports both at error, oxlint reports
+   * them as `react/rules-of-hooks` and `react/exhaustive-deps`, and `eslint-plugin-react-hooks`
+   * ships its own — so a conditional `useEffect` is one defect that arrives under three names, on
+   * the same line and column, and silencing it takes three disable comments.
+   *
+   * @eslint-react keeps them: it is the plugin this config registers for React, it reports the pair
+   * alongside the rest of its rule set, and the handoff already spells its names. These two were in
+   * `temporary.ts` under "1 eslint config" — a census observation rather than a decision, which
+   * happened to produce the right behavior and would have been undone by the first project that
+   * passed `temporaryRules: false`.
+   */
+  "react-hooks/exhaustive-deps": "@eslint-react owns the hooks rules",
+  "react-hooks/rules-of-hooks": "@eslint-react owns the hooks rules",
+  /**
    * Caps and shapes already decided elsewhere in this list: complexity next to core complexity,
    * nested-conditional next to no-nested-ternary, todo-tag next to no-warning-comments.
    */

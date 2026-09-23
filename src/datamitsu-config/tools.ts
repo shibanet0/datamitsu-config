@@ -23,9 +23,10 @@ import {
   shellGlobs,
   sqlGlobs,
   stylelintGlobs,
+  syncpackGlobs,
   tomlGlobs,
+  tscGlobs,
   tyGlobs,
-  typescriptGlobs,
   typstGlobs,
   yamlExcludeGlobs,
   yamlGlobs,
@@ -51,6 +52,8 @@ type Tool =
   | "lefthook-sort"
   | "lefthook-validate"
   | "lychee"
+  | "lychee-offline"
+  | "markdownlint-cli2"
   | "osv-scanner"
   | "oxfmt"
   | "oxlint"
@@ -62,6 +65,8 @@ type Tool =
   | "rustfmt"
   | "shellcheck"
   | "shfmt"
+  | "sort-keys-properties"
+  | "sort-keys-yaml"
   | "sort-package-json"
   | "stylelint"
   | "syncpack"
@@ -77,9 +82,7 @@ type Tool =
   | "vale"
   | "yamlfmt"
   | "yamllint"
-  | "yq-json"
-  | "yq-properties"
-  | "yq-yaml";
+  | "yq-json";
 
 const toPriorityMap = (list: Tool[]): Record<Tool, number> =>
   [...new Set<Tool>(list)].reduce<Record<Tool, number>>(
@@ -92,12 +95,11 @@ const toPriorityMap = (list: Tool[]): Record<Tool, number> =>
 
 // Priority order for `fix` operations. Only includes tools that expose a fix.
 const _fixPriority: Tool[] = [
-  "typos",
   "syncpack",
   "oxlint",
   "protolint",
   "yq-json",
-  "yq-properties",
+  "sort-keys-properties",
   "eslint",
   // Before the formatters: its fixes rewrite declarations, and oxfmt settles the
   // resulting whitespace afterwards rather than fighting it.
@@ -106,6 +108,9 @@ const _fixPriority: Tool[] = [
   "oxfmt",
   "sort-package-json",
   "golangci-lint",
+  // After `golangci-lint run --fix`: its fixes rewrite statements, and the formatter settles the
+  // whitespace they leave behind.
+  "golangci-lint-fmt",
   "ruff",
   "ruff-format",
   "typstyle",
@@ -120,7 +125,7 @@ const _fixPriority: Tool[] = [
   "terraform-docs",
   // Reorders compose keys and services, so it runs before yamlfmt settles the style.
   "dclint",
-  "yq-yaml",
+  "sort-keys-yaml",
   // Orders lefthook configs before yamlfmt reformats them, so the formatter
   // always gets the last word on style.
   "lefthook-sort",
@@ -137,6 +142,7 @@ const _lintPriority: Tool[] = [
   "actionlint",
   "tsc",
   "cspell",
+  "markdownlint-cli2",
   "harper-cli",
   "vale",
   "eslint",
@@ -146,6 +152,8 @@ const _lintPriority: Tool[] = [
   "sort-package-json",
   "golangci-lint",
   "golangci-lint-fmt",
+  "ruff",
+  "ruff-format",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -166,6 +174,7 @@ const _lintPriority: Tool[] = [
   // Last of the source analyses: whole-repository scope and tens of seconds, so
   // everything that can fail on one file gets to fail first.
   "knip",
+  "lychee-offline",
   "lychee",
   "grype",
   "trivy",
@@ -180,6 +189,17 @@ const isCI = facts().env.CI === "true" || facts().env.CI === "1";
 
 // Reason shown in the skipped report for the opt-in batch below.
 const optInSkip = "opt-in: pending manual review & config tuning";
+
+// vale and harper both ship as a second spell checker with no project dictionary, so cspell — which
+// has one — reports nothing while they report the project's own vocabulary back at it. Measured on
+// this repository's 45 Markdown files: vale 1294 findings, every one `Vale.Spelling` (`config` ×216,
+// `knip` ×188, `oxlint` ×104); harper 1762, of which 800 are spelling and the rest style preferences
+// such as "config → configuration" (×299) and heading title case (×167). harper also reads its user
+// dictionary from the developer's home directory, so its verdict differs per machine. A project that
+// wants grammar or an editorial policy turns one on and configures it: harper with an explicit
+// `--only` and repository-owned dictionaries, vale with a real style and `Vale.Spelling = NO`.
+const proseSkip =
+  "opt-in: a second spell checker without a project dictionary; cspell owns spelling";
 
 export const toolsConfig: config.MapOfTools = {
   actionlint: {
@@ -409,9 +429,11 @@ export const toolsConfig: config.MapOfTools = {
   "editorconfig-checker": {
     name: "EditorConfig Checker",
     operations: {
+      // `{files}` matters here: with no file arguments the checker walks everything git tracks, so
+      // a run over one staged file was a whole-repository pass. Its help states both modes.
       lint: {
         app: "editorconfig-checker",
-        args: ["-config", ".editorconfig-checker.json"],
+        args: ["-config", ".editorconfig-checker.json", "{files}"],
         globs: ["**/*"],
         priority: lintPriority["editorconfig-checker"],
         scope: "repository",
@@ -522,7 +544,7 @@ export const toolsConfig: config.MapOfTools = {
     projectTypes: ["golang-package"],
   },
   "golangci-lint-fmt": {
-    name: "golangci-lint - Go Linter",
+    name: "golangci-lint - Go Formatter",
     operations: {
       fix: {
         app: "golangci-lint",
@@ -531,6 +553,23 @@ export const toolsConfig: config.MapOfTools = {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
         priority: fixPriority["golangci-lint-fmt"],
+        scope: "per-project",
+      },
+      /**
+       * Go formatting was fixed and never checked: with only a `fix` operation, `dm lint` passed on
+       * a file `gofumpt` would rewrite, and CI — which lints rather than fixes — never saw it.
+       * Every other formatter here carries both halves.
+       *
+       * The file mode, not `--stdin`: the stdin mode prints the formatted text and exits 0 whatever
+       * it finds, so a check built on it can only ever pass.
+       */
+      lint: {
+        app: "golangci-lint",
+        args: ["fmt", "--diff"],
+        env: {
+          GOLANGCI_LINT_CACHE: "{toolCache}",
+        },
+        priority: lintPriority["golangci-lint-fmt"],
         scope: "per-project",
       },
     },
@@ -590,6 +629,8 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     outputParser: { module: "core", parser: "harper_cli" },
+    skip: true,
+    skipReason: proseSkip,
   },
   helm: {
     name: "Helm - The Kubernetes Package Manager",
@@ -682,9 +723,7 @@ export const toolsConfig: config.MapOfTools = {
     skipReason: optInSkip,
   },
   // Rewrites a lefthook config into the order it actually executes: top-level
-  // hooks by the git lifecycle, then each hook's commands by `priority`. These
-  // files are excluded from yq-yaml (see lefthookConfigGlobs), which would
-  // otherwise re-sort them by key and hide the execution order.
+  // hooks by the git lifecycle, then each hook's commands by `priority`.
   "lefthook-sort": {
     name: "lefthook - Config Sorter",
     operations: {
@@ -729,12 +768,17 @@ export const toolsConfig: config.MapOfTools = {
     skip: true,
     skipReason: optInSkip,
   },
+  /**
+   * The network half. Everything it can answer without the network is `lychee-offline`'s job, which
+   * is why this one keeps `skip: !isCI`: a broken relative link should fail the moment it is
+   * written, and a 503 from somebody else's server should not fail a commit at all.
+   */
   lychee: {
     name: "lychee - Link Checker",
     operations: {
       lint: {
         app: "lychee",
-        args: ["--no-progress", "{files}"],
+        args: ["--config", "{root}/lychee.toml", "--no-progress", "{files}"],
         globs: markdownGlobs,
         priority: lintPriority.lychee,
         scope: "repository",
@@ -742,6 +786,60 @@ export const toolsConfig: config.MapOfTools = {
     },
     skip: !isCI,
     skipReason: "runs in CI only (network access)",
+  },
+  /**
+   * The same binary with the network taken away: it resolves relative paths and anchors and reports
+   * the ones that do not exist, in milliseconds and with no outbound request. That half of link
+   * checking is a fact about the repository, so it runs everywhere — the CI-only rule exists for
+   * the half that depends on somebody else's uptime.
+   *
+   * `--cache=false` because there is nothing to cache: the answers come from the file system, and a
+   * cache file would only be another thing to invalidate.
+   */
+  "lychee-offline": {
+    name: "lychee - Link Checker (offline)",
+    operations: {
+      lint: {
+        app: "lychee",
+        // `--include-fragments` is the half of link checking that has nothing to do with the
+        // network and was not being done: without it a link to `README.md#no-such-heading` passed,
+        // because the file exists. markdownlint's MD051 does not cover it either — that rule only
+        // sees fragments pointing inside the same document.
+        args: [
+          "--config",
+          "{root}/lychee.toml",
+          "--offline",
+          "--include-fragments=anchor-only",
+          "--cache=false",
+          "--no-progress",
+          "{files}",
+        ],
+        globs: markdownGlobs,
+        priority: lintPriority["lychee-offline"],
+        scope: "repository",
+      },
+    },
+  },
+  "markdownlint-cli2": {
+    name: "markdownlint-cli2 - Markdown structure linter",
+    operations: {
+      // No `fix`. markdownlint's fixes edit the document — wrapping a bare URL in angle brackets,
+      // renumbering a list — rather than reformatting it, and `dm fix` is not where prose gets
+      // rewritten. `dm exec markdownlint-cli2 -- --fix <glob>` is there for when it is.
+      //
+      // No `outputParser` either, though core has a `markdownlint_cli2` one: it drops the file name.
+      // Measured by feeding it a real report — `README.md:12 MD040/…` came back as a diagnostic
+      // carrying the row, the code and the message, and no `file`, which for a repository-scoped run
+      // leaves every finding unattributed. The raw report names the file on every line, so it is
+      // strictly better until the parser is fixed upstream.
+      lint: {
+        app: "markdownlint-cli2",
+        args: ["--config", "{root}/.markdownlint-cli2.mjs", "--no-globs", "{files}"],
+        globs: markdownGlobs,
+        priority: lintPriority["markdownlint-cli2"],
+        scope: "repository",
+      },
+    },
   },
   mdsf: {
     name: "mdsf - format code blocks inside Markdown",
@@ -888,6 +986,26 @@ export const toolsConfig: config.MapOfTools = {
     },
     projectTypes: ["pre-commit-project"],
   },
+  /**
+   * Off by default, and the app is still installed on purpose.
+   *
+   * Every extension `prettierGlobs` claims is also in `oxfmtGlobs`, so two formatters were writing
+   * the same files and `docs/backlog/prettier-and-oxfmt-disagree-on-wrapped-unions.md` was what
+   * that cost: a union type long enough to wrap has a form each tool restores and the other
+   * rejects, so `dm fix` ended in oxfmt's and `dm lint` failed on it — reproduced again while
+   * writing this, on a three-member union in `src/apps/eslint/plugins/jsonc.ts`.
+   *
+   * Oxfmt is the one that stays because it is the one that covers more: `.svelte`, `.vue`, `.less`,
+   * `.mdx`, `.graphqls` and `.mjml` have no prettier operation here, it runs in every project type
+   * rather than only npm ones, and it is faster (0.21s against 1.60s over 283 files of this
+   * repository). Nothing is lost on the shared ground — measured over js, ts, tsx, json, css, yaml
+   * and graphql, including the fenced code inside Markdown, the two write identical bytes.
+   *
+   * What stays is the app, its managed `prettier.config.mjs` and the `.datamitsu` link: a project
+   * that needs one of the four bundled plugins (XML, SQL, embed, JSDoc — none of which this config
+   * enables) still has `dm exec prettier`, and an editor pointed at the managed config keeps
+   * working.
+   */
   prettier: {
     name: "Prettier - Code Formatter",
     operations: {
@@ -909,6 +1027,8 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+    skip: true,
+    skipReason: "oxfmt owns formatting; two formatters on one file loop (see AGENTS.md)",
   },
   protolint: {
     name: "protolint - Protocol Buffer Linter",
@@ -1028,6 +1148,49 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
   },
+  /**
+   * Alphabetical key order for `.properties`, restored after the `yq` version of it was found to
+   * lose a line: piping the file through YAML (`-p props -o props`) reads `a.b` as `b` nested under
+   * `a`, so a file holding both `a.b=hello` and `a=world` came back as `a = world` alone. sort-keys
+   * never parses the values — it orders the lines and writes every byte of each record back.
+   */
+  "sort-keys-properties": {
+    name: "sort-keys - .properties Key Sorter",
+    operations: {
+      fix: {
+        app: "sort-keys",
+        args: ["properties", "{files}"],
+        globs: propertiesGlobs,
+        priority: fixPriority["sort-keys-properties"],
+        scope: "repository",
+      },
+    },
+  },
+  /**
+   * Alphabetical key order for YAML, restored after the `yq` version of it was found to produce
+   * documents that no longer parse: `sort_keys(..)` moves an alias above the anchor that defines
+   * it, and `yamllint` then reports `found undeclared alias` on a file `dm fix` has just written.
+   * sort-keys leaves any document carrying an anchor, an alias or a merge key exactly as it is, and
+   * sorts the rest.
+   *
+   * The exclusions are the ones the `yq` operation carried, for the same reasons: dclint owns key
+   * order in Compose files (Compose's own order, not alphabetical), lefthook configs are ordered by
+   * the lifecycle they execute in, and `yamlExcludeGlobs` holds the lock file and the SOPS
+   * documents whose MAC covers the values in the order they appear.
+   */
+  "sort-keys-yaml": {
+    name: "sort-keys - YAML Key Sorter",
+    operations: {
+      fix: {
+        app: "sort-keys",
+        args: ["yaml", "{files}"],
+        excludeGlobs: [...yamlExcludeGlobs, ...lefthookConfigGlobs, ...composeGlobs],
+        globs: yamlGlobs,
+        priority: fixPriority["sort-keys-yaml"],
+        scope: "repository",
+      },
+    },
+  },
   "sort-package-json": {
     name: "sort-package-json",
     operations: {
@@ -1112,14 +1275,14 @@ export const toolsConfig: config.MapOfTools = {
       fix: {
         app: "syncpack",
         args: ["fix", "--config", "{root}/.syncpackrc.json"],
-        globs: packageJsonGlobs,
+        globs: syncpackGlobs,
         priority: fixPriority.syncpack,
         scope: "repository",
       },
       lint: {
         app: "syncpack",
         args: ["lint", "--config", "{root}/.syncpackrc.json"],
-        globs: packageJsonGlobs,
+        globs: syncpackGlobs,
         priority: lintPriority.syncpack,
         scope: "repository",
       },
@@ -1150,11 +1313,20 @@ export const toolsConfig: config.MapOfTools = {
   "terragrunt-fmt": {
     name: "Terragrunt HCL Format",
     operations: {
+      // `hclfmt` is the pre-1.0 spelling; the pinned build takes `hcl fmt`, which also has the
+      // `--check` mode the lint operation needs.
       fix: {
         app: "terragrunt",
-        args: ["hclfmt"],
+        args: ["hcl", "fmt"],
         globs: ["**/*.hcl"],
         priority: fixPriority["terragrunt-fmt"],
+        scope: "repository",
+      },
+      lint: {
+        app: "terragrunt",
+        args: ["hcl", "fmt", "--check", "--diff"],
+        globs: ["**/*.hcl"],
+        priority: lintPriority["terragrunt-fmt"],
         scope: "repository",
       },
     },
@@ -1284,7 +1456,7 @@ export const toolsConfig: config.MapOfTools = {
       lint: {
         app: "tsc",
         args: ["--noEmit", "--incremental", "--tsBuildInfoFile", "{toolCache}/tsbuildinfo.json"],
-        globs: typescriptGlobs,
+        globs: tscGlobs,
         priority: lintPriority.tsc,
         scope: "per-project",
       },
@@ -1292,6 +1464,14 @@ export const toolsConfig: config.MapOfTools = {
     outputParser: { module: "core", parser: "tsc" },
     projectTypes: ["typescript-project"],
   },
+  /**
+   * No managed `ty.toml`, deliberately. ty reads its configuration from `[tool.ty]` in
+   * `pyproject.toml` **or** from `ty.toml`, and the second wins whenever it exists — so generating
+   * one, even empty, silently outranked the settings a project already had. The managed-config API
+   * can create and overwrite but not delete, so the only way not to shadow is not to write: a
+   * project that wants a `ty.toml` writes its own, and one that already received the empty stub
+   * should delete it.
+   */
   ty: {
     name: "ty - Astral's Python type checker",
     operations: {
@@ -1313,9 +1493,13 @@ export const toolsConfig: config.MapOfTools = {
       // lint-only by design: `typos --write-changes` auto-"corrects" legitimate
       // identifiers and proper nouns (org names, linter names), so we never wire
       // it into `fix`. Curate real misspellings via .typos.toml instead.
+      // `{files}` matters: with no path argument typos defaults to `.`, so linting one changed
+      // file re-scanned the whole repository. `--config` matters for a different reason: a project
+      // needs somewhere to say that `decorder` is a linter and `Automattic` a company, and without
+      // a config file the only way to stop those being reported was to stop running the tool.
       lint: {
         app: "typos",
-        args: ["--format", "brief"],
+        args: ["--format", "brief", "--config", "{root}/.typos.toml", "--force-exclude", "{files}"],
         globs: ["**/*"],
         priority: lintPriority.typos,
         scope: "repository",
@@ -1369,6 +1553,8 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     outputParser: { module: "core", parser: "vale" },
+    skip: true,
+    skipReason: proseSkip,
   },
   yamlfmt: {
     name: "yamlfmt - YAML Formatter",
@@ -1415,35 +1601,6 @@ export const toolsConfig: config.MapOfTools = {
         excludeGlobs: jsonExcludeGlobs,
         globs: jsonGlobs,
         priority: fixPriority["yq-json"],
-        scope: "per-file",
-      },
-    },
-  },
-  "yq-properties": {
-    name: "yq - Properties Key Sorter",
-    operations: {
-      fix: {
-        app: "yq",
-        args: ["-i", "-p", "props", "-o", "props", "sort_keys(..)", "{file}"],
-        arity: "one",
-        globs: propertiesGlobs,
-        priority: fixPriority["yq-properties"],
-        scope: "per-file",
-      },
-    },
-  },
-  "yq-yaml": {
-    name: "yq - YAML Key Sorter",
-    operations: {
-      fix: {
-        app: "yq",
-        args: ["-i", "sort_keys(..)", "{file}"],
-        arity: "one",
-        // dclint owns key order in Compose files (Compose's own order, not alphabetical); sorting
-        // them here undoes `dclint --fix` on every run and fails its order rules.
-        excludeGlobs: [...yamlExcludeGlobs, ...lefthookConfigGlobs, ...composeGlobs],
-        globs: yamlGlobs,
-        priority: fixPriority["yq-yaml"],
         scope: "per-file",
       },
     },

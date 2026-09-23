@@ -10,6 +10,8 @@ export interface ToolConfig {
   name: string;
   operations: Record<string, ToolOperation>;
   projectTypes?: string[];
+  skip?: boolean;
+  skipReason?: string;
 }
 
 export interface ToolDocInfo {
@@ -19,6 +21,10 @@ export interface ToolDocInfo {
   operations: string[];
   projectTypes: string[];
   scope: string;
+  /**
+   * Empty when the tool runs; the reason it does not, otherwise.
+   */
+  skipReason: string;
 }
 
 export interface ToolOperation {
@@ -32,6 +38,14 @@ export interface ToolOperation {
 export function executeConfigShow(): string {
   return execSync("pnpm --silent dm config show", {
     encoding: "utf8",
+    /**
+     * `CI` is cleared so the page says the same thing wherever it is generated. Several tools carry
+     * `skip: !isCI`, so a run inside CI — which is where the documentation workflow runs — resolved
+     * them to "runs" and the published table claimed knip, lychee and trufflehog were part of an
+     * ordinary `dm check`. Outside CI they resolve to their real condition, which is the one worth
+     * printing: "off — runs in CI only".
+     */
+    env: { ...process.env, CI: "" },
     maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
     stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
     timeout: 30_000,
@@ -47,6 +61,7 @@ export function extractToolsInfo(config: ConfigShowOutput): ToolDocInfo[] {
       operations: Object.keys(toolConfig.operations),
       projectTypes: toolConfig.projectTypes || [],
       scope: extractScope(toolConfig.operations),
+      skipReason: toolConfig.skip ? toolConfig.skipReason || "skipped" : "",
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -67,7 +82,9 @@ export function generateToolsMarkdown(tools: ToolDocInfo[]): string {
     "Tools are configurations that define how to run [apps](apps.md) automatically via `dm check` and `dm fix`.",
     "Each tool references an app with specific arguments, file globs, and execution scope.",
     "",
-    `This configuration includes **${tools.length} tools**.`,
+    `This configuration includes **${tools.length} tools**, of which ` +
+      `**${tools.filter((t) => !t.skipReason).length}** run by default — the rest are listed with ` +
+      "the reason they do not, in the Status column.",
     "",
     "## Tools Reference",
     "",
@@ -138,15 +155,21 @@ function extractUniqueGlobs(operations: Record<string, ToolOperation>): string[]
   return [...globsSet].sort();
 }
 
+/**
+ * The Status column exists because the table read as a list of active checks, and a fifth of the
+ * tools in it do not run: some are opt-in pending configuration, some only in CI. A reader had no
+ * way to tell which, and the generated page was the only place anyone would look.
+ */
 function generateToolsTable(tools: ToolDocInfo[]): string {
-  const header = "| Tool | Operations | File Patterns | Project Types | Scope |";
-  const separator = "| --- | --- | --- | --- | --- |";
+  const header = "| Tool | Status | Operations | File Patterns | Project Types | Scope |";
+  const separator = "| --- | --- | --- | --- | --- | --- |";
   const rows = tools.map((t) => {
     const operations = t.operations.join("<br>");
     const globs = t.globs.length > 0 ? t.globs.map((g) => `\`${g}\``).join("<br>") : "all";
     const projectTypes = t.projectTypes.length > 0 ? t.projectTypes.join("<br>") : "all";
     const scope = t.scope;
-    return `| **${t.name}** | ${operations} | ${globs} | ${projectTypes} | ${scope} |`;
+    const status = t.skipReason ? `off — ${t.skipReason}` : "runs";
+    return `| **${t.name}** | ${status} | ${operations} | ${globs} | ${projectTypes} | ${scope} |`;
   });
   return [header, separator, ...rows].join("\n");
 }

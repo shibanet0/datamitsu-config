@@ -25,6 +25,7 @@ const KNIP_DEFAULT_ENTRY = [
 const PROJECT_SCOPED_CONFIGS = ["eslint.config.mjs", "oxlint.config.mts", "prettier.config.mjs"];
 
 const GIT_ROOT_SCOPED_CONFIGS = [
+  ".markdownlint-cli2.mjs",
   "commitlint.config.mjs",
   "cspell.config.mjs",
   "datamitsu.config.{js,ts}",

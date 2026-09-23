@@ -229,7 +229,7 @@ private and public projects alike, and to links as much as to names.
 Without that permission, describe the **idea** rather than its source:
 
 > ❌ \`Backlog entries follow the format used by <author>/<repo>.\`
-> ✅ \`Backlog entries carry \`worth\`/\`where\`/\`added\` frontmatter and a one-symptom title.\`
+> ✅ Backlog entries carry \`worth\`/\`where\`/\`added\` frontmatter and a one-symptom title.
 
 A user pasting a link is not the same as a user granting permission to cite it. If the attribution
 genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it
@@ -378,14 +378,14 @@ Every datamitsu command follows the same rule:
 - i18n: i18next.
 - Component catalogue: Storybook.
 - Emails: react-email. PDF: \`@react-pdf/renderer\` to generate, \`react-pdf\` to view.
-- Prefer the ovineko ecosystem — consult https://ovineko.com/llms.txt first.
+- Prefer the ovineko ecosystem — consult <https://ovineko.com/llms.txt> first.
 - **Banned: Tailwind CSS and anything built on top of it. Never introduce it.**
 
 ### Node
 
 - Web framework: Fastify.
-- Schemas/validation: \`typebox\` — the npm package \`typebox\` (https://www.npmjs.com/package/typebox), NOT \`@sinclair/typebox\`.
-- Database: Kysely, a type-safe query builder (https://kysely.dev). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
+- Schemas/validation: \`typebox\` — the npm package \`typebox\` (<https://www.npmjs.com/package/typebox>), NOT \`@sinclair/typebox\`.
+- Database: Kysely, a type-safe query builder (<https://kysely.dev>). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
 - CLI: commander with \`@commander-js/extra-typings\`.
 
 ### Go
@@ -404,7 +404,7 @@ Every datamitsu command follows the same rule:
 ### Testing
 
 - Unit: Vitest.
-- E2E: Testcontainers (https://testcontainers.com); browser E2E → Playwright (https://playwright.dev).
+- E2E: Testcontainers (<https://testcontainers.com>); browser E2E → Playwright (<https://playwright.dev>).
 
 ### Monorepo
 
@@ -497,9 +497,9 @@ export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb7
 export const CHUNK_00_BASE_HASH = "dc82caf6a6f273b7b87d967dc8ee3d46dadf7f02f02663bf15b9aae0a307bb25"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
-export const CHUNK_00_PRIVACY_HASH = "d8be582e591eb438952dd4173019ddb1f0f194260b04d1146526b6bd6afbd9f3"; // prettier-ignore
+export const CHUNK_00_PRIVACY_HASH = "1ddad93a578148375649488c794902657f4542d55146687b2eb518cd3d2afe11"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "55e2fde384fab14ee92366f9d0eb4115e20f73ef97a892fcf2224706d71cf12e"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "0fc75a6d218f9bf4b31ac605f61373da5818d14cb282c33ad62e9a84db2be9a0"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "babafc853c28c64fc881f395c2a221a9639a1e34bfd8f219a50221e91e40dd05"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "a9d1c1a59fa5b7ffd4c62819a84162113389675a4af72a7ab1e6eb0bfb325029"; // prettier-ignore

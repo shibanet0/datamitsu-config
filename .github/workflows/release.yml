@@ -46,10 +46,12 @@ jobs:
         run: |
           npm pack
           echo "Packed tarball:"
-          ls -lh *.tgz
+          # `./*.tgz` rather than `*.tgz`: a name beginning with a dash would otherwise be read as
+          # an option by ls, tar and rm (SC2035).
+          ls -lh ./*.tgz
           echo "Contents:"
-          tar -tzf *.tgz | grep -E "(datamitsu.config.js|dist/)" | head -20
-          rm *.tgz
+          tar -tzf ./*.tgz | grep -E "(datamitsu.config.js|dist/)" | head -20
+          rm ./*.tgz
       - name: Re-materialize shipped config for upload
         # `npm pack` above runs postpack, which removes the root datamitsu.config.js;
         # recreate it from the baseline so the artifact (consumed by the publish jobs)
@@ -84,9 +86,9 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "push" ]]; then
             # Tag push - always stable
-            echo "is_stable=true" >> $GITHUB_OUTPUT
-            echo "is_unstable=false" >> $GITHUB_OUTPUT
-            echo "checkout_ref=${{ github.ref }}" >> $GITHUB_OUTPUT
+            echo "is_stable=true" >> "$GITHUB_OUTPUT"
+            echo "is_unstable=false" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.ref }}" >> "$GITHUB_OUTPUT"
             echo "Detected: Tag push (stable release)"
           elif [[ "${{ github.event.inputs.release_type }}" == "stable" ]]; then
             # Manual stable release
@@ -95,15 +97,15 @@ jobs:
               echo "Error: version input is required for manual stable releases"
               exit 1
             fi
-            echo "is_stable=true" >> $GITHUB_OUTPUT
-            echo "is_unstable=false" >> $GITHUB_OUTPUT
-            echo "checkout_ref=$VERSION_TAG" >> $GITHUB_OUTPUT
+            echo "is_stable=true" >> "$GITHUB_OUTPUT"
+            echo "is_unstable=false" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=$VERSION_TAG" >> "$GITHUB_OUTPUT"
             echo "Detected: Manual stable release ($VERSION_TAG)"
           else
             # Manual unstable release
-            echo "is_stable=false" >> $GITHUB_OUTPUT
-            echo "is_unstable=true" >> $GITHUB_OUTPUT
-            echo "checkout_ref=${{ github.event.inputs.ref }}" >> $GITHUB_OUTPUT
+            echo "is_stable=false" >> "$GITHUB_OUTPUT"
+            echo "is_unstable=true" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.event.inputs.ref }}" >> "$GITHUB_OUTPUT"
             echo "Detected: Unstable release"
           fi
   generate-unstable-version:
@@ -130,9 +132,9 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           VERSION="0.0.0-unstable.${DATE}.${SHORT_SHA}"
           TAG_NAME="unstable-${DATE}-${SHORT_SHA}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
           echo "npm version: $VERSION"
           echo "git tag: $TAG_NAME"
   publish-docker:
@@ -174,10 +176,10 @@ jobs:
         run: |
           IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
           if [[ "$IS_STABLE" == "true" ]]; then
-            echo "name=ghcr.io/shibanet0/datamitsu-config" >> $GITHUB_OUTPUT
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> "$GITHUB_OUTPUT"
             echo "Image: ghcr.io/shibanet0/datamitsu-config (stable)"
           else
-            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> $GITHUB_OUTPUT
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> "$GITHUB_OUTPUT"
             echo "Image: ghcr.io/shibanet0/datamitsu-config-unstable (unstable)"
           fi
       - id: meta
@@ -427,14 +429,14 @@ jobs:
           if [[ "$IS_STABLE" == "true" ]]; then
             VERSION="${{ needs.validate-stable.outputs.version }}"
             if [[ "$VERSION" == *"-rc."* ]] || [[ "$VERSION" == *"-alpha."* ]]; then
-              echo "tag=next" >> $GITHUB_OUTPUT
+              echo "tag=next" >> "$GITHUB_OUTPUT"
               echo "npm tag: next (prerelease)"
             else
-              echo "tag=latest" >> $GITHUB_OUTPUT
+              echo "tag=latest" >> "$GITHUB_OUTPUT"
               echo "npm tag: latest"
             fi
           else
-            echo "tag=unstable" >> $GITHUB_OUTPUT
+            echo "tag=unstable" >> "$GITHUB_OUTPUT"
             echo "npm tag: unstable"
           fi
       - name: Produce the opt-in OCI config variants
@@ -490,11 +492,11 @@ jobs:
         run: |
           IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
           if [[ "$IS_STABLE" == "true" ]]; then
-            echo "name=ghcr.io/shibanet0/datamitsu-config" >> $GITHUB_OUTPUT
-            echo "tag=${{ needs.validate-stable.outputs.version }}" >> $GITHUB_OUTPUT
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> "$GITHUB_OUTPUT"
+            echo "tag=${{ needs.validate-stable.outputs.version }}" >> "$GITHUB_OUTPUT"
           else
-            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> $GITHUB_OUTPUT
-            echo "tag=${{ needs.generate-unstable-version.outputs.tag_name }}" >> $GITHUB_OUTPUT
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> "$GITHUB_OUTPUT"
+            echo "tag=${{ needs.generate-unstable-version.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
           fi
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -549,8 +551,8 @@ jobs:
       - name: Verify tag is on main branch
         run: |
           TAG_REF="${{ needs.determine-release-type.outputs.checkout_ref }}"
-          TAG_COMMIT=$(git rev-parse $TAG_REF)
-          if ! git branch -r --contains $TAG_COMMIT | grep -q 'origin/main'; then
+          TAG_COMMIT=$(git rev-parse "$TAG_REF")
+          if ! git branch -r --contains "$TAG_COMMIT" | grep -q 'origin/main'; then
             echo "Error: Tag $TAG_REF is not on main branch"
             exit 1
           fi
@@ -560,7 +562,7 @@ jobs:
         run: |
           TAG_REF="${{ needs.determine-release-type.outputs.checkout_ref }}"
           VERSION="${TAG_REF#refs/tags/v}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Stable version: $VERSION"
 name: Release
 on:

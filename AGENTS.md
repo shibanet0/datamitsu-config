@@ -21,7 +21,7 @@ Documentation is built with Zensical and lives in `docs/`:
 - `docs/reference/tsconfig.md` — manually maintained, bundled as `.datamitsu/tsconfig.md`
 - Other docs — manually maintained markdown files
 - **Build site:** `pnpm dm exec task -- docs:build`
-- **Serve locally:** `pnpm dm exec task -- docs:serve` (http://localhost:8000)
+- **Serve locally:** `pnpm dm exec task -- docs:serve` (<http://localhost:8000>)
 - **Regenerate content:** `pnpm dm exec task -- docs:generate`
 - **Skill:** `/update-docs` — regenerates all auto-generated documentation
 
@@ -112,9 +112,32 @@ oxfmt operations must include `--no-error-on-unmatched-pattern`: a staged-file c
 only files that oxfmt ignores (for example `package-lock.json`). That is an empty check, not a
 formatter failure.
 
-YAML has one formatter, yamlfmt (with `yq-yaml` sorting keys); `oxfmtGlobs` deliberately leaves it
-out. oxfmt and yamlfmt disagree on flow-mapping spacing, so with both on a file `dm fix` leaves one
-form and the other's check fails.
+YAML has one formatter, yamlfmt; `oxfmtGlobs` deliberately leaves it out. oxfmt and yamlfmt disagree
+on flow-mapping spacing, so with both on a file `dm fix` leaves one form and the other's check fails.
+
+**Alphabetical key order for YAML and `.properties` comes from `sort-keys`, not from `yq`.** The
+sorting itself was deliberate and stays; what changed is the tool under it, because both `yq`
+invocations lost data rather than restyling:
+
+- YAML. `sort_keys(..)` orders keys without knowing that an alias may not precede its anchor, so a
+  document declaring `z: &a` and referring to it from `b: *a` comes back with `b` first and stops
+  parsing — `yamllint` then reports `found undeclared alias "a"` on a file `dm fix` had just written.
+- `.properties`. The sorter round-tripped through YAML (`-p props -o props`), which folds `a.b` into
+  a nested `a`, so a file holding both `a.b=hello` and `a=world` came out as `a = world` alone.
+
+[src/apps/sort-keys](src/apps/sort-keys) is a Bun app in the shape of `lefthook-sort`, and it answers
+both: a YAML document carrying an anchor, an alias or a merge key is **left exactly as it was** —
+sorting it safely would mean ordering anchors before their aliases, which is a different operation
+from "alphabetical" — and the `.properties` mode never parses values at all, ordering whole records
+(a key line with its continuations and the comments above it) as text. Sequences keep their order in
+both: a list is an order, and reordering `steps:` would change what the file means.
+
+The format is its first argument (`sort-keys yaml …`, `sort-keys properties …`), so the two operations
+in `tools.ts` are `sort-keys-yaml` and `sort-keys-properties` — the shape `yq-json` and `yq-yaml`
+already had. Its exclusions are the ones the `yq` operation carried, for the same reasons: dclint owns key order
+in Compose files, lefthook configs are ordered by the lifecycle they execute in, and
+`yamlExcludeGlobs` holds the lock file and the SOPS documents whose MAC covers the values in the
+order they appear. `yq-json` is untouched — JSON has no anchors.
 
 ## Shared Ignore List
 
@@ -126,7 +149,7 @@ To skip a path: add one catalog row, then reference its ID from each profile tha
 - **Negations are gitignore-only.** `.claude/*` with `!.claude/skills/` exists only in the gitignore profile. Other profiles list what they skip explicitly; being tracked by git does not make a file suitable for linting.
 - **Globs use `**/x`, not `**/x/**`.** Both are equivalent in ESLint and cspell (measured, root and nested), and only `**/x` names the directory itself, which ls-lint needs to skip it (the ls-lint base then renders it as `x`, `*/x`, …, never as `**`). The exception is a wildcard name: `**/playwright-report-*` would also match a source file such as `playwright-report-parser.ts`, so it keeps `/**`. `src/ignore/__tests__/eslint-traversal.test.ts` runs ESLint's real traversal with look-alike source files; extend it when adding a directory entry.
 - **The catalog is a table.** Every `IgnoreEntry` field is required (`undefined` when absent) so the columns line up, the object sits under `// prettier-ignore`, and a file-level inline `@stylistic/key-spacing` `align: "value"` keeps the ID column aligned. The inner columns are aligned by hand when a wider value lands. Keep `catalog.ts` free of anything but the table: an inline rule config applies to the whole file.
-- **The planner excludes come from it too.** `jsonExcludeGlobs` and `yamlExcludeGlobs` in [src/datamitsu-config/globs.ts](src/datamitsu-config/globs.ts) resolve the `json-exclude` and `yaml-exclude` profiles. They keep the key sorters (`yq-json`, `yq-yaml`) and the YAML formatters off files whose byte order is load-bearing: a lock file, a manifest `sort-package-json` owns, and a SOPS document, whose MAC covers the values in the order they appear.
+- **The planner excludes come from it too.** `jsonExcludeGlobs` and `yamlExcludeGlobs` in [src/datamitsu-config/globs.ts](src/datamitsu-config/globs.ts) resolve the `json-exclude` and `yaml-exclude` profiles. They keep the JSON key sorter (`yq-json`) and the YAML formatters off files whose byte order is load-bearing: a lock file, a manifest `sort-package-json` owns, and a SOPS document, whose MAC covers the values in the order they appear.
 - **Naming is split between two tools.** alint owns file names: the managed rules in `src/datamitsu-config/alint-defaults.ts` render to `.datamitsu/alint-managed.yml`, which the project's `.alint.yml` extends with `allow_out_of_root: true`, because datamitsu links that file from its store and alint otherwise refuses a local `extends` outside the tree. alint honors `.gitignore`, so it needs no ignore list. ls-lint owns directory names only: its base `.datamitsu/ls-lint-managed.yml` is rendered from its profile with every `**/x` expanded to fixed depths (`x`, `*/x`, … up to `LS_LINT_IGNORE_DEPTH`) and never a `**` pattern. ls-lint expands each glob `ignore` entry over the whole tree before walking (upstream issue #246): one `**/node_modules` took over 7 minutes on a pnpm monorepo, depth 3 takes 1.5s. Never pass ls-lint a path argument either: it silently drops errors (upstream issue #365).
 
 A consuming project skips paths in every datamitsu-run tool with `ignoreRules` in its config layer or a `.datamitsuignore` file; both are native datamitsu and need nothing from this package. Tools that walk the tree themselves (ls-lint, editor extensions, a direct `dm exec eslint .`) never see those rules and are extended through their own config.
@@ -240,6 +263,62 @@ and would cost a migration later. Measured: a scoped, described, still-needed di
 parser, so Less needs `postcss-less` and a preset of its own; pointing stylelint at a `.less` file
 without them fails to parse rather than reporting nothing. oxfmt still formats it — the gap is
 linting, and it is stated in `globs.ts` rather than hidden behind a glob that cannot work.
+
+## Markdown, prose and links
+
+Markdown had ten tools on it and no owner for anything. It now has one formatter, one structural
+linter, one spell checker and one link checker, and the rest are opt-in with the measurement that
+put them there.
+
+**oxfmt formats, markdownlint-cli2 reports structure.** oxfmt reaches the fenced code too — measured
+on a file holding thirteen languages, it reformats `js`, `ts`, `tsx`, `json`, `css`, `yaml` and
+`graphql` blocks, byte-identical to prettier's output, which is why `prettierGlobs` no longer claims
+`**/*.md`. What no formatter reports is the structure: a fence with no language, a bare URL, a
+skipped heading level, a table whose rows disagree on column count — 42 findings on this
+repository's 45 Markdown files, none of them from any other tool in the toolchain.
+
+Three things about `src/apps/markdownlint-cli2/index.ts` that are decisions rather than defaults:
+
+- **Every rule that decides what the file looks like is off**, in two groups with two reasons: the 23
+  — this is about layout, not about wording. Editorial rules that a formatter has no opinion on stay
+  on, `MD026` (no punctuation at the end of a heading) among them. The two groups are: the 23
+  that `markdownlint/style/prettier` names (copied by code rather than `extends`-ed, because
+  `extends` resolves against the consuming project's config file and markdownlint lives in the
+  managed app's install — the trap the Stylelint section documents), and five newer ones the preset
+  has not caught up with, mostly about tables. Leaving one on does not produce a second opinion, it
+  produces a loop.
+- **No `fix` operation.** markdownlint's fixes edit prose — wrapping a bare URL in angle brackets,
+  renumbering a list — rather than reflowing it, and `dm fix` is not where a document gets rewritten.
+  `dm exec markdownlint-cli2 -- --fix <glob>` is there for when that is exactly what you want.
+- **No `outputParser`, though core has a `markdownlint_cli2` one.** It drops the file name: fed a
+  real report, `README.md:12 MD040/…` came back as a diagnostic carrying the row, the code and the
+  message, with no `file`, which for a repository-scoped run leaves every finding unattributed. The
+  raw report names the file on every line, so it is strictly better until the parser is fixed.
+
+A directory of fragments turns off `MD041` in its own `.markdownlint-cli2.jsonc` — not
+`.markdownlint.json`, which **replaces** the base configuration rather than layering on it
+(`markdownlint-cli2.mjs:772` picks `markdownlintConfig || markdownlintOptions?.config`), so the whole
+rule set reverts to markdownlint's defaults for that directory.
+
+**cspell owns the dictionary; typos owns known misspellings; vale and harper are opt-in.** The first
+two are not one job done twice: cspell reports a word no dictionary has, typos reports a word that is
+in the dictionary but is a known misspelling of another (and checks file names), and both run on
+everything rather than on Markdown alone. Both arrived as a second spell checker with no
+project dictionary, so cspell — which has one — reported nothing while they reported the project's
+own vocabulary back at it: vale 1294 findings, every one `Vale.Spelling` (`config` ×216, `knip` ×188,
+`oxlint` ×104); harper 1762, of which 800 are spelling and the rest style preferences such as
+"config → configuration" (×299) and heading title case (×167). harper also reads its user dictionary
+from the developer's home directory, so its verdict differs per machine. Grammar and editorial policy
+are real jobs — they are just jobs a project opts into and configures, not defaults.
+
+**lychee is two tools, split by what they depend on.** `lychee-offline` resolves relative paths with no network at all
+(99ms on this repository), checks fragments with `--include-fragments=anchor-only` — without that
+flag a link to `README.md#no-such-heading` passed because the file exists, and markdownlint's `MD051`
+only sees fragments inside the document it is reading — and runs everywhere; `lychee` keeps
+`skip: !isCI`, because a broken relative link should fail the moment it is written and somebody
+else's 503 should not fail a commit. Both read a managed `lychee.toml`, which exists because the
+defaults are built for a one-off run rather than a gate — 128 requests in flight, no retry policy,
+private addresses treated as real targets.
 
 ## Svelte
 

@@ -31,7 +31,7 @@ private and public projects alike, and to links as much as to names.
 Without that permission, describe the **idea** rather than its source:
 
 > ❌ `Backlog entries follow the format used by <author>/<repo>.`
-> ✅ `Backlog entries carry `worth`/`where`/`added` frontmatter and a one-symptom title.`
+> ✅ Backlog entries carry `worth`/`where`/`added` frontmatter and a one-symptom title.
 
 A user pasting a link is not the same as a user granting permission to cite it. If the attribution
 genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it

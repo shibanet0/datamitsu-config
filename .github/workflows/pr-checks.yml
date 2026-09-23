@@ -33,14 +33,16 @@ jobs:
         run: |
           npm pack
           echo "Packed tarball:"
-          ls -lh *.tgz
+          # `./*.tgz` rather than `*.tgz`: a name beginning with a dash would otherwise be read as
+          # an option by ls, tar and rm (SC2035).
+          ls -lh ./*.tgz
           echo "Verifying contents:"
-          tar -tzf *.tgz | grep -E "(datamitsu.config.js|dist/)" || {
+          tar -tzf ./*.tgz | grep -E "(datamitsu.config.js|dist/)" || {
             echo "Error: Required files not found in tarball"
             exit 1
           }
           echo "Tarball contains required files"
-          rm *.tgz
+          rm ./*.tgz
       - name: Materialize datamitsu.config.js for the Docker context
         # The build leaves only datamitsu.config.base.js, and npm pack's postpack
         # removes any datamitsu.config.js, so the Docker COPY (and the artifact)

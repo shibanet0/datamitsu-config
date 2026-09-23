@@ -30,7 +30,7 @@ This config manages tools across multiple runtimes (Node.js, Go binaries, Python
 - **Security scanners** — Semgrep, Trivy, Grype, Gitleaks, detect-secrets
 - **Build tools** — TypeScript, protobuf (buf, protoc), OpenAPI generators
 - **Git hooks** — commitlint, lefthook
-- **Spelling & docs** — cspell, Vale, markdownlint, Mermaid CLI
+- **Spelling & docs** — cspell, markdownlint, lychee (links); Vale, Harper and Mermaid CLI on request
 
 See [Apps](reference/apps.md) for the complete list.
 
@@ -38,10 +38,10 @@ See [Apps](reference/apps.md) for the complete list.
 
 Browse the resolved configuration — every app, its runtime and pinned version, every tool with its
 scope, patterns and priorities, and the managed files — in datamitsu's
-[Config Inspector](https://datamitsu.com/docs/guides/config-inspector). It is exported from the same
+[Config Inspector](https://datamitsu.com/). It is exported from the same
 build as this site.
 
-[Open the Config Inspector](/atlas){ .md-button .md-button--primary }
+[Open the Config Inspector](https://datamitsu-config.shibanet0.com/atlas){ .md-button .md-button--primary }
 
 The dataset behind it is attached to every release as
 [`datamitsu-inspector-manifest.json`](https://github.com/shibanet0/datamitsu-config/releases/latest/download/datamitsu-inspector-manifest.json).

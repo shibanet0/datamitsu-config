@@ -96,10 +96,6 @@ FROM rt-bun AS app-lefthook-sort
 COPY --link --from=config-split /slices/app-lefthook-sort.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install lefthook-sort
 
-FROM rt-node AS app-markdown-link-check
-COPY --link --from=config-split /slices/app-markdown-link-check.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install markdown-link-check
-
 FROM rt-node AS app-markdownlint-cli2
 COPY --link --from=config-split /slices/app-markdownlint-cli2.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install markdownlint-cli2
@@ -147,6 +143,10 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
 FROM rt-node AS app-slidev
 COPY --link --from=config-split /slices/app-slidev.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install slidev
+
+FROM rt-bun AS app-sort-keys
+COPY --link --from=config-split /slices/app-sort-keys.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sort-keys
 
 FROM rt-node AS app-sort-package-json
 COPY --link --from=config-split /slices/app-sort-package-json.js /opt/datamitsu-config/datamitsu.config.js
@@ -471,7 +471,6 @@ COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
 COPY --link --from=app-lefthook /dm/store/.apps/bun/lefthook /dm/store/.apps/bun/lefthook
 COPY --link --from=app-lefthook-sort /dm/store/.apps/bun/lefthook-sort /dm/store/.apps/bun/lefthook-sort
-COPY --link --from=app-markdown-link-check /dm/store/.apps/node/markdown-link-check /dm/store/.apps/node/markdown-link-check
 COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2
 COPY --link --from=app-mmdc /dm/store/.apps/node/mmdc /dm/store/.apps/node/mmdc
 COPY --link --from=app-mypy /dm/store/.apps/uv/mypy /dm/store/.apps/uv/mypy
@@ -487,6 +486,7 @@ COPY --link --from=app-quicktype /dm/store/.apps/node/quicktype /dm/store/.apps/
 COPY --link --from=app-semgrep /dm/store/.apps/uv/semgrep /dm/store/.apps/uv/semgrep
 COPY --link --from=app-semgrep /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-slidev /dm/store/.apps/node/slidev /dm/store/.apps/node/slidev
+COPY --link --from=app-sort-keys /dm/store/.apps/bun/sort-keys /dm/store/.apps/bun/sort-keys
 COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json /dm/store/.apps/node/sort-package-json
 COPY --link --from=app-spectral /dm/store/.apps/node/spectral /dm/store/.apps/node/spectral
 COPY --link --from=app-sqlfluff /dm/store/.apps/uv/sqlfluff /dm/store/.apps/uv/sqlfluff

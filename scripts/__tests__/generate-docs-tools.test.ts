@@ -142,6 +142,7 @@ const sampleTools: ToolDocInfo[] = [
     operations: ["check", "fix"],
     projectTypes: ["typescript-project"],
     scope: "per-project",
+    skipReason: "",
   },
   {
     displayName: "Prettier",
@@ -150,6 +151,7 @@ const sampleTools: ToolDocInfo[] = [
     operations: ["check", "fix"],
     projectTypes: [],
     scope: "per-project",
+    skipReason: "oxfmt owns formatting",
   },
 ];
 
@@ -164,8 +166,10 @@ describe("generateToolsMarkdown", () => {
 
   it("should include tools table with headers", () => {
     const result = generateToolsMarkdown(sampleTools);
-    expect(result).toContain("| Tool | Operations | File Patterns | Project Types | Scope |");
-    expect(result).toContain("| --- | --- | --- | --- | --- |");
+    expect(result).toContain(
+      "| Tool | Status | Operations | File Patterns | Project Types | Scope |",
+    );
+    expect(result).toContain("| --- | --- | --- | --- | --- | --- |");
   });
 
   it("should include tool names in the table", () => {
@@ -189,17 +193,32 @@ describe("generateToolsMarkdown", () => {
     const result = generateToolsMarkdown([]);
     expect(result).toContain("# Configured Tools");
     expect(result).toContain("**0 tools**");
-    expect(result).toContain("| Tool | Operations | File Patterns | Project Types | Scope |");
+    expect(result).toContain(
+      "| Tool | Status | Operations | File Patterns | Project Types | Scope |",
+    );
   });
 
   it("should show 'all' for tools without specific globs", () => {
     const result = generateToolsMarkdown(sampleTools);
-    expect(result).toContain("| **eslint** | check<br>fix | all |");
+    expect(result).toContain("| **eslint** | runs | check<br>fix | all |");
   });
 
   it("should show 'all' for tools without project types", () => {
     const result = generateToolsMarkdown(sampleTools);
-    expect(result).toContain("| **prettier** | check<br>fix | `**/*.{ts,js,json,md}` | all |");
+    expect(result).toContain(
+      "| **prettier** | off — oxfmt owns formatting | check<br>fix | `**/*.{ts,js,json,md}` | all |",
+    );
+  });
+
+  /**
+   * The column exists because a fifth of the tools in this table do not run, and the page gave a
+   * reader no way to tell which — so it read as a list of active checks and was wrong about a dozen
+   * of them.
+   */
+  it("states why a tool that does not run does not run", () => {
+    const result = generateToolsMarkdown(sampleTools);
+    expect(result).toContain("off — oxfmt owns formatting");
+    expect(result).toContain("**1** run by default");
   });
 
   it("should include overview section", () => {
