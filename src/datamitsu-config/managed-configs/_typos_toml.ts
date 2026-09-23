@@ -26,6 +26,11 @@ export const typosToml: config.ManagedConfig = {
       "# [default.extend-identifiers], and whole paths under [files] extend-exclude.",
       "",
       "[default.extend-words]",
+      "# LaTeX auxiliary extensions, from the file-nesting map datamitsu itself writes into",
+      "# .vscode/settings.json. typos reads them as misspellings of `can` and `is`; a project that",
+      "# never opens a .tex file still has the setting, because the package generated it.",
+      'acn = "acn"',
+      'ist = "ist"',
       "",
     ].join("\n");
   },

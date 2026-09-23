@@ -99,6 +99,32 @@ if (!lefthookUpstreamApp) {
 const allApps: BinManager.MapOfApps = {
   ...otherGithubApps,
   ...externalApps,
+  /**
+   * Actionlint runs ShellCheck over the `run:` blocks of a workflow, and finds it only as
+   * `shellcheck` on PATH — `dependsOn` is what puts the managed one there, the same way droast gets
+   * it below.
+   *
+   * Without it the shell half of every workflow check silently does not happen: locally actionlint
+   * reported nothing on this repository, while CI — where a system ShellCheck happens to exist —
+   * reported three findings in `.github/workflows/pr-checks.yml`. A check that is weaker on the
+   * machine where the code is written than on the machine that rejects it is the worst of both.
+   */
+  actionlint: {
+    ...otherGithubApps["actionlint"],
+    dependsOn: ["shellcheck"],
+    runtimeEnv: {
+      /**
+       * ShellCheck reads this from the environment, and actionlint passes its own environment on.
+       *
+       * `SC2129` is excluded because it is a preference about how a script is written rather than a
+       * defect in it — "consider `{ cmd1; cmd2; } >> file` instead of individual redirects" — and
+       * the rule here is that a check either fails the build or is off with a reason. Everything
+       * else stays on, `info`-level included: `SC2035`, the one that says an unprefixed glob can be
+       * read as an option, is `info` and was a real finding in two of this repository's workflows.
+       */
+      SHELLCHECK_OPTS: "--exclude=SC2129",
+    },
+  },
   bandit: {
     description: uvVersions.bandit.description,
     uv: {
