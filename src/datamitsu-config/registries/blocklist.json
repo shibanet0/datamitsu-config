@@ -26,6 +26,10 @@
     "lint-staged": {
       "reason": "Outdated pre-commit tool, replaced by lefthook's built-in staged file filtering",
       "replacement": "Use lefthook with {staged_files} placeholder for running tools on staged files"
+    },
+    "markdown-link-check": {
+      "reason": "A second link checker with no operation wired to it: lychee already checks every link in the same Markdown globs, is faster, caches, and now runs in two profiles (offline everywhere, network in CI). Two checkers over one concern means two answers and two exclusion lists",
+      "replacement": "Use lychee (GitHub release binary); see the lychee and lychee-offline tools"
     }
   },
   "runtimes": {},

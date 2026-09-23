@@ -100,11 +100,6 @@
       "app": "lefthook-sort"
     },
     {
-      "subtree": ".apps/node/markdown-link-check",
-      "kind": "app",
-      "app": "markdown-link-check"
-    },
-    {
       "subtree": ".apps/node/markdownlint-cli2",
       "kind": "app",
       "app": "markdownlint-cli2"
@@ -175,6 +170,11 @@
       "subtree": ".apps/node/slidev",
       "kind": "app",
       "app": "slidev"
+    },
+    {
+      "subtree": ".apps/bun/sort-keys",
+      "kind": "app",
+      "app": "sort-keys"
     },
     {
       "subtree": ".apps/node/sort-package-json",

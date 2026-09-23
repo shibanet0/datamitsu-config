@@ -127,13 +127,14 @@ export const oxlintGlobs: string[] = [
 ];
 
 // oxfmt formats by file type, independent of project type. This is every extension the pinned
-// oxfmt understands (https://oxc.rs/docs/guide/usage/formatter/language-support.html), minus two
+// oxfmt understands (https://oxc.rs/docs/guide/usage/formatter/language-support.html), minus three
 // exclusions:
 //
 // - Astro, which oxfmt does not support at all — there is no `.astro` in its extension table.
 // - YAML, which yamlfmt owns: the two disagree on flow-mapping spacing (`{ a: 1 }` against
-//   `{a: 1}`, which yq's key sorter also writes), so with both on a file `dm fix` leaves one form
-//   and the other's check fails.
+//   `{a: 1}`), so with both on a file `dm fix` leaves one form and the other's check fails.
+// - TOML, which tombi owns: they disagree on short arrays — tombi keeps the multi-line form with its
+//   trailing comma, oxfmt collapses it onto one line — so the file's shape depends on which ran last.
 //
 // `.svelte` is formatted by every project: the managed oxfmt app ships `svelte/compiler` and
 // src/apps/oxfmt/index.ts sets `svelte: true` unconditionally. A repository with no components
@@ -170,12 +171,23 @@ export const oxfmtGlobs: string[] = [
   "**/*.md",
   "**/*.markdown",
   "**/*.mdx",
-  "**/*.toml",
 ];
 
 export const packageJsonGlobs: string[] = ["**/package.json"];
 
-export const prettierGlobs: string[] = [...scriptGlobs, "**/*.d.ts", "**/*.md"];
+/**
+ * What changes a syncpack verdict. The manifests are the subject, but the workspace file decides
+ * which manifests there are — and in pnpm it also carries `catalog:` entries and `overrides`, so a
+ * version can move without a single `package.json` being touched. With only the manifests listed, a
+ * commit that edits the catalog alone skips the check that exists to notice.
+ */
+export const syncpackGlobs: string[] = [...packageJsonGlobs, "**/pnpm-workspace.yaml"];
+
+// Markdown is deliberately absent: oxfmt owns it. The two produce byte-identical output on the
+// fenced languages either can reach (js, ts, tsx, json, css, yaml, graphql — measured), so prettier
+// added nothing here but a second writer, and `docs/backlog/prettier-and-oxfmt-disagree-on-wrapped-unions.md`
+// is what a second writer costs. oxfmt also reaches `.mdx` and every project type, prettier neither.
+export const prettierGlobs: string[] = [...scriptGlobs, "**/*.d.ts"];
 
 export const propertiesGlobs: string[] = ["**/*.properties"];
 
@@ -192,6 +204,16 @@ export const typescriptGlobs: string[] = [
   "**/*.cts",
   "**/*.tsx",
 ];
+
+/**
+ * What changes a `tsc` verdict, which is more than the TypeScript files themselves: `tsconfig.json`
+ * decides the compiler options, the file set and the project references, so editing one is exactly
+ * the change most likely to break a build — and with only the source globs listed, selecting it
+ * alone ran nothing. `.tsx`/`.mts`/`.cts` are already covered above; `allowJs` projects are not,
+ * and are left out deliberately rather than handing every JavaScript repository a type-check
+ * trigger.
+ */
+export const tscGlobs: string[] = [...typescriptGlobs, "**/tsconfig.json", "**/tsconfig.*.json"];
 
 export const typstGlobs: string[] = ["**/*.typ"];
 

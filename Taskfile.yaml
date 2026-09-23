@@ -42,6 +42,8 @@ tasks:
       - task: build:inline:commitlint
       - task: build:inline:knip
       - task: build:inline:cspell
+      - task: build:inline:markdownlint-cli2
+      - task: build:inline:sort-keys
       - task: build:inline:oxfmt
       - task: build:inline:oxlint
       - task: build:inline:stylelint
@@ -72,6 +74,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.lefthook-sort.ts --config-loader unrun
     desc: Build inline lefthook-sort script
+  build:inline:markdownlint-cli2:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.markdownlint-cli2.ts --config-loader unrun
+    desc: Build inline markdownlint-cli2 config
   build:inline:oxfmt:
     cmds:
       - pnpm exec tsdown --config tsdown.config.oxfmt.ts --config-loader unrun
@@ -84,6 +90,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
     desc: Build inline prettier config
+  build:inline:sort-keys:
+    cmds:
+      - pnpm exec tsdown --config tsdown.config.sort-keys.ts --config-loader unrun
+    desc: Build inline sort-keys script
   build:inline:stylelint:
     cmds:
       - pnpm exec tsdown --config tsdown.config.stylelint.ts --config-loader unrun

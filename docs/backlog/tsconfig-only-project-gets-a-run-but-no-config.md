@@ -15,7 +15,7 @@ which does not exist — and no amount of reconciling fixes it.
 Reproduced on a fixture: a root npm package with a `types/` subdirectory containing only
 `tsconfig.json`, `api.ts` and `style.css`. After `config reconcile --skip-fix` and `init`:
 
-```
+```text
 prettier -u --check --config .../types/prettier.config.mjs api.ts …
 [error] Cannot find module '.../types/prettier.config.mjs'
 ```

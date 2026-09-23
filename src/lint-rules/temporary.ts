@@ -345,12 +345,10 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "promise/prefer-await-to-callbacks": "-",
   radix: "1 oxlint config",
   // react-hooks
-  "react-hooks/exhaustive-deps": "1 eslint config",
   "react-hooks/immutability": "2 eslint configs",
   "react-hooks/preserve-manual-memoization": "1 eslint config",
   "react-hooks/purity": "2 eslint configs",
   "react-hooks/refs": "2 eslint configs",
-  "react-hooks/rules-of-hooks": "1 eslint config",
   "react-hooks/set-state-in-effect": "2 eslint configs",
   "react-hooks/set-state-in-render": "1 eslint config",
   "react-hooks/unsupported-syntax": "1 eslint config",

@@ -142,7 +142,7 @@ variance). Never present a 7 upgrade as a drop-in swap; it surfaces real type er
 
 1. Read `docs/reference/tsconfig.md`. Find the **"Based on"** section near the bottom. It looks like:
 
-   ```
+   ```markdown
    [@codecompose/typescript-config](https://github.com/0x80/typescript-config/commit/<sha>) by 0x80.
    ```
 
@@ -265,33 +265,37 @@ the guide's "Quick Selection" table may also need updating. Note this in the pla
 
 Present a single scannable report. Structure it exactly like this:
 
-```
+```markdown
 ## tsconfig upstream sync plan
 
 Upstream: <repo-url>
 Baseline (pinned): <short-sha> — <subject> (<date>)
-Upstream HEAD:      <short-sha> — <subject> (<date>)
+Upstream HEAD: <short-sha> — <subject> (<date>)
 Commits to reconcile: <N>
 
 ### Changes by upstream commit
+
 <one line per relevant commit: `<short-sha> <subject>` — and a half-line of why it matters>
 
 ### Per-change decisions
 
-| Upstream change | Local target | Decision | Rationale |
-| --------------- | ------------ | -------- | --------- |
+| Upstream change              | Local target                                 | Decision                              | Rationale                           |
+| ---------------------------- | -------------------------------------------- | ------------------------------------- | ----------------------------------- |
 | <option/file + what changed> | tsconfig/<preset>.json or "guide" or "(new)" | adopt / adapt / skip / NEEDS DECISION | <why, citing commit msg or TS docs> |
-...
+| ...                          |
 
 ### Proposed edits
+
 - `tsconfig/<preset>.json`: <concrete change>
 - `docs/reference/tsconfig.md`: <table/section/Common-Mistakes updates> + bump "Based on" pin to <new-sha>
 - `skills-chunks/setup-tsconfig/instructions.md`: <only if decision rules changed; else "no change">
 
 ### Deliberately NOT adopting (recorded so they don't resurface)
+
 - <upstream change> — <reason it doesn't fit this fork>
 
 ### Open questions for you
+
 - <each "NEEDS DECISION" item, phrased as a yes/no or pick-one>
 
 Proceed? Reply: yes / no / discuss <item>
@@ -346,17 +350,18 @@ Rules for this step:
 
 After writing, print:
 
-```
+```markdown
 Done. Reconciled <N> upstream commits; pin bumped <old-sha> → <new-sha>.
 
 Presets changed: <list or "none">
-Guide updated:   yes/no
+Guide updated: yes/no
 Shared skill updated: yes/no
 Skipped (recorded): <count> — see plan above
 
 Verify:
-- pnpm exec tsc --noEmit            (or this repo's check task) — confirm presets still type-check
-- git diff docs/reference/tsconfig.md tsconfig/ skills-chunks/  — review before commit
+
+- pnpm exec tsc --noEmit (or this repo's check task) — confirm presets still type-check
+- git diff docs/reference/tsconfig.md tsconfig/ skills-chunks/ — review before commit
 ```
 
 If you can run the type check non-destructively, offer to. Report failures with their output verbatim;

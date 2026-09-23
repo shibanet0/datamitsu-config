@@ -44,23 +44,27 @@ For every library you intend to add, apply the Version Policy:
 
 Present a plan and do not write yet. Structure it:
 
-```
+```markdown
 ## scaffold plan
 
 Building: <e.g. "Vite + React + TS web app inside the existing pnpm monorepo">
 Invocation: <pnpm dm exec | direct datamitsu>
 
 Libraries (catalogue → resolved version):
+
 - <lib> — <version> (<reused from repo | latest stable>)
 - …
 
 Structure:
+
 - <files/dirs to create, package.json wrapper, standard scripts, Taskfile tasks, turbo wiring>
 
 Config inputs (per the Single Source rule):
+
 - <env module / constants module / build-flag module to create, if any>
 
 Commands to run:
+
 - <exact install/scaffold commands>
 
 Apply? Reply: yes / no / show details
@@ -85,7 +89,7 @@ After explicit `yes`:
 
 ## Step 6 — Report
 
-```
+```markdown
 Done.
 
 Scaffolded: <what>
@@ -93,6 +97,7 @@ Libraries: <lib@version, …>
 Invocation: <mode>
 
 Next steps:
+
 - Run `pnpm dm check` (or `datamitsu check`) to fix + lint.
 - <if monorepo:> add the new package to the workspace / turbo pipeline if needed.
 - <if a runtime like Go/Rust is required:> ensure the toolchain is installed.
