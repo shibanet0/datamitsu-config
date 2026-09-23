@@ -223,7 +223,7 @@ post-checkout:
       priority: 1
       run: pnpm i -y
   parallel: false
-    `,
+`,
       expectChainHash: "xxh3:1124e9bc6be737f22c501e7582f6fbda",
     },
     "package.json": {
@@ -242,7 +242,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260919.92e886b",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260922.684bf2c",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
@@ -432,7 +432,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:2f2bce8c164ed347a933bf3522f8e3a9",
+      expectChainHash: "xxh3:980f91ee767f350cac998c86973f1b01",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -577,7 +577,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:7edd11a2c000f70ef0b8f6cedb35abe9",
+      expectChainHash: "xxh3:6eebbfeb9adc65f2639564390351465d",
     },
   },
   tools: {
@@ -811,4 +811,8 @@ const cspellWords: string[] = [
   // examples of inputs an enumerated glob list cannot cover.
   "swcrc",
   "graphqlrc",
+  // Forges datamitsu derives an app's officialUrl from, named in the synced
+  // src/datamitsu-config/datamitsu.config.d.ts.
+  "codeberg",
+  "gitea",
 ];

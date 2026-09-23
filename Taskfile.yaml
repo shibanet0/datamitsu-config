@@ -134,7 +134,10 @@ tasks:
   docs:build:
     cmds:
       - pnpm dm exec zensical -- build
-    desc: Build Zensical documentation site
+      # After the build, not before: the atlas is written into site/, so it is served with the
+      # documentation and never enters git.
+      - task: docs:inspector
+    desc: Build Zensical documentation site, with the Config Inspector atlas
   docs:clean:
     cmds:
       - rm -rf site/
@@ -165,6 +168,10 @@ tasks:
     cmds:
       - node scripts/generate-docs-tools.ts
     desc: Generate docs/reference/tools.md from tools config
+  docs:inspector:
+    cmds:
+      - node scripts/export-inspector.ts --out-dir site
+    desc: Export the Config Inspector (site/atlas.html, served at /atlas) and its manifest (requires `task build` first)
   docs:serve:
     cmds:
       - pnpm dm exec zensical -- serve --dev-addr 0.0.0.0:8000

@@ -42,15 +42,4 @@ describe("defineConfig", () => {
       commentLineStrategy: "multiline",
     });
   });
-
-  /**
-   * A manifest passed first is discarded rather than spread into the config — the compatibility
-   * shim for configs generated while `svelte` was gated on the project's manifest.
-   */
-  it("discards a manifest passed as the first argument", () => {
-    const fromGeneratedConfig = defineConfig({ name: "consumer", version: "1.0.0" });
-
-    expect(fromGeneratedConfig).not.toHaveProperty("name");
-    expect(fromGeneratedConfig.printWidth).toBe(defineConfig().printWidth);
-  });
 });

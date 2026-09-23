@@ -202,6 +202,8 @@ export default defineConfig((prev) => {
     "Formatly",
     "swcrc",
     "graphqlrc",
+    "codeberg",
+    "gitea",
   ];
 
   return {
