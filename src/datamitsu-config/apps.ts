@@ -517,7 +517,7 @@ const allApps: BinManager.MapOfApps = {
 };
 
 // The full opt-in tool set would push the OCI image past the overlay2 128-layer
-// limit (docker-smoke builds the image with --load and runs it). The docker
+// limit (the PR Docker job loads the image with --load and runs it). The docker
 // generator (scripts/generate-dockerfiles.ts) sets DATAMITSU_OCI_MINIMAL=1 to
 // drop these apps from the image only — they stay installable on demand for
 // every other command. The list began as the opt-in tool batch in tools.ts; dclint and droast have
