@@ -555,7 +555,7 @@ The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDo
 
 ## Docker CI Cache
 
-PR Docker builds use a separate GitHub Actions cache scope per image variant (`pr-docker-debian` and `pr-docker-alpine`). Smoke tests must read the same scope as their producer. Do not use the default shared `buildkit` scope: parallel image builds overwrite each other's cache.
+PR Docker builds use no GitHub Actions cache. The smoke check runs in the same job as the multi-platform build and loads the amd64 image from the builder that just built it. Do not bring `cache-to: type=gha` back: a cache a PR writes is visible only to that PR, no build step ever came back from it, exporting it took 9-31 minutes per variant, and the repository cache ran past its quota until evictions failed builds.
 
 The Lefthook proxy's `versionCheck.args` uses `--proxy-version` to verify the proxy artifact itself.
 Dependency-aware Docker slices also provision the private upstream. Keep the proxy version probe
