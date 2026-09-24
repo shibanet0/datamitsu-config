@@ -47,6 +47,17 @@ export const cargoGlobs: string[] = ["**/Cargo.toml", "**/Cargo.lock", "**/*.rs"
 // Go sources + module file (govulncheck scans the module).
 export const goGlobs: string[] = ["**/*.go", "**/go.mod"];
 
+// Go sources alone: the Go formatter is handed them one path each.
+export const goSourceGlobs: string[] = ["**/*.go"];
+
+// What `golangci-lint fmt` skips when it walks a module itself. Handed the paths, it formats them.
+export const goFormatExcludeGlobs: string[] = [
+  "**/testdata/**",
+  "**/vendor/**",
+  "**/node_modules/**",
+  "**/.*/**",
+];
+
 export const sqlGlobs: string[] = ["**/*.sql"];
 
 /**

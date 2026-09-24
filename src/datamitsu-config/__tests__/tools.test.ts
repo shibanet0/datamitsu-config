@@ -3,6 +3,31 @@ import { describe, expect, it } from "vitest";
 import { toolsConfig } from "../tools.js";
 
 describe("tools", () => {
+  describe("Go formatting", () => {
+    /**
+     * A formatter that declares no files is left out of editor format-on-save, and a bare
+     * `golangci-lint fmt` walks the whole module. Both halves take the files instead, and at file
+     * granularity one changed file re-runs alone.
+     */
+    it("hands golangci-lint fmt the Go files, one path each", () => {
+      for (const operation of ["fix", "lint"] as const) {
+        const op = toolsConfig["golangci-lint-fmt"]!.operations[operation]!;
+        expect(op.args, operation).toContain("{files}");
+        expect(op.globs, operation).toEqual(["**/*.go"]);
+        expect(op.granularity, operation).toBe("file");
+      }
+    });
+
+    it("keeps out what its own walk skips", () => {
+      for (const operation of ["fix", "lint"] as const) {
+        expect(
+          toolsConfig["golangci-lint-fmt"]!.operations[operation]!.excludeGlobs,
+          operation,
+        ).toEqual(expect.arrayContaining(["**/testdata/**", "**/vendor/**"]));
+      }
+    });
+  });
+
   describe("YAML formatting", () => {
     const isYaml = (glob: string) => /\.ya?ml$|\.y\*ml$/u.test(glob);
 
