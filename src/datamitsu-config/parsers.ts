@@ -23,7 +23,7 @@
  * edit. Both values change on every release even when the parser sources do not, because the
  * module's version string is compiled into it.
  *
- * Pinned to datamitsu unstable-20260923-38e96c5.
+ * Pinned to datamitsu unstable-20260924-e312cf1.
  */
 
 const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
@@ -31,9 +31,9 @@ const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
 // and an unwrapped line here would leave every `task refresh` with a file the formatter rewrites
 // and `validate:parsers` then rejects.
 const PARSERS_OCI_DIGEST =
-  "sha256:f1ea0e7020baede77da0062424d354bf5c1471bd16ccd4d16c7a82dd174f8b6d";
+  "sha256:8cba2b5677096e87bee47822ea79023526777a184e262f52fceb64c100e15a08";
 
-const CORE_PARSER_HASH = "051bceddedf6a4815d95772d33df672f83eeb8b78b1e336609017f07e67d4c38";
+const CORE_PARSER_HASH = "7b05921b30e4a10b4de9f1697c8140b56cdb5a3bb64c3769334f9c71f046268d";
 
 export const parsers: config.MapOfParsers = {
   core: {

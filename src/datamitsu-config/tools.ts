@@ -7,7 +7,9 @@ import {
   dotenvLinterGlobs,
   droastGlobs,
   eslintGlobs,
+  goFormatExcludeGlobs,
   goGlobs,
+  goSourceGlobs,
   helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
@@ -542,12 +544,22 @@ export const toolsConfig: config.MapOfTools = {
   "golangci-lint-fmt": {
     name: "golangci-lint - Go Formatter",
     operations: {
+      /**
+       * The files, not the module. A bare `fmt` walks the whole module — 150 s on datamitsu's 627
+       * files, about 0.25 s each — and declares no files, so the language server leaves it out of
+       * format-on-save. Handed paths at file granularity, a save formats one file and a run only
+       * the files that changed. Handed paths it also formats what its own walk skips, hence the
+       * excludes.
+       */
       fix: {
         app: "golangci-lint",
-        args: ["fmt"],
+        args: ["fmt", "{files}"],
         env: {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
+        excludeGlobs: goFormatExcludeGlobs,
+        globs: goSourceGlobs,
+        granularity: "file",
         priority: fixPriority["golangci-lint-fmt"],
         scope: "per-project",
       },
@@ -561,10 +573,13 @@ export const toolsConfig: config.MapOfTools = {
        */
       lint: {
         app: "golangci-lint",
-        args: ["fmt", "--diff"],
+        args: ["fmt", "--diff", "{files}"],
         env: {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
+        excludeGlobs: goFormatExcludeGlobs,
+        globs: goSourceGlobs,
+        granularity: "file",
         priority: lintPriority["golangci-lint-fmt"],
         scope: "per-project",
       },
