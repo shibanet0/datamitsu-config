@@ -117,7 +117,6 @@ const _fixPriority: Tool[] = [
   "dotenv-linter",
   "shfmt",
   "rustfmt",
-  "droast",
   "toml",
   "tflint",
   "terraform-fmt",
@@ -385,26 +384,12 @@ export const toolsConfig: config.MapOfTools = {
     },
     outputParser: { module: "core", parser: "dotenv_linter" },
   },
+  // Lint only, and only in CI: since droast 1.5.0 a run takes seconds on every check, and a fix
+  // costs two full lints on top. Measurements and the way back:
+  // docs/backlog/droast-lint-takes-seconds-on-every-check.md
   droast: {
     name: "dockerfile-roast - opinionated Dockerfile linter",
     operations: {
-      // Only droast's safe fixers (instruction casing, EXPOSE protocol case, AS casing, a redundant
-      // --platform). The run reports nothing and fails nothing: every finding belongs to lint.
-      fix: {
-        app: "droast",
-        args: [
-          "-c",
-          "{managedConfig:droast.toml}",
-          "--fix",
-          "--no-fail",
-          "--shellcheck",
-          "off",
-          "{root}",
-        ],
-        globs: droastGlobs,
-        priority: fixPriority.droast,
-        scope: "repository",
-      },
       // Repository scope (not per-file like hadolint): droast resolves each Dockerfile's build
       // context from compose and bake files, so it runs once from the git root. A Dockerfile
       // linted on its own is measured against its own directory and reports a false DF033.
@@ -433,6 +418,9 @@ export const toolsConfig: config.MapOfTools = {
     // droast exits 1 with "No Dockerfile(s) found" before it lints anything, which no --no-fail
     // covers. The project type is the gate: it is exactly "this repository has a Dockerfile".
     projectTypes: ["docker-project"],
+    // Locally: `CI=true dm lint --tools droast`.
+    skip: !isCI,
+    skipReason: "runs in CI only",
   },
   "editorconfig-checker": {
     name: "EditorConfig Checker",
