@@ -78,6 +78,9 @@ jobs:
         uses: docker/setup-buildx-action@v4
         with:
           buildkitd-config: docker/buildkitd.toml
+          # Removing the builder's multi-gigabyte state took up to 8 min and then timed out;
+          # the runner is thrown away after the job anyway.
+          cleanup: false
       # No GitHub Actions cache: a cache written by a PR is visible only to that PR, no build
       # step ever came back from it, and exporting it took 9-31 min per variant.
       - name: Build Docker image (no push)
