@@ -256,7 +256,8 @@ export const toolsConfig: config.MapOfTools = {
     name: "blint - binary linter & SBOM generator",
     operations: {
       // Inspects compiled binaries, not source — point `-i` at build output
-      // when enabling. Network scanner → enable as `skip: !isCI`.
+      // when enabling. Offline: the blintdb download happens only with
+      // `--use-blintdb` or `USE_BLINTDB`, neither of which is passed here.
       lint: {
         app: "blint",
         args: ["--no-banner", "--no-error", "-i", "{target}", "-o", "{toolCache}/blint"],

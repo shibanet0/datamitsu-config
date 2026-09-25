@@ -295,6 +295,22 @@ Individual tools (ESLint, Prettier, cspell, etc.) can be customized through thei
 - `cspell.json` — cspell dictionary and settings
 - `knip.config.js` — Knip unused code configuration
 
+Configs that only their tool reads — gitleaks, yamlfmt, yamllint, hadolint and a few more — are not
+written into your repository: `dm init` keeps them in `.datamitsu/configs/`. To change one, name its
+tool in your `datamitsu.config.*` and reconcile it into the repository:
+
+```javascript
+function getConfig(config) {
+  return { ...config, ejectConfigs: ["gitleaks"] };
+}
+
+globalThis.getConfig = getConfig;
+```
+
+```bash
+pnpm dm config reconcile --tools gitleaks
+```
+
 Naming checks are opt-in and split between two tools: alint checks file names, ls-lint checks
 directory names. Enable either with `tools["alint"].skip: false` or `tools["ls-lint"].skip: false`,
 then run `pnpm dm init` and `pnpm dm config reconcile` so both the managed base in `.datamitsu/`

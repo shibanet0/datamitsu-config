@@ -8,10 +8,10 @@ This skill regenerates documentation by extracting information from the datamits
 
 It generates:
 
-1. **Apps documentation** (`docs/reference/apps.md`) - List of 81+ managed applications
-2. **Tools documentation** (`docs/reference/tools.md`) - List of 15 configured tools with operations
-3. **Project Types documentation** (`docs/reference/project-types.md`) - List of 8 project type detectors
-4. **Managed Configs documentation** (`docs/reference/managed-configs.md`) - List of files written by `dm config reconcile`
+1. **Apps documentation** (`website/reference/apps.md`) - List of 81+ managed applications
+2. **Tools documentation** (`website/reference/tools.md`) - List of 15 configured tools with operations
+3. **Project Types documentation** (`website/reference/project-types.md`) - List of 8 project type detectors
+4. **Managed Configs documentation** (`website/reference/managed-configs.md`) - List of files written by `dm config reconcile`
 
 ## When to Use This Skill
 
@@ -39,10 +39,10 @@ The skill executes the following steps:
 
 ## Generated Files
 
-- `docs/reference/apps.md` - Auto-generated from `pnpm dm config show` (apps field)
-- `docs/reference/tools.md` - Auto-generated from `pnpm dm config show` (tools field)
-- `docs/reference/project-types.md` - Auto-generated from `pnpm dm config show` (projectTypes field)
-- `docs/reference/managed-configs.md` - Auto-generated from `pnpm dm config show` (managedConfigs field)
+- `website/reference/apps.md` - Auto-generated from `pnpm dm config show` (apps field)
+- `website/reference/tools.md` - Auto-generated from `pnpm dm config show` (tools field)
+- `website/reference/project-types.md` - Auto-generated from `pnpm dm config show` (projectTypes field)
+- `website/reference/managed-configs.md` - Auto-generated from `pnpm dm config show` (managedConfigs field)
 
 ## Integration
 

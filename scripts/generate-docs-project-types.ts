@@ -76,7 +76,7 @@ export function generateProjectTypesMarkdown(types: ProjectTypeDocInfo[]): strin
 }
 
 export async function main(): Promise<void> {
-  const outputPath = "docs/reference/project-types.md";
+  const outputPath = "website/reference/project-types.md";
   const jsonStr = executeConfigShow();
   const config = parseConfigJson(jsonStr);
   const types = extractProjectTypesInfo(config);

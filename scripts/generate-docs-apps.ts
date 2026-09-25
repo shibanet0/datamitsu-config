@@ -239,7 +239,7 @@ export function generateMarkdownTable(apps: AppInfo[]): string {
 }
 
 export async function main(): Promise<void> {
-  const outputPath = "docs/reference/apps.md";
+  const outputPath = "website/reference/apps.md";
   const jsonStr = executeConfigShow();
   const config = parseConfigJson(jsonStr);
   const apps = extractAllApps(config);

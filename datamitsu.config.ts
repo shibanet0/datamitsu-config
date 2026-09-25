@@ -187,7 +187,7 @@ pre-commit:
       stage_fixed: true
     docs-generate:
       priority: 30
-      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/managed-configs.md"
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add website/reference/apps.md website/reference/tools.md website/reference/project-types.md website/reference/managed-configs.md"
       stage_fixed: true
     datamitsu-check:
       priority: 40

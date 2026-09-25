@@ -1,6 +1,6 @@
 ---
 name: sync-tsconfig-upstream
-description: Reconcile this repo's TypeScript presets and guide against the upstream project they are based on (0x80/typescript-config). Reads the pinned commit from docs/reference/tsconfig.md ("Based on" line), makes a fresh clone, diffs the pinned commit against upstream HEAD, deeply analyses what changed and WHY (upstream commit messages, upstream docs, TS release notes), then proposes a plan to update tsconfig/*.json presets, the docs/reference/tsconfig.md guide, and the shared setup-tsconfig skill — waiting for explicit human confirmation before applying anything, and bumping the pinned commit on apply. Use whenever the user asks to sync/update/refresh the tsconfig presets from upstream, check for upstream TypeScript-config changes, or "see what 0x80 changed".
+description: Reconcile this repo's TypeScript presets and guide against the upstream project they are based on (0x80/typescript-config). Reads the pinned commit from website/reference/tsconfig.md ("Based on" line), makes a fresh clone, diffs the pinned commit against upstream HEAD, deeply analyses what changed and WHY (upstream commit messages, upstream docs, TS release notes), then proposes a plan to update tsconfig/*.json presets, the website/reference/tsconfig.md guide, and the shared setup-tsconfig skill — waiting for explicit human confirmation before applying anything, and bumping the pinned commit on apply. Use whenever the user asks to sync/update/refresh the tsconfig presets from upstream, check for upstream TypeScript-config changes, or "see what 0x80 changed".
 ---
 
 # Sync TypeScript Config From Upstream
@@ -8,7 +8,7 @@ description: Reconcile this repo's TypeScript presets and guide against the upst
 This repo maintains a **curated, intentionally divergent fork** of the ideas in
 [`0x80/typescript-config`](https://github.com/0x80/typescript-config). It is **not a mirror**:
 file names differ, the preset set is smaller, and this repo has its own philosophy
-(explicit configuration, bundler-centric, no path aliases — see `docs/reference/tsconfig.md`).
+(explicit configuration, bundler-centric, no path aliases — see `website/reference/tsconfig.md`).
 
 Your job in this skill is to **reconcile**, not copy. You detect what moved upstream since the
 pinned commit, understand _why_ the upstream author made each change, and then help the human
@@ -25,12 +25,12 @@ Edit only these. Everything else is generated from them.
 | File                                           | Role                                                                                                                                  |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `tsconfig/*.json`                              | The actual presets. Published directly as `@shibanet0/datamitsu-config/tsconfig/*`. No build step.                                    |
-| `docs/reference/tsconfig.md`                   | The human-facing guide **and** the pinned upstream commit (the "Based on" line at the bottom).                                        |
+| `website/reference/tsconfig.md`                | The human-facing guide **and** the pinned upstream commit (the "Based on" line at the bottom).                                        |
 | `skills-chunks/setup-tsconfig/instructions.md` | Source of the shared `setup-tsconfig` skill (the one distributed to consumer projects). Edit only if preset decision _rules_ changed. |
 
 **Never hand-edit these — they are regenerated:**
 
-- `src/datamitsu-config/tsconfig.md.ts` ← `docs/reference/tsconfig.md` (via `node scripts/gen-tsconfig-md.ts`)
+- `src/datamitsu-config/tsconfig.md.ts` ← `website/reference/tsconfig.md` (via `node scripts/gen-tsconfig-md.ts`)
 - `src/datamitsu-config/skills.ts` ← `skills-chunks/` (via `node scripts/gen-skills.ts`)
 - `.datamitsu/tsconfig.md` and anything else under `.datamitsu/` (rebuilt by `pnpm dm init`)
 
@@ -49,7 +49,7 @@ it exists so an upstream change in one of these areas is flagged as colliding wi
 **`base.json` — the most divergent preset:**
 
 - **No path aliases.** Upstream `base.json` defines `compilerOptions.paths` (`~/*`, `@/*`); this repo
-  **removed them** on purpose (see the "Path Aliases" section of `docs/reference/tsconfig.md`). **Never
+  **removed them** on purpose (see the "Path Aliases" section of `website/reference/tsconfig.md`). **Never
   re-introduce `paths`** — if upstream changes/extends its aliases, that is a no-op for this repo.
 - **Explicit-options set.** This repo adds a large set of options on top of upstream's leaner base, per
   the "explicit configuration" philosophy. Keep them even if upstream reformats or relies on TS defaults:
@@ -140,7 +140,7 @@ variance). Never present a 7 upgrade as a drop-in swap; it surfaces real type er
 
 ## Step 1 — Read the pin
 
-1. Read `docs/reference/tsconfig.md`. Find the **"Based on"** section near the bottom. It looks like:
+1. Read `website/reference/tsconfig.md`. Find the **"Based on"** section near the bottom. It looks like:
 
    ```markdown
    [@codecompose/typescript-config](https://github.com/0x80/typescript-config/commit/<sha>) by 0x80.
@@ -152,7 +152,7 @@ variance). Never present a 7 upgrade as a drop-in swap; it surfaces real type er
 
 3. If the line has no `/commit/<sha>` (the link points at the repo root, un-pinned), tell the user:
 
-   > The "Based on" line in `docs/reference/tsconfig.md` is not pinned to a commit. I can't compute a diff without a baseline. Pin it to a known-good upstream commit first (or tell me which commit to treat as the baseline), then re-run.
+   > The "Based on" line in `website/reference/tsconfig.md` is not pinned to a commit. I can't compute a diff without a baseline. Pin it to a known-good upstream commit first (or tell me which commit to treat as the baseline), then re-run.
 
    Stop and ask which commit to use as the baseline if they want to proceed anyway.
 
@@ -249,7 +249,7 @@ Cross-check every proposed adopt/adapt against the repo's own rules:
 - The **"Known local divergences"** section above — if an upstream change touches one of those areas
   (especially anything re-introducing `paths`, or weakening the explicit-options set in `base.json`),
   it collides with a deliberate choice → mark it NEEDS DECISION, never auto-adopt.
-- The "Philosophy" and "Path Aliases" sections of `docs/reference/tsconfig.md`.
+- The "Philosophy" and "Path Aliases" sections of `website/reference/tsconfig.md`.
 - `CLAUDE.md` / `AGENTS.md` (e.g. the goja runtime constraint does **not** apply to consumer presets,
   but the "one config per tool / explicit over implicit" ethos does).
 - The existing preset shapes in `tsconfig/*.json` (they use `${configDir}`, alphabetised keys, a
@@ -287,7 +287,7 @@ Commits to reconcile: <N>
 ### Proposed edits
 
 - `tsconfig/<preset>.json`: <concrete change>
-- `docs/reference/tsconfig.md`: <table/section/Common-Mistakes updates> + bump "Based on" pin to <new-sha>
+- `website/reference/tsconfig.md`: <table/section/Common-Mistakes updates> + bump "Based on" pin to <new-sha>
 - `skills-chunks/setup-tsconfig/instructions.md`: <only if decision rules changed; else "no change">
 
 ### Deliberately NOT adopting (recorded so they don't resurface)
@@ -320,7 +320,7 @@ Rules for this step:
    `display`, alphabetised `compilerOptions`, `${configDir}` paths, explicit option lists, `extends: "./base.json"`
    for non-base presets. If adopting a brand-new preset, create `tsconfig/<name>.json` and add it to the
    guide's tables.
-2. **Guide.** Edit `docs/reference/tsconfig.md`:
+2. **Guide.** Edit `website/reference/tsconfig.md`:
    - Update the "Quick Selection" table, "Configuration Descriptions", and "Common Mistakes" to match.
    - Update "Requirements" / "Migration" if the upstream change implies a new minimum TS version.
    - **Bump the "Based on" line** to the new pin: replace the old commit URL with
@@ -361,7 +361,7 @@ Skipped (recorded): <count> — see plan above
 Verify:
 
 - pnpm exec tsc --noEmit (or this repo's check task) — confirm presets still type-check
-- git diff docs/reference/tsconfig.md tsconfig/ skills-chunks/ — review before commit
+- git diff website/reference/tsconfig.md tsconfig/ skills-chunks/ — review before commit
 ```
 
 If you can run the type check non-destructively, offer to. Report failures with their output verbatim;

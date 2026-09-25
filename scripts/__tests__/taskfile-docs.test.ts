@@ -13,7 +13,7 @@ describe("Taskfile.yaml docs tasks", () => {
   it("should contain docs:generate:tools task with desc", () => {
     expect(taskfileContent).toContain("docs:generate:tools:");
     expect(taskfileContent).toMatch(
-      /docs:generate:tools:[\s\S]*?desc:.*Generate docs\/reference\/tools\.md/,
+      /docs:generate:tools:[\s\S]*?desc:.*Generate website\/reference\/tools\.md/,
     );
   });
 

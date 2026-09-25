@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { generatedSourceBanner } from "../tsdown.config-banner.ts";
 
-const sourceFile = path.join(import.meta.dirname, "../docs/reference/tsconfig.md");
+const sourceFile = path.join(import.meta.dirname, "../website/reference/tsconfig.md");
 const outFile = path.join(import.meta.dirname, "../src/datamitsu-config/tsconfig.md.ts");
 
 // Read source
