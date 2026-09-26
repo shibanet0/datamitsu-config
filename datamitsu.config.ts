@@ -2,6 +2,20 @@
 
 const _getConfig = (config: config.Config): config.Config => ({
   ...config,
+  // The configuration-author guide is for agents changing this repository's configuration, so it is
+  // linked from this root config and never from the config the package publishes to consumers.
+  bundles: {
+    ...config.bundles,
+    "config-author-guide": {
+      files: {
+        "datamitsu-config-author.md":
+          config.sharedStorage?.["datamitsu-config-author-prompt"] ?? "",
+      },
+      links: {
+        "ai/agents/datamitsu-config-author.md": "datamitsu-config-author.md",
+      },
+    },
+  },
   // These carry rules of this repository's own, so they stay in the repository; every other
   // ejectable config lives in .datamitsu/configs/.
   ejectConfigs: ["alint", "droast", "ls-lint", "yamlfmt"],
@@ -245,7 +259,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260926.aa52e62",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260926.c963f6f",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
