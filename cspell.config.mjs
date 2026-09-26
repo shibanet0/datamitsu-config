@@ -205,6 +205,7 @@ export default defineConfig((prev) => {
     "codeberg",
     "gitea",
     "blintdb",
+    "btrfs",
   ];
 
   return {

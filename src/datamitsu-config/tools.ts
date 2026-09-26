@@ -1351,22 +1351,24 @@ export const toolsConfig: config.MapOfTools = {
   },
   "terragrunt-fmt": {
     name: "Terragrunt HCL Format",
+    // `hclfmt` is the pre-1.0 spelling; the pinned build takes `hcl fmt`, which also has the
+    // `--check` mode the lint operation needs. One file at a time through `--file`: run on a
+    // directory, `hcl fmt` walks it itself and reformats `.hcl` files under `node_modules/`,
+    // `vendor/`, `.terraform/` and anything else the project's ignore rules would have excluded.
     operations: {
-      // `hclfmt` is the pre-1.0 spelling; the pinned build takes `hcl fmt`, which also has the
-      // `--check` mode the lint operation needs.
       fix: {
         app: "terragrunt",
-        args: ["hcl", "fmt"],
+        args: ["hcl", "fmt", "--file", "{file}"],
         globs: ["**/*.hcl"],
         priority: fixPriority["terragrunt-fmt"],
-        scope: "repository",
+        scope: "per-file",
       },
       lint: {
         app: "terragrunt",
-        args: ["hcl", "fmt", "--check", "--diff"],
+        args: ["hcl", "fmt", "--check", "--diff", "--file", "{file}"],
         globs: ["**/*.hcl"],
         priority: lintPriority["terragrunt-fmt"],
-        scope: "repository",
+        scope: "per-file",
       },
     },
     projectTypes: ["terragrunt-project"],

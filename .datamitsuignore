@@ -1,8 +1,13 @@
 # One SCA scanner, not four. grype, trivy and bearer each bring their own vulnerability database and
-# their own walk of the tree, over the same pnpm lockfile that osv-scanner — which stays on, and
-# reports nothing today — already covers. A project that needs container or SBOM scanning enables
-# the one that answers that question, in its own config, rather than paying for three in CI.
-**/*: grype, trivy, bearer
+# their own walk of the tree, over the same pnpm lockfile that osv-scanner covers. A project that
+# needs container or SBOM scanning enables the one that answers that question, in its own config,
+# rather than paying for three in CI.
+#
+# osv-scanner is off here as well, for now. Until 2.6.0 it read only the first document of a pnpm 11+
+# lockfile, pnpm's own packages, and passed by missing the rest; it now reports 43 known
+# vulnerabilities in this repository's dependencies. See
+# docs/backlog/dependencies-carry-known-vulnerabilities-with-osv-scanner-off.md.
+**/*: grype, trivy, bearer, osv-scanner
 
 # Generated layer→subtree maps (devtools dockerfile --emit-oci-map): raw
 # generator output must stay byte-stable for the Dockerfile drift gate.

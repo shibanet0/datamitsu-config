@@ -65,6 +65,11 @@
       "kind": "uv-python"
     },
     {
+      "subtree": ".apps/go/dockle",
+      "kind": "app",
+      "app": "dockle"
+    },
+    {
       "subtree": ".apps/bun/eslint",
       "kind": "app",
       "app": "eslint"
@@ -73,6 +78,15 @@
       "subtree": ".apps/go/govulncheck",
       "kind": "app",
       "app": "govulncheck"
+    },
+    {
+      "subtree": ".apps/uv/httpstat",
+      "kind": "app",
+      "app": "httpstat"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
     },
     {
       "subtree": ".apps/node/knip",
@@ -165,6 +179,11 @@
     {
       "subtree": ".uv/python",
       "kind": "uv-python"
+    },
+    {
+      "subtree": ".apps/go/skywalking-eyes",
+      "kind": "app",
+      "app": "skywalking-eyes"
     },
     {
       "subtree": ".apps/node/slidev",
@@ -279,6 +298,11 @@
       "app": "dasel"
     },
     {
+      "subtree": ".bin/dive",
+      "kind": "binary",
+      "app": "dive"
+    },
+    {
       "subtree": ".bin/dm-internal-lefthook-upstream",
       "kind": "binary",
       "app": "dm-internal-lefthook-upstream"
@@ -327,6 +351,11 @@
       "subtree": ".bin/goose",
       "kind": "binary",
       "app": "goose"
+    },
+    {
+      "subtree": ".bin/grpcurl",
+      "kind": "binary",
+      "app": "grpcurl"
     },
     {
       "subtree": ".bin/grype",

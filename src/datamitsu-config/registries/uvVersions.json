@@ -24,6 +24,11 @@
     "packageName": "detect-secrets",
     "version": "1.5.0"
   },
+  "httpstat": {
+    "description": "curl statistics made simple",
+    "packageName": "httpstat",
+    "version": "2.0.0"
+  },
   "mypy": {
     "description": "Optional static typing for Python",
     "packageName": "mypy",

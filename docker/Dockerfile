@@ -68,6 +68,10 @@ FROM rt-uv AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install detect-secrets
 
+FROM rt-go AS app-dockle
+COPY --link --from=config-split /slices/app-dockle.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dockle
+
 FROM rt-bun AS app-eslint
 COPY --link --from=config-split /slices/app-eslint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
@@ -75,6 +79,10 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
 FROM rt-go AS app-govulncheck
 COPY --link --from=config-split /slices/app-govulncheck.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install govulncheck
+
+FROM rt-uv AS app-httpstat
+COPY --link --from=config-split /slices/app-httpstat.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install httpstat
 
 FROM rt-node AS app-knip
 COPY --link --from=config-split /slices/app-knip.js /opt/datamitsu-config/datamitsu.config.js
@@ -139,6 +147,10 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install quickty
 FROM rt-uv AS app-semgrep
 COPY --link --from=config-split /slices/app-semgrep.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
+
+FROM rt-go AS app-skywalking-eyes
+COPY --link --from=config-split /slices/app-skywalking-eyes.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install skywalking-eyes
 
 FROM rt-node AS app-slidev
 COPY --link --from=config-split /slices/app-slidev.js /opt/datamitsu-config/datamitsu.config.js
@@ -237,6 +249,10 @@ FROM dm-build AS app-dasel
 COPY --link --from=config-split /slices/app-dasel.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dasel
 
+FROM dm-build AS app-dive
+COPY --link --from=config-split /slices/app-dive.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dive
+
 FROM dm-build AS app-dm-internal-lefthook-upstream
 COPY --link --from=config-split /slices/app-dm-internal-lefthook-upstream.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dm-internal-lefthook-upstream
@@ -276,6 +292,10 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golangc
 FROM dm-build AS app-goose
 COPY --link --from=config-split /slices/app-goose.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install goose
+
+FROM dm-build AS app-grpcurl
+COPY --link --from=config-split /slices/app-grpcurl.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install grpcurl
 
 FROM dm-build AS app-grype
 COPY --link --from=config-split /slices/app-grype.js /opt/datamitsu-config/datamitsu.config.js
@@ -464,8 +484,11 @@ COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-
 COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-dockle /dm/store/.apps/go/dockle /dm/store/.apps/go/dockle
 COPY --link --from=app-eslint /dm/store/.apps/bun/eslint /dm/store/.apps/bun/eslint
 COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.apps/go/govulncheck
+COPY --link --from=app-httpstat /dm/store/.apps/uv/httpstat /dm/store/.apps/uv/httpstat
+COPY --link --from=app-httpstat /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-knip /dm/store/.apps/node/knip /dm/store/.apps/node/knip
 COPY --link --from=app-ktfmt /dm/store/.apps/jvm/ktfmt /dm/store/.apps/jvm/ktfmt
 COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktlint
@@ -485,6 +508,7 @@ COPY --link --from=app-prettier /dm/store/.apps/node/prettier /dm/store/.apps/no
 COPY --link --from=app-quicktype /dm/store/.apps/node/quicktype /dm/store/.apps/node/quicktype
 COPY --link --from=app-semgrep /dm/store/.apps/uv/semgrep /dm/store/.apps/uv/semgrep
 COPY --link --from=app-semgrep /dm/store/.uv/python /dm/store/.uv/python
+COPY --link --from=app-skywalking-eyes /dm/store/.apps/go/skywalking-eyes /dm/store/.apps/go/skywalking-eyes
 COPY --link --from=app-slidev /dm/store/.apps/node/slidev /dm/store/.apps/node/slidev
 COPY --link --from=app-sort-keys /dm/store/.apps/bun/sort-keys /dm/store/.apps/bun/sort-keys
 COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json /dm/store/.apps/node/sort-package-json
@@ -512,6 +536,7 @@ COPY --link --from=app-cosign /dm/store/.bin/cosign /dm/store/.bin/cosign
 COPY --link --from=app-crane /dm/store/.bin/crane /dm/store/.bin/crane
 COPY --link --from=app-d2 /dm/store/.bin/d2 /dm/store/.bin/d2
 COPY --link --from=app-dasel /dm/store/.bin/dasel /dm/store/.bin/dasel
+COPY --link --from=app-dive /dm/store/.bin/dive /dm/store/.bin/dive
 COPY --link --from=app-dm-internal-lefthook-upstream /dm/store/.bin/dm-internal-lefthook-upstream /dm/store/.bin/dm-internal-lefthook-upstream
 COPY --link --from=app-dotenv-linter /dm/store/.bin/dotenv-linter /dm/store/.bin/dotenv-linter
 COPY --link --from=app-editorconfig-checker /dm/store/.bin/editorconfig-checker /dm/store/.bin/editorconfig-checker
@@ -522,6 +547,7 @@ COPY --link --from=app-gitleaks /dm/store/.bin/gitleaks /dm/store/.bin/gitleaks
 COPY --link --from=app-golang-migrate /dm/store/.bin/golang-migrate /dm/store/.bin/golang-migrate
 COPY --link --from=app-golangci-lint /dm/store/.bin/golangci-lint /dm/store/.bin/golangci-lint
 COPY --link --from=app-goose /dm/store/.bin/goose /dm/store/.bin/goose
+COPY --link --from=app-grpcurl /dm/store/.bin/grpcurl /dm/store/.bin/grpcurl
 COPY --link --from=app-grype /dm/store/.bin/grype /dm/store/.bin/grype
 COPY --link --from=app-hadolint /dm/store/.bin/hadolint /dm/store/.bin/hadolint
 COPY --link --from=app-harper-cli /dm/store/.bin/harper-cli /dm/store/.bin/harper-cli
