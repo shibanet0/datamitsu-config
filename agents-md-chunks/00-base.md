@@ -59,7 +59,7 @@ Worktrees are managed with `wt`, which datamitsu installs. Never run `git worktr
 pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
 ```
 
-Activity markers in `wt list`, and routing of a harness's own worktree creation through `wt`, come from an optional plugin that datamitsu does not install. Suggest `wt config plugins <claude|codex|opencode> install` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+Activity markers in `wt list`, and routing of a harness's own worktree creation through `wt`, come from an optional plugin that datamitsu does not install. Suggest `wt config plugins <claude|codex|opencode|pi|omp> install` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
 
 **Commit message format** (Conventional Commits):
 

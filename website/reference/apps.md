@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **113 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **112 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **113 apps** across multiple runtimes (binary, bun, n
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (65 apps): actionlint, age, air, etc.
+- **Utilities** (64 apps): actionlint, age, air, etc.
 
 ## Apps Reference
 
@@ -128,7 +128,6 @@ This configuration manages **113 apps** across multiple runtimes (binary, bun, n
 | typos                         | binary  | [Info](https://github.com/crate-ci/typos){:target="_blank"}                                                                             | Source code spell checker                                                                                                                                                                                 |
 | typst                         | binary  | [Info](https://github.com/typst/typst){:target="_blank"}                                                                                | A markup-based typesetting system that is powerful and easy to learn.                                                                                                                                     |
 | typstyle                      | binary  | [Info](https://github.com/typstyle-rs/typstyle){:target="_blank"}                                                                       | Beautiful and reliable typst code formatter                                                                                                                                                               |
-| unfuck-ai-comments            | binary  | [Info](https://github.com/umputun/unfuck-ai-comments){:target="_blank"}                                                                 | converts all comments inside go functions to lowercase                                                                                                                                                    |
 | utpm                          | binary  | [Info](https://github.com/typst-community/utpm){:target="_blank"}                                                                       | A package manager for local and remote Typst packages.                                                                                                                                                    |
 | vacuum                        | binary  | [Info](https://github.com/daveshanley/vacuum){:target="_blank"}                                                                         | vacuum is the worlds fastest and most versatile OpenAPI, AsyncAPI & JSON Schema linter, docs generator and toolkit. It tears through API specs at light speed. 100% compatible with Spectral rulesets,... |
 | vale                          | binary  | [Info](https://github.com/vale-cli/vale){:target="_blank"}                                                                              | :pencil: A markup-aware linter for prose built with speed and extensibility in mind.                                                                                                                      |

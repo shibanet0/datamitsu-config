@@ -56,13 +56,6 @@ const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApp
       accumulator[key].versionCheck = { args: ["version"] };
     }
 
-    // harper-cli's binary self-versions independently (reports 0.1.0) of the
-    // harper monorepo release tag it ships from, so a tag-vs-output check is
-    // meaningless — skip it.
-    if (key === "harper-cli") {
-      accumulator[key].versionCheck = { disabled: true };
-    }
-
     return accumulator;
   },
   {},

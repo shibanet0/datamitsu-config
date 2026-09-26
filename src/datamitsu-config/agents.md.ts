@@ -109,7 +109,7 @@ Worktrees are managed with \`wt\`, which datamitsu installs. Never run \`git wor
 pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
 \`\`\`
 
-Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode|pi|omp> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
 
 **Commit message format** (Conventional Commits):
 
@@ -504,7 +504,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "dc82caf6a6f273b7b87d967dc8ee3d46dadf7f02f02663bf15b9aae0a307bb25"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "99f787a9542bbe75d2214c94b20525b3b85e1c0bd2c209d622b5416288058db4"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "1ddad93a578148375649488c794902657f4542d55146687b2eb518cd3d2afe11"; // prettier-ignore

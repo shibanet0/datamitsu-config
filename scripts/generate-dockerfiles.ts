@@ -103,7 +103,6 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "tflint",
       "trivy",
       "trufflehog",
-      "unfuck-ai-comments",
       "vacuum",
       "yamlfmt",
       "yq",

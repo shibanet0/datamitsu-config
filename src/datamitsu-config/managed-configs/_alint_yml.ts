@@ -2,8 +2,9 @@ import { ALINT_MANAGED_FILE } from "../alint-defaults";
 
 // alint (repository-structure linter) config. Extends the bundled `oss-baseline` ruleset and the
 // managed naming rules in .datamitsu/alint-managed.yml; layer more bundled sets (rust, node,
-// python, go, ci/github-actions, …) or add your own rules. A rule redefined here by `id`
-// overrides the managed one.
+// python, go, …) or add your own rules. A rule redefined here by `id` overrides the managed one.
+// Not ci/github-actions: actionlint, pinact and zizmor own workflows, and that set's pinning
+// rule contradicts zizmor on `uses: ./…` versus `uses: $/…`.
 const OSS_BASELINE = "alint://bundled/oss-baseline@v1";
 
 export const alintYml: config.ManagedConfig = {

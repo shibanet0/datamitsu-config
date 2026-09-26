@@ -514,11 +514,6 @@
       "app": "typstyle"
     },
     {
-      "subtree": ".bin/unfuck-ai-comments",
-      "kind": "binary",
-      "app": "unfuck-ai-comments"
-    },
-    {
       "subtree": ".bin/utpm",
       "kind": "binary",
       "app": "utpm"

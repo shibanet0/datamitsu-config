@@ -206,7 +206,6 @@ const words: string[] = [
   "typst",
   "typstyle",
   "umputun",
-  "unfuck",
   "unlighthouse",
   "unocss",
   "unpushed",

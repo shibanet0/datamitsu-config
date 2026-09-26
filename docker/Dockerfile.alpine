@@ -361,10 +361,6 @@ FROM dm-build AS app-typst
 COPY --link --from=config-split /slices/app-typst.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typst
 
-FROM dm-build AS app-unfuck-ai-comments
-COPY --link --from=config-split /slices/app-unfuck-ai-comments.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install unfuck-ai-comments
-
 FROM dm-build AS app-vacuum
 COPY --link --from=config-split /slices/app-vacuum.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install vacuum
@@ -491,7 +487,6 @@ COPY --link --from=app-trivy /dm/store/.bin/trivy /dm/store/.bin/trivy
 COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/trufflehog
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
-COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments
 COPY --link --from=app-vacuum /dm/store/.bin/vacuum /dm/store/.bin/vacuum
 COPY --link --from=app-wt /dm/store/.bin/wt /dm/store/.bin/wt
 COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh

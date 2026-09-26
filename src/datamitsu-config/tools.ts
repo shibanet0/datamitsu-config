@@ -948,6 +948,9 @@ export const toolsConfig: config.MapOfTools = {
   },
   oxlint: {
     name: "Oxlint",
+    // `--format=default` is pinned because oxlint picks its format from the environment: `github`
+    // (`::error` workflow commands) under GITHUB_ACTIONS, `agent` when an AI coding agent runs it.
+    // The same `dm check` would otherwise print three different reports.
     operations: {
       fix: {
         app: "oxlint",
@@ -955,6 +958,7 @@ export const toolsConfig: config.MapOfTools = {
           "--disable-nested-config",
           "-c",
           "{managedConfig:oxlint.config.mts}",
+          "--format=default",
           "--fix",
           "{files}",
         ],
@@ -964,7 +968,13 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{managedConfig:oxlint.config.mts}", "{files}"],
+        args: [
+          "--disable-nested-config",
+          "-c",
+          "{managedConfig:oxlint.config.mts}",
+          "--format=default",
+          "{files}",
+        ],
         globs: oxlintGlobs,
         priority: lintPriority.oxlint,
         scope: "per-project",
@@ -974,16 +984,21 @@ export const toolsConfig: config.MapOfTools = {
   },
   pinact: {
     name: "pinact - pin GitHub Actions to commit SHAs",
+    // pinact adds `::error`/`::notice` workflow commands and forces colour when GITHUB_ACTIONS is
+    // "true", and no flag turns that off (`--format` only selects a machine-readable report), so
+    // the variable is overridden for its operations. It reads nothing else from it.
     operations: {
       fix: {
         app: "pinact",
         args: ["--config", "{managedConfig:.pinact.yaml}", "run", "{files}"],
+        env: { GITHUB_ACTIONS: "false" },
         globs: actionlintGlobs,
         scope: "repository",
       },
       lint: {
         app: "pinact",
         args: ["--config", "{managedConfig:.pinact.yaml}", "run", "--check", "{files}"],
+        env: { GITHUB_ACTIONS: "false" },
         globs: actionlintGlobs,
         scope: "repository",
       },
@@ -1231,17 +1246,19 @@ export const toolsConfig: config.MapOfTools = {
   },
   sqruff: {
     name: "sqruff - SQL linter & formatter",
+    // `--format human` is pinned: under GITHUB_ACTIONS sqruff switches to `::error` workflow
+    // commands on stdout, in `fix` as well as `lint`.
     operations: {
       fix: {
         app: "sqruff",
-        args: ["fix", "--config", "{managedConfig:.sqruff}", "{files}"],
+        args: ["fix", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        args: ["lint", "--config", "{managedConfig:.sqruff}", "{files}"],
+        args: ["lint", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",

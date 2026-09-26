@@ -454,11 +454,6 @@
       "app": "typst"
     },
     {
-      "subtree": ".bin/unfuck-ai-comments",
-      "kind": "binary",
-      "app": "unfuck-ai-comments"
-    },
-    {
       "subtree": ".bin/vacuum",
       "kind": "binary",
       "app": "vacuum"

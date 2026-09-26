@@ -409,10 +409,6 @@ FROM dm-build AS app-typstyle
 COPY --link --from=config-split /slices/app-typstyle.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install typstyle
 
-FROM dm-build AS app-unfuck-ai-comments
-COPY --link --from=config-split /slices/app-unfuck-ai-comments.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install unfuck-ai-comments
-
 FROM dm-build AS app-utpm
 COPY --link --from=config-split /slices/app-utpm.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install utpm
@@ -555,7 +551,6 @@ COPY --link --from=app-trufflehog /dm/store/.bin/trufflehog /dm/store/.bin/truff
 COPY --link --from=app-typos /dm/store/.bin/typos /dm/store/.bin/typos
 COPY --link --from=app-typst /dm/store/.bin/typst /dm/store/.bin/typst
 COPY --link --from=app-typstyle /dm/store/.bin/typstyle /dm/store/.bin/typstyle
-COPY --link --from=app-unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments /dm/store/.bin/unfuck-ai-comments
 COPY --link --from=app-utpm /dm/store/.bin/utpm /dm/store/.bin/utpm
 COPY --link --from=app-vacuum /dm/store/.bin/vacuum /dm/store/.bin/vacuum
 COPY --link --from=app-vale /dm/store/.bin/vale /dm/store/.bin/vale
