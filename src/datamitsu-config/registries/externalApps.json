@@ -2,6 +2,7 @@
   "apps": {
     "helm": {
       "binaryPathTemplate": "{os}-{arch}/helm{binExt}",
+      "checksumUrlTemplate": "{url}.sha256sum",
       "contentType": "tar.gz",
       "contentTypeMap": {
         "windows": "zip"
@@ -11,6 +12,7 @@
         "default": ".tar.gz",
         "windows": ".zip"
       },
+      "githubRepo": "helm/helm",
       "latestVersionType": "github-release",
       "latestVersionUrl": "https://api.github.com/repos/helm/helm/releases/latest",
       "platforms": {
@@ -29,7 +31,7 @@
       },
       "source": "helm",
       "urlTemplate": "https://get.helm.sh/helm-{version}-{os}-{arch}{ext}",
-      "version": "v4.2.4",
+      "version": "v4.3.0",
       "versionCheck": {
         "args": [
           "version"
@@ -37,8 +39,10 @@
       }
     },
     "kubectl": {
+      "checksumUrlTemplate": "{url}.sha256",
       "contentType": "binary",
       "description": "Kubernetes command-line tool",
+      "githubRepo": "kubernetes/kubernetes",
       "latestVersionUrl": "https://dl.k8s.io/release/stable.txt",
       "platforms": {
         "darwin": {
@@ -72,16 +76,16 @@
             "unknown": {
               "binaryPath": "darwin-amd64/helm",
               "contentType": "tar.gz",
-              "hash": "6c163d687ca03c3b5c01928e53bbbcf9518278f47ce7a2f249a5a08e8bdaa2bc",
-              "url": "https://get.helm.sh/helm-v4.2.4-darwin-amd64.tar.gz"
+              "hash": "347a784877e0e20eac865e8d1c36a80f6bb0861d6f29abd34defb6570ef95d92",
+              "url": "https://get.helm.sh/helm-v4.3.0-darwin-amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "darwin-arm64/helm",
               "contentType": "tar.gz",
-              "hash": "d747eb4e28bd2727173d15b759fa0a17822291ec09db7ced3d55af290a3661a2",
-              "url": "https://get.helm.sh/helm-v4.2.4-darwin-arm64.tar.gz"
+              "hash": "d3870437e1e95b67f8edbde964156c84a26503f560821d40c542441658934fba",
+              "url": "https://get.helm.sh/helm-v4.3.0-darwin-arm64.tar.gz"
             }
           }
         },
@@ -90,16 +94,16 @@
             "glibc": {
               "binaryPath": "linux-amd64/helm",
               "contentType": "tar.gz",
-              "hash": "c306b46f719b0a4da32d0f78ee21bf90ce8d602f15b22ab753f0674d1670a7f3",
-              "url": "https://get.helm.sh/helm-v4.2.4-linux-amd64.tar.gz"
+              "hash": "86584a54def73570558f66f5111cc53dfed56689637ae32c1201205d494f54fb",
+              "url": "https://get.helm.sh/helm-v4.3.0-linux-amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
               "binaryPath": "linux-arm64/helm",
               "contentType": "tar.gz",
-              "hash": "564de2191b881e9f71b5606b25345821ea1682f06ab90499d3ab22b530176da1",
-              "url": "https://get.helm.sh/helm-v4.2.4-linux-arm64.tar.gz"
+              "hash": "31c5794dd55c66a51e6b7d2e2ac7a114ae8b1de41ff1d9ba51748ac973b06a08",
+              "url": "https://get.helm.sh/helm-v4.3.0-linux-arm64.tar.gz"
             }
           }
         },
@@ -108,16 +112,16 @@
             "unknown": {
               "binaryPath": "windows-amd64/helm.exe",
               "contentType": "zip",
-              "hash": "e94d83a4706fd82078c98dade2079fa9d9680c1c2bfb93bfc304ee6bc2412a32",
-              "url": "https://get.helm.sh/helm-v4.2.4-windows-amd64.zip"
+              "hash": "304ea163cce4d9ad14e189c01846c6a34de9cfdfe48536ae54b2e8ba7884e67c",
+              "url": "https://get.helm.sh/helm-v4.3.0-windows-amd64.zip"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "windows-arm64/helm.exe",
               "contentType": "zip",
-              "hash": "dbe8b49ea9877abe3d77354a792efb01920da9f65a492fcb8b4fce4e08bbae8f",
-              "url": "https://get.helm.sh/helm-v4.2.4-windows-arm64.zip"
+              "hash": "4a9eefa30d26eb73900a9a0f16e97eae678582172204db60cbd454c68acea246",
+              "url": "https://get.helm.sh/helm-v4.3.0-windows-arm64.zip"
             }
           }
         }

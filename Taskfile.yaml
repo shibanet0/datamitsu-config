@@ -216,11 +216,11 @@ tasks:
   pull:external:
     cmds:
       - node scripts/pull-external-apps.ts ./src/datamitsu-config/registries/externalApps.json
-    desc: Pull external app registry (verify hashes only)
+    desc: Re-download every external app and check it against the recorded hash and upstream's checksum file; writes nothing
   pull:external:update:
     cmds:
       - node scripts/pull-external-apps.ts --update ./src/datamitsu-config/registries/externalApps.json
-    desc: Pull external app registry with update flag
+    desc: Move external apps to the newest release past the minimum release age, checked against upstream's checksum files
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────
