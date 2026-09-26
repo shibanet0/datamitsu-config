@@ -189,6 +189,10 @@ FROM dm-build AS app-age
 COPY --link --from=config-split /slices/app-age.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install age
 
+FROM dm-build AS app-age-keygen
+COPY --link --from=config-split /slices/app-age-keygen.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install age-keygen
+
 FROM dm-build AS app-air
 COPY --link --from=config-split /slices/app-air.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install air
@@ -496,6 +500,7 @@ COPY --link --from=app-zensical /dm/store/.apps/uv/zensical /dm/store/.apps/uv/z
 COPY --link --from=app-zensical /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-actionlint /dm/store/.bin/actionlint /dm/store/.bin/actionlint
 COPY --link --from=app-age /dm/store/.bin/age /dm/store/.bin/age
+COPY --link --from=app-age-keygen /dm/store/.bin/age-keygen /dm/store/.bin/age-keygen
 COPY --link --from=app-air /dm/store/.bin/air /dm/store/.bin/air
 COPY --link --from=app-allurectl /dm/store/.bin/allurectl /dm/store/.bin/allurectl
 COPY --link --from=app-ast-grep /dm/store/.bin/ast-grep /dm/store/.bin/ast-grep

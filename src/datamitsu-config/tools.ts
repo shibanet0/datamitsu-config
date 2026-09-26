@@ -7,6 +7,7 @@ import {
   dotenvLinterGlobs,
   droastGlobs,
   eslintGlobs,
+  githubActionsGlobs,
   goFormatExcludeGlobs,
   goGlobs,
   goSourceGlobs,
@@ -984,27 +985,30 @@ export const toolsConfig: config.MapOfTools = {
   },
   pinact: {
     name: "pinact - pin GitHub Actions to commit SHAs",
+    // A check, not a fixer: `--fix=false --no-api` fails on any `uses:` that is not a 40-character
+    // SHA, offline. Pinning resolves each tag through the GitHub API (60 requests an hour without a
+    // token) and rewrites workflows, so it stays a deliberate `dm exec pinact -- run`, not part of
+    // `dm fix`.
+    //
     // pinact adds `::error`/`::notice` workflow commands and forces colour when GITHUB_ACTIONS is
     // "true", and no flag turns that off (`--format` only selects a machine-readable report), so
-    // the variable is overridden for its operations. It reads nothing else from it.
+    // the variable is overridden. It reads nothing else from it.
     operations: {
-      fix: {
-        app: "pinact",
-        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "{files}"],
-        env: { GITHUB_ACTIONS: "false" },
-        globs: actionlintGlobs,
-        scope: "repository",
-      },
       lint: {
         app: "pinact",
-        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "--check", "{files}"],
+        args: [
+          "--config",
+          "{managedConfig:.pinact.yaml}",
+          "run",
+          "--fix=false",
+          "--no-api",
+          "{files}",
+        ],
         env: { GITHUB_ACTIONS: "false" },
-        globs: actionlintGlobs,
+        globs: githubActionsGlobs,
         scope: "repository",
       },
     },
-    skip: true,
-    skipReason: optInSkip,
   },
   "pre-commit": {
     name: "pre-commit - Multi-language pre-commit hooks",
@@ -1662,7 +1666,7 @@ export const toolsConfig: config.MapOfTools = {
           "plain",
           "{target}",
         ],
-        globs: actionlintGlobs,
+        globs: githubActionsGlobs,
         scope: "repository",
       },
     },

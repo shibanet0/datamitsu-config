@@ -69,6 +69,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       // "typstyle",
       "actionlint",
       "age",
+      "age-keygen",
       "air",
       "allurectl",
       "buf",

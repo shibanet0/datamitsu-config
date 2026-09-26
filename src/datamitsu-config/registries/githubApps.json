@@ -10,6 +10,11 @@
       "repo": "age",
       "tag": "v1.3.2"
     },
+    "age-keygen": {
+      "owner": "FiloSottile",
+      "repo": "age",
+      "tag": "v1.3.2"
+    },
     "air": {
       "owner": "air-verse",
       "repo": "air",
@@ -531,6 +536,76 @@
       },
       "configHash": "2f6373e545b625f0f376d34e2633c15b",
       "description": "A simple, modern and secure encryption tool (and Go library) with small explicit keys, no config options, and UNIX-style composability."
+    },
+    "age-keygen": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "age-v1.3.2/age-keygen",
+              "contentType": "tar.gz",
+              "hash": "1d1e4bc66e1427edad7739ae7616157de0e79db8b6d2a1497d7d9925fb06a539",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-darwin-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "age-v1.3.2/age-keygen",
+              "contentType": "tar.gz",
+              "hash": "e2020b073c44f692685a24d6abc378817eb81ffaaf49fd0531ef8565f767f2f5",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-darwin-arm64.tar.gz"
+            }
+          }
+        },
+        "freebsd": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "age-v1.3.2/age-keygen",
+              "contentType": "tar.gz",
+              "hash": "d4687997d3ebfcc352ac529208e953edff68a652786de2701a03fec701a1e798",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-freebsd-amd64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "age-v1.3.2/age-keygen",
+              "contentType": "tar.gz",
+              "hash": "cbe24006683f8eb669266162894b9a522a1af52f2665fbc63a4bb032ed26ac10",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-linux-amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "age-v1.3.2/age-keygen",
+              "contentType": "tar.gz",
+              "hash": "6b8dc4333c53a5a57c9e5834e3a48f92605d7154014cd07269ff3327db5d37f4",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-linux-arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "age-v1.3.2/age-keygen.exe",
+              "contentType": "zip",
+              "hash": "f48d8f8f9ebe903ab5027ed067652f2cc1db94bc206976430133b905dcd8e8c7",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-windows-amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "age-v1.3.2/age-keygen.exe",
+              "contentType": "zip",
+              "hash": "fae351336c8d5f30f93cc3ccdec16d1ed7851d68cdd6656d41955cc31a447c9d",
+              "url": "https://github.com/FiloSottile/age/releases/download/v1.3.2/age-v1.3.2-windows-arm64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "2f6373e545b625f0f376d34e2633c15b",
+      "description": "Generates age key pairs (age-keygen), shipped in the same release archive as age."
     },
     "air": {
       "binaries": {
@@ -3053,6 +3128,11 @@
               "contentType": "binary",
               "hash": "40453156449604129f6ed5cb98eb0c9aca27facd7dd8161d9c9828618b62e703",
               "url": "https://github.com/snyk/cli/releases/download/v1.1307.2/snyk-linux"
+            },
+            "musl": {
+              "contentType": "binary",
+              "hash": "ecd42fbccaac3ff903dfbcdbb8951282e3e839eb5a606889f6864340aaef43d1",
+              "url": "https://github.com/snyk/cli/releases/download/v1.1307.2/snyk-alpine"
             }
           },
           "arm64": {

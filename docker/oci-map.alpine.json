@@ -239,6 +239,11 @@
       "app": "age"
     },
     {
+      "subtree": ".bin/age-keygen",
+      "kind": "binary",
+      "app": "age-keygen"
+    },
+    {
       "subtree": ".bin/air",
       "kind": "binary",
       "app": "air"
@@ -402,6 +407,11 @@
       "subtree": ".bin/shfmt",
       "kind": "binary",
       "app": "shfmt"
+    },
+    {
+      "subtree": ".bin/snyk",
+      "kind": "binary",
+      "app": "snyk"
     },
     {
       "subtree": ".bin/sops",

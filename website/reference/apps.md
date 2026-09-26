@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **112 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **113 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -20,7 +20,7 @@ This configuration manages **112 apps** across multiple runtimes (binary, bun, n
 - **Git Hooks** (3 apps): commitlint, lefthook, pre-commit
 - **Linters & Formatters** (19 apps): checkmake, dotenv-linter, editorconfig-checker, etc.
 - **Security Scanners** (12 apps): bearer, checkov, detect-secrets, etc.
-- **Utilities** (64 apps): actionlint, age, air, etc.
+- **Utilities** (65 apps): actionlint, age, age-keygen, etc.
 
 ## Apps Reference
 
@@ -28,6 +28,7 @@ This configuration manages **112 apps** across multiple runtimes (binary, bun, n
 | ----------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | actionlint                    | binary  | [Info](https://github.com/rhysd/actionlint){:target="_blank"}                                                                           | :octocat: Static checker for GitHub Actions workflow files                                                                                                                                                |
 | age                           | binary  | [Info](https://github.com/FiloSottile/age){:target="_blank"}                                                                            | A simple, modern and secure encryption tool (and Go library) with small explicit keys, no config options, and UNIX-style composability.                                                                   |
+| age-keygen                    | binary  | [Info](https://github.com/FiloSottile/age){:target="_blank"}                                                                            | Generates age key pairs (age-keygen), shipped in the same release archive as age.                                                                                                                         |
 | air                           | binary  | [Info](https://github.com/air-verse/air){:target="_blank"}                                                                              | ☁️ Live reload for Go apps                                                                                                                                                                                |
 | alint                         | binary  | [Info](https://github.com/asamarts/alint){:target="_blank"}                                                                             | Language-agnostic linter for repository structure, files, and content                                                                                                                                     |
 | allurectl                     | binary  | [Info](https://github.com/allure-framework/allurectl){:target="_blank"}                                                                 | Allure TestOps Command line tool                                                                                                                                                                          |

@@ -513,8 +513,8 @@ const allApps: BinManager.MapOfApps = {
 // limit (the PR Docker job loads the image with --load and runs it). The docker
 // generator (scripts/generate-dockerfiles.ts) sets DATAMITSU_OCI_MINIMAL=1 to
 // drop these apps from the image only — they stay installable on demand for
-// every other command. The list began as the opt-in tool batch in tools.ts; dclint and droast have
-// since left that batch but stay excluded here, since adding them back costs image layers.
+// every other command. The list began as the opt-in tool batch in tools.ts; dclint, droast and
+// pinact have since left that batch but stay excluded here, since adding them back costs image layers.
 const ociExcludedApps = new Set([
   "alint",
   "blint",

@@ -189,6 +189,10 @@ FROM dm-build AS app-age
 COPY --link --from=config-split /slices/app-age.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install age
 
+FROM dm-build AS app-age-keygen
+COPY --link --from=config-split /slices/app-age-keygen.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install age-keygen
+
 FROM dm-build AS app-air
 COPY --link --from=config-split /slices/app-air.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install air
@@ -321,6 +325,10 @@ FROM dm-build AS app-shfmt
 COPY --link --from=config-split /slices/app-shfmt.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install shfmt
 
+FROM dm-build AS app-snyk
+COPY --link --from=config-split /slices/app-snyk.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install snyk
+
 FROM dm-build AS app-sops
 COPY --link --from=config-split /slices/app-sops.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sops
@@ -444,6 +452,7 @@ COPY --link --from=app-zensical /dm/store/.apps/uv/zensical /dm/store/.apps/uv/z
 COPY --link --from=app-zensical /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-actionlint /dm/store/.bin/actionlint /dm/store/.bin/actionlint
 COPY --link --from=app-age /dm/store/.bin/age /dm/store/.bin/age
+COPY --link --from=app-age-keygen /dm/store/.bin/age-keygen /dm/store/.bin/age-keygen
 COPY --link --from=app-air /dm/store/.bin/air /dm/store/.bin/air
 COPY --link --from=app-allurectl /dm/store/.bin/allurectl /dm/store/.bin/allurectl
 COPY --link --from=app-buf /dm/store/.bin/buf /dm/store/.bin/buf
@@ -477,6 +486,7 @@ COPY --link --from=app-ruff /dm/store/.bin/ruff /dm/store/.bin/ruff
 COPY --link --from=app-scorecard /dm/store/.bin/scorecard /dm/store/.bin/scorecard
 COPY --link --from=app-shellcheck /dm/store/.bin/shellcheck /dm/store/.bin/shellcheck
 COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
+COPY --link --from=app-snyk /dm/store/.bin/snyk /dm/store/.bin/snyk
 COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
 COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft

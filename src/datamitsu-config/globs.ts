@@ -7,6 +7,15 @@ export const actionlintGlobs: string[] = [
   "**/.github/workflows/*.yaml",
 ];
 
+// Workflows plus composite actions, for tools that read both. datamitsu passes the matched files, and
+// pinact then ignores the `files` list in its own config, so an action file outside these globs is
+// never pinned; for zizmor they decide whether an edit to an action triggers a run at all.
+export const githubActionsGlobs: string[] = [
+  ...actionlintGlobs,
+  "**/.github/actions/*/action.yml",
+  "**/.github/actions/*/action.yaml",
+];
+
 export const dockerfileGlobs: string[] = ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"];
 
 // docker-compose / compose files (dclint targets these). Mirrors dclint's own

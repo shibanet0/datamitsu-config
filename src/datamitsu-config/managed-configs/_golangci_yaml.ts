@@ -100,7 +100,7 @@ export const golangciYaml: config.ManagedConfig = {
       "cyclop",
       "dupl",
       "err113",
-      "exhaustruct",
+      "exhaustruct_v5",
       "funlen",
       "gochecknoglobals",
       "gochecknoinits",
