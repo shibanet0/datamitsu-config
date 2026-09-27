@@ -195,6 +195,10 @@ jobs:
         uses: ./.github/actions/setup-environment
         with:
           cache-datamitsu: "false"
+          # pnpm 12 cannot read a store that actions/cache restored on Windows: the install fails
+          # with ERR_PNPM_PACKAGE_MANAGER_INSPECT_OPTIONAL_DEPENDENCY, "Access is denied", on the
+          # first run that hits the cache, and passes on every run that misses it.
+          cache-pnpm: "false"
           install-dependencies: "false"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts

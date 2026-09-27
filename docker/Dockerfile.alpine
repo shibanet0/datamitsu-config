@@ -68,10 +68,6 @@ FROM rt-uv AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install detect-secrets
 
-FROM rt-go AS app-dockle
-COPY --link --from=config-split /slices/app-dockle.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install dockle
-
 FROM rt-bun AS app-eslint
 COPY --link --from=config-split /slices/app-eslint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
@@ -143,10 +139,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install quickty
 FROM rt-uv AS app-semgrep
 COPY --link --from=config-split /slices/app-semgrep.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
-
-FROM rt-go AS app-skywalking-eyes
-COPY --link --from=config-split /slices/app-skywalking-eyes.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install skywalking-eyes
 
 FROM rt-bun AS app-sort-keys
 COPY --link --from=config-split /slices/app-sort-keys.js /opt/datamitsu-config/datamitsu.config.js
@@ -428,7 +420,6 @@ COPY --link --from=app-conventional-changelog /dm/store/.apps/node/conventional-
 COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/cspell
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
-COPY --link --from=app-dockle /dm/store/.apps/go/dockle /dm/store/.apps/go/dockle
 COPY --link --from=app-eslint /dm/store/.apps/bun/eslint /dm/store/.apps/bun/eslint
 COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.apps/go/govulncheck
 COPY --link --from=app-httpstat /dm/store/.apps/uv/httpstat /dm/store/.apps/uv/httpstat
@@ -451,7 +442,6 @@ COPY --link --from=app-prettier /dm/store/.apps/node/prettier /dm/store/.apps/no
 COPY --link --from=app-quicktype /dm/store/.apps/node/quicktype /dm/store/.apps/node/quicktype
 COPY --link --from=app-semgrep /dm/store/.apps/uv/semgrep /dm/store/.apps/uv/semgrep
 COPY --link --from=app-semgrep /dm/store/.uv/python /dm/store/.uv/python
-COPY --link --from=app-skywalking-eyes /dm/store/.apps/go/skywalking-eyes /dm/store/.apps/go/skywalking-eyes
 COPY --link --from=app-sort-keys /dm/store/.apps/bun/sort-keys /dm/store/.apps/bun/sort-keys
 COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json /dm/store/.apps/node/sort-package-json
 COPY --link --from=app-spectral /dm/store/.apps/node/spectral /dm/store/.apps/node/spectral

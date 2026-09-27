@@ -615,17 +615,24 @@ const allApps: BinManager.MapOfApps = {
 // never reached the image, and the base image (debian slim) lacks the ~50 system libraries it loads
 // (graphics, audio, accessibility, X11 and more) and the fonts it renders with. Shipping the apps
 // without a working browser only cost image size.
+//
+// dockle and skywalking-eyes are built from source with the Go runtime, and the arm64 image is built
+// under emulation: with them, three Go builds share the emulated CPU and govulncheck ran past the
+// 20-minute install timeout (alone it takes about 10). Neither was in the image before it moved to
+// the Go runtime, since the registry had no binaries for them.
 const ociExcludedApps = new Set([
   "alint",
   "blint",
   "cargo-deny",
   "dclint",
   "deptry",
+  "dockle",
   "droast",
   "ls-lint",
   "mdsf",
   "mmdc",
   "pinact",
+  "skywalking-eyes",
   "slidev",
   "sqruff",
   "ty",

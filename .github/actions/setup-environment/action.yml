@@ -4,6 +4,10 @@ inputs:
     default: "true"
     description: "Whether to cache datamitsu store"
     required: false
+  cache-pnpm:
+    default: "true"
+    description: "Whether to cache the pnpm store"
+    required: false
   install-dependencies:
     default: "true"
     description: "Whether to run pnpm install"
@@ -21,8 +25,10 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
       with:
-        cache: "pnpm"
+        cache: ${{ inputs.cache-pnpm == 'true' && 'pnpm' || '' }}
         node-version-file: ".node-version"
+        # setup-node turns a pnpm cache on by itself when package.json names a packageManager.
+        package-manager-cache: ${{ inputs.cache-pnpm == 'true' }}
         registry-url: ${{ inputs.registry-url != '' && inputs.registry-url || null }}
     - if: ${{ inputs.cache-datamitsu == 'true' }}
       name: Cache datamitsu store

@@ -65,11 +65,6 @@
       "kind": "uv-python"
     },
     {
-      "subtree": ".apps/go/dockle",
-      "kind": "app",
-      "app": "dockle"
-    },
-    {
       "subtree": ".apps/bun/eslint",
       "kind": "app",
       "app": "eslint"
@@ -174,11 +169,6 @@
     {
       "subtree": ".uv/python",
       "kind": "uv-python"
-    },
-    {
-      "subtree": ".apps/go/skywalking-eyes",
-      "kind": "app",
-      "app": "skywalking-eyes"
     },
     {
       "subtree": ".apps/bun/sort-keys",
