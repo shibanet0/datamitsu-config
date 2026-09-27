@@ -27,7 +27,11 @@ export class Datamitsu {
     this.#globalFlags = globalFlags ?? {};
   }
 
-  exec(toolName: string, args?: string[], options?: ExecaOptions) {
+  exec<OptionsType extends ExecaOptions = {}>(
+    toolName: string,
+    args?: string[],
+    options?: OptionsType,
+  ) {
     return execa(
       this.binaryPath,
       [...this.globalFlags, "exec", toolName, "--", ...(args || [])],

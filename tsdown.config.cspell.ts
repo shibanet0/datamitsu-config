@@ -8,9 +8,9 @@ import { tsdownConfigBanner } from "./tsdown.config-banner";
 const execAsync = promisify(exec);
 
 export default defineConfig({
+  deps: { neverBundle: Object.keys(cspellDeps) },
   dts: true,
   entry: ["src/apps/cspell/index.ts"],
-  external: Object.keys(cspellDeps),
   fixedExtension: false,
   hooks: {
     "build:done": async () => {

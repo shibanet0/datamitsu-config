@@ -629,7 +629,7 @@ async function cleanup() {
   // Kill all running processes
   for (const proc of runningProcesses) {
     try {
-      proc.kill("SIGTERM", { forceKillAfterTimeout: 2000 });
+      proc.kill("SIGTERM");
     } catch {
       // Ignore errors during cleanup
     }
@@ -679,6 +679,8 @@ async function runWithOutput(file: string, args: string[], cwd: string): Promise
   const proc = execa(file, args, {
     cwd,
     env: { ...process.env, DATAMITSU_LOG_LEVEL: "debug" }, // cspell:disable-line
+    // A SIGTERM from cleanup() escalates to SIGKILL after this long.
+    forceKillAfterDelay: 2000,
     reject: false,
     stderr: "inherit",
     stdout: "pipe",

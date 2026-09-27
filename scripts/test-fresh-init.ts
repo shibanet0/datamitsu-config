@@ -117,7 +117,7 @@ function assertOk(label: string, r: StepResult): void {
 async function cleanup(): Promise<void> {
   for (const proc of runningProcesses) {
     try {
-      proc.kill("SIGTERM", { forceKillAfterTimeout: 2000 });
+      proc.kill("SIGTERM");
     } catch {
       // ignore
     }
@@ -236,6 +236,8 @@ async function run(
   const proc = execa(file, cmdArgs, {
     cwd,
     env,
+    // A SIGTERM from cleanup() escalates to SIGKILL after this long.
+    forceKillAfterDelay: 2000,
     reject: false,
     stderr: VERBOSE ? "inherit" : "pipe",
     stdout: VERBOSE ? "inherit" : "pipe",

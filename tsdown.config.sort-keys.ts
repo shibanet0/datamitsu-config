@@ -17,9 +17,9 @@ export default defineConfig({
   define: {
     __SORT_KEYS_VERSION__: JSON.stringify(version),
   },
+  deps: { neverBundle: ["yaml"] },
   dts: false,
   entry: ["src/apps/sort-keys/index.ts"],
-  external: ["yaml"],
   fixedExtension: true,
   format: ["esm"],
   hooks: {

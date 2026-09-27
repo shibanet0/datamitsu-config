@@ -276,13 +276,13 @@ post-checkout:
                 tsx: "bin/tsx.js",
               },
               dependencies: {
-                "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260927.74c80da",
-                commander: "14.0.3",
-                execa: "9.6.1",
+                "@commander-js/extra-typings": "15.0.0",
+                "@datamitsu/datamitsu": "0.4.0",
+                commander: "15.0.0",
+                execa: "10.0.1",
                 "fast-glob": "3.3.3",
-                tsx: "4.22.3",
-                "type-fest": "5.6.0",
+                tsx: "4.23.15",
+                "type-fest": "5.10.0",
                 typescript: "6.0.3",
               },
               description: "Shared datamitsu configuration with 79+ managed development tools",
@@ -301,14 +301,13 @@ post-checkout:
                 "@ovineko/clean-pkg-json": "0.0.4",
                 "@prettier/plugin-xml": "3.4.2",
                 "@stylistic/eslint-plugin": "5.10.0",
-                "@types/node": "25.9.1",
-                "@types/remove-markdown": "0.3.4",
+                "@types/node": "26.6.2",
                 // Not plugins. Two packages that import them at runtime without declaring either a
                 // dependency or a peer — @antebudimir/eslint-plugin-vanilla-extract needs
                 // @typescript-eslint/utils, eslint-plugin-compat needs caniuse-lite — so under
                 // pnpm's isolated layout they only ever resolved by accident.
                 "@typescript-eslint/utils": "8.70.0",
-                "@vitest/coverage-v8": "4.1.7",
+                "@vitest/coverage-v8": "5.0.1",
                 "@vitest/eslint-plugin": "1.6.27",
                 "caniuse-lite": "1.0.30001810",
                 "conventional-changelog-conventionalcommits": "10.4.0",
@@ -360,7 +359,7 @@ post-checkout:
                 "eslint-plugin-unused-imports": "4.4.1",
                 "eslint-typegen": "2.3.1",
                 globals: "17.12.0",
-                "json-schema-to-typescript": "15.0.4",
+                "json-schema-to-typescript": "16.0.0",
                 knip: "6.37.0",
                 oxfmt: "0.68.0",
                 oxlint: "1.83.0",
@@ -368,13 +367,13 @@ post-checkout:
                 "prettier-plugin-embed": "0.5.1",
                 "prettier-plugin-jsdoc": "1.8.1",
                 "prettier-plugin-sql": "0.20.0",
-                "remove-markdown": "0.6.4",
+                "remove-markdown": "0.7.0",
                 stylelint: "17.15.0",
                 svelte: "5.57.1",
-                tsdown: "0.22.14",
+                tsdown: "0.23.0",
                 "typescript-eslint": "8.70.0",
-                unrun: "0.3.0",
-                vitest: "4.1.7",
+                unrun: "0.3.1",
+                vitest: "5.0.1",
                 yaml: "2.9.1",
               },
               devEngines: {
@@ -467,7 +466,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:f3b01d1494035b4a475689093c8fc3e0",
+      expectChainHash: "xxh3:fb4f8ccf727d259b00359837b124b810",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],

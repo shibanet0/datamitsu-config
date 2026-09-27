@@ -8,9 +8,9 @@ import { tsdownConfigBanner } from "./tsdown.config-banner";
 const execAsync = promisify(exec);
 
 export default defineConfig({
+  deps: { neverBundle: Object.keys(stylelintDeps) },
   dts: true,
   entry: ["src/apps/stylelint/index.ts"],
-  external: Object.keys(stylelintDeps),
   fixedExtension: false,
   hooks: {
     "build:done": async () => {
