@@ -89,6 +89,49 @@ if (!lefthookUpstreamApp) {
   throw new Error("githubApps registry no longer defines lefthook; the proxy has nothing to wrap");
 }
 
+/**
+ * The well-known types protoc imports — `google/protobuf/timestamp.proto` and the rest — live in
+ * the `include/` directory beside `bin/` in its release archive. Extracted as a lone binary it has
+ * no `include/`, and every schema importing one of them fails with "File not found"; `extractDir`
+ * keeps the whole archive and runs `bin/protoc` inside it.
+ *
+ * Both are set here because `pull-github` writes neither: the registry holds a guessed
+ * `protoc-<version>/protoc`, which single-file extraction resolves by basename and a directory
+ * install cannot.
+ */
+const registryProtoc = otherGithubApps["protoc"];
+if (!registryProtoc?.binary) {
+  throw new Error(
+    "githubApps registry no longer defines protoc; its extractDir override has nothing to apply to",
+  );
+}
+const protocApp: BinManager.App = {
+  ...registryProtoc,
+  binary: {
+    ...registryProtoc.binary,
+    binaries: Object.fromEntries(
+      Object.entries(registryProtoc.binary.binaries).map(([os, byArch]) => [
+        os,
+        Object.fromEntries(
+          Object.entries(byArch ?? {}).map(([arch, byLibc]) => [
+            arch,
+            Object.fromEntries(
+              Object.entries(byLibc ?? {}).map(([libc, info]) => [
+                libc,
+                {
+                  ...info,
+                  binaryPath: os === "windows" ? "bin/protoc.exe" : "bin/protoc",
+                  extractDir: true,
+                },
+              ]),
+            ),
+          ]),
+        ),
+      ]),
+    ) as BinManager.MapOfBinaries,
+  },
+};
+
 const allApps: BinManager.MapOfApps = {
   ...otherGithubApps,
   ...externalApps,
@@ -389,6 +432,7 @@ const allApps: BinManager.MapOfApps = {
     },
   },
   prettier: prettierApp,
+  protoc: protocApp,
   quicktype: {
     description: `Generate types and converters from JSON, Schema, and GraphQL`,
     node: {

@@ -58,7 +58,7 @@
     "conftest": {
       "owner": "open-policy-agent",
       "repo": "conftest",
-      "tag": "v0.70.0"
+      "tag": "v0.70.1"
     },
     "cosign": {
       "owner": "sigstore",
@@ -1067,59 +1067,59 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "conftest-0.70.0/conftest",
+              "binaryPath": "conftest-0.70.1/conftest",
               "contentType": "tar.gz",
-              "hash": "fc2971cebaa7adfd1e7636005be200ac04b607a8a8815d72ccf7faaddb850905",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Darwin_x86_64.tar.gz"
+              "hash": "ccfe6dfb526a8d200d91d1a9f234f07d814f56f93a1ae8f47a5cb30f567dc97f",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Darwin_x86_64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "conftest-0.70.0/conftest",
+              "binaryPath": "conftest-0.70.1/conftest",
               "contentType": "tar.gz",
-              "hash": "e24e6784547f3b9c720b4b49ee5d9111559b25b399640eca531560ca4ea17682",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Darwin_arm64.tar.gz"
+              "hash": "b8eae5ce6c7c3a768a9b9c6c12b0c01f8fc065a99267c94646d309c479b218dd",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "conftest-0.70.0/conftest",
+              "binaryPath": "conftest-0.70.1/conftest",
               "contentType": "tar.gz",
-              "hash": "e738506fd808f7dc9794ce8e325f89b14932891a4841fe45f1f24c4a9bb3ed96",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Linux_x86_64.tar.gz"
+              "hash": "613d124b8f6c1f3cee890491f7ab19114cca5a2102ca47cb2e6c35b4c23f9c8a",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Linux_x86_64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "conftest-0.70.0/conftest",
+              "binaryPath": "conftest-0.70.1/conftest",
               "contentType": "tar.gz",
-              "hash": "1702395299bfff81e66c417e9ca0e17714f2082db3550f857efde962e9a17b26",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Linux_arm64.tar.gz"
+              "hash": "8eb914755cb1b3c610d557019d5f373d5528b366ba706961d1a23f2ec55eab57",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Linux_arm64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "conftest-0.70.0/conftest.exe",
+              "binaryPath": "conftest-0.70.1/conftest.exe",
               "contentType": "zip",
-              "hash": "e067213cdcc17bd8c614508af3dada70eba2af81b5f54288d8a705a73d18180c",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Windows_x86_64.zip"
+              "hash": "f88f02c67975dc0b77dd64b782a07dc1833eb4071170a65b5336fcb0e0dcfb1d",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Windows_x86_64.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "conftest-0.70.0/conftest.exe",
+              "binaryPath": "conftest-0.70.1/conftest.exe",
               "contentType": "zip",
-              "hash": "d231f2a3be79f3bc389ed28a6c4dea8d849170ac070551f1c56cda962017f262",
-              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.0/conftest_0.70.0_Windows_arm64.zip"
+              "hash": "a3ec4631096d68023db40b0aa6796aa3d2e37eec2ffb06b50790cab688e64ead",
+              "url": "https://github.com/open-policy-agent/conftest/releases/download/v0.70.1/conftest_0.70.1_Windows_arm64.zip"
             }
           }
         }
       },
-      "configHash": "867a6ab88bc85392395ddffda38a2172",
+      "configHash": "6d9e45ff792938ae708c0ac461c82c89",
       "description": "Write tests against structured configuration data using the Open Policy Agent Rego query language"
     },
     "cosign": {

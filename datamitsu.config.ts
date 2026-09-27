@@ -259,7 +259,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260926.c963f6f",
+                "@datamitsu/datamitsu": "0.0.0-unstable.20260926.4655c25",
                 commander: "14.0.3",
                 execa: "9.6.1",
                 "fast-glob": "3.3.3",
