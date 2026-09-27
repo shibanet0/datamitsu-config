@@ -80,7 +80,7 @@
     "fast-glob": "3.3.3",
     "tsx": "4.23.15",
     "type-fest": "5.10.0",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "devDependencies": {
     "@antebudimir/eslint-plugin-vanilla-extract": "1.17.0",
