@@ -57,6 +57,26 @@ export default defineConfig((prev) => {
 `,
       expectChainHash: "xxh3:84e8fe2861e794390eb299da516f3d4b",
     },
+    "droast.toml": {
+      ...config.managedConfigs?.["droast.toml"],
+      // Written as text so the comment on the override survives reconciliation: the managed
+      // content parses and re-serializes the file, and TOML comments do not survive a parse.
+      content: () => /* toml */ `fail-on = "info"
+inline-suppressions = true
+max-suppression-days = 90
+no-roast = true
+report-unused-suppressions = true
+require-suppression-expiration = true
+require-suppression-reason = true
+
+# The published images are CLI toolchains run per command, not services: there is no process to
+# health-check and no port to document.
+[[overrides]]
+paths = ["docker/Dockerfile", "docker/Dockerfile.*"]
+skip = ["DF012", "DF022"]
+`,
+      expectChainHash: "xxh3:f400967fef3dfa89512eefc4f95cbf78",
+    },
     "eslint.config.mjs": {
       ...config.managedConfigs?.["eslint.config.mjs"],
       content: () => /* js */ `import { globalIgnores } from "@eslint/config-helpers";

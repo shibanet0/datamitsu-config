@@ -609,6 +609,12 @@ const allApps: BinManager.MapOfApps = {
 // drop these apps from the image only — they stay installable on demand for
 // every other command. The list began as the opt-in tool batch in tools.ts; dclint, droast and
 // pinact have since left that batch but stay excluded here, since adding them back costs image layers.
+//
+// mmdc and slidev are here for a different reason: both drive a headless Chromium, and the image
+// cannot run one. The browser was downloaded outside the app directory the image copies, so it
+// never reached the image, and the base image (debian slim) lacks the ~50 system libraries it loads
+// (graphics, audio, accessibility, X11 and more) and the fonts it renders with. Shipping the apps
+// without a working browser only cost image size.
 const ociExcludedApps = new Set([
   "alint",
   "blint",
@@ -618,7 +624,9 @@ const ociExcludedApps = new Set([
   "droast",
   "ls-lint",
   "mdsf",
+  "mmdc",
   "pinact",
+  "slidev",
   "sqruff",
   "ty",
   "zizmor",

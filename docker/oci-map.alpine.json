@@ -119,11 +119,6 @@
       "app": "markdownlint-cli2"
     },
     {
-      "subtree": ".apps/node/mmdc",
-      "kind": "app",
-      "app": "mmdc"
-    },
-    {
       "subtree": ".apps/uv/mypy",
       "kind": "app",
       "app": "mypy"
@@ -184,11 +179,6 @@
       "subtree": ".apps/go/skywalking-eyes",
       "kind": "app",
       "app": "skywalking-eyes"
-    },
-    {
-      "subtree": ".apps/node/slidev",
-      "kind": "app",
-      "app": "slidev"
     },
     {
       "subtree": ".apps/bun/sort-keys",

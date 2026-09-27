@@ -108,10 +108,6 @@ FROM rt-node AS app-markdownlint-cli2
 COPY --link --from=config-split /slices/app-markdownlint-cli2.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install markdownlint-cli2
 
-FROM rt-node AS app-mmdc
-COPY --link --from=config-split /slices/app-mmdc.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install mmdc
-
 FROM rt-uv AS app-mypy
 COPY --link --from=config-split /slices/app-mypy.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install mypy
@@ -151,10 +147,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
 FROM rt-go AS app-skywalking-eyes
 COPY --link --from=config-split /slices/app-skywalking-eyes.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install skywalking-eyes
-
-FROM rt-node AS app-slidev
-COPY --link --from=config-split /slices/app-slidev.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install slidev
 
 FROM rt-bun AS app-sort-keys
 COPY --link --from=config-split /slices/app-sort-keys.js /opt/datamitsu-config/datamitsu.config.js
@@ -495,7 +487,6 @@ COPY --link --from=app-ktlint /dm/store/.apps/jvm/ktlint /dm/store/.apps/jvm/ktl
 COPY --link --from=app-lefthook /dm/store/.apps/bun/lefthook /dm/store/.apps/bun/lefthook
 COPY --link --from=app-lefthook-sort /dm/store/.apps/bun/lefthook-sort /dm/store/.apps/bun/lefthook-sort
 COPY --link --from=app-markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2 /dm/store/.apps/node/markdownlint-cli2
-COPY --link --from=app-mmdc /dm/store/.apps/node/mmdc /dm/store/.apps/node/mmdc
 COPY --link --from=app-mypy /dm/store/.apps/uv/mypy /dm/store/.apps/uv/mypy
 COPY --link --from=app-mypy /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-openapi-generator /dm/store/.apps/jvm/openapi-generator /dm/store/.apps/jvm/openapi-generator
@@ -509,7 +500,6 @@ COPY --link --from=app-quicktype /dm/store/.apps/node/quicktype /dm/store/.apps/
 COPY --link --from=app-semgrep /dm/store/.apps/uv/semgrep /dm/store/.apps/uv/semgrep
 COPY --link --from=app-semgrep /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-skywalking-eyes /dm/store/.apps/go/skywalking-eyes /dm/store/.apps/go/skywalking-eyes
-COPY --link --from=app-slidev /dm/store/.apps/node/slidev /dm/store/.apps/node/slidev
 COPY --link --from=app-sort-keys /dm/store/.apps/bun/sort-keys /dm/store/.apps/bun/sort-keys
 COPY --link --from=app-sort-package-json /dm/store/.apps/node/sort-package-json /dm/store/.apps/node/sort-package-json
 COPY --link --from=app-spectral /dm/store/.apps/node/spectral /dm/store/.apps/node/spectral
