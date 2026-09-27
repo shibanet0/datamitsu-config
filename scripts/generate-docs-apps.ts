@@ -56,75 +56,154 @@ type BinaryPlatforms = Record<
   >
 >;
 
-export function categorizeApps(apps: AppInfo[]): Map<string, AppInfo[]> {
-  const categories = new Map<string, AppInfo[]>();
+/**
+ * The category each app is listed under on the website. Every app is named here, the ones under
+ * "Utilities" included, because a catch-all default had quietly filed seventy apps — most of them
+ * linters and scanners — under "Utilities". A new app now fails `docs:generate` until someone
+ * decides where it belongs, and an app that was removed fails it until its name is dropped here.
+ *
+ * Categories describe what an app does in this configuration: `tsc` runs as a type check, not a
+ * build, and `terraform-docs` writes module READMEs as part of an infrastructure workflow.
+ */
+export const APP_CATEGORIES: Record<string, string[]> = {
+  "Code Generation": ["buf", "openapi-generator", "protoc", "quicktype", "sqlc", "swag"],
+  "Containers & Kubernetes": ["crane", "dive", "gcrane", "helm", "kubectl"],
+  "Database Migrations": ["golang-migrate", "goose"],
+  "Data Processing": ["dasel", "fx", "jq", "yq"],
+  "Documentation & Spelling": [
+    "cspell",
+    "d2",
+    "harper-cli",
+    "lychee",
+    "mmdc",
+    "slidev",
+    "typos",
+    "typst",
+    "vale",
+    "zensical",
+  ],
+  "Git & Releases": [
+    "commitlint",
+    "conventional-changelog",
+    "dm-internal-lefthook-upstream",
+    "git-cliff",
+    "lefthook",
+    "lefthook-sort",
+    "pre-commit",
+    "wt",
+  ],
+  "HTTP & gRPC Clients": ["grpcurl", "httpstat", "xh"],
+  "Infrastructure as Code": ["terraform-docs", "terragrunt", "tfupdate", "tofu"],
+  "Linters & Formatters": [
+    "actionlint",
+    "alint",
+    "ast-grep",
+    "checkmake",
+    "conftest",
+    "dclint",
+    "deptry",
+    "dotenv-linter",
+    "droast",
+    "editorconfig-checker",
+    "eslint",
+    "golangci-lint",
+    "hadolint",
+    "knip",
+    "ktfmt",
+    "ktlint",
+    "kubeconform",
+    "ls-lint",
+    "markdownlint-cli2",
+    "mdsf",
+    "oxfmt",
+    "oxlint",
+    "prettier",
+    "protolint",
+    "ruff",
+    "rustfmt",
+    "shellcheck",
+    "shfmt",
+    "skywalking-eyes",
+    "sort-keys",
+    "sort-package-json",
+    "spectral",
+    "sqlfluff",
+    "sqruff",
+    "stylelint",
+    "syncpack",
+    "tflint",
+    "tombi",
+    "typstyle",
+    "vacuum",
+    "yamlfmt",
+    "yamllint",
+  ],
+  "Package Managers": ["pnpm", "utpm"],
+  "Secrets & Signing": ["age", "age-keygen", "cosign", "sops"],
+  "Security Scanners": [
+    "bandit",
+    "bearer",
+    "blint",
+    "cargo-deny",
+    "checkov",
+    "detect-secrets",
+    "dockle",
+    "gitleaks",
+    "govulncheck",
+    "grype",
+    "kube-linter",
+    "osv-scanner",
+    "pinact",
+    "scorecard",
+    "semgrep",
+    "snyk",
+    "syft",
+    "trivy",
+    "trufflehog",
+    "zizmor",
+  ],
+  "Task Runners & Dev Servers": ["air", "just", "task"],
+  "Type Checkers": ["mypy", "tsc", "ty"],
+  Utilities: ["allurectl", "oxipng"],
+};
 
-  const categoryMap: Record<string, string[]> = {
-    "Build Tools": ["tsc", "buf", "protoc", "swag", "openapi-generator", "quicktype", "sqlc"],
-    "Documentation & Spelling": ["cspell", "vale", "mmdc", "lychee", "slidev", "zensical", "typst"],
-    "Git Hooks": ["commitlint", "lefthook", "pre-commit"],
-    "Linters & Formatters": [
-      "eslint",
-      "prettier",
-      "oxlint",
-      "ruff",
-      "ktlint",
-      "shfmt",
-      "golangci-lint",
-      "hadolint",
-      "shellcheck",
-      "markdownlint-cli2",
-      "yamllint",
-      "dotenv-linter",
-      "editorconfig-checker",
-      "checkmake",
-      "protolint",
-      "tflint",
-      "typos",
-      "typstyle",
-      "sqlfluff",
-    ],
-    "Security Scanners": [
-      "semgrep",
-      "trivy",
-      "grype",
-      "gitleaks",
-      "detect-secrets",
-      "bearer",
-      "checkov",
-      "kube-linter",
-      "osv-scanner",
-      "scorecard",
-      "snyk",
-      "trufflehog",
-    ],
-  };
-
-  // Initialize categories
-  for (const categoryName of Object.keys(categoryMap)) {
-    categories.set(categoryName, []);
-  }
-  categories.set("Utilities", []);
-
-  // Categorize each app
-  for (const app of apps) {
-    let categorized = false;
-    for (const [categoryName, appNames] of Object.entries(categoryMap)) {
-      if (appNames.includes(app.name)) {
-        categories.get(categoryName)?.push(app);
-        categorized = true;
-        break;
+export function categorizeApps(
+  apps: AppInfo[],
+  categoryMap: Record<string, string[]> = APP_CATEGORIES,
+): Map<string, AppInfo[]> {
+  const categoryOf = new Map<string, string>();
+  const duplicated: string[] = [];
+  for (const [categoryName, appNames] of Object.entries(categoryMap)) {
+    for (const appName of appNames) {
+      if (categoryOf.has(appName)) {
+        duplicated.push(`${appName} (${categoryOf.get(appName)}, ${categoryName})`);
       }
-    }
-    if (!categorized) {
-      categories.get("Utilities")?.push(app);
+      categoryOf.set(appName, categoryName);
     }
   }
 
-  // Remove empty categories
-  for (const [categoryName, categoryApps] of categories.entries()) {
-    if (categoryApps.length === 0) {
-      categories.delete(categoryName);
+  const appNames = new Set(apps.map((app) => app.name));
+  const uncategorized = apps.filter((app) => !categoryOf.has(app.name)).map((app) => app.name);
+  const removed = [...categoryOf.keys()].filter((name) => !appNames.has(name));
+
+  const problems = [
+    uncategorized.length > 0 ? `apps with no category: ${uncategorized.join(", ")}` : undefined,
+    duplicated.length > 0 ? `apps listed twice: ${duplicated.join("; ")}` : undefined,
+    removed.length > 0
+      ? `categorized names that are no longer apps: ${removed.join(", ")}`
+      : undefined,
+  ].filter((problem) => problem !== undefined);
+  if (problems.length > 0) {
+    throw new Error(
+      `APP_CATEGORIES in scripts/generate-docs-apps.ts is out of date — ${problems.join("; ")}`,
+    );
+  }
+
+  const categories = new Map<string, AppInfo[]>();
+  for (const categoryName of Object.keys(categoryMap)) {
+    const members = apps.filter((app) => categoryOf.get(app.name) === categoryName);
+    if (members.length > 0) {
+      categories.set(categoryName, members);
     }
   }
 
@@ -195,7 +274,7 @@ export function generateAppsMarkdown(apps: AppInfo[]): string {
     "",
     "## Apps Reference",
     "",
-    generateMarkdownTable(apps),
+    generateMarkdownTable(apps, categories),
     "",
     "## How Apps Work",
     "",
@@ -228,12 +307,20 @@ export function generateCategorySummary(categories: Map<string, AppInfo[]>): str
   return lines;
 }
 
-export function generateMarkdownTable(apps: AppInfo[]): string {
-  const header = "| App | Runtime | Info | Description |";
-  const separator = "| --- | --- | --- | --- |";
+export function generateMarkdownTable(apps: AppInfo[], categories: Map<string, AppInfo[]>): string {
+  // Read from the same grouping as the summary above the table, so the two cannot disagree.
+  const categoryOf = new Map<string, string>();
+  for (const [categoryName, members] of categories) {
+    for (const member of members) {
+      categoryOf.set(member.name, categoryName);
+    }
+  }
+
+  const header = "| App | Category | Runtime | Info | Description |";
+  const separator = "| --- | --- | --- | --- | --- |";
   const rows = apps.map(
     (t) =>
-      `| ${t.name} | ${t.runtime} | ${formatRepositoryLink(t.repository)} | ${formatDescription(t.description)} |`,
+      `| ${t.name} | ${categoryOf.get(t.name) ?? ""} | ${t.runtime} | ${formatRepositoryLink(t.repository)} | ${formatDescription(t.description)} |`,
   );
   return [header, separator, ...rows].join("\n");
 }
