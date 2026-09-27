@@ -190,18 +190,19 @@ export type KnipOverrides = Omit<KnipConfiguration, "rules"> & {
 // defaults every later call reads.
 // Deliberately no `playwright` block. A blanket entry glob lived here — every
 // `*.test.*` and `*.spec.*` file counted as an entry point — to survive knip's
-// loader failing on a `playwright.config` whose import chain reaches JSX, which
-// it cannot parse even in a `.tsx`. It was measured against a real failure: 576
-// unused files against 86.
+// loader failing on a `playwright.config` it could not load (knip 6.32.2 could
+// not parse JSX anywhere in the config's import chain; 6.37.0 can, but a config
+// that throws still fails). It was measured against a real failure: 576 unused
+// files against 86.
 //
 // It is gone because that failure is a defect in the project, not a standing
 // condition to compensate for. Compensating made it silent — the run looks
 // clean while the plugin contributes nothing — and charged every other consumer
 // for it, since the plugin normally scopes discovery to `testDir`/`testMatch`
-// and a repository-wide glob does not. Without the block the failure is loud,
-// and the fix belongs where the broken config is. The recipe for both, and how
-// to tell which case a project is in, is in the usage guide under "If Playwright
-// tests show up as unused".
+// and a repository-wide glob does not. Without the block the failure is loud —
+// since knip 6.35.1 a config that fails to load exits 2 — and the fix belongs
+// where the broken config is. The fallback recipe for a project that needs one
+// is in AGENTS.md under "Knip".
 const createBaseConfig = (): KnipConfiguration => ({
   entry: [...KNIP_DEFAULT_ENTRY, ...PROJECT_SCOPED_CONFIGS, ...GIT_ROOT_SCOPED_CONFIGS],
   ignoreBinaries: ["datamitsu", "dm", "s0"],

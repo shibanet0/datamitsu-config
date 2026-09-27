@@ -67,7 +67,7 @@ type Severity = "error" | "off" | "warn";
  */
 const SYNTHETIC_PACKAGE_JSON = {
   // Not a dependency, but the same kind of switch: `compat` and `escompat` are gated on the project
-  // declaring browser targets, so without this the census loses all 28 of their rules and
+  // declaring browser targets, so without this the census loses all 30 of their rules and
   // `compat/compat` — which is in `temporary.ts` — stops existing in `KnownRuleName`.
   browserslist: ["defaults"],
   devDependencies: {

@@ -1035,8 +1035,11 @@ export const toolsConfig: config.MapOfTools = {
    * Oxfmt is the one that stays because it is the one that covers more: `.svelte`, `.vue`, `.less`,
    * `.mdx`, `.graphqls` and `.mjml` have no prettier operation here, it runs in every project type
    * rather than only npm ones, and it is faster (0.21s against 1.60s over 283 files of this
-   * repository). Nothing is lost on the shared ground — measured over js, ts, tsx, json, css, yaml
-   * and graphql, including the fenced code inside Markdown, the two write identical bytes.
+   * repository). Little is lost on the shared ground. json, css, yaml and graphql, including the
+   * fenced code inside Markdown, come out byte-identical, because oxfmt formats them through the
+   * Prettier it bundles; js, ts and tsx matched when measured, but since oxfmt 0.66 oxc places some
+   * comments differently from Prettier on purpose — between a statement's head and its body, in
+   * `for` heads, around labels and JSX — as listed in oxc's DIVERGENCES.md.
    *
    * What stays is the app, its managed `prettier.config.mjs` and the `.datamitsu` link: a project
    * that needs one of the four bundled plugins (XML, SQL, embed, JSDoc — none of which this config

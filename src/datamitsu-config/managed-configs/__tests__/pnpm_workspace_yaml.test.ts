@@ -93,4 +93,87 @@ trustPolicy:
   ])("rejects malformed exclusions instead of losing them: %j", (input) => {
     expect(() => render(stringify(input))).toThrow("must be lists of package selectors");
   });
+
+  it("strips every setting pnpm 12 rejects", () => {
+    const rejected = [
+      "confirmModulesPurge",
+      "ignoreDepScripts",
+      "ignorePatchFailures",
+      "managePackageManagerVersions",
+      "packageManagerStrict",
+      "packageManagerStrictVersion",
+      "useNodeVersion",
+    ];
+    const result = render(
+      stringify({
+        ...Object.fromEntries(rejected.map((key) => [key, true])),
+        packages: ["packages/*"],
+      }),
+    );
+
+    for (const key of rejected) {
+      expect(result).not.toHaveProperty(key);
+    }
+    expect(result.packages).toEqual(["packages/*"]);
+  });
+
+  it("carries allowNonAppliedPatches over to its pnpm 12 name", () => {
+    const result = render("allowNonAppliedPatches: true\n");
+
+    expect(result).not.toHaveProperty("allowNonAppliedPatches");
+    expect(result.allowUnusedPatches).toBe(true);
+  });
+
+  it("keeps an allowUnusedPatches the file already has over the legacy value", () => {
+    const result = render("allowNonAppliedPatches: true\nallowUnusedPatches: false\n");
+
+    expect(result).not.toHaveProperty("allowNonAppliedPatches");
+    expect(result.allowUnusedPatches).toBe(false);
+  });
+
+  it("keeps the project's audit settings and sets only the level", () => {
+    const result = render(`
+auditLevel: moderate
+audit:
+  level: low
+  ignore:
+    - GHSA-aaaa-bbbb-cccc
+`);
+
+    expect(result).not.toHaveProperty("auditLevel");
+    expect(result.audit).toEqual({ ignore: ["GHSA-aaaa-bbbb-cccc"], level: "high" });
+  });
+
+  it.each(["", "audit:\n", "audit: {}\nauditLevel: high\n"])(
+    "sets the audit level when the file has none: %j",
+    (input) => {
+      const result = render(input);
+
+      expect(result).not.toHaveProperty("auditLevel");
+      expect(result.audit).toEqual({ level: "high" });
+    },
+  );
+
+  it.each([{ audit: "high" }, { audit: ["GHSA-aaaa-bbbb-cccc"] }])(
+    "rejects a malformed audit section instead of losing it: %j",
+    (input) => {
+      expect(() => render(stringify(input))).toThrow("must be a mapping of pnpm audit settings");
+    },
+  );
+
+  it("renders the same file again on a second reconciliation", () => {
+    const first = render(`
+allowNonAppliedPatches: true
+confirmModulesPurge: false
+auditLevel: moderate
+audit:
+  ignore:
+    - GHSA-aaaa-bbbb-cccc
+trustPolicy:
+  allowDowngrade:
+    - semver@6.3.1
+`);
+
+    expect(render(stringify(first))).toEqual(first);
+  });
 });

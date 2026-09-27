@@ -16,10 +16,64 @@
  * A rule that turns out to be permanently unwanted moves to {@link ../permanent}. Same spelling
  * rules as there: ESLint names, translated for oxlint by `../index`.
  *
- * The most recent batch is kept in {@link NEWLY_DISABLED_RULES} and spread in at the top, so a
- * group that has not been triaged yet stays visible instead of dissolving into the alphabet.
+ * Batches still waiting for a decision are kept in their own objects —
+ * {@link
+ * DEPENDENCY_UPDATE_RULES} and {@link NEWLY_DISABLED_RULES} — and spread in at the top, so a
+ * group nobody has been through stays visible instead of dissolving into the alphabet.
  */
 import type { KnownRuleName } from "./rule-names.generated";
+
+/**
+ * Rules the 2026-09-27 dependency update brought in at error, parked so that the update itself
+ * changes no verdicts.
+ *
+ * Each arrived with a plugin release in a preset this config already enables — unicorn 76, sonarjs
+ * 4.2.1, escompat 4.1, playwright 2.12 — so without an entry here it would start failing consumers'
+ * builds the moment they upgraded. None of them has been judged yet: decide each one (turn it on,
+ * move it to `../permanent-disabled` with a reason, or keep it here as real deferred work) and
+ * delete its line. The rules the same releases added outside their presets are off already and need
+ * no entry.
+ */
+const DEPENDENCY_UPDATE_RULES: Partial<Record<KnownRuleName, string>> = {
+  "escompat/no-bigint-function": "new in eslint-plugin-escompat 4.1 — off until decided",
+  "escompat/no-private-in": "new in eslint-plugin-escompat 4.0 — off until decided",
+  "playwright/no-identical-title": "new in eslint-plugin-playwright 2.12 — off until decided",
+  "sonarjs/avoid-mutating-nested-properties-of-shallow-clones":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-debounce-throttle-in-render":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-duplicate-parameterized-test-case":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-empty-parameterized-test-dataset":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-mutate-reactive-state-in-updated-hook":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-networkidle-wait":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided; the same check as playwright/no-networkidle, which is parked below",
+  "sonarjs/no-vue-class-component": "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/no-vue-mixins": "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/prefer-cypress-should": "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/prefer-native-axios-alternative":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/prefer-native-jquery-alternative":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/synchronous-exception-assertions":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/testing-library-prefer-query-by-disappearance":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/testing-library-query-assertion":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
+  "sonarjs/vitest-mock-at-module-scope":
+    "new in eslint-plugin-sonarjs 4.2.1 — off until decided; may duplicate oxlint's vitest/hoisted-apis-on-top",
+  "unicorn/no-async-iterator-callback": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/no-unused-iterator-helper": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/no-useless-set-construction": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/no-using-resource-escape": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/prefer-combined-guards": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/prefer-iterator-zip":
+    "new in eslint-plugin-unicorn 76 — off until decided; Iterator.zip is in neither TypeScript 6's lib nor Node 26",
+  "unicorn/prefer-temporal-conversion": "new in eslint-plugin-unicorn 76 — off until decided",
+};
 
 /**
  * Rules that went off in one batch, and have not been decided one at a time yet.
@@ -101,6 +155,7 @@ const NEWLY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> = {
 };
 
 export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> = {
+  ...DEPENDENCY_UPDATE_RULES,
   ...NEWLY_DISABLED_RULES,
   "@eslint-react/dom-no-dangerously-set-innerhtml": "-",
   // @eslint-react
@@ -465,7 +520,6 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "unicorn/no-duplicate-loops": "1 eslint config",
   "unicorn/no-empty-file": "1 oxlint config",
   "unicorn/no-error-property-assignment": "1 eslint config",
-  "unicorn/no-for-each": "2 eslint configs",
   "unicorn/no-global-object-property-assignment": "2 eslint configs",
   "unicorn/no-immediate-mutation": "3 oxlint configs",
   "unicorn/no-incorrect-query-selector": "1 eslint config",
@@ -485,7 +539,7 @@ export const TEMPORARILY_DISABLED_RULES: Partial<Record<KnownRuleName, string>> 
   "unicorn/no-unnecessary-global-this": "1 eslint config",
   "unicorn/no-unreadable-for-of-expression": "2 eslint configs",
   "unicorn/no-unsafe-string-replacement": "2 eslint configs",
-  "unicorn/no-unused-array-method-return": "1 eslint config",
+  "unicorn/no-unused-builtin-method-return": "1 eslint config",
   "unicorn/no-useless-collection-argument": "2 oxlint configs",
   "unicorn/no-useless-error-capture-stack-trace": "1 oxlint config",
   "unicorn/no-useless-undefined": "1 oxlint config, 3 eslint configs",

@@ -1,8 +1,8 @@
 allowBuilds:
   esbuild: false
   unrs-resolver: false
-audit: {}
-auditLevel: high
+audit:
+  level: high
 autoInstallPeers: true
 blockExoticSubdeps: true
 catalog:
@@ -111,6 +111,10 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@datamitsu/*"
   - "@ovineko/*"
+  # eslint-plugin-html 8.2.0 crashes ESLint 10.11 on any .html file with inline script, and
+  # 8.2.1 is the fix: https://github.com/BenoitZugmeyer/eslint-plugin-html/issues/342
+  # Remove this entry once 8.2.1 is older than the minimum release age: 2026-09-30T19:30Z.
+  - eslint-plugin-html@8.2.1
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7

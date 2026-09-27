@@ -95,6 +95,21 @@ for (const field of DEPENDENCY_FIELDS) {
   }
 }
 
+/**
+ * `packageManager` is one string rather than a map, and just as unguarded: `pull:node` writes the
+ * manifest's, and the literal went on saying pnpm 12.4.1 after the manifest had moved to 12.5.1.
+ */
+const declaredPackageManager = /\n {14}packageManager: "([^"]+)"/.exec(source)?.[1];
+const actualPackageManager = (manifest as Record<string, unknown>)["packageManager"];
+
+if (declaredPackageManager !== actualPackageManager) {
+  failed = true;
+  process.stdout.write(
+    `\npackageManager\n${"─".repeat(72)}\n` +
+      `  version disagrees          literal ${declaredPackageManager}, manifest ${String(actualPackageManager)}\n`,
+  );
+}
+
 if (failed) {
   process.stdout.write(
     "\nThe dependency literal in datamitsu.config.ts manages package.json, so a disagreement\n" +

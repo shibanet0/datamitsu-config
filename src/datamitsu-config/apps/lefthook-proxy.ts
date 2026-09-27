@@ -13,7 +13,7 @@ export const lefthookProxyApp: BinManager.App = {
     binPath: "index.mjs",
     ...nodeVersions.yaml,
     lockFile:
-      "br:G6EBIBwHdqyxIP/ilUkIXTUwz75URFwNQoMozPVtEBe0vIPn1OdU8Yikwh9T6AhXveqZOBwXpFk7+4xhQbDpzKyjApQJCiyUXgmC7B2ttVoub/fvLhqAQkODxVJafO3IyvCYw0IgD4HL210pSsglGefb5X1yx6fHwzAhLeR0UzCETFBrjBrvdmFTKgVjWI2CXQR4Kf4Fmv5n+/gq7pspTzM4Y782xYg9zqTfQph8xbjoHu3lQAc0Hw2F4em6o+634WGfZvPL+ECu8zhPtt9neGXSZcyMg09f7RYHB2WzOU3dl3n2yLi5resHkK6XK/7R9KUADR3NEQK4Y7Pp3dmetJzaaXo5cs9UIIB/AA==",
+      "br:G6EBIBwHdjtOkFuxyiSE51NDdtt/WiSVN/rKDaIw17dBXNDyDp5Tn1PFI5IKf0yhI1z1uk3w6LiqGG7maYkFwa4zt44aWKUYuFB6LQiyd7TWZrW6g+8uGohGQ4PlSto1ul9OBR4LWAgVIXB1B1pRQi3JuNitwOKOz07HaUJZyOmu4SiVYvcYNT7s0qbUCsZwjIJdBHhp/g2a/mf3+GrAdiayHMlXn0rBZaVe/uZ92adH+xh81437yGYVH1UBGH1e8kQ+LQLQpy/1aTNSvOu3baPIO7+mIb9XJ1xv+WMHRVSsfoUczrlv9DbNQyjXyzX/bPrSwJaJFSgJPrHZDHi7s5ZTO8+uV+6ZCgTwDwE=",
   },
   dependsOn: ["dm-internal-lefthook-upstream"],
   description: githubBinaries.lefthook.description,

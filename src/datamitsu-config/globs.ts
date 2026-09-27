@@ -203,8 +203,10 @@ export const packageJsonGlobs: string[] = ["**/package.json"];
  */
 export const syncpackGlobs: string[] = [...packageJsonGlobs, "**/pnpm-workspace.yaml"];
 
-// Markdown is deliberately absent: oxfmt owns it. The two produce byte-identical output on the
-// fenced languages either can reach (js, ts, tsx, json, css, yaml, graphql — measured), so prettier
+// Markdown is deliberately absent: oxfmt owns it. On the fenced languages either can reach the two
+// agree: json, css, yaml and graphql come out byte-identical, because oxfmt formats them through the
+// Prettier it bundles, and js, ts and tsx did when measured — since oxfmt 0.66 oxc places some
+// comments differently from Prettier on purpose (oxc's DIVERGENCES.md). So prettier
 // added nothing here but a second writer, and `docs/backlog/prettier-and-oxfmt-disagree-on-wrapped-unions.md`
 // is what a second writer costs. oxfmt also reaches `.mdx` and every project type, prettier neither.
 export const prettierGlobs: string[] = [...scriptGlobs, "**/*.d.ts"];
