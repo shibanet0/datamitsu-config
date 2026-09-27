@@ -4,8 +4,9 @@ import { spawnSync } from "node:child_process";
 
 import { getBinaryFilepath } from "./utils.js";
 
+// The node running this wrapper, not whichever `node` is first on PATH.
 const result = spawnSync(
-  "node",
+  process.execPath,
   [getBinaryFilepath("tsx", "../dist/cli.mjs"), ...process.argv.slice(2)],
   { stdio: "inherit" },
 );
