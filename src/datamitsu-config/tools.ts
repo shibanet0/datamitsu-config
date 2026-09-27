@@ -7,6 +7,7 @@ import {
   dotenvLinterGlobs,
   droastGlobs,
   eslintGlobs,
+  githubActionsGlobs,
   goFormatExcludeGlobs,
   goGlobs,
   goSourceGlobs,
@@ -256,7 +257,8 @@ export const toolsConfig: config.MapOfTools = {
     name: "blint - binary linter & SBOM generator",
     operations: {
       // Inspects compiled binaries, not source — point `-i` at build output
-      // when enabling. Network scanner → enable as `skip: !isCI`.
+      // when enabling. Offline: the blintdb download happens only with
+      // `--use-blintdb` or `USE_BLINTDB`, neither of which is passed here.
       lint: {
         app: "blint",
         args: ["--no-banner", "--no-error", "-i", "{target}", "-o", "{toolCache}/blint"],
@@ -947,6 +949,9 @@ export const toolsConfig: config.MapOfTools = {
   },
   oxlint: {
     name: "Oxlint",
+    // `--format=default` is pinned because oxlint picks its format from the environment: `github`
+    // (`::error` workflow commands) under GITHUB_ACTIONS, `agent` when an AI coding agent runs it.
+    // The same `dm check` would otherwise print three different reports.
     operations: {
       fix: {
         app: "oxlint",
@@ -954,6 +959,7 @@ export const toolsConfig: config.MapOfTools = {
           "--disable-nested-config",
           "-c",
           "{managedConfig:oxlint.config.mts}",
+          "--format=default",
           "--fix",
           "{files}",
         ],
@@ -963,7 +969,13 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "oxlint",
-        args: ["--disable-nested-config", "-c", "{managedConfig:oxlint.config.mts}", "{files}"],
+        args: [
+          "--disable-nested-config",
+          "-c",
+          "{managedConfig:oxlint.config.mts}",
+          "--format=default",
+          "{files}",
+        ],
         globs: oxlintGlobs,
         priority: lintPriority.oxlint,
         scope: "per-project",
@@ -973,22 +985,30 @@ export const toolsConfig: config.MapOfTools = {
   },
   pinact: {
     name: "pinact - pin GitHub Actions to commit SHAs",
+    // A check, not a fixer: `--fix=false --no-api` fails on any `uses:` that is not a 40-character
+    // SHA, offline. Pinning resolves each tag through the GitHub API (60 requests an hour without a
+    // token) and rewrites workflows, so it stays a deliberate `dm exec pinact -- run`, not part of
+    // `dm fix`.
+    //
+    // pinact adds `::error`/`::notice` workflow commands and forces colour when GITHUB_ACTIONS is
+    // "true", and no flag turns that off (`--format` only selects a machine-readable report), so
+    // the variable is overridden. It reads nothing else from it.
     operations: {
-      fix: {
-        app: "pinact",
-        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "{files}"],
-        globs: actionlintGlobs,
-        scope: "repository",
-      },
       lint: {
         app: "pinact",
-        args: ["--config", "{managedConfig:.pinact.yaml}", "run", "--check", "{files}"],
-        globs: actionlintGlobs,
+        args: [
+          "--config",
+          "{managedConfig:.pinact.yaml}",
+          "run",
+          "--fix=false",
+          "--no-api",
+          "{files}",
+        ],
+        env: { GITHUB_ACTIONS: "false" },
+        globs: githubActionsGlobs,
         scope: "repository",
       },
     },
-    skip: true,
-    skipReason: optInSkip,
   },
   "pre-commit": {
     name: "pre-commit - Multi-language pre-commit hooks",
@@ -1015,8 +1035,11 @@ export const toolsConfig: config.MapOfTools = {
    * Oxfmt is the one that stays because it is the one that covers more: `.svelte`, `.vue`, `.less`,
    * `.mdx`, `.graphqls` and `.mjml` have no prettier operation here, it runs in every project type
    * rather than only npm ones, and it is faster (0.21s against 1.60s over 283 files of this
-   * repository). Nothing is lost on the shared ground — measured over js, ts, tsx, json, css, yaml
-   * and graphql, including the fenced code inside Markdown, the two write identical bytes.
+   * repository). Little is lost on the shared ground. json, css, yaml and graphql, including the
+   * fenced code inside Markdown, come out byte-identical, because oxfmt formats them through the
+   * Prettier it bundles; js, ts and tsx matched when measured, but since oxfmt 0.66 oxc places some
+   * comments differently from Prettier on purpose — between a statement's head and its body, in
+   * `for` heads, around labels and JSX — as listed in oxc's DIVERGENCES.md.
    *
    * What stays is the app, its managed `prettier.config.mjs` and the `.datamitsu` link: a project
    * that needs one of the four bundled plugins (XML, SQL, embed, JSDoc — none of which this config
@@ -1230,17 +1253,19 @@ export const toolsConfig: config.MapOfTools = {
   },
   sqruff: {
     name: "sqruff - SQL linter & formatter",
+    // `--format human` is pinned: under GITHUB_ACTIONS sqruff switches to `::error` workflow
+    // commands on stdout, in `fix` as well as `lint`.
     operations: {
       fix: {
         app: "sqruff",
-        args: ["fix", "--config", "{managedConfig:.sqruff}", "{files}"],
+        args: ["fix", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        args: ["lint", "--config", "{managedConfig:.sqruff}", "{files}"],
+        args: ["lint", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
         globs: sqlGlobs,
         granularity: "file",
         scope: "per-project",
@@ -1329,22 +1354,24 @@ export const toolsConfig: config.MapOfTools = {
   },
   "terragrunt-fmt": {
     name: "Terragrunt HCL Format",
+    // `hclfmt` is the pre-1.0 spelling; the pinned build takes `hcl fmt`, which also has the
+    // `--check` mode the lint operation needs. One file at a time through `--file`: run on a
+    // directory, `hcl fmt` walks it itself and reformats `.hcl` files under `node_modules/`,
+    // `vendor/`, `.terraform/` and anything else the project's ignore rules would have excluded.
     operations: {
-      // `hclfmt` is the pre-1.0 spelling; the pinned build takes `hcl fmt`, which also has the
-      // `--check` mode the lint operation needs.
       fix: {
         app: "terragrunt",
-        args: ["hcl", "fmt"],
+        args: ["hcl", "fmt", "--file", "{file}"],
         globs: ["**/*.hcl"],
         priority: fixPriority["terragrunt-fmt"],
-        scope: "repository",
+        scope: "per-file",
       },
       lint: {
         app: "terragrunt",
-        args: ["hcl", "fmt", "--check", "--diff"],
+        args: ["hcl", "fmt", "--check", "--diff", "--file", "{file}"],
         globs: ["**/*.hcl"],
         priority: lintPriority["terragrunt-fmt"],
-        scope: "repository",
+        scope: "per-file",
       },
     },
     projectTypes: ["terragrunt-project"],
@@ -1644,7 +1671,7 @@ export const toolsConfig: config.MapOfTools = {
           "plain",
           "{target}",
         ],
-        globs: actionlintGlobs,
+        globs: githubActionsGlobs,
         scope: "repository",
       },
     },

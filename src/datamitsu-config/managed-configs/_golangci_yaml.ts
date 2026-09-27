@@ -100,7 +100,7 @@ export const golangciYaml: config.ManagedConfig = {
       "cyclop",
       "dupl",
       "err113",
-      "exhaustruct",
+      "exhaustruct_v5",
       "funlen",
       "gochecknoglobals",
       "gochecknoinits",
@@ -211,6 +211,10 @@ export const golangciYaml: config.ManagedConfig = {
           rules: exclusionRules,
         },
         settings: {
+          // Since golangci-lint 2.13.2, canonicalheader accepts one spelling per header and
+          // `--fix` rewrites the other. With the default exclusions that spelling is the common
+          // one (`X-Request-ID`, `ETag`), not Go's canonical key (`X-Request-Id`, `Etag`).
+          canonicalheader: { "use-default-exclusions": true },
           gocyclo: { "min-complexity": 20 },
           revive: { rules: reviveRules },
           ...prevSettings,

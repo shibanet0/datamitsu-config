@@ -102,7 +102,7 @@ export function generateToolsMarkdown(tools: ToolDocInfo[]): string {
 }
 
 export async function main(): Promise<void> {
-  const outputPath = "docs/reference/tools.md";
+  const outputPath = "website/reference/tools.md";
   const jsonStr = executeConfigShow();
   const config = parseConfigJson(jsonStr);
   const tools = extractToolsInfo(config);

@@ -188,7 +188,7 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
    * no browserslist it falls back to a default browser list and reports against Opera Mini. The
    * escompat half has the identical dependency and had no gate, no `files` and no list entry — so a
    * Node-only service with `engines.node >= 22` failed on `escompat/no-regexp-v-flag` citing
-   * "chrome 109". Only two of its 27 rules are reachable today, but that set is a function of the
+   * "chrome 109". Only two of its 29 rules are reachable today, but that set is a function of the
    * caniuse snapshot and grows silently on a `caniuse-lite` bump.
    *
    * The manifest field only, not `.browserslistrc`: this config is handed a `package.json`, not a

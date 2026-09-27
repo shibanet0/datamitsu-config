@@ -4,6 +4,10 @@ inputs:
     default: "true"
     description: "Whether to cache datamitsu store"
     required: false
+  cache-pnpm:
+    default: "true"
+    description: "Whether to cache the pnpm store"
+    required: false
   install-dependencies:
     default: "true"
     description: "Whether to run pnpm install"
@@ -16,17 +20,19 @@ name: Setup Environment
 runs:
   steps:
     - name: Setup pnpm
-      uses: pnpm/action-setup@v5
+      uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       # Auto-detects version from package.json packageManager field
     - name: Setup Node.js
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
       with:
-        cache: "pnpm"
+        cache: ${{ inputs.cache-pnpm == 'true' && 'pnpm' || '' }}
         node-version-file: ".node-version"
+        # setup-node turns a pnpm cache on by itself when package.json names a packageManager.
+        package-manager-cache: ${{ inputs.cache-pnpm == 'true' }}
         registry-url: ${{ inputs.registry-url != '' && inputs.registry-url || null }}
     - if: ${{ inputs.cache-datamitsu == 'true' }}
       name: Cache datamitsu store
-      uses: actions/cache@v5
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
       with:
         key: datamitsu-store-${{ hashFiles('package.json', 'pnpm-lock.yaml', 'datamitsu.config.js') }}
         path: ~/.cache/datamitsu/store

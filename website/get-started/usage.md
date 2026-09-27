@@ -50,6 +50,18 @@ merging the lists. Package selectors keep their versions and ranges. Repeating
 reconciliation preserves the result; modern scalar `trustPolicy` values are left intact.
 Malformed exclusion lists stop reconciliation with an error.
 
+Reconciliation also brings the file up to pnpm 12, which fails every command on a workspace
+setting it does not recognize. The settings pnpm 12 removed — `confirmModulesPurge`,
+`ignoreDepScripts`, `ignorePatchFailures`, `managePackageManagerVersions`,
+`packageManagerStrict`, `packageManagerStrictVersion` and `useNodeVersion` — are dropped,
+`allowNonAppliedPatches` becomes `allowUnusedPatches` with its value, and `auditLevel` gives way to
+`audit.level`. Everything else under `audit`, such as the `audit.ignore` list, is kept.
+
+pnpm 12 records the `packageManager` version in `pnpm-lock.yaml`. The managed `package.json` pins
+the pnpm version this package ships with, so a reconciliation that moves it leaves the lockfile out
+of date, and `pnpm install --frozen-lockfile` fails in CI. Run `pnpm install` after reconciling and
+commit `pnpm-lock.yaml` together with `package.json`.
+
 **When to use:**
 
 - Standard development workflow
@@ -294,6 +306,22 @@ Individual tools (ESLint, Prettier, cspell, etc.) can be customized through thei
 - `.prettierrc` / `prettier.config.mjs` — Prettier configuration
 - `cspell.json` — cspell dictionary and settings
 - `knip.config.js` — Knip unused code configuration
+
+Configs that only their tool reads — gitleaks, yamlfmt, yamllint, hadolint and a few more — are not
+written into your repository: `dm init` keeps them in `.datamitsu/configs/`. To change one, name its
+tool in your `datamitsu.config.*` and reconcile it into the repository:
+
+```javascript
+function getConfig(config) {
+  return { ...config, ejectConfigs: ["gitleaks"] };
+}
+
+globalThis.getConfig = getConfig;
+```
+
+```bash
+pnpm dm config reconcile --tools gitleaks
+```
 
 Naming checks are opt-in and split between two tools: alint checks file names, ls-lint checks
 directory names. Enable either with `tools["alint"].skip: false` or `tools["ls-lint"].skip: false`,

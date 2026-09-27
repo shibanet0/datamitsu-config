@@ -109,7 +109,7 @@ Worktrees are managed with \`wt\`, which datamitsu installs. Never run \`git wor
 pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
 \`\`\`
 
-Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode|pi|omp> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
 
 **Commit message format** (Conventional Commits):
 
@@ -450,6 +450,8 @@ If the project provides an \`llms.txt\` file (served via website or accessible v
 
 const CHUNK_20_DOCS_MARKDOWN = `## Documentation Surface
 
+These rules are for documentation that is **not published**: Markdown files read in the repository itself, with no site built from them. If the project builds a documentation site, it needs \`agents-docs-website.md\` instead — tell the user rather than applying the rules below to the site.
+
 All user-facing documentation lives in Markdown files within the repository. Primary surfaces:
 
 - **\`docs/\`** — detailed guides, API reference, architecture docs, command reference, config reference
@@ -468,7 +470,15 @@ Keep README focused. Detailed architecture explanations and full API references 
 
 const CHUNK_20_DOCS_WEBSITE = `## Documentation Surface
 
+These rules are for documentation **published as a site** built from the repository. If the documentation is only Markdown files read in the repository, the project needs \`agents-docs-markdown.md\` instead — tell the user.
+
 **All user-facing documentation lives in the documentation website. README.md files must remain minimal.** Reference pages, the command reference and the config reference all live there.
+
+### Website Sources
+
+Keep the site's sources in \`website/\` at the repository root, and point the generator's content directory there. Start new sites in \`website/\`; for an existing site kept elsewhere, propose migrating it. This is a default, not a hard rule — when the user or the project says the sources belong in \`docs/\` or anywhere else, do that.
+
+\`docs/\` is for what is never published, such as \`docs/backlog/\` and \`docs/plans/\`. Most generators publish every file under their content directory, so a site built from \`docs/\` publishes those too.
 
 ### README.md Scope
 
@@ -494,14 +504,14 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "dc82caf6a6f273b7b87d967dc8ee3d46dadf7f02f02663bf15b9aae0a307bb25"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "99f787a9542bbe75d2214c94b20525b3b85e1c0bd2c209d622b5416288058db4"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "1ddad93a578148375649488c794902657f4542d55146687b2eb518cd3d2afe11"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
 export const CHUNK_00_STACK_HASH = "0fc75a6d218f9bf4b31ac605f61373da5818d14cb282c33ad62e9a84db2be9a0"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
-export const CHUNK_20_DOCS_MARKDOWN_HASH = "babafc853c28c64fc881f395c2a221a9639a1e34bfd8f219a50221e91e40dd05"; // prettier-ignore
-export const CHUNK_20_DOCS_WEBSITE_HASH = "a9d1c1a59fa5b7ffd4c62819a84162113389675a4af72a7ab1e6eb0bfb325029"; // prettier-ignore
+export const CHUNK_20_DOCS_MARKDOWN_HASH = "c966e49af479f77fc45d99b41dce062b873f3ab1af62c44ab5324b05374d505a"; // prettier-ignore
+export const CHUNK_20_DOCS_WEBSITE_HASH = "c2e1ca1dd5e32d27e2f82955bbf703b3cb4c6e0b4d9427a78907e01844cb6dbf"; // prettier-ignore
 
 export const ALL_AGENTS_HASHES = [CHUNK_00_BACKLOG_HASH, CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_PRIVACY_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore

@@ -5,7 +5,7 @@ import { GLOB_E2E } from "../globs";
 /**
  * Scoped to {@link GLOB_E2E}.
  *
- * `flat/recommended` ships with no `files` of its own, so all 37 rules applied to every file in any
+ * `flat/recommended` ships with no `files` of its own, so all 38 rules applied to every file in any
  * project that has playwright installed — `no-standalone-expect` on a unit test,
  * `no-conditional-in-test` on application code. `playwright/no-standalone-expect` is already in the
  * shared backlog because of it.

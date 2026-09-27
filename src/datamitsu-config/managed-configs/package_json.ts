@@ -68,9 +68,10 @@ export const packageJson: config.ManagedConfig = {
       devEngines: isRoot
         ? {
             // Only the runtime here. devEngines.packageManager is intentionally
-            // NOT used: it is mutually exclusive with the top-level
-            // packageManager field, and tooling that resolves pnpm (Corepack,
-            // pnpm/action-setup in CI) reads packageManager, not devEngines.
+            // NOT used: the top-level packageManager field already pins pnpm, and
+            // the tooling that resolves pnpm (Corepack, pnpm/action-setup in CI)
+            // reads that field, so a second declaration would only be one more
+            // version to keep in step.
             runtime: { name: "node", onFail: "warn", version: `>=${runtimeVersions.node}` },
           }
         : undefined,

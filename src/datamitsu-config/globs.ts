@@ -7,6 +7,15 @@ export const actionlintGlobs: string[] = [
   "**/.github/workflows/*.yaml",
 ];
 
+// Workflows plus composite actions, for tools that read both. datamitsu passes the matched files, and
+// pinact then ignores the `files` list in its own config, so an action file outside these globs is
+// never pinned; for zizmor they decide whether an edit to an action triggers a run at all.
+export const githubActionsGlobs: string[] = [
+  ...actionlintGlobs,
+  "**/.github/actions/*/action.yml",
+  "**/.github/actions/*/action.yaml",
+];
+
 export const dockerfileGlobs: string[] = ["**/Dockerfile", "**/Dockerfile.*", "**/*.dockerfile"];
 
 // docker-compose / compose files (dclint targets these). Mirrors dclint's own
@@ -194,8 +203,10 @@ export const packageJsonGlobs: string[] = ["**/package.json"];
  */
 export const syncpackGlobs: string[] = [...packageJsonGlobs, "**/pnpm-workspace.yaml"];
 
-// Markdown is deliberately absent: oxfmt owns it. The two produce byte-identical output on the
-// fenced languages either can reach (js, ts, tsx, json, css, yaml, graphql — measured), so prettier
+// Markdown is deliberately absent: oxfmt owns it. On the fenced languages either can reach the two
+// agree: json, css, yaml and graphql come out byte-identical, because oxfmt formats them through the
+// Prettier it bundles, and js, ts and tsx did when measured — since oxfmt 0.66 oxc places some
+// comments differently from Prettier on purpose (oxc's DIVERGENCES.md). So prettier
 // added nothing here but a second writer, and `docs/backlog/prettier-and-oxfmt-disagree-on-wrapped-unions.md`
 // is what a second writer costs. oxfmt also reaches `.mdx` and every project type, prettier neither.
 export const prettierGlobs: string[] = [...scriptGlobs, "**/*.d.ts"];

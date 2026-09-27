@@ -101,7 +101,7 @@ export function generateManagedConfigsMarkdown(configs: ManagedConfigDocInfo[]):
 }
 
 export async function main(): Promise<void> {
-  const outputPath = "docs/reference/managed-configs.md";
+  const outputPath = "website/reference/managed-configs.md";
   const jsonStr = executeConfigShow();
   const config = parseConfigJson(jsonStr);
   const configs = extractManagedConfigsInfo(config);

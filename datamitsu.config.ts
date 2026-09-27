@@ -2,11 +2,43 @@
 
 const _getConfig = (config: config.Config): config.Config => ({
   ...config,
+  // The configuration-author guide is for agents changing this repository's configuration, so it is
+  // linked from this root config and never from the config the package publishes to consumers.
+  bundles: {
+    ...config.bundles,
+    "config-author-guide": {
+      files: {
+        "datamitsu-config-author.md":
+          config.sharedStorage?.["datamitsu-config-author-prompt"] ?? "",
+      },
+      links: {
+        "ai/agents/datamitsu-config-author.md": "datamitsu-config-author.md",
+      },
+    },
+  },
   // These carry rules of this repository's own, so they stay in the repository; every other
   // ejectable config lives in .datamitsu/configs/.
   ejectConfigs: ["alint", "droast", "ls-lint", "yamlfmt"],
   managedConfigs: {
     ...config.managedConfigs,
+    ".markdownlint-cli2.mjs": {
+      ...config.managedConfigs?.[".markdownlint-cli2.mjs"],
+      content:
+        () => /* js */ `import { defineConfig } from "./.datamitsu/markdownlint-cli2.config.mjs";
+
+export default defineConfig((base) => ({
+  ...base,
+  /**
+   * \`website/reference/\` is written by \`scripts/generate-docs-*.ts\` from \`dm config show\`, so a
+   * finding there is a finding about the generator, not about a document anyone can edit — and the
+   * fix would be overwritten by the next \`task refresh\`. The generators sanitize tool descriptions
+   * rather than author prose, which is where the bare URLs come from.
+   */
+  ignores: ["website/reference/**"],
+}));
+`,
+      expectChainHash: "xxh3:954a3802abda0d1d14c4900bf694a4f3",
+    },
     "cspell.config.mjs": {
       ...config.managedConfigs?.["cspell.config.mjs"],
       content: () => /* js */ `import { defineConfig } from "./.datamitsu/cspell.config.mjs";
@@ -24,6 +56,26 @@ export default defineConfig((prev) => {
 })});
 `,
       expectChainHash: "xxh3:84e8fe2861e794390eb299da516f3d4b",
+    },
+    "droast.toml": {
+      ...config.managedConfigs?.["droast.toml"],
+      // Written as text so the comment on the override survives reconciliation: the managed
+      // content parses and re-serializes the file, and TOML comments do not survive a parse.
+      content: () => /* toml */ `fail-on = "info"
+inline-suppressions = true
+max-suppression-days = 90
+no-roast = true
+report-unused-suppressions = true
+require-suppression-expiration = true
+require-suppression-reason = true
+
+# The published images are CLI toolchains run per command, not services: there is no process to
+# health-check and no port to document.
+[[overrides]]
+paths = ["docker/Dockerfile", "docker/Dockerfile.*"]
+skip = ["DF012", "DF022"]
+`,
+      expectChainHash: "xxh3:f400967fef3dfa89512eefc4f95cbf78",
     },
     "eslint.config.mjs": {
       ...config.managedConfigs?.["eslint.config.mjs"],
@@ -187,7 +239,7 @@ pre-commit:
       stage_fixed: true
     docs-generate:
       priority: 30
-      run: "node bin/datamitsu.js exec task -- docs:generate && git add docs/reference/apps.md docs/reference/tools.md docs/reference/project-types.md docs/reference/managed-configs.md"
+      run: "node bin/datamitsu.js exec task -- docs:generate && git add website/reference/apps.md website/reference/tools.md website/reference/project-types.md website/reference/managed-configs.md"
       stage_fixed: true
     datamitsu-check:
       priority: 40
@@ -227,7 +279,7 @@ post-checkout:
       run: pnpm i -y
   parallel: false
 `,
-      expectChainHash: "xxh3:1124e9bc6be737f22c501e7582f6fbda",
+      expectChainHash: "xxh3:98ebd786075cf9840a865dc9036fc428",
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
@@ -244,44 +296,43 @@ post-checkout:
                 tsx: "bin/tsx.js",
               },
               dependencies: {
-                "@commander-js/extra-typings": "14.0.0",
-                "@datamitsu/datamitsu": "0.0.0-unstable.20260924.e312cf1",
-                commander: "14.0.3",
-                execa: "9.6.1",
+                "@commander-js/extra-typings": "15.0.0",
+                "@datamitsu/datamitsu": "0.4.0",
+                commander: "15.0.0",
+                execa: "10.0.1",
                 "fast-glob": "3.3.3",
-                tsx: "4.22.3",
-                "type-fest": "5.6.0",
+                tsx: "4.23.15",
+                "type-fest": "5.10.0",
                 typescript: "6.0.3",
               },
               description: "Shared datamitsu configuration with 79+ managed development tools",
               devDependencies: {
                 "@antebudimir/eslint-plugin-vanilla-extract": "1.17.0",
-                "@commitlint/cli": "21.2.2",
-                "@commitlint/config-conventional": "21.2.2",
-                "@commitlint/format": "21.2.2",
-                "@commitlint/types": "21.2.0",
-                "@e18e/eslint-plugin": "0.8.0",
-                "@eslint-community/eslint-plugin-eslint-comments": "4.7.2",
-                "@eslint-react/eslint-plugin": "5.18.6",
+                "@commitlint/cli": "21.2.3",
+                "@commitlint/config-conventional": "21.2.3",
+                "@commitlint/format": "21.2.3",
+                "@commitlint/types": "21.2.3",
+                "@e18e/eslint-plugin": "0.8.1",
+                "@eslint-community/eslint-plugin-eslint-comments": "4.8.1",
+                "@eslint-react/eslint-plugin": "5.20.1",
                 "@eslint/config-helpers": "0.7.0",
                 "@eslint/js": "10.0.1",
-                "@next/eslint-plugin-next": "16.3.2",
+                "@next/eslint-plugin-next": "16.3.5",
                 "@ovineko/clean-pkg-json": "0.0.4",
                 "@prettier/plugin-xml": "3.4.2",
                 "@stylistic/eslint-plugin": "5.10.0",
-                "@types/node": "25.9.1",
-                "@types/remove-markdown": "0.3.4",
+                "@types/node": "26.6.2",
                 // Not plugins. Two packages that import them at runtime without declaring either a
                 // dependency or a peer — @antebudimir/eslint-plugin-vanilla-extract needs
                 // @typescript-eslint/utils, eslint-plugin-compat needs caniuse-lite — so under
                 // pnpm's isolated layout they only ever resolved by accident.
-                "@typescript-eslint/utils": "8.67.0",
-                "@vitest/coverage-v8": "4.1.7",
+                "@typescript-eslint/utils": "8.70.0",
+                "@vitest/coverage-v8": "5.0.1",
                 "@vitest/eslint-plugin": "1.6.27",
-                "caniuse-lite": "1.0.30001760",
+                "caniuse-lite": "1.0.30001810",
                 "conventional-changelog-conventionalcommits": "10.4.0",
-                cspell: "10.0.1",
-                eslint: "10.9.0",
+                cspell: "10.3.3",
+                eslint: "10.11.0",
                 "eslint-config-prettier": "10.1.8",
                 "eslint-flat-config-utils": "3.2.0",
                 "eslint-import-resolver-typescript": "4.4.5",
@@ -294,62 +345,62 @@ post-checkout:
                 "eslint-plugin-de-morgan": "2.1.3",
                 "eslint-plugin-decorator-position": "6.1.1",
                 "eslint-plugin-depend": "1.5.0",
-                "eslint-plugin-es-x": "10.0.0",
-                "eslint-plugin-escompat": "3.11.4",
+                "eslint-plugin-es-x": "10.0.1",
+                "eslint-plugin-escompat": "4.1.0",
                 "eslint-plugin-fsecond": "1.5.0",
-                "eslint-plugin-functional": "10.0.0",
-                "eslint-plugin-html": "8.1.4",
+                "eslint-plugin-functional": "10.0.1",
+                "eslint-plugin-html": "8.2.1",
                 "eslint-plugin-i18next": "6.1.5",
                 "eslint-plugin-import-x": "4.17.1",
-                "eslint-plugin-jsdoc": "64.2.1",
+                "eslint-plugin-jsdoc": "64.5.4",
                 "eslint-plugin-json": "5.0.0",
                 "eslint-plugin-json-schema-validator": "6.3.1",
-                "eslint-plugin-jsonc": "3.4.1",
+                "eslint-plugin-jsonc": "3.4.2",
                 "eslint-plugin-jsx-a11y-x": "0.2.0",
                 "eslint-plugin-n": "18.3.0",
                 "eslint-plugin-no-unsanitized": "4.1.5",
                 "eslint-plugin-no-use-extend-native": "0.7.3",
-                "eslint-plugin-oxlint": "1.79.0",
-                "eslint-plugin-perfectionist": "5.10.1",
-                "eslint-plugin-playwright": "2.11.0",
-                "eslint-plugin-pnpm": "1.8.0",
+                "eslint-plugin-oxlint": "1.83.0",
+                "eslint-plugin-perfectionist": "5.11.1",
+                "eslint-plugin-playwright": "2.12.0",
+                "eslint-plugin-pnpm": "1.9.1",
                 "eslint-plugin-promise": "7.3.0",
                 "eslint-plugin-react-hooks": "7.1.1",
                 "eslint-plugin-react-prefer-function-component": "5.0.0",
-                "eslint-plugin-react-refresh": "0.5.4",
+                "eslint-plugin-react-refresh": "0.5.7",
                 "eslint-plugin-react-you-might-not-need-an-effect": "1.0.2",
-                "eslint-plugin-regexp": "3.2.0",
+                "eslint-plugin-regexp": "3.3.1",
                 "eslint-plugin-security": "4.0.1",
-                "eslint-plugin-sonarjs": "4.2.0",
-                "eslint-plugin-storybook": "10.5.10",
+                "eslint-plugin-sonarjs": "4.2.1",
+                "eslint-plugin-storybook": "10.6.0",
                 "eslint-plugin-svelte": "3.23.0",
-                "eslint-plugin-turbo": "2.10.11",
-                "eslint-plugin-unicorn": "73.0.0",
+                "eslint-plugin-turbo": "2.11.2",
+                "eslint-plugin-unicorn": "76.0.0",
                 "eslint-plugin-unused-imports": "4.4.1",
                 "eslint-typegen": "2.3.1",
-                globals: "17.11.0",
-                "json-schema-to-typescript": "15.0.4",
-                knip: "6.32.2",
-                oxfmt: "0.64.0",
-                oxlint: "1.79.0",
-                prettier: "3.9.6",
+                globals: "17.12.0",
+                "json-schema-to-typescript": "16.0.0",
+                knip: "6.37.0",
+                oxfmt: "0.68.0",
+                oxlint: "1.83.0",
+                prettier: "3.9.8",
                 "prettier-plugin-embed": "0.5.1",
                 "prettier-plugin-jsdoc": "1.8.1",
                 "prettier-plugin-sql": "0.20.0",
-                "remove-markdown": "0.6.4",
+                "remove-markdown": "0.7.0",
                 stylelint: "17.15.0",
-                svelte: "5.57.0",
-                tsdown: "0.22.14",
-                "typescript-eslint": "8.67.0",
-                unrun: "0.3.0",
-                vitest: "4.1.7",
-                yaml: "2.9.0",
+                svelte: "5.57.1",
+                tsdown: "0.23.0",
+                "typescript-eslint": "8.70.0",
+                unrun: "0.3.1",
+                vitest: "5.0.1",
+                yaml: "2.9.1",
               },
               devEngines: {
                 runtime: {
                   name: "node",
                   onFail: "warn",
-                  version: ">=26.8.1",
+                  version: ">=26.10.0",
                 },
               },
               engines: {
@@ -394,7 +445,7 @@ post-checkout:
               keywords: [],
               license: "MIT",
               name: "@shibanet0/datamitsu-config",
-              packageManager: "pnpm@12.4.1",
+              packageManager: "pnpm@12.5.1",
               repository: {
                 type: "git",
                 url: "https://github.com/shibanet0/datamitsu-config",
@@ -435,15 +486,15 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:980f91ee767f350cac998c86973f1b01",
+      expectChainHash: "xxh3:fb4f8ccf727d259b00359837b124b810",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
       content: () => /*yaml*/ `allowBuilds:
   esbuild: false
   unrs-resolver: false
-audit: {}
-auditLevel: high
+audit:
+  level: high
 autoInstallPeers: true
 blockExoticSubdeps: true
 catalog:
@@ -552,6 +603,10 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - "@datamitsu/*"
   - "@ovineko/*"
+  # eslint-plugin-html 8.2.0 crashes ESLint 10.11 on any .html file with inline script, and
+  # 8.2.1 is the fix: https://github.com/BenoitZugmeyer/eslint-plugin-html/issues/342
+  # Remove this entry once 8.2.1 is older than the minimum release age: 2026-09-30T19:30Z.
+  - eslint-plugin-html@8.2.1
 optimisticRepeatInstall: true
 overrides:
   debug@4.4.3: npm:debug@3.2.7
@@ -580,7 +635,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:6eebbfeb9adc65f2639564390351465d",
+      expectChainHash: "xxh3:0bc53a66c432bd8a4f05c1f604f84162",
     },
   },
   tools: {
@@ -818,4 +873,8 @@ const cspellWords: string[] = [
   // src/datamitsu-config/datamitsu.config.d.ts.
   "codeberg",
   "gitea",
+  // blint's vulnerability database (tools.ts) and the filesystem driver dockle builds without cgo
+  // for (apps.ts).
+  "blintdb",
+  "btrfs",
 ];

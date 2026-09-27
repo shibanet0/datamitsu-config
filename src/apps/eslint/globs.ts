@@ -18,7 +18,7 @@ export const GLOB_SCSS = "**/*.scss";
  *
  * Both of the plugins that need this were mis-scoped. The vitest block asked for `tests/**`, which
  * matches nothing in a repository whose tests are in `__tests__/` — so its rules had never run at
- * all. eslint-plugin-playwright's `flat/recommended` carries no `files` of its own, so its 37 rules
+ * all. eslint-plugin-playwright's `flat/recommended` carries no `files` of its own, so its 38 rules
  * applied to every file in any project that has playwright installed.
  *
  * One list rather than two per plugin, because "is this a test file" is one question. The e2e set
@@ -36,7 +36,7 @@ export const GLOB_TESTS = [
  * by filename — which is also why this is a separate list from {@link GLOB_TESTS}.
  *
  * `**\/tests/**` is deliberately not here. It is the conventional home of _unit_ tests in plenty of
- * projects, and matching it applied all 37 playwright rules to them: `no-conditional-in-test`,
+ * projects, and matching it applied all 38 playwright rules to them: `no-conditional-in-test`,
  * `no-conditional-expect`, `no-focused-test`, `prefer-to-have-length` on a vitest file, two of them
  * duplicating a sonarjs finding on the same line. A project that keeps e2e specs somewhere else
  * names the directory itself; that is a smaller cost than arming the rules everywhere.

@@ -8,9 +8,9 @@ import { tsdownConfigBanner } from "./tsdown.config-banner";
 const execAsync = promisify(exec);
 
 export default defineConfig({
+  deps: { neverBundle: Object.keys(prettierDeps) },
   dts: true,
   entry: ["src/apps/prettier/index.ts"],
-  external: Object.keys(prettierDeps),
   fixedExtension: false,
   hooks: {
     "build:done": async () => {

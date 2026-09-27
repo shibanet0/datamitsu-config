@@ -5,9 +5,9 @@
  * no `oci` key is emitted and store seeding stays opt-in. At release time scripts/inject-oci-pin.ts
  * produces the SEPARATE `datamitsu.config.oci-ghcr.js` variant — a copy of the built default with
  * the placeholder replaced by the freshly published ghcr.io bundle reference. Consumers enable
- * seeding by pointing getBeforeConfigs() at that variant (see docs/get-started/oci-bundle.md), and
- * can override the `oci` key in their own config layer (e.g. to pull through a corporate registry
- * mirror — the digest stays the same, so verification is unaffected).
+ * seeding by pointing getBeforeConfigs() at that variant (see website/get-started/oci-bundle.md),
+ * and can override the `oci` key in their own config layer (e.g. to pull through a corporate
+ * registry mirror — the digest stays the same, so verification is unaffected).
  *
  * The config baked into the docker images keeps the placeholder too: a bundle must not
  * self-reference, and containers already carry the full store.

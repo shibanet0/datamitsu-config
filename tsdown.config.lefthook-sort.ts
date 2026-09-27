@@ -6,9 +6,9 @@ const execAsync = promisify(exec);
 
 // Keep YAML external so the managed app owns the pinned parser dependency.
 export default defineConfig({
+  deps: { neverBundle: ["yaml"] },
   dts: false,
   entry: ["src/apps/lefthook-sort/index.ts"],
-  external: ["yaml"],
   fixedExtension: true,
   format: ["esm"],
   hooks: {

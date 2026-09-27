@@ -75,6 +75,15 @@
       "app": "govulncheck"
     },
     {
+      "subtree": ".apps/uv/httpstat",
+      "kind": "app",
+      "app": "httpstat"
+    },
+    {
+      "subtree": ".uv/python",
+      "kind": "uv-python"
+    },
+    {
       "subtree": ".apps/node/knip",
       "kind": "app",
       "app": "knip"
@@ -103,11 +112,6 @@
       "subtree": ".apps/node/markdownlint-cli2",
       "kind": "app",
       "app": "markdownlint-cli2"
-    },
-    {
-      "subtree": ".apps/node/mmdc",
-      "kind": "app",
-      "app": "mmdc"
     },
     {
       "subtree": ".apps/uv/mypy",
@@ -165,11 +169,6 @@
     {
       "subtree": ".uv/python",
       "kind": "uv-python"
-    },
-    {
-      "subtree": ".apps/node/slidev",
-      "kind": "app",
-      "app": "slidev"
     },
     {
       "subtree": ".apps/bun/sort-keys",
@@ -239,6 +238,11 @@
       "app": "age"
     },
     {
+      "subtree": ".bin/age-keygen",
+      "kind": "binary",
+      "app": "age-keygen"
+    },
+    {
       "subtree": ".bin/air",
       "kind": "binary",
       "app": "air"
@@ -272,6 +276,11 @@
       "subtree": ".bin/dasel",
       "kind": "binary",
       "app": "dasel"
+    },
+    {
+      "subtree": ".bin/dive",
+      "kind": "binary",
+      "app": "dive"
     },
     {
       "subtree": ".bin/dm-internal-lefthook-upstream",
@@ -322,6 +331,11 @@
       "subtree": ".bin/goose",
       "kind": "binary",
       "app": "goose"
+    },
+    {
+      "subtree": ".bin/grpcurl",
+      "kind": "binary",
+      "app": "grpcurl"
     },
     {
       "subtree": ".bin/grype",
@@ -404,6 +418,11 @@
       "app": "shfmt"
     },
     {
+      "subtree": ".bin/snyk",
+      "kind": "binary",
+      "app": "snyk"
+    },
+    {
       "subtree": ".bin/sops",
       "kind": "binary",
       "app": "sops"
@@ -452,11 +471,6 @@
       "subtree": ".bin/typst",
       "kind": "binary",
       "app": "typst"
-    },
-    {
-      "subtree": ".bin/unfuck-ai-comments",
-      "kind": "binary",
-      "app": "unfuck-ai-comments"
     },
     {
       "subtree": ".bin/vacuum",

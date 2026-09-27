@@ -1,5 +1,5 @@
 export const runtimeVersions = {
-  node: "26.8.1",
+  node: "26.10.0",
   python: "3.14.7",
 };
 

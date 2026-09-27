@@ -7,9 +7,9 @@ import { tsdownConfigBanner } from "./tsdown.config-banner";
 const execAsync = promisify(exec);
 
 export default defineConfig({
+  deps: { neverBundle: ["oxfmt"] },
   dts: true,
   entry: ["src/apps/oxfmt/index.ts"],
-  external: ["oxfmt"],
   fixedExtension: false,
   hooks: {
     "build:done": async () => {
