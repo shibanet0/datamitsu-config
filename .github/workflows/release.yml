@@ -255,7 +255,10 @@ jobs:
       - id: mirror
         name: Mirror images and bundle by digest
         run: |
-          rm -f datamitsu.config.js
+          # The shipped config from the artifacts must not sit in the checkout while
+          # bin/datamitsu.js runs below, but the smoke test after this step needs it:
+          # move it aside rather than delete it.
+          mv datamitsu.config.js "$RUNNER_TEMP/shipped-datamitsu.config.js"
           # Warm up the managed crane binary so install logs never mix into
           # command substitutions below.
           node bin/datamitsu.js exec crane -- version
@@ -304,7 +307,7 @@ jobs:
           DM_BIN="$(node -e 'import("@datamitsu/datamitsu/get-exe.js").then((m) => console.log(m.getExePath()))')"
           SMOKE="$RUNNER_TEMP/dm-dockerhub-smoke-project"
           rm -rf "$SMOKE" && mkdir -p "$SMOKE"
-          cp datamitsu.config.js "$SMOKE/datamitsu.config.js"
+          cp "$RUNNER_TEMP/shipped-datamitsu.config.js" "$SMOKE/datamitsu.config.js"
           git init -q "$SMOKE"
           export DATAMITSU_CACHE_DIR="$RUNNER_TEMP/dm-dockerhub-smoke"
           cd "$SMOKE"
