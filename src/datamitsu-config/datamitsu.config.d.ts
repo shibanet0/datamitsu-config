@@ -1033,8 +1033,11 @@ declare global {
       cache?: boolean;
 
       /**
-       * Extra environment variables for this operation Merge priority: OS env < app env < tool
-       * operation env
+       * Extra environment variables for this operation Merge priority: OS env < inherited
+       * (`inheritEnv`) < app env < tool operation env. In `fix`, `lint` and `check` the tool does
+       * not see `GITHUB_ACTIONS`, AI agent markers or `FORCE_COLOR` from the OS env (see the Tool
+       * Environment reference page); name one in `inheritEnv` to hand it back. `NO_COLOR` cannot be
+       * set: every tool gets `NO_COLOR=1`.
        *
        * @example
        *   { "NODE_ENV": "production", "ESLINT_USE_FLAT_CONFIG": "true" }
@@ -1052,6 +1055,19 @@ declare global {
        *   ["**\/node_modules/**"];
        */
       excludeGlobs?: string[];
+
+      /**
+       * The lowest severity that fails the run: "error" (default), "warning", "info" or "hint". The
+       * tool's own exit code always fails the run too; failOn only adds failures, never removes
+       * them. The terminal shows findings at this severity and above. It needs a parser module that
+       * reads levels only from what the tool printed (descriptor schema 2); with an older module
+       * the exit code alone decides, and a run warns once. `--fail-on` raises it for every
+       * operation of a run, never lowers it.
+       *
+       * @example
+       *   failOn: "warning";
+       */
+      failOn?: "error" | "hint" | "info" | "warning";
 
       /**
        * File glob patterns this tool operates on Uses doublestar glob syntax: `*`, `**`, `?`,
@@ -1082,6 +1098,19 @@ declare global {
        *   granularity: "file";
        */
       granularity?: "file" | "repo" | "unit";
+
+      /**
+       * Host environment variables to hand to the tool even though datamitsu strips them by default
+       * (`GITHUB_ACTIONS`, AI agent markers, `FORCE_COLOR`). Names only: the tool sees the host's
+       * real value, and nothing when the host has none. The values are part of the operation's
+       * cache identity, so a change of value runs the tool again. Use `env` to set a fixed value
+       * instead; `env` wins over an inherited value. `NO_COLOR`, `PATH` and `DATAMITSU_*` names are
+       * rejected.
+       *
+       * @example
+       *   inheritEnv: ["GITHUB_ACTIONS"];
+       */
+      inheritEnv?: string[];
 
       /**
        * How the file content reaches the tool. - "file" (default): pass file paths as arguments via
@@ -1647,6 +1676,59 @@ declare global {
   }
 
   /**
+   * `facts().ci`: which CI runs the job, and the identifiers of the change it builds.
+   */
+  interface CIFacts {
+    /**
+     * The branch a pull or merge request targets, when the vendor says; empty otherwise.
+     */
+    baseRef: string;
+
+    /**
+     * Whether any CI was detected: a vendor's own marker, or `CI` set to anything but `false` or
+     * `0`.
+     */
+    isCI: boolean;
+
+    /**
+     * Whether the job builds a pull or merge request.
+     */
+    isPR: boolean;
+
+    /**
+     * The pull or merge request number, when the vendor says; empty otherwise.
+     */
+    prNumber: string;
+
+    /**
+     * The ref the job builds, as the vendor names it (`refs/pull/42/merge`, `main`).
+     */
+    ref: string;
+
+    /**
+     * The commit the job builds; on a GitHub pull request, the merge commit.
+     */
+    sha: string;
+
+    /**
+     * The CI, from its own variables; `generic` when only `CI` is set, empty outside CI. Gitea and
+     * Forgejo read as `gitea` although they set `GITHUB_ACTIONS` too.
+     */
+    vendor:
+      | ""
+      | "azure"
+      | "bitbucket"
+      | "buildkite"
+      | "circleci"
+      | "generic"
+      | "gitea"
+      | "github"
+      | "gitlab"
+      | "jenkins"
+      | "teamcity";
+  }
+
+  /**
    * Facts about the project environment. Collected automatically on engine initialization.
    *
    * Path-related fields have been removed. Use template placeholders in tool operation args
@@ -1671,6 +1753,16 @@ declare global {
      * Absolute path to the currently running binary
      */
     binaryPath: string;
+
+    /**
+     * The continuous-integration system the process runs under, detected from the variables each
+     * vendor sets for its jobs. Every field is empty or false outside CI. It is read from the same
+     * environment as `env`, so the config-evaluation cache already tells two values apart.
+     *
+     * @example
+     *   skip: !facts().ci.isCI;
+     */
+    ci: CIFacts;
 
     /**
      * The process environment available to configuration code, except observation-only datamitsu

@@ -187,7 +187,9 @@ const _lintPriority: Tool[] = [
 const fixPriority = toPriorityMap(_fixPriority);
 const lintPriority = toPriorityMap(_lintPriority);
 
-const isCI = facts().env.CI === "true" || facts().env.CI === "1";
+const runtimeFacts = facts();
+const isCI =
+  runtimeFacts.ci?.isCI ?? (runtimeFacts.env.CI === "true" || runtimeFacts.env.CI === "1");
 
 // Reason shown in the skipped report for the opt-in batch below.
 const optInSkip = "opt-in: pending manual review & config tuning";
@@ -327,7 +329,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "dclint",
-        args: ["-c", "{managedConfig:.dclint.yaml}", "--fix", "{files}"],
+        args: ["-c", "{managedConfig:.dclint.yaml}", "--fix", "--formatter", "json", "{files}"],
         globs: composeGlobs,
         priority: fixPriority.dclint,
         scope: "repository",
@@ -442,13 +444,16 @@ export const toolsConfig: config.MapOfTools = {
   },
   eslint: {
     name: "Eslint",
+    // ESLint's JSON formatter emits one object for every clean file. Without `--quiet`, this
+    // repository's report exceeds the runner's captured-output limit and becomes unparsable.
+    // `raiseWarningsToErrors` guarantees that hiding warnings cannot hide an enabled rule.
     operations: {
       fix: {
         app: "eslint",
         // `--fix-type` excludes `directive`, which is the fix type for an unused `eslint-disable`
         // comment — and "unused" here means "names a rule this config has off", which is ~1600 of
-        // them. Without the flag, `--quiet --fix` deletes the comment and its reason text, prints
-        // nothing, and exits 0; pre-commit then stages the deletion.
+        // them. Without the flag, `--fix` deletes the comment and its reason text; pre-commit then
+        // stages the deletion.
         //
         // Two shapes of loss. A rule oxlint owns: the comment goes, oxlint still reports it, and
         // nothing tells you the replacement is `oxlint-disable-next-line`. A rule parked in
@@ -458,6 +463,7 @@ export const toolsConfig: config.MapOfTools = {
         // With the flag the directive is left alone and reported instead, so it is a decision.
         args: [
           "--quiet",
+          "--format=json",
           "--fix",
           "--fix-type",
           "problem,suggestion,layout",
@@ -465,6 +471,7 @@ export const toolsConfig: config.MapOfTools = {
           "{managedConfig:eslint.config.mjs}",
           "{files}",
         ],
+        failOn: "error",
         globs: eslintGlobs,
         granularity: "file",
         priority: fixPriority.eslint,
@@ -473,6 +480,7 @@ export const toolsConfig: config.MapOfTools = {
       lint: {
         app: "eslint",
         args: ["--quiet", "--format=json", "-c", "{managedConfig:eslint.config.mjs}", "{files}"],
+        failOn: "error",
         globs: eslintGlobs,
         granularity: "file",
         priority: lintPriority.eslint,
@@ -523,7 +531,13 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "golangci-lint",
-        args: ["run", "--fix", "--allow-parallel-runners"],
+        args: [
+          "run",
+          "--fix",
+          "--allow-parallel-runners",
+          "--output.json.path=stdout",
+          "--show-stats=false",
+        ],
         env: {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
@@ -532,7 +546,12 @@ export const toolsConfig: config.MapOfTools = {
       },
       lint: {
         app: "golangci-lint",
-        args: ["run", "--allow-parallel-runners", "--output.json.path=stdout"],
+        args: [
+          "run",
+          "--allow-parallel-runners",
+          "--output.json.path=stdout",
+          "--show-stats=false",
+        ],
         env: {
           GOLANGCI_LINT_CACHE: "{toolCache}",
         },
@@ -989,10 +1008,8 @@ export const toolsConfig: config.MapOfTools = {
     // SHA, offline. Pinning resolves each tag through the GitHub API (60 requests an hour without a
     // token) and rewrites workflows, so it stays a deliberate `dm exec pinact -- run`, not part of
     // `dm fix`.
-    //
-    // pinact adds `::error`/`::notice` workflow commands and forces colour when GITHUB_ACTIONS is
-    // "true", and no flag turns that off (`--format` only selects a machine-readable report), so
-    // the variable is overridden. It reads nothing else from it.
+    // Managed operations no longer inherit GITHUB_ACTIONS, so pinact keeps its ordinary report
+    // format without an operation-level override.
     operations: {
       lint: {
         app: "pinact",
@@ -1004,7 +1021,6 @@ export const toolsConfig: config.MapOfTools = {
           "--no-api",
           "{files}",
         ],
-        env: { GITHUB_ACTIONS: "false" },
         globs: githubActionsGlobs,
         scope: "repository",
       },
@@ -1075,7 +1091,7 @@ export const toolsConfig: config.MapOfTools = {
     operations: {
       fix: {
         app: "protolint",
-        args: ["lint", "-fix", "{file}"],
+        args: ["lint", "-fix", "--reporter", "json", "{file}"],
         globs: protoGlobs,
         priority: fixPriority.protolint,
         scope: "per-file",

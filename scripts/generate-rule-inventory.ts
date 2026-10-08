@@ -473,11 +473,10 @@ const inventory: Inventory = {
   oxlint: collectOxlint(printedOxlintConfig),
 };
 
-// `warn` is not a severity this config uses. datamitsu runs eslint with `--quiet`, so a warn-level
-// rule reports nothing and fails nothing while still running on every file — off in every way that
-// matters, minus the honesty of saying so. `defineConfig` raises every warn a plugin preset leaves
-// behind; this catches the case where something slips past that, which would otherwise show up as a
-// rule quietly doing nothing rather than as an error.
+// `warn` is not a severity this config uses: ESLint and oxlint share one enforcement policy, and
+// oxlint has no warning tier. `defineConfig` raises every warn a plugin preset leaves behind; this
+// catches anything that slips past that transformation rather than letting the two linters enforce
+// the same rule differently.
 const warned = [...Object.entries(inventory.eslint), ...Object.entries(inventory.oxlint)]
   .filter(([, severity]) => severity === "warn")
   .map(([name]) => name);
