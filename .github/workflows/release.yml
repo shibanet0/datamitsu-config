@@ -460,8 +460,11 @@ jobs:
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Publish to npm
+        # npm snapshots the publish manifest before its prepack lifecycle. Resolve workspace-only
+        # specifiers first; doing this only inside prepack leaves `catalog:` in registry metadata.
         run: |
           NPM_TAG="${{ steps.npm-tag.outputs.tag }}"
+          node scripts/resolve-publish-catalog.ts
           echo "Publishing with tag: $NPM_TAG"
           npm publish --access public --provenance --tag $NPM_TAG
   publish-oci-bundle:
