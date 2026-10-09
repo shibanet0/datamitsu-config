@@ -33,17 +33,6 @@ describe("workflow CI guards", () => {
     expect(publish).toBeGreaterThan(resolver);
   });
 
-  it("passes GitHub credentials to every Docker image build as a BuildKit secret", () => {
-    for (const file of ["pr-checks.yml", "release.yml"]) {
-      const content = readFileSync(join(WORKFLOW_DIR, file), "utf8");
-      const builds = content.split("uses: docker/build-push-action@").slice(1);
-      expect(builds.length).toBeGreaterThan(0);
-      for (const build of builds) {
-        expect(build).toContain("secrets: |\n            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}");
-      }
-    }
-  });
-
   it("found at least one workflow to scan", () => {
     expect(files.length).toBeGreaterThan(0);
   });

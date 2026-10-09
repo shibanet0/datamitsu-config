@@ -1,5 +1,4 @@
 import { execa } from "execa";
-import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 /**
@@ -36,13 +35,6 @@ const LABELS: Record<string, string> = {
 const BUILD_ARGS: Record<string, string> = {
   DATAMITSU_INSTALL_TIMEOUT: "1200",
 };
-
-// GitHub's asset API allows only 60 anonymous requests per hour. A full multi-platform image build
-// downloads enough binary apps to exceed that limit, so expose the workflow token only to install
-// steps through a BuildKit secret. Unlike ARG/ENV, the token is absent from layers and the final
-// image. The mount is optional, preserving local builds without a token.
-const INSTALL_COMMAND = /^RUN (datamitsu .* install(?: .*)?)$/gmu;
-const INSTALL_WITH_GITHUB_TOKEN = "RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN $1";
 
 /**
  * Per-variant `--force-include`: binary apps the generator drops because the registry has no binary
@@ -157,11 +149,5 @@ for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
     // apps.ts) so the image stays under the overlay2 128-layer limit.
     { env: { DATAMITSU_OCI_MINIMAL: "1" }, preferLocal: true, stdio: "inherit" },
   );
-  const generated = await readFile(output, "utf8");
-  const withCredentialMounts = generated.replace(INSTALL_COMMAND, INSTALL_WITH_GITHUB_TOKEN);
-  if (withCredentialMounts === generated) {
-    throw new Error(`Generated Dockerfile ${output} contains no datamitsu install steps`);
-  }
-  await writeFile(output, withCredentialMounts);
   console.log(`Generated ${output} + ${ociMap}`);
 }
