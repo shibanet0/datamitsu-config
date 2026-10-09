@@ -1,11 +1,11 @@
 {
-  "external": {},
-  "github": {
+  "binary": {
     "taplo": {
       "reason": "Replaced by Tombi (TOML toolkit). Use native Tombi binary instead",
       "replacement": "Use tombi from GitHub releases (native Rust binary)"
     }
   },
+  "external": {},
   "node": {
     "eslint-plugin-arrow-return-style": {
       "reason": "Incompatible with ESLint 10: it pulls @typescript-eslint/utils@7, which throws \"Class extends value undefined\" the moment the plugin loads. It was shipped as a dependency but switched off by default, so the breakage stayed invisible",
