@@ -208,6 +208,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,push=true,compression=zstd,compression-level=19,force-compression=true,oci-mediatypes=true
           platforms: linux/amd64,linux/arm64
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
     strategy:
       matrix:

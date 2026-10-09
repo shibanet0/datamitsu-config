@@ -90,6 +90,8 @@ jobs:
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           platforms: linux/amd64,linux/arm64
           push: false
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: datamitsu-config:pr-${{ github.event.pull_request.number }}${{ matrix.variant == 'alpine' && '-alpine' || '' }}
       # The builder above still holds every amd64 layer, so this only exports the image into
       # the Docker daemon for the smoke check below.
@@ -100,6 +102,8 @@ jobs:
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           load: true
           platforms: linux/amd64
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: datamitsu-config:smoke-${{ matrix.variant }}
       - name: Verify key binaries run inside the image
         run: |

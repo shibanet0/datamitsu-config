@@ -39,6 +39,23 @@ describe("Dockerfile consistency", () => {
     expect(countFromStages(readFile("docker/Dockerfile.alpine"))).toBeGreaterThan(50);
   });
 
+  for (const dockerfilePath of ["docker/Dockerfile", "docker/Dockerfile.alpine"]) {
+    it(`${dockerfilePath} exposes GitHub credentials only through BuildKit secrets`, () => {
+      const installSteps = readFile(dockerfilePath)
+        .split("\n")
+        .filter(
+          (line) =>
+            line.startsWith("RUN ") && line.includes(" datamitsu ") && line.includes(" install"),
+        );
+      expect(installSteps.length).toBeGreaterThan(50);
+      expect(
+        installSteps.every((line) =>
+          line.startsWith("RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN datamitsu "),
+        ),
+      ).toBe(true);
+    });
+  }
+
   it("oci-map.json golangci-lint entry is a binary at .bin/golangci-lint", () => {
     const map = readOciMap("docker/oci-map.json");
     const entry = map.layers.find((e) => e.app === "golangci-lint");
