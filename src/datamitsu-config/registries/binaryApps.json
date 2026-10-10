@@ -4106,7 +4106,7 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "terragrunt",
+              "binaryPath": "terragrunt_darwin_amd64",
               "contentType": "tar.gz",
               "hash": "sha256:30804167c055ce4fb6ab24c21ea6816fd51ffe107ff7df36a3dda8013144c53f",
               "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.1.5/terragrunt_darwin_amd64.tar.gz"
@@ -4114,7 +4114,7 @@
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "terragrunt",
+              "binaryPath": "terragrunt_darwin_arm64",
               "contentType": "tar.gz",
               "hash": "sha256:f8ff33ae99bb99bdcb50f9a2f27c7b8256567caa03d299cced9ee3710a823eaa",
               "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.1.5/terragrunt_darwin_arm64.tar.gz"
@@ -4124,7 +4124,7 @@
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "terragrunt",
+              "binaryPath": "terragrunt_linux_amd64",
               "contentType": "tar.gz",
               "hash": "sha256:ae96b4d63ca9756a7642454289ff5b52a1eaa935b995705c4ca38bddb4da3042",
               "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.1.5/terragrunt_linux_amd64.tar.gz"
@@ -4132,7 +4132,7 @@
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "terragrunt",
+              "binaryPath": "terragrunt_linux_arm64",
               "contentType": "tar.gz",
               "hash": "sha256:d3bc11a65f0905a94a008190fe630c1c3bafa192d1f1528efe1af744b8e6afa5",
               "url": "https://github.com/gruntwork-io/terragrunt/releases/download/v1.1.5/terragrunt_linux_arm64.tar.gz"

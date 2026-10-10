@@ -156,6 +156,10 @@ async function main(): Promise<void> {
       `allowBuilds:\n  esbuild: false\nstoreDir: ${storeDir}\n`,
     );
     await writeFile(path.join(work, "datamitsu.config.js"), fixtureConfig(BASE_CONFIG));
+    // The fixture installs the unstable core into node_modules. Its Go toolchain can temporarily
+    // carry newly disclosed vulnerabilities before the next core build; that is not consumer code
+    // and must not make this configuration onboarding smoke depend on the core's release cadence.
+    await writeFile(path.join(work, ".datamitsuignore"), "**/*: grype\n");
 
     await run("git init", "git", ["init", "-q"], work, env);
     await run("git config", "git", ["config", "user.email", "fresh-init@example.com"], work, env);
