@@ -41,7 +41,7 @@ interface ParsersOCI {
   version: string;
 }
 
-const HEX64 = /^[\da-f]{64}$/;
+const SHA256 = /^sha256:[\da-f]{64}$/;
 
 function assertShape(source: ParsersOCI): void {
   if (source.module !== "core") {
@@ -55,11 +55,11 @@ function assertShape(source: ParsersOCI): void {
   }
   // The digest guards the manifest and the hash guards the payload; a malformed either one would be
   // written into the config and only fail much later, at download time, on a consumer's machine.
-  if (!HEX64.test(source.digest.replace(/^sha256:/, ""))) {
-    throw new Error(`parsers-oci.json digest is not a sha256 hex digest: ${source.digest}`);
+  if (!SHA256.test(source.digest)) {
+    throw new Error(`parsers-oci.json digest is not a canonical sha256 digest: ${source.digest}`);
   }
-  if (!HEX64.test(source.sha256)) {
-    throw new Error(`parsers-oci.json sha256 is not a 64-character hex hash: ${source.sha256}`);
+  if (!SHA256.test(source.sha256)) {
+    throw new Error(`parsers-oci.json sha256 is not a canonical sha256 hash: ${source.sha256}`);
   }
 }
 

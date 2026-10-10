@@ -283,7 +283,7 @@ const allApps: BinManager.MapOfApps = {
     description:
       "A program that reformats Kotlin source code to comply with the common community standard for Kotlin code conventions.",
     jvm: {
-      jarHash: "f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
+      jarHash: "sha256:f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
       jarUrl:
         "https://github.com/facebook/ktfmt/releases/download/v0.62/ktfmt-0.62-with-dependencies.jar",
       version: "v0.62",
@@ -292,7 +292,7 @@ const allApps: BinManager.MapOfApps = {
   ktlint: {
     description: "An anti-bikeshedding Kotlin linter with built-in formatter",
     jvm: {
-      jarHash: "a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
+      jarHash: "sha256:a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
       jarUrl: "https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint",
       version: "1.8.0",
     },
@@ -350,7 +350,7 @@ const allApps: BinManager.MapOfApps = {
     description: `OpenAPI Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec (v2, v3)`,
     // https://github.com/OpenAPITools/openapi-generator
     jvm: {
-      jarHash: "871e0155287a87b579ff31096b2d45b1f95a115edfe631411ec6cff4848d0f03",
+      jarHash: "sha256:871e0155287a87b579ff31096b2d45b1f95a115edfe631411ec6cff4848d0f03",
       jarUrl:
         "https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.20.0/openapi-generator-cli-7.20.0.jar",
       version: "7.20.0",
