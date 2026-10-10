@@ -9,6 +9,15 @@ globalThis.facts = (): Facts => ({
   arch: "amd64",
   binaryCommand: "datamitsu",
   binaryPath: "/usr/local/bin/datamitsu",
+  ci: {
+    baseRef: "",
+    isCI: false,
+    isPR: false,
+    prNumber: "",
+    ref: "",
+    sha: "",
+    vendor: "",
+  },
   env: {
     CI: "false",
   },

@@ -2,8 +2,8 @@ import fsPromise from "node:fs/promises";
 import path from "node:path";
 
 export interface Blocklist {
+  binary: Record<string, BlocklistEntry>;
   external: Record<string, BlocklistEntry>;
-  github: Record<string, BlocklistEntry>;
   go: Record<string, BlocklistEntry>;
   node: Record<string, BlocklistEntry>;
   runtimes: Record<string, BlocklistEntry>;
@@ -68,7 +68,7 @@ export async function loadBlocklist(blocklistPath: string): Promise<Blocklist> {
   const blocklist = data as Blocklist;
 
   // Validate structure
-  const requiredKeys = ["external", "node", "uv", "github", "runtimes"];
+  const requiredKeys = ["binary", "external", "node", "uv", "runtimes"];
   for (const key of requiredKeys) {
     if (!(key in blocklist)) {
       throw new Error(`Invalid blocklist format: missing '${key}' section`);
@@ -114,18 +114,18 @@ export async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Validate githubApps.json
+  // Validate binaryApps.json
   try {
-    const githubPath = path.join(registriesDir, "githubApps.json");
-    const githubContent = await fsPromise.readFile(githubPath, "utf8");
-    const githubRegistry = JSON.parse(githubContent) as {
+    const binaryPath = path.join(registriesDir, "binaryApps.json");
+    const binaryContent = await fsPromise.readFile(binaryPath, "utf8");
+    const binaryRegistry = JSON.parse(binaryContent) as {
       apps?: Record<string, any>;
       binaries?: Record<string, any>;
     };
-    const githubErrors = validateGithubRegistry(githubRegistry, blocklist.github);
-    allErrors.push(...githubErrors);
+    const binaryErrors = validateBinaryRegistry(binaryRegistry, blocklist.binary);
+    allErrors.push(...binaryErrors);
   } catch (error) {
-    console.error("Error validating githubApps.json:", error);
+    console.error("Error validating binaryApps.json:", error);
     process.exit(1);
   }
 
@@ -166,6 +166,54 @@ export async function main(): Promise<void> {
 }
 
 /**
+ * Validate the release-backed binary registry against the GitHub blocklist.
+ */
+export function validateBinaryRegistry(
+  registry: { apps?: Record<string, any>; binaries?: Record<string, any> },
+  blocklist: Record<string, BlocklistEntry>,
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  // Validate apps section
+  if (registry.apps && typeof registry.apps === "object") {
+    for (const appName of Object.keys(registry.apps)) {
+      const normalizedName = appName.toLowerCase();
+
+      for (const [blockedName, entry] of Object.entries(blocklist)) {
+        if (normalizedName === blockedName.toLowerCase()) {
+          errors.push({
+            packageName: appName,
+            reason: entry.reason,
+            registry: "binary/apps",
+            replacement: entry.replacement,
+          });
+        }
+      }
+    }
+  }
+
+  // Validate binaries section
+  if (registry.binaries && typeof registry.binaries === "object") {
+    for (const binaryName of Object.keys(registry.binaries)) {
+      const normalizedName = binaryName.toLowerCase();
+
+      for (const [blockedName, entry] of Object.entries(blocklist)) {
+        if (normalizedName === blockedName.toLowerCase()) {
+          errors.push({
+            packageName: binaryName,
+            reason: entry.reason,
+            registry: "binary/binaries",
+            replacement: entry.replacement,
+          });
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
+/**
  * Validate external apps registry against blocklist Checks both 'apps' and 'binaries' sections
  */
 export function validateExternalRegistry(
@@ -201,54 +249,6 @@ export function validateExternalRegistry(
             packageName: binaryName,
             reason: entry.reason,
             registry: "external/binaries",
-            replacement: entry.replacement,
-          });
-        }
-      }
-    }
-  }
-
-  return errors;
-}
-
-/**
- * Validate GitHub apps registry against blocklist Checks both 'apps' and 'binaries' sections
- */
-export function validateGithubRegistry(
-  registry: { apps?: Record<string, any>; binaries?: Record<string, any> },
-  blocklist: Record<string, BlocklistEntry>,
-): ValidationError[] {
-  const errors: ValidationError[] = [];
-
-  // Validate apps section
-  if (registry.apps && typeof registry.apps === "object") {
-    for (const appName of Object.keys(registry.apps)) {
-      const normalizedName = appName.toLowerCase();
-
-      for (const [blockedName, entry] of Object.entries(blocklist)) {
-        if (normalizedName === blockedName.toLowerCase()) {
-          errors.push({
-            packageName: appName,
-            reason: entry.reason,
-            registry: "github/apps",
-            replacement: entry.replacement,
-          });
-        }
-      }
-    }
-  }
-
-  // Validate binaries section
-  if (registry.binaries && typeof registry.binaries === "object") {
-    for (const binaryName of Object.keys(registry.binaries)) {
-      const normalizedName = binaryName.toLowerCase();
-
-      for (const [blockedName, entry] of Object.entries(blocklist)) {
-        if (normalizedName === blockedName.toLowerCase()) {
-          errors.push({
-            packageName: binaryName,
-            reason: entry.reason,
-            registry: "github/binaries",
             replacement: entry.replacement,
           });
         }

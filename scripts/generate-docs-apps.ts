@@ -249,6 +249,34 @@ export function extractAppInfo(name: string, app: AppConfig): AppInfo {
   return { description: app.description, name, repository, runtime };
 }
 
+export function extractRepositoryFromBinary(app: AppConfig): string | undefined {
+  const binaries = app.binary?.binaries;
+  if (!binaries) {
+    return undefined;
+  }
+
+  for (const os of Object.values(binaries)) {
+    for (const arch of Object.values(os)) {
+      for (const variant of Object.values(arch)) {
+        if (!variant.url) {
+          continue;
+        }
+
+        const url = new URL(variant.url);
+        const segments = url.pathname.split("/").filter(Boolean);
+        const repositoryOffset =
+          url.hostname === "api.github.com" && segments[0] === "repos" ? 1 : 0;
+        const owner = segments[repositoryOffset];
+        const repository = segments[repositoryOffset + 1];
+        if (url.hostname.endsWith("github.com") && owner && repository) {
+          return `https://github.com/${owner}/${repository}`;
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 export function generateAppsMarkdown(apps: AppInfo[]): string {
   const categories = categorizeApps(apps);
 
@@ -381,25 +409,6 @@ function detectRuntime(app: AppConfig): string {
     return "jvm";
   }
   return "unknown";
-}
-
-function extractRepositoryFromBinary(app: AppConfig): string | undefined {
-  const binaries = app.binary?.binaries;
-  if (!binaries) {
-    return undefined;
-  }
-
-  for (const os of Object.values(binaries)) {
-    for (const arch of Object.values(os)) {
-      for (const variant of Object.values(arch)) {
-        const match = variant.url?.match(/github\.com\/([^/]+\/[^/]+)/);
-        if (match) {
-          return `https://github.com/${match[1]}`;
-        }
-      }
-    }
-  }
-  return undefined;
 }
 
 function extractRepositoryFromGo(app: AppConfig): string | undefined {

@@ -9,7 +9,7 @@
  * How it works, and two deliberate choices:
  *
  * 1. Inheritance, not copying. The temp repo's own datamitsu.config.js declares `getBeforeConfigs()`
- *    pointing at this repo's datamitsu.config.base.js by a relative path. That exercises the real
+ *    pointing at this repo's datamitsu.config.base.js by its absolute path. That exercises the real
  *    config-inheritance path a consumer uses, with no npm pack / install of the config package. It
  *    also lets the fixture layer `skip: true` onto prose/spell tools that a fresh project has not
  *    configured yet (vale, harper-cli, cspell) and knip (no source tree).
@@ -30,6 +30,8 @@ import { execa } from "execa";
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+
+import { readDatamitsuVersion } from "./sync-datamitsu-version.ts";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const BASE_CONFIG = path.join(ROOT, "datamitsu.config.base.js");
@@ -90,14 +92,7 @@ globalThis.getMinVersion = getMinVersion;
 }
 
 async function readDmVersion(): Promise<string> {
-  const pkg = JSON.parse(await readFile(path.join(ROOT, "package.json"), "utf8")) as {
-    dependencies?: Record<string, string>;
-  };
-  const version = pkg.dependencies?.["@datamitsu/datamitsu"]; // cspell:disable-line
-  if (!version) {
-    throw new Error("@datamitsu/datamitsu not found in dependencies"); // cspell:disable-line
-  }
-  return version;
+  return readDatamitsuVersion(await readFile(path.join(ROOT, "pnpm-workspace.yaml"), "utf8"));
 }
 
 const runningProcesses = new Set<ReturnType<typeof execa>>();
@@ -160,10 +155,11 @@ async function main(): Promise<void> {
       path.join(work, "pnpm-workspace.yaml"),
       `allowBuilds:\n  esbuild: false\nstoreDir: ${storeDir}\n`,
     );
-    await writeFile(
-      path.join(work, "datamitsu.config.js"),
-      fixtureConfig(path.relative(work, BASE_CONFIG)),
-    );
+    await writeFile(path.join(work, "datamitsu.config.js"), fixtureConfig(BASE_CONFIG));
+    // The fixture installs the unstable core into node_modules. Its Go toolchain can temporarily
+    // carry newly disclosed vulnerabilities before the next core build; that is not consumer code
+    // and must not make this configuration onboarding smoke depend on the core's release cadence.
+    await writeFile(path.join(work, ".datamitsuignore"), "**/*: grype\n");
 
     await run("git init", "git", ["init", "-q"], work, env);
     await run("git config", "git", ["config", "user.email", "fresh-init@example.com"], work, env);

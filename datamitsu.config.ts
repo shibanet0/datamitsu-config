@@ -297,7 +297,7 @@ post-checkout:
               },
               dependencies: {
                 "@commander-js/extra-typings": "15.0.0",
-                "@datamitsu/datamitsu": "0.4.0",
+                "@datamitsu/datamitsu": "catalog:",
                 commander: "15.0.0",
                 execa: "10.0.1",
                 "fast-glob": "3.3.3",
@@ -486,7 +486,7 @@ post-checkout:
           ) + "\n"
         );
       },
-      expectChainHash: "xxh3:fb4f8ccf727d259b00359837b124b810",
+      expectChainHash: "xxh3:61b59bf0639ec589884bcc7ca7855e8d",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -504,7 +504,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.2
   "@commitlint/format": 21.2.2
   "@commitlint/types": 21.2.0
-  "@datamitsu/datamitsu": 0.2.2
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261009.0f5e6e3
   "@e18e/eslint-plugin": 0.8.0
   "@eslint-community/eslint-plugin-eslint-comments": 4.7.2
   "@eslint-react/eslint-plugin": 5.18.6
@@ -635,7 +635,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:0bc53a66c432bd8a4f05c1f604f84162",
+      expectChainHash: "xxh3:bcd56867a6ef1688a843c98fbcf13bc4",
     },
   },
   tools: {
@@ -873,6 +873,7 @@ const cspellWords: string[] = [
   // src/datamitsu-config/datamitsu.config.d.ts.
   "codeberg",
   "gitea",
+  "Forgejo",
   // blint's vulnerability database (tools.ts) and the filesystem driver dockle builds without cgo
   // for (apps.ts).
   "blintdb",

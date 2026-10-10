@@ -40,13 +40,12 @@ export const javascript = async (): Promise<TypedFlatConfigItem[]> => {
       /**
        * A suppression that no longer suppresses anything is an error, not a shrug.
        *
-       * `reportUnusedDisableDirectives` defaults to `"warn"`, and datamitsu runs eslint with
-       * `--quiet` — so the default reported nothing and failed nothing. Setting it to `false`, as
-       * this block used to, picked the wrong side of that: stale `// eslint-disable` comments
-       * accumulate invisibly, and the one left behind on a rule that later comes back off
-       * `temporary.ts` silently swallows it. This is also the one warn-severity thing in the config
-       * that `raiseWarningsToErrors` cannot reach, because it lives in `linterOptions` rather than
-       * in `rules`.
+       * `reportUnusedDisableDirectives` defaults to `"warn"`, but this configuration has no
+       * non-enforcing rule tier. Setting it to `false`, as this block used to, picked the wrong
+       * side of that: stale `// eslint-disable` comments accumulate invisibly, and the one left
+       * behind on a rule that later comes back off `temporary.ts` silently swallows it. This is
+       * also the one warn-severity setting that `raiseWarningsToErrors` cannot reach, because it
+       * lives in `linterOptions` rather than in `rules`.
        *
        * `reportUnusedInlineConfigs` is the sibling case — an inline `/* eslint x: "error" *\/` that
        * changes nothing because the config already says exactly that. Off by default.

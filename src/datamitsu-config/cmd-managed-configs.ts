@@ -1,5 +1,4 @@
 import { alintYml } from "./managed-configs/_alint_yml";
-import { checkEmptyFilesSh } from "./managed-configs/_datamitsu_scripts_check_empty_files_sh";
 import { formatTerraformSpacingSh } from "./managed-configs/_datamitsu_scripts_format_terraform_spacing_sh";
 import { dclintYaml } from "./managed-configs/_dclint_yaml";
 import { dockerignore } from "./managed-configs/_dockerignore";
@@ -50,7 +49,6 @@ import { turboJson } from "./managed-configs/turbo_json";
 
 export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
-  ".datamitsu/scripts/check-empty-files.sh": checkEmptyFilesSh,
   ".datamitsu/scripts/format-terraform-spacing.sh": formatTerraformSpacingSh,
   ".dclint.yaml": dclintYaml,
   ".dockerignore": dockerignore,

@@ -164,12 +164,10 @@ export type DefineConfigOptions = {
 /**
  * Severities this config emits, and the only ones it accepts.
  *
- * Knip's own `warn` is deliberately absent. It is a real tier there — a `warn` finding is reported
- * and excluded from the count that sets the exit code — but datamitsu reads knip through
- * `--reporter json`, and that reporter carries no severity at all. A warned finding arrives
- * indistinguishable from an errored one, the parser renders every finding as an error, and the run
- * still exits zero: red diagnostics on a green tool. Better that the tier cannot be written at all
- * than that it mean that.
+ * Knip's JSON reporter carries no severity. Datamitsu therefore resolves every finding from a
+ * passing process to warning and every finding from a failing process to error. In a mixed run,
+ * Knip's nonzero exit makes its warning-tier findings indistinguishable from errors. Better that
+ * the tier cannot be written at all than that its meaning depends on what else the same run found.
  */
 export type IssueSeverity = "error" | "off";
 
