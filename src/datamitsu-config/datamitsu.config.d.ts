@@ -1226,16 +1226,23 @@ declare global {
       /**
        * Named archives to extract into the app's install directory. Archive names can be referenced
        * in Links to create symlinks. Archives are extracted before Files are written, allowing
-       * Files to override. Only valid for Bun, UV, and Node apps; using this field on a binary,
-       * JVM, Go, or shell app is a configuration error.
+       * Files to override. Valid for Bun, UV, Node, and Go apps (a Go app's archives carry its
+       * module source — the source-blob form); using this field on a binary, JVM, or shell app is a
+       * configuration error.
        */
       archives?: Record<string, ArchiveSpec>;
       binary?: AppConfigBinary;
       bun?: AppConfigBun;
       /**
-       * Managed apps required at run time, installed transitively even when lazy or optional.
+       * Managed apps required at run time, installed transitively even when lazy or optional. Each
+       * entry is an app name, or an object that also names the role under which this app refers to
+       * the dependency in `${APP_BIN:<alias>}` bindings. The alias defaults to the app name and
+       * must be unique among this app's direct dependencies.
+       *
+       * @example
+       *   dependsOn: ["shellcheck", { app: "jsonschema", as: "validator" }];
        */
-      dependsOn?: string[];
+      dependsOn?: AppDependency[];
       /**
        * Human-readable description of the app, shown in exec listing.
        */
@@ -1263,8 +1270,9 @@ declare global {
       env?: Record<string, string>;
       /**
        * Static file contents to write into the app's install directory before the package manager
-       * runs. Keys are filenames; values are file contents. Only valid for Bun, UV, and Node apps;
-       * using this field on a binary, JVM, Go, or shell app is a configuration error.
+       * runs. Keys are filenames; values are file contents. Valid for Bun, UV, Node, and Go apps
+       * (for a Go app these stage the module source — the source-blob form); using this field on a
+       * binary, JVM, or shell app is a configuration error.
        *
        * Special handling for `pnpm-workspace.yaml` on Bun and Node apps: the entry is NOT written
        * verbatim. Instead, the installer parses it and shallow-merges it on top of the recommended
@@ -1292,7 +1300,7 @@ declare global {
       lazy?: boolean;
       /**
        * Symlinks to create in .datamitsu/ directory, mapping link name to relative path in install
-       * directory. Only valid for Bun, UV, and Node apps; using this field on a binary, JVM, Go, or
+       * directory. Valid for Bun, UV, Node, and Go apps; using this field on a binary, JVM, or
        * shell app is a configuration error.
        */
       links?: Record<string, string>;
@@ -1325,11 +1333,18 @@ declare global {
        *   officialUrl: "https://eslint.org/docs/latest/";
        */
       officialUrl?: string;
+      /**
+       * One-time step that fills this app's prepared state after the app and its whole dependsOn
+       * closure are installed. Run time exposes the result as `${APP_PREPARED}` (runtimeEnv). The
+       * step is the app's own executable run directly, without a shell.
+       */
+      prepare?: AppPrepare;
       required?: boolean;
       /**
        * Execution-only env, outside install identity; keys must not overlap `env`. Supports
-       * `${STORE}`, `${APP_DIR}`, and `${APP_BIN:<name>}` for the exact executable of a native
-       * binary in direct `dependsOn`. Datamitsu/runtime-owned keys win.
+       * `${STORE}`, `${APP_DIR}`, and `${APP_BIN:<name>}` for the exact executable of a dependency
+       * in direct `dependsOn` (binary, uv and go apps), and `${APP_PREPARED}` when `prepare` is
+       * set. Datamitsu/runtime-owned keys win.
        */
       runtimeEnv?: Record<string, string>;
       shell?: AppConfigShell;
@@ -1449,6 +1464,60 @@ declare global {
       requiresPython?: string;
       runtime?: string;
       version: string;
+    }
+
+    /**
+     * An edge of `dependsOn`: an app name, or an object that also names the role under which this
+     * app refers to the dependency in `${APP_BIN:<alias>}` bindings.
+     */
+    type AppDependency =
+      | string
+      | {
+          /**
+           * App name in `apps`.
+           */
+          app: string;
+          /**
+           * Alias for bindings. Default: `app`. Unique among this app's direct edges
+           * (case-insensitive).
+           */
+          as?: string;
+        };
+
+    /**
+     * One-time step that fills this app's prepared state.
+     */
+    interface AppPrepare {
+      /**
+       * Arguments of the step. Supports `${APP_PREPARED}` (the directory the step fills),
+       * `${APP_DIR}` (this app's install directory) and `${APP_BIN:<alias>}` (a direct dependency).
+       * Rejected: `${STORE}` and every tool placeholder ({root}, {cwd}, {file}, {files}, {target},
+       * {toolCache}) — the prepared state is shared by every project. May be empty.
+       */
+      args: string[];
+      /**
+       * Another executable of this app's own installation to run instead of the app's main command,
+       * relative to the install directory. Node, bun and uv apps, and binary apps with extractDir.
+       * Default: the app itself.
+       */
+      binPath?: string;
+      /**
+       * Environment for the step only; same placeholders as `args`. `PATH` and the temporary
+       * directories (TMPDIR, TEMP, TMP, XDG_CACHE_HOME, XDG_DATA_HOME, XDG_STATE_HOME) are owned by
+       * datamitsu during the step and rejected here.
+       */
+      env?: Record<string, string>;
+      /**
+       * Whether the step needs the network. Required: under DATAMITSU_OFFLINE an unprepared step
+       * that needs it is refused before the process starts.
+       */
+      network: boolean;
+      /**
+       * What the step finds on PATH. "declared" (default): the runtime's own directories and the
+       * binaries of this app's dependsOn closure only. "inherit": additionally the inherited host
+       * PATH.
+       */
+      path?: "declared" | "inherit";
     }
 
     interface AppVersionCheck {
