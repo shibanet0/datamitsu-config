@@ -64,7 +64,7 @@
     "docker:build:amd64": "pnpm run docker:builder && node scripts/docker-build.ts amd64",
     "docker:build:arm64": "pnpm run docker:builder && node scripts/docker-build.ts arm64",
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
-    "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean",
+    "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean && node scripts/resolve-publish-catalog.ts",
     "postpack": "clean-pkg-json restore && rm -f datamitsu.config.js",
     "prepare": "pnpm build && pnpm datamitsu init",
     "test": "vitest run",
@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "15.0.0",
-    "@datamitsu/datamitsu": "0.4.0",
+    "@datamitsu/datamitsu": "catalog:",
     "commander": "15.0.0",
     "execa": "10.0.1",
     "fast-glob": "3.3.3",

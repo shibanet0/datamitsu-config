@@ -224,19 +224,6 @@ tasks:
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────
-  pull:github:
-    cmds:
-      - pnpm datamitsu devtools pull-github --verify-extraction ./src/datamitsu-config/registries/githubApps.json
-      - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
-    desc: Pull GitHub app registry (verify extraction only)
-  pull:github:update:
-    cmds:
-      - pnpm datamitsu devtools pull-github --verify-extraction --update ./src/datamitsu-config/registries/githubApps.json
-      - pnpm dm fix ./src/datamitsu-config/registries/githubApps.json
-    desc: Pull GitHub app registry with update flag
-  # ──────────────────────────────────────────────
-  # Pull / registry update
-  # ──────────────────────────────────────────────
   pull:node:
     cmds:
       - pnpm dm devtools pull-node ./src/datamitsu-config/registries/nodeVersions.json
@@ -249,6 +236,19 @@ tasks:
       - node scripts/sync-node-versions-to-package-json.ts
       - pnpm dm fix ./src/datamitsu-config/registries/nodeVersions.json
     desc: Pull node versions with update flag
+  # ──────────────────────────────────────────────
+  # Pull / registry update
+  # ──────────────────────────────────────────────
+  pull:releases:
+    cmds:
+      - pnpm dm devtools pull-releases --verify-extraction ./src/datamitsu-config/registries/binaryApps.json
+      - pnpm dm fix ./src/datamitsu-config/registries/binaryApps.json
+    desc: Verify release-backed app registry and extracted binaries
+  pull:releases:update:
+    cmds:
+      - pnpm dm devtools pull-releases --verify-extraction --update ./src/datamitsu-config/registries/binaryApps.json
+      - pnpm dm fix ./src/datamitsu-config/registries/binaryApps.json
+    desc: Update release-backed app registry and verify extracted binaries
   pull:runtimes:update:
     cmds:
       - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json
@@ -283,7 +283,7 @@ tasks:
     cmds:
       - task: pull:node:update
       - task: pull:uv:update
-      - task: pull:github:update
+      - task: pull:releases:update
       - task: pull:external:update
       - task: pull:runtimes:update
     desc: Update every registry from upstream. Run `refresh` afterwards.

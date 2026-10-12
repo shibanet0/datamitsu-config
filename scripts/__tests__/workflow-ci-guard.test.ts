@@ -24,6 +24,15 @@ describe("workflow CI guards", () => {
     });
   }
 
+  it("resolves catalog dependencies before npm snapshots the publish manifest", () => {
+    const release = readFileSync(join(WORKFLOW_DIR, "release.yml"), "utf8");
+    const resolver = release.indexOf("node scripts/resolve-publish-catalog.ts");
+    const publish = release.indexOf("npm publish --access public");
+
+    expect(resolver).toBeGreaterThanOrEqual(0);
+    expect(publish).toBeGreaterThan(resolver);
+  });
+
   it("found at least one workflow to scan", () => {
     expect(files.length).toBeGreaterThan(0);
   });

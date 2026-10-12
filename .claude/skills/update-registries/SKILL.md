@@ -1,6 +1,6 @@
 ---
 name: update-registries
-description: Finish a dependency update in datamitsu-config after the user has pulled one — review what changed upstream, regenerate everything derived from it (lock files, pins, census, docs), migrate what the new versions require, run the checks, and report. Covers every registry under src/datamitsu-config/registries/ (uvVersions, nodeVersions, githubApps, externalApps, runtimes), a datamitsu core bump, and the wrapper's own dependencies in package.json. Use whenever the user says they pulled or updated a registry, bumped the core or dependencies, and asks to check, review, regenerate lock files, migrate or "bring everything up to date" — including informal requests like "I updated githubApps, take a look" or "the node registry moved, sort it out". Never pulls or updates a registry itself.
+description: Finish a dependency update in datamitsu-config after the user has pulled one — review what changed upstream, regenerate everything derived from it (lock files, pins, census, docs), migrate what the new versions require, run the checks, and report. Covers every registry under src/datamitsu-config/registries/ (uvVersions, nodeVersions, binaryApps, externalApps, runtimes), a datamitsu core bump, and the wrapper's own dependencies in package.json. Use whenever the user says they pulled or updated a registry, bumped the core or dependencies, and asks to check, review, regenerate lock files, migrate or "bring everything up to date" — including informal requests like "I updated binaryApps, take a look" or "the node registry moved, sort it out". Never pull registries unless the user explicitly asks: the human chooses what moves; this skill reviews and finishes the move.
 ---
 
 <!-- cspell:ignore illumos musllinux Temurin -->
@@ -47,7 +47,7 @@ from the registries, carry out the migrations the new versions require, prove it
    one-liners:
    - `git show HEAD:src/datamitsu-config/registries/<file>.json > /tmp/old.json`, then `jq` over
      both files;
-   - for githubApps, compare each bumped app's platform set (`os/arch/libc`), `binaryPath` and
+   - for binaryApps, compare each bumped app's platform set (`os/arch/libc`), `binaryPath` and
      `contentType`, old against new.
 3. Look for versions that did not propagate — each of these has happened:
    - `package.json` against the literal in the root `datamitsu.config.ts`, both the dependencies
@@ -184,23 +184,24 @@ Relay the conclusions to the user; they do not see the report.
   `eslint-plugin-oxlint` turns off, and whether oxlint added, removed or renamed a rule.
   `oxlint-known-rules.generated.ts` changes only by its header when oxlint added nothing.
 
-### githubApps.json
+### binaryApps.json
 
-- The user should pull with `GITHUB_TOKEN="$(gh auth token)"`: unauthenticated GitHub allows 60
-  requests an hour.
-- Core ≥ 0.4.0 retries, reports every failed app and exits 1. Older cores skipped apps silently.
+- The registry is provider-neutral. Every app names a configured top-level `sources` entry with
+  `source`, identifies the provider repository with `repository`, and pins a `tag`. Keep tokens in
+  the environment through the source's `tokenEnv`; never put token values in the registry.
+- For GitHub, the user should pull with `GITHUB_TOKEN="$(gh auth token)"`: unauthenticated GitHub
+  allows 60 requests an hour.
 - After the pull, check each of these:
   - **Apps without `binaries`**: an entry with no binaries is retried and never saved.
-  - **Releases without asset digests**, roughly anything before mid-2025, cannot be pulled. The
-    user writes these entries by hand: sha256 checked against the release checksums, and
-    `configHash` is XXH3-128 of `owner\0repo\0tag`, big-endian hex, as in datamitsu's
-    `internal/hashutil`.
+  - **Releases without trustworthy asset digests** cannot be pulled. Pin an asset with an explicit
+    SHA-256 hash, or configure a checksum artifact whose own SHA-256 is pinned. Never trust an
+    unpinned checksum file.
   - **Wrong assets**:
     - a foreign OS (illumos, solaris, netbsd) mapped to linux;
     - an arch token that contradicts the platform key;
     - an installer (`*-setup.exe`) or a sibling program chosen instead of the app.
-  - **Prerelease tags.** `--update` downgrades an app pinned to a semver prerelease: swag
-    `v2.0.0-rc5` goes to `v1.16.6`. Put it back by hand until the core guards against it.
+  - **Prerelease tags.** Check that `--update` preserved an intentional prerelease instead of
+    selecting the newest stable release.
   - **A changed `binaryPath`** must be proven by running the binary. A `binaryPath` guessed after
     the history was wiped still resolves through suffix/basename matching, but not when the
     binary's name differs from the app's (golang-migrate ships `migrate`).
@@ -213,7 +214,7 @@ Relay the conclusions to the user; they do not see the report.
   (`go: { packageName, version, lockFile }`; `env: { CGO_ENABLED: "0" }` when a dependency needs C
   headers; `versionCheck: { disabled: true }`, since source builds print `dev`).
 - Tools that need files beside their binary (protoc's `include/`) get `extractDir: true` and an
-  exact `binaryPath` set in `apps.ts` after the registry is loaded. `pull-github` writes neither.
+  exact `binaryPath` set in `apps.ts` after the registry is loaded. `pull-releases` writes neither.
 
 ### externalApps.json
 

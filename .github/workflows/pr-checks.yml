@@ -134,7 +134,7 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
       - name: Run lint
-        run: pnpm dm check
+        run: pnpm dm lint --fail-fast=false
       # `validate` rather than `validate:blocklist` alone: the parser pin and the rule-inventory
       # census had no CI gate at all, and both are exactly the kind of drift a Dependabot bump
       # produces. Without this, a plugin bump that adds or re-categorises a rule merges with a

@@ -682,8 +682,8 @@ declare global {
        * silently clobbering local overrides.
        *
        * Opt-in per file and verified only on the root layer (intermediate layers are ignored). The
-       * content is hashed byte-for-byte, with no normalization. Format: "xxh3:<32-hex>" (a bare
-       * 32-hex value is also accepted). Bypass the check with `--no-verify-hash`.
+       * content is hashed byte-for-byte, with no normalization. Format: "xxh3:<32 lowercase hex>" —
+       * canonical form only, validated at config load. Bypass the check with `--no-verify-hash`.
        *
        * @example
        *   "xxh3:0a1b2c3d4e5f60718293a4b5c6d7e8f9";
@@ -836,10 +836,10 @@ declare global {
      */
     interface Parser {
       /**
-       * SHA-256 hash (64 lowercase hex characters) of the .wasm module. Mandatory per the security
-       * policy for every source — an empty or malformed hash is a config error. For an `oci` source
-       * it must also equal the artifact's single layer blob digest, so a mismatch is rejected
-       * before the module is downloaded.
+       * Canonical SHA-256 digest of the .wasm module: "sha256:<64 lowercase hex>". Mandatory per
+       * the security policy for every source — an empty or malformed hash is a config error. For an
+       * `oci` source it must also equal the artifact's single layer blob digest, so a mismatch is
+       * rejected before the module is downloaded.
        */
       hash: string;
 
@@ -1033,8 +1033,11 @@ declare global {
       cache?: boolean;
 
       /**
-       * Extra environment variables for this operation Merge priority: OS env < app env < tool
-       * operation env
+       * Extra environment variables for this operation Merge priority: OS env < inherited
+       * (`inheritEnv`) < app env < tool operation env. In `fix`, `lint` and `check` the tool does
+       * not see `GITHUB_ACTIONS`, AI agent markers or `FORCE_COLOR` from the OS env (see the Tool
+       * Environment reference page); name one in `inheritEnv` to hand it back. `NO_COLOR` cannot be
+       * set: every tool gets `NO_COLOR=1`.
        *
        * @example
        *   { "NODE_ENV": "production", "ESLINT_USE_FLAT_CONFIG": "true" }
@@ -1052,6 +1055,19 @@ declare global {
        *   ["**\/node_modules/**"];
        */
       excludeGlobs?: string[];
+
+      /**
+       * The lowest severity that fails the run: "error" (default), "warning", "info" or "hint". The
+       * tool's own exit code always fails the run too; failOn only adds failures, never removes
+       * them. The terminal shows findings at this severity and above. It needs a parser module that
+       * reads levels only from what the tool printed (descriptor schema 2); with an older module
+       * the exit code alone decides, and a run warns once. `--fail-on` raises it for every
+       * operation of a run, never lowers it.
+       *
+       * @example
+       *   failOn: "warning";
+       */
+      failOn?: "error" | "hint" | "info" | "warning";
 
       /**
        * File glob patterns this tool operates on Uses doublestar glob syntax: `*`, `**`, `?`,
@@ -1082,6 +1098,19 @@ declare global {
        *   granularity: "file";
        */
       granularity?: "file" | "repo" | "unit";
+
+      /**
+       * Host environment variables to hand to the tool even though datamitsu strips them by default
+       * (`GITHUB_ACTIONS`, AI agent markers, `FORCE_COLOR`). Names only: the tool sees the host's
+       * real value, and nothing when the host has none. The values are part of the operation's
+       * cache identity, so a change of value runs the tool again. Use `env` to set a fixed value
+       * instead; `env` wins over an inherited value. `NO_COLOR`, `PATH` and `DATAMITSU_*` names are
+       * rejected.
+       *
+       * @example
+       *   inheritEnv: ["GITHUB_ACTIONS"];
+       */
+      inheritEnv?: string[];
 
       /**
        * How the file content reaches the tool. - "file" (default): pass file paths as arguments via
@@ -1197,16 +1226,23 @@ declare global {
       /**
        * Named archives to extract into the app's install directory. Archive names can be referenced
        * in Links to create symlinks. Archives are extracted before Files are written, allowing
-       * Files to override. Only valid for Bun, UV, and Node apps; using this field on a binary,
-       * JVM, Go, or shell app is a configuration error.
+       * Files to override. Valid for Bun, UV, Node, and Go apps (a Go app's archives carry its
+       * module source — the source-blob form); using this field on a binary, JVM, or shell app is a
+       * configuration error.
        */
       archives?: Record<string, ArchiveSpec>;
       binary?: AppConfigBinary;
       bun?: AppConfigBun;
       /**
-       * Managed apps required at run time, installed transitively even when lazy or optional.
+       * Managed apps required at run time, installed transitively even when lazy or optional. Each
+       * entry is an app name, or an object that also names the role under which this app refers to
+       * the dependency in `${APP_BIN:<alias>}` bindings. The alias defaults to the app name and
+       * must be unique among this app's direct dependencies.
+       *
+       * @example
+       *   dependsOn: ["shellcheck", { app: "jsonschema", as: "validator" }];
        */
-      dependsOn?: string[];
+      dependsOn?: AppDependency[];
       /**
        * Human-readable description of the app, shown in exec listing.
        */
@@ -1234,8 +1270,9 @@ declare global {
       env?: Record<string, string>;
       /**
        * Static file contents to write into the app's install directory before the package manager
-       * runs. Keys are filenames; values are file contents. Only valid for Bun, UV, and Node apps;
-       * using this field on a binary, JVM, Go, or shell app is a configuration error.
+       * runs. Keys are filenames; values are file contents. Valid for Bun, UV, Node, and Go apps
+       * (for a Go app these stage the module source — the source-blob form); using this field on a
+       * binary, JVM, or shell app is a configuration error.
        *
        * Special handling for `pnpm-workspace.yaml` on Bun and Node apps: the entry is NOT written
        * verbatim. Instead, the installer parses it and shallow-merges it on top of the recommended
@@ -1263,7 +1300,7 @@ declare global {
       lazy?: boolean;
       /**
        * Symlinks to create in .datamitsu/ directory, mapping link name to relative path in install
-       * directory. Only valid for Bun, UV, and Node apps; using this field on a binary, JVM, Go, or
+       * directory. Valid for Bun, UV, Node, and Go apps; using this field on a binary, JVM, or
        * shell app is a configuration error.
        */
       links?: Record<string, string>;
@@ -1296,11 +1333,18 @@ declare global {
        *   officialUrl: "https://eslint.org/docs/latest/";
        */
       officialUrl?: string;
+      /**
+       * One-time step that fills this app's prepared state after the app and its whole dependsOn
+       * closure are installed. Run time exposes the result as `${APP_PREPARED}` (runtimeEnv). The
+       * step is the app's own executable run directly, without a shell.
+       */
+      prepare?: AppPrepare;
       required?: boolean;
       /**
        * Execution-only env, outside install identity; keys must not overlap `env`. Supports
-       * `${STORE}`, `${APP_DIR}`, and `${APP_BIN:<name>}` for the exact executable of a native
-       * binary in direct `dependsOn`. Datamitsu/runtime-owned keys win.
+       * `${STORE}`, `${APP_DIR}`, and `${APP_BIN:<name>}` for the exact executable of a dependency
+       * in direct `dependsOn` (binary, uv and go apps), and `${APP_PREPARED}` when `prepare` is
+       * set. Datamitsu/runtime-owned keys win.
        */
       runtimeEnv?: Record<string, string>;
       shell?: AppConfigShell;
@@ -1368,6 +1412,9 @@ declare global {
     }
 
     interface AppConfigJVM {
+      /**
+       * Canonical SHA-256 digest of the JAR: "sha256:<64 lowercase hex>".
+       */
       jarHash: string;
       jarUrl: string;
       /**
@@ -1419,6 +1466,60 @@ declare global {
       version: string;
     }
 
+    /**
+     * An edge of `dependsOn`: an app name, or an object that also names the role under which this
+     * app refers to the dependency in `${APP_BIN:<alias>}` bindings.
+     */
+    type AppDependency =
+      | string
+      | {
+          /**
+           * App name in `apps`.
+           */
+          app: string;
+          /**
+           * Alias for bindings. Default: `app`. Unique among this app's direct edges
+           * (case-insensitive).
+           */
+          as?: string;
+        };
+
+    /**
+     * One-time step that fills this app's prepared state.
+     */
+    interface AppPrepare {
+      /**
+       * Arguments of the step. Supports `${APP_PREPARED}` (the directory the step fills),
+       * `${APP_DIR}` (this app's install directory) and `${APP_BIN:<alias>}` (a direct dependency).
+       * Rejected: `${STORE}` and every tool placeholder ({root}, {cwd}, {file}, {files}, {target},
+       * {toolCache}) — the prepared state is shared by every project. May be empty.
+       */
+      args: string[];
+      /**
+       * Another executable of this app's own installation to run instead of the app's main command,
+       * relative to the install directory. Node, bun and uv apps, and binary apps with extractDir.
+       * Default: the app itself.
+       */
+      binPath?: string;
+      /**
+       * Environment for the step only; same placeholders as `args`. `PATH` and the temporary
+       * directories (TMPDIR, TEMP, TMP, XDG_CACHE_HOME, XDG_DATA_HOME, XDG_STATE_HOME) are owned by
+       * datamitsu during the step and rejected here.
+       */
+      env?: Record<string, string>;
+      /**
+       * Whether the step needs the network. Required: under DATAMITSU_OFFLINE an unprepared step
+       * that needs it is refused before the process starts.
+       */
+      network: boolean;
+      /**
+       * What the step finds on PATH. "declared" (default): the runtime's own directories and the
+       * binaries of this app's dependsOn closure only. "inherit": additionally the inherited host
+       * PATH.
+       */
+      path?: "declared" | "inherit";
+    }
+
     interface AppVersionCheck {
       /**
        * Custom arguments for version check. Defaults to ["--version"] if absent.
@@ -1442,8 +1543,8 @@ declare global {
       format?: "tar" | "tar.bz2" | "tar.gz" | "tar.xz" | "tar.zst";
 
       /**
-       * SHA-256 hash (64 lowercase hex characters). Required for external archives per security
-       * policy.
+       * Canonical SHA-256 digest ("sha256:<64 lowercase hex>"). Required for external archives per
+       * security policy.
        */
       hash?: string;
 
@@ -1465,6 +1566,16 @@ declare global {
 
     interface BinaryOsArchInfo {
       /**
+       * Host-scoped credential reference; the token value is never stored in configuration.
+       */
+      auth?: {
+        accept?: "application/octet-stream";
+        header: "Authorization" | "PRIVATE-TOKEN";
+        origin: string;
+        scheme?: "Bearer" | "token";
+        tokenEnv: string;
+      };
+      /**
        * Path of the binary inside the archive, such as "tool-1.2.3/bin/tool". With `extractDir` it
        * is the command inside the extracted directory, and required.
        */
@@ -1478,11 +1589,10 @@ declare global {
        */
       extractDir?: boolean;
 
-      hash: string;
       /**
-       * @default sha256
+       * Canonical SHA-256 digest of the artifact: "sha256:<64 lowercase hex>".
        */
-      hashType?: BinHashType;
+      hash: string;
       url: string;
     }
 
@@ -1498,8 +1608,6 @@ declare global {
       | "xz"
       | "zip"
       | "zst";
-
-    type BinHashType = "sha256";
 
     interface Bundle {
       /**
@@ -1647,6 +1755,59 @@ declare global {
   }
 
   /**
+   * `facts().ci`: which CI runs the job, and the identifiers of the change it builds.
+   */
+  interface CIFacts {
+    /**
+     * The branch a pull or merge request targets, when the vendor says; empty otherwise.
+     */
+    baseRef: string;
+
+    /**
+     * Whether any CI was detected: a vendor's own marker, or `CI` set to anything but `false` or
+     * `0`.
+     */
+    isCI: boolean;
+
+    /**
+     * Whether the job builds a pull or merge request.
+     */
+    isPR: boolean;
+
+    /**
+     * The pull or merge request number, when the vendor says; empty otherwise.
+     */
+    prNumber: string;
+
+    /**
+     * The ref the job builds, as the vendor names it (`refs/pull/42/merge`, `main`).
+     */
+    ref: string;
+
+    /**
+     * The commit the job builds; on a GitHub pull request, the merge commit.
+     */
+    sha: string;
+
+    /**
+     * The CI, from its own variables; `generic` when only `CI` is set, empty outside CI. Gitea and
+     * Forgejo read as `gitea` although they set `GITHUB_ACTIONS` too.
+     */
+    vendor:
+      | ""
+      | "azure"
+      | "bitbucket"
+      | "buildkite"
+      | "circleci"
+      | "generic"
+      | "gitea"
+      | "github"
+      | "gitlab"
+      | "jenkins"
+      | "teamcity";
+  }
+
+  /**
    * Facts about the project environment. Collected automatically on engine initialization.
    *
    * Path-related fields have been removed. Use template placeholders in tool operation args
@@ -1671,6 +1832,16 @@ declare global {
      * Absolute path to the currently running binary
      */
     binaryPath: string;
+
+    /**
+     * The continuous-integration system the process runs under, detected from the variables each
+     * vendor sets for its jobs. Every field is empty or false outside CI. It is read from the same
+     * environment as `env`, so the config-evaluation cache already tells two values apart.
+     *
+     * @example
+     *   skip: !facts().ci.isCI;
+     */
+    ci: CIFacts;
 
     /**
      * The process environment available to configuration code, except observation-only datamitsu

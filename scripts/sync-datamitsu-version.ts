@@ -1,6 +1,6 @@
 import fsPromise from "node:fs/promises";
 import path from "node:path";
-
+import { parse } from "yaml";
 // --- Types ---
 
 export interface SyncResult {
@@ -17,9 +17,8 @@ const UNSTABLE_PATTERN = /^0\.0\.0-unstable\./;
 
 const MIN_VERSION_REGEX = /(return\s+")([\w.-]+)(")/;
 
-// The root config restates the pin inside the package.json it manages for this repo, so the same
-// version lives in two files and nothing was keeping them equal.
-const SELF_PIN_REGEX = /("@datamitsu\/datamitsu":\s*")([\w.-]+)(")/;
+// The root config emits the workspace catalog that resolves this repository's catalog: dependency.
+const SELF_PIN_REGEX = /^(\s*"@datamitsu\/datamitsu":\s*)([\w.-]+)(\s*)$/m;
 
 // --- Exported functions (testable) ---
 
@@ -31,18 +30,18 @@ export function isUnstableVersion(version: string): boolean {
 }
 
 /**
- * Read the @datamitsu/datamitsu version from package.json.
+ * Read the @datamitsu/datamitsu version from the pnpm workspace catalog.
  */
-export async function readDatamitsuVersion(packageJsonPath: string): Promise<string> {
-  const content = await fsPromise.readFile(packageJsonPath, "utf8");
-  const pkg = JSON.parse(content) as {
-    dependencies?: Record<string, string>;
+export function readDatamitsuVersion(content: string): string {
+  const workspace = parse(content) as {
+    catalog?: Record<string, unknown>;
   };
+  const version = workspace.catalog?.["@datamitsu/datamitsu"];
 
-  const version = pkg.dependencies?.["@datamitsu/datamitsu"];
-  if (!version) {
-    throw new Error("Could not find @datamitsu/datamitsu in package.json dependencies");
+  if (typeof version !== "string" || version.length === 0) {
+    throw new Error("Could not find @datamitsu/datamitsu in the pnpm workspace catalog");
   }
+
   return version;
 }
 
@@ -54,10 +53,11 @@ export async function readDatamitsuVersion(packageJsonPath: string): Promise<str
  * installed binary.
  */
 export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult> {
-  const packageJsonPath = path.join(rootDir, "package.json");
+  const workspaceYamlPath = path.join(rootDir, "pnpm-workspace.yaml");
   const configTsPath = path.join(rootDir, "src/datamitsu-config/datamitsu.config.ts");
 
-  const version = await readDatamitsuVersion(packageJsonPath);
+  const workspaceYaml = await fsPromise.readFile(workspaceYamlPath, "utf8");
+  const version = readDatamitsuVersion(workspaceYaml);
 
   const rootConfigTsPath = path.join(rootDir, "datamitsu.config.ts");
   const rootConfigTs = await fsPromise.readFile(rootConfigTsPath, "utf8");
@@ -110,14 +110,14 @@ export function updateMinVersion(content: string, version: string): [string, boo
 }
 
 /**
- * Update the `@datamitsu/datamitsu` pin the root datamitsu.config.ts writes into this repo's own
- * package.json. Returns [updatedContent, wasChanged].
+ * Update the `@datamitsu/datamitsu` pin in the workspace catalog emitted by the root
+ * datamitsu.config.ts. Returns [updatedContent, wasChanged].
  */
 export function updateSelfPin(content: string, version: string): [string, boolean] {
   const match = content.match(SELF_PIN_REGEX);
 
   if (!match) {
-    throw new Error('Could not find the "@datamitsu/datamitsu" pin in datamitsu.config.ts');
+    throw new Error('Could not find the "@datamitsu/datamitsu" catalog pin in datamitsu.config.ts');
   }
 
   if (match[2] === version) {
@@ -140,7 +140,7 @@ if (isDirectRun) {
 
     if (result.selfPinUpdated) {
       console.log(
-        `Synced the @datamitsu/datamitsu pin in datamitsu.config.ts to ${result.version}`,
+        `Synced the @datamitsu/datamitsu workspace catalog pin in datamitsu.config.ts to ${result.version}`,
       );
     }
 

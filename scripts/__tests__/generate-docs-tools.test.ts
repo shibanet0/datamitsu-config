@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   type ConfigShowOutput,
+  environmentWithoutCI,
   extractToolsInfo,
   generateToolsMarkdown,
   parseConfigJson,
@@ -82,6 +83,20 @@ describe("parseConfigJson", () => {
 
   it("should throw on array input", () => {
     expect(() => parseConfigJson(JSON.stringify([]))).toThrow("missing 'tools' field");
+  });
+});
+
+describe("environmentWithoutCI", () => {
+  it("clears generic and vendor-specific CI markers", () => {
+    const result = environmentWithoutCI({
+      CI: "true",
+      FORGEJO_ACTIONS: "true",
+      GITHUB_ACTIONS: "true",
+      HOME: "/home/user",
+      TEAMCITY_VERSION: "2026.1",
+    });
+
+    expect(result).toEqual({ HOME: "/home/user" });
   });
 });
 

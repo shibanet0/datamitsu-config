@@ -455,11 +455,10 @@ export const defineConfig: DefineConfigFunction = async (packageJSON, config, op
   // `warn` is not a severity this config uses, so every rule a plugin preset left at warn is raised
   // to error.
   //
-  // datamitsu runs eslint with `--quiet`, which reports errors only. A warn-level rule therefore
-  // fails nothing and prints nothing — it is off in every way that matters, except that it still
-  // runs on every file and still shows up in an editor. Three severities where the runner
-  // understands two is not a softer bar, it is a rule nobody can act on. oxlint has no warn tier at
-  // all, which is the behavior being matched.
+  // This configuration has one enforcement tier: a rule is an error or it is off. Datamitsu parses
+  // ESLint's JSON report and gates at `error`, while oxlint has no warning tier at all. Leaving a
+  // rule at warn would make the same shared policy mean different things in the two linters and
+  // would let a finding be visible without enforcing it.
   //
   // Rewritten in place rather than appended as one overriding block: a plugin's rules are only
   // addressable from a config object that registers that plugin, and several are scoped to `files`

@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { isUnstableVersion, updateMinVersion } from "../sync-datamitsu-version.ts";
+import {
+  isUnstableVersion,
+  readDatamitsuVersion,
+  updateMinVersion,
+  updateSelfPin,
+} from "../sync-datamitsu-version.ts";
 
 describe("isUnstableVersion", () => {
   it("should return true for unstable versions", () => {
@@ -16,6 +21,52 @@ describe("isUnstableVersion", () => {
   it("should return false for prerelease versions", () => {
     expect(isUnstableVersion("0.0.11-rc.1")).toBe(false);
     expect(isUnstableVersion("0.0.11-alpha.1")).toBe(false);
+  });
+});
+
+describe("readDatamitsuVersion", () => {
+  it("reads the datamitsu version from the pnpm workspace catalog", () => {
+    const workspaceYaml = `catalog:
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261007.33fdfa9
+`;
+
+    expect(readDatamitsuVersion(workspaceYaml)).toBe("0.0.0-unstable.20261007.33fdfa9");
+  });
+
+  it("rejects a workspace without a datamitsu catalog pin", () => {
+    expect(() => readDatamitsuVersion("catalog: {}\n")).toThrow(
+      "Could not find @datamitsu/datamitsu in the pnpm workspace catalog",
+    );
+  });
+});
+
+describe("updateSelfPin", () => {
+  const rootConfig = `dependencies: {
+  "@datamitsu/datamitsu": "catalog:",
+}
+catalog:
+  "@datamitsu/datamitsu": 0.0.10
+`;
+
+  it("updates the catalog pin without replacing the package catalog reference", () => {
+    const [result, changed] = updateSelfPin(rootConfig, "0.0.11");
+
+    expect(changed).toBe(true);
+    expect(result).toContain('"@datamitsu/datamitsu": "catalog:"');
+    expect(result).toContain('"@datamitsu/datamitsu": 0.0.11');
+  });
+
+  it("returns unchanged when the catalog pin already matches", () => {
+    const [result, changed] = updateSelfPin(rootConfig, "0.0.10");
+
+    expect(changed).toBe(false);
+    expect(result).toBe(rootConfig);
+  });
+
+  it("rejects a root config without a catalog pin", () => {
+    expect(() =>
+      updateSelfPin('dependencies: { "@datamitsu/datamitsu": "catalog:" }', "0.0.11"),
+    ).toThrow('Could not find the "@datamitsu/datamitsu" catalog pin in datamitsu.config.ts');
   });
 });
 

@@ -204,6 +204,7 @@ export default defineConfig((prev) => {
     "graphqlrc",
     "codeberg",
     "gitea",
+    "Forgejo",
     "blintdb",
     "btrfs",
   ];

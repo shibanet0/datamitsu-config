@@ -11,21 +11,21 @@ import { data as archiveMarkdownlintCli2Config } from "./inline-config/markdownl
 import { data as oxfmtConfigArchive } from "./inline-config/oxfmt";
 import { data as oxlintConfigArchive } from "./inline-config/oxlint";
 import {
+  apps as binaryAppsJSON,
+  binaries as binaryBinariesJSON,
+} from "./registries/binaryApps.json";
+import {
   apps as externalAppsJSON,
   binaries as externalBinariesJSON,
 } from "./registries/externalApps.json";
-import {
-  apps as githubAppsJSON,
-  binaries as githubBinariesJSON,
-} from "./registries/githubApps.json";
 import nodeVersions from "./registries/nodeVersions.json";
 import uvVersions from "./registries/uvVersions.json";
 
-const githubApps = Object.entries(githubBinariesJSON).reduce<BinManager.MapOfApps>(
+const binaryApps = Object.entries(binaryBinariesJSON).reduce<BinManager.MapOfApps>(
   (accumulator, [key, element]) => {
     const binaries = element.binaries as unknown as BinManager.MapOfBinaries;
 
-    const app = githubAppsJSON[key as keyof typeof githubAppsJSON];
+    const app = binaryAppsJSON[key as keyof typeof binaryAppsJSON];
 
     accumulator[key] = {
       binary: {
@@ -84,9 +84,9 @@ const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapO
 );
 
 // The private name lets the proxy own `lefthook`; its dependsOn provisions this binary.
-const { lefthook: lefthookUpstreamApp, ...otherGithubApps } = githubApps;
+const { lefthook: lefthookUpstreamApp, ...otherBinaryApps } = binaryApps;
 if (!lefthookUpstreamApp) {
-  throw new Error("githubApps registry no longer defines lefthook; the proxy has nothing to wrap");
+  throw new Error("binaryApps registry no longer defines lefthook; the proxy has nothing to wrap");
 }
 
 /**
@@ -95,14 +95,14 @@ if (!lefthookUpstreamApp) {
  * no `include/`, and every schema importing one of them fails with "File not found"; `extractDir`
  * keeps the whole archive and runs `bin/protoc` inside it.
  *
- * Both are set here because `pull-github` writes neither: the registry holds a guessed
+ * Both are set here because `pull-releases` writes neither: the registry holds a guessed
  * `protoc-<version>/protoc`, which single-file extraction resolves by basename and a directory
  * install cannot.
  */
-const registryProtoc = otherGithubApps["protoc"];
+const registryProtoc = otherBinaryApps["protoc"];
 if (!registryProtoc?.binary) {
   throw new Error(
-    "githubApps registry no longer defines protoc; its extractDir override has nothing to apply to",
+    "binaryApps registry no longer defines protoc; its extractDir override has nothing to apply to",
   );
 }
 const protocApp: BinManager.App = {
@@ -133,7 +133,7 @@ const protocApp: BinManager.App = {
 };
 
 const allApps: BinManager.MapOfApps = {
-  ...otherGithubApps,
+  ...otherBinaryApps,
   ...externalApps,
   /**
    * Actionlint runs ShellCheck over the `run:` blocks of a workflow, and finds it only as
@@ -146,7 +146,7 @@ const allApps: BinManager.MapOfApps = {
    * machine where the code is written than on the machine that rejects it is the worst of both.
    */
   actionlint: {
-    ...otherGithubApps["actionlint"],
+    ...otherBinaryApps["actionlint"],
     dependsOn: ["shellcheck"],
     runtimeEnv: {
       /**
@@ -249,7 +249,7 @@ const allApps: BinManager.MapOfApps = {
     versionCheck: { disabled: true },
   },
   droast: {
-    ...otherGithubApps.droast,
+    ...otherBinaryApps.droast,
     dependsOn: ["shellcheck"],
     runtimeEnv: {
       // ShellCheck's optional checks are off by default, and droast has no setting for them; it
@@ -283,7 +283,7 @@ const allApps: BinManager.MapOfApps = {
     description:
       "A program that reformats Kotlin source code to comply with the common community standard for Kotlin code conventions.",
     jvm: {
-      jarHash: "f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
+      jarHash: "sha256:f39bf9a1f520d27f86f2bdf4d6dbb2574c05e84f656171ed65c4e534b86b9965",
       jarUrl:
         "https://github.com/facebook/ktfmt/releases/download/v0.62/ktfmt-0.62-with-dependencies.jar",
       version: "v0.62",
@@ -292,7 +292,7 @@ const allApps: BinManager.MapOfApps = {
   ktlint: {
     description: "An anti-bikeshedding Kotlin linter with built-in formatter",
     jvm: {
-      jarHash: "a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
+      jarHash: "sha256:a3fd620207d5c40da6ca789b95e7f823c54e854b7fade7f613e91096a3706d75",
       jarUrl: "https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint",
       version: "1.8.0",
     },
@@ -350,7 +350,7 @@ const allApps: BinManager.MapOfApps = {
     description: `OpenAPI Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec (v2, v3)`,
     // https://github.com/OpenAPITools/openapi-generator
     jvm: {
-      jarHash: "871e0155287a87b579ff31096b2d45b1f95a115edfe631411ec6cff4848d0f03",
+      jarHash: "sha256:871e0155287a87b579ff31096b2d45b1f95a115edfe631411ec6cff4848d0f03",
       jarUrl:
         "https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.20.0/openapi-generator-cli-7.20.0.jar",
       version: "7.20.0",

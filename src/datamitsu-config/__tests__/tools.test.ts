@@ -207,5 +207,30 @@ describe("tools", () => {
         ).toBeGreaterThan(0);
       }
     });
+
+    it("keeps every parsed fixer on the parser's structured output format", () => {
+      expect(toolsConfig.dclint!.operations.fix!.args).toEqual(
+        expect.arrayContaining(["--formatter", "json"]),
+      );
+      expect(toolsConfig.eslint!.operations.fix!.args).toContain("--format=json");
+      expect(toolsConfig["golangci-lint"]!.operations.fix!.args).toContain(
+        "--output.json.path=stdout",
+      );
+      expect(toolsConfig.protolint!.operations.fix!.args).toEqual(
+        expect.arrayContaining(["--reporter", "json"]),
+      );
+    });
+
+    it("lets datamitsu gate ESLint's structured severities", () => {
+      for (const operation of ["fix", "lint"] as const) {
+        const config = toolsConfig.eslint!.operations[operation]!;
+        expect(config.args).toContain("--format=json");
+        expect(config.failOn).toBe("error");
+      }
+    });
+
+    it("does not reintroduce GitHub Actions markers for pinact", () => {
+      expect(toolsConfig.pinact!.operations.lint!.env).toBeUndefined();
+    });
   });
 });

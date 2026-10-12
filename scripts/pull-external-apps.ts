@@ -252,14 +252,18 @@ async function main(): Promise<void> {
           }
         }
 
+        const hash = `sha256:${sha256}`;
         const recorded = registry.binaries[appName]?.binaries[os]?.[arch]?.[libc]?.hash;
-        if (!bumped && recorded !== sha256) {
+        const recordedCanonical =
+          recorded && !recorded.startsWith("sha256:") ? `sha256:${recorded}` : recorded;
+        if (!bumped && recordedCanonical !== hash) {
           errors.push(
-            `${appName} ${os}/${arch}: ${url} hashes to ${sha256}, the registry records ${recorded}`,
+            `${appName} ${os}/${arch}: ${url} hashes to ${hash}, the registry records ${recorded}`,
           );
         }
+        changed ||= recorded !== hash;
 
-        const entry: BinaryEntry = { contentType, hash: sha256, url };
+        const entry: BinaryEntry = { contentType, hash, url };
         if (appMeta.binaryPathTemplate) {
           const binExtension = os === "windows" ? ".exe" : "";
           entry.binaryPath = appMeta.binaryPathTemplate
@@ -273,12 +277,12 @@ async function main(): Promise<void> {
 
     if (bumped) {
       appMeta.version = version;
-      registry.binaries[appName] = {
-        binaries: binariesMap,
-        description: appMeta.description,
-      };
       changed = true;
     }
+    registry.binaries[appName] = {
+      binaries: binariesMap,
+      description: appMeta.description,
+    };
   }
 
   if (errors.length > 0) {
