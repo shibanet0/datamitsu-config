@@ -14,6 +14,7 @@ import {
   helmGlobs,
   jsonExcludeGlobs,
   jsonGlobs,
+  kotlinGlobs,
   lefthookConfigGlobs,
   makefileGlobs,
   markdownGlobs,
@@ -52,6 +53,8 @@ type Tool =
   | "harper-cli"
   | "helm"
   | "knip"
+  | "ktfmt"
+  | "ktlint"
   | "lefthook-sort"
   | "lefthook-validate"
   | "lychee"
@@ -116,6 +119,7 @@ const _fixPriority: Tool[] = [
   "golangci-lint-fmt",
   "ruff",
   "ruff-format",
+  "ktfmt",
   "typstyle",
   "dotenv-linter",
   "shfmt",
@@ -156,6 +160,8 @@ const _lintPriority: Tool[] = [
   "golangci-lint-fmt",
   "ruff",
   "ruff-format",
+  "ktfmt",
+  "ktlint",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -736,6 +742,53 @@ export const toolsConfig: config.MapOfTools = {
     //   dm exec knip -- --fix --fix-type exports,types
     skip: !isCI,
     skipReason: "runs in CI only",
+  },
+  ktfmt: {
+    name: "ktfmt - Kotlin formatter",
+    operations: {
+      fix: {
+        app: "ktfmt",
+        args: ["--google-style", "--enable-editorconfig", "{files}"],
+        globs: kotlinGlobs,
+        invalidateOn: [".editorconfig"],
+        priority: fixPriority.ktfmt,
+        scope: "per-project",
+      },
+      lint: {
+        app: "ktfmt",
+        args: [
+          "--google-style",
+          "--enable-editorconfig",
+          "--dry-run",
+          "--set-exit-if-changed",
+          "{files}",
+        ],
+        globs: kotlinGlobs,
+        invalidateOn: [".editorconfig"],
+        priority: lintPriority.ktfmt,
+        scope: "per-project",
+      },
+    },
+    outputParser: { module: "core", parser: "ktfmt" },
+  },
+  ktlint: {
+    name: "ktlint - Kotlin linter",
+    operations: {
+      lint: {
+        app: "ktlint",
+        args: [
+          "--editorconfig={managedConfig:.editorconfig}",
+          "--reporter=json",
+          "--log-level=none",
+          "{files}",
+        ],
+        globs: kotlinGlobs,
+        invalidateOn: [".editorconfig"],
+        priority: lintPriority.ktlint,
+        scope: "per-project",
+      },
+    },
+    outputParser: { module: "core", parser: "ktlint" },
   },
   kubeconform: {
     name: "kubeconform - Kubernetes manifest validation",

@@ -571,3 +571,37 @@ Dependency-aware Docker slices also provision the private upstream. Keep the pro
 independent of upstream resolution; ordinary `version`/`--version` calls and the final image smoke
 test must still execute the upstream binary. The Alpine generator force-includes the static
 private upstream because its registry entry only declares glibc; `dependsOn` does not add platform metadata.
+
+## Kotlin
+
+ktfmt is the only Kotlin writer. The shared Kotlin defaults live in
+`src/datamitsu-config/kotlin-defaults.ts`; the managed `.editorconfig` preserves project overrides
+and inserts new defaults before existing narrower sections. Keep block indentation, continuation
+indentation and width derived from `indentSettings`, not Kotlin-specific copies.
+
+ktlint uses JSON and its `ktlint` tool parser. Its preset is off, with naming and syntax rules
+enabled individually; do not enable layout rules alongside ktfmt. `@Composable` functions need
+the explicit function-naming exemption. IntelliJ's import thresholds and package allowlist must
+agree with the wildcard-import check. See `website/reference/kotlin.md` for every enabled rule.
+
+Kotlin operations use the default cache and declare `.editorconfig` in `invalidateOn`. A nested
+configuration change may require a manual local execution-cache reset. CI uses a fresh execution
+cache. Do not disable the shared local cache to compensate for nested configuration files or add
+nested EditorConfig tracking to core.
+Both parser descriptors use UTF-16 columns. The new `ktfmt` parser
+key needs a rebuilt module; an older published core parser pin does not acquire it from a tool
+configuration edit. Validate local parser work using a local, SHA-256-verified module until release.
+
+The Kotlin file-name rules live in `alint-defaults.ts`, not ktlint: they accept Unicode letter
+stems, platform suffixes and Gradle script names. Keep `ktlint_standard_filename` off so a second
+tool does not own that concern.
+
+Root whole-file generators must emit the order their formatter preserves. The package manifest
+is a JSON template in `datamitsu.config.ts` so object-key linting cannot rewrite it to alphabetical
+order while `sort-package-json` writes conventional manifest order. Keep the Lefthook template
+in the output order of `lefthook-sort` and yamlfmt too; otherwise a successful reconcile changes
+the input of the next chain-hash check as soon as formatting runs.
+
+Pass ktlint explicit file paths in operations. With the pinned CLI, a quoted absolute glob can
+walk from the filesystem root and fail on unrelated protected directories; keep `{files}` rather
+than turning the selection into an absolute glob or stdin pattern stream.

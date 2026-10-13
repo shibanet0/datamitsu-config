@@ -248,3 +248,5 @@ export const lefthookConfigGlobs: string[] = [
   "**/.lefthook.y*ml",
   "**/.config/lefthook.y*ml",
 ];
+
+export const kotlinGlobs: string[] = ["**/*.kt", "**/*.kts"];

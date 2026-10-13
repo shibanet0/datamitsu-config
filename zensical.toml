@@ -79,6 +79,7 @@ Home = "index.md"
 Reference = [
   { Apps = "reference/apps.md" },
   { Tools = "reference/tools.md" },
+  { "Kotlin Configuration" = "reference/kotlin.md" },
   { "Project Types" = "reference/project-types.md" },
   { "Managed Configs" = "reference/managed-configs.md" },
   { "Lefthook Proxy" = "reference/lefthook-proxy.md" },

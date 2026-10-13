@@ -3,6 +3,27 @@ import { describe, expect, it } from "vitest";
 import { toolsConfig } from "../tools.js";
 
 describe("tools", () => {
+  describe("Kotlin", () => {
+    it("keeps ktfmt as the sole writer and parses each tool's native output", () => {
+      expect(toolsConfig.ktlint!.operations.fix).toBeUndefined();
+      expect(toolsConfig.ktfmt!.operations.lint!.args).toEqual(
+        expect.arrayContaining(["--dry-run", "--set-exit-if-changed"]),
+      );
+      expect(toolsConfig.ktlint!.operations.lint!.args).toContain("--reporter=json");
+      expect(toolsConfig.ktfmt!.outputParser?.parser).toBe("ktfmt");
+      expect(toolsConfig.ktlint!.outputParser?.parser).toBe("ktlint");
+    });
+
+    it("uses the default cache and tracks project and ancestor EditorConfig files", () => {
+      for (const tool of ["ktfmt", "ktlint"] as const) {
+        for (const operation of Object.values(toolsConfig[tool]!.operations)) {
+          expect(operation!.cache).not.toBe(false);
+          expect(operation!.invalidateOn).toContain(".editorconfig");
+        }
+      }
+    });
+  });
+
   describe("Go formatting", () => {
     /**
      * A formatter that declares no files is left out of editor format-on-save, and a bare

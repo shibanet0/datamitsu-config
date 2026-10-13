@@ -1,4 +1,5 @@
 import { indentSettings } from "../constants";
+import { kotlinEditorConfig } from "../kotlin-defaults";
 
 /**
  * The sections this generator owns. Everything else in the file is the project's.
@@ -10,7 +11,15 @@ import { indentSettings } from "../constants";
  * eats a hard line break. So sections keep the position they had, and only the ones this generator
  * owns are updated in place; new managed sections are appended, ahead of nothing.
  */
-const MANAGED_SECTIONS = ["DEFAULT", "*", "*.md", "*.markdown", "GNUmakefile", "Makefile"] as const;
+const MANAGED_SECTIONS = [
+  "DEFAULT",
+  "*",
+  "*.{kt,kts}",
+  "*.md",
+  "*.markdown",
+  "GNUmakefile",
+  "Makefile",
+] as const;
 
 type SectionName = (typeof MANAGED_SECTIONS)[number];
 
@@ -60,6 +69,9 @@ export const editorconfig: config.ManagedConfig = {
         case "*.md": {
           return { trim_trailing_whitespace: "false", ...project };
         }
+        case "*.{kt,kts}": {
+          return { ...kotlinEditorConfig, ...project };
+        }
         case "DEFAULT": {
           return { root: "true" };
         }
@@ -86,6 +98,23 @@ export const editorconfig: config.ManagedConfig = {
         : { name, properties };
     });
 
+    if (!seen.has("DEFAULT")) {
+      kept.unshift({ name: "DEFAULT", properties: managedProperties("DEFAULT") });
+      seen.add("DEFAULT");
+    }
+
+    // New defaults must precede existing project sections, whose more specific overrides win.
+    for (const name of ["*.{kt,kts}", "*"] as const) {
+      if (!seen.has(name)) {
+        const position = kept.findIndex((section) => section.name !== "DEFAULT");
+        kept.splice(position === -1 ? kept.length : position, 0, {
+          name,
+          properties: managedProperties(name),
+        });
+        seen.add(name);
+      }
+    }
+
     const added: INI.SectionEntry[] = MANAGED_SECTIONS.filter((name) => !seen.has(name)).map(
       (name) => ({ name, properties: managedProperties(name) }),
     );
@@ -93,5 +122,5 @@ export const editorconfig: config.ManagedConfig = {
     return INI.stringify([...kept, ...added]);
   },
   scope: "git-root",
-  tools: ["editorconfig-checker"],
+  tools: ["editorconfig-checker", "ktfmt", "ktlint"],
 };
