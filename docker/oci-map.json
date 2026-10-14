@@ -114,15 +114,6 @@
       "app": "markdownlint-cli2"
     },
     {
-      "subtree": ".apps/uv/mypy",
-      "kind": "app",
-      "app": "mypy"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/jvm/openapi-generator",
       "kind": "app",
       "app": "openapi-generator"
@@ -157,6 +148,11 @@
       "app": "prettier"
     },
     {
+      "subtree": ".apps/go/protolint-fix",
+      "kind": "app",
+      "app": "protolint-fix"
+    },
+    {
       "subtree": ".apps/node/quicktype",
       "kind": "app",
       "app": "quicktype"
@@ -179,20 +175,6 @@
       "subtree": ".apps/node/sort-package-json",
       "kind": "app",
       "app": "sort-package-json"
-    },
-    {
-      "subtree": ".apps/node/spectral",
-      "kind": "app",
-      "app": "spectral"
-    },
-    {
-      "subtree": ".apps/uv/sqlfluff",
-      "kind": "app",
-      "app": "sqlfluff"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
     },
     {
       "subtree": ".apps/node/stylelint",
@@ -511,6 +493,11 @@
       "subtree": ".bin/trufflehog",
       "kind": "binary",
       "app": "trufflehog"
+    },
+    {
+      "subtree": ".bin/ty",
+      "kind": "binary",
+      "app": "ty"
     },
     {
       "subtree": ".bin/typos",

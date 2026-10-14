@@ -23,6 +23,7 @@ export const pyprojectToml: config.ManagedConfig = {
       "line-length": indentSettings.lineWidth,
       ...(rest.ruff as object),
     };
+    const ty = (rest.ty ?? {}) as { rules?: Record<string, unknown> };
 
     return TOML.stringify({
       ...data,
@@ -30,6 +31,10 @@ export const pyprojectToml: config.ManagedConfig = {
         ...rest,
         deptry: { extend_exclude: ["tests"], ...(rest.deptry as object) },
         ruff,
+        ty: {
+          ...ty,
+          rules: { "unused-ignore-comment": "error", ...ty.rules },
+        },
       },
     });
   },

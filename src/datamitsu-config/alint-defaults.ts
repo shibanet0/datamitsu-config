@@ -25,6 +25,7 @@ const escapedDot = String.raw`[a-zA-Z0-9-]+(\[\.\][a-zA-Z0-9-]+)+`;
 // Suffixes protobuf-es, connect-es and grpc-tools write: user_pb.ts, user_connect.ts.
 const codegenSuffix = "(_(pb|connect|grpc_pb|grpc_web_pb))?";
 const jsStem = String.raw`(${routeBracket}|${optionalSegment}|${escapedDot}|\$|[+$-]?_{0,2}(${kebab}|${camel}|${pascal})_?)${codegenSuffix}(\+api)?`;
+const kotlinStem = String.raw`[\p{L}][\p{L}\p{N}]*`;
 const jsSegment = String.raw`(${routeBracket}|${optionalSegment}|${escapedDot}|\$|[+$_-]{0,2}[a-zA-Z0-9-]+_?)`;
 
 /**
@@ -41,6 +42,18 @@ export const alintNamingRules: NamingRule[] = [
     message: "JS/TS file names use kebab-case, camelCase or PascalCase",
     paths: "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}",
     pattern: String.raw`^\.?${jsStem}(\.${jsSegment})*\.(js|jsx|mjs|cjs|ts|tsx|mts|cts)$`,
+  },
+  {
+    id: "s0-kotlin-file-names",
+    message: "Kotlin source names use camelCase or PascalCase, with optional platform suffixes",
+    paths: "**/*.kt",
+    pattern: String.raw`^${kotlinStem}${middle}\.kt$`,
+  },
+  {
+    id: "s0-kotlin-script-file-names",
+    message: "Kotlin scripts use kebab-case, camelCase or PascalCase, with optional sub-extensions",
+    paths: "**/*.kts",
+    pattern: String.raw`^(${kebab}|${kotlinStem})${middle}\.kts$`,
   },
   {
     id: "s0-markdown-file-names",

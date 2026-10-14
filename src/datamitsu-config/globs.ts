@@ -1,6 +1,7 @@
 import { resolve } from "../ignore/profile";
 import { jsonExcludeProfile } from "../ignore/profiles/json-exclude";
 import { yamlExcludeProfile } from "../ignore/profiles/yaml-exclude";
+import { PYTHON_SOURCE_EXTENSIONS } from "./constants";
 
 export const actionlintGlobs: string[] = [
   "**/.github/workflows/*.yml",
@@ -91,7 +92,7 @@ export const stylelintGlobs: string[] = [
 
 // ty type-checks Python sources, stubs, and Jupyter notebooks (NOT markdown —
 // ty's markdown support is only its internal `mdtest` format, not a user input).
-export const tyGlobs: string[] = ["**/*.py", "**/*.pyi", "**/*.ipynb"];
+export const tyGlobs: string[] = PYTHON_SOURCE_EXTENSIONS.map((extension) => `**/*${extension}`);
 
 export const dotenvLinterGlobs: string[] = ["**/*.env", "**/.env", "**/*.env.*", "**/.env.*"];
 
@@ -248,3 +249,5 @@ export const lefthookConfigGlobs: string[] = [
   "**/.lefthook.y*ml",
   "**/.config/lefthook.y*ml",
 ];
+
+export const kotlinGlobs: string[] = ["**/*.kt", "**/*.kts"];

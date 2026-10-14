@@ -17,6 +17,8 @@
 import fsPromise from "node:fs/promises";
 import path from "node:path";
 
+import { readPackageLiteral } from "./lib/package-literal.ts";
+
 const repoRoot = path.join(import.meta.dirname, "..");
 
 const DEPENDENCY_FIELDS = ["dependencies", "devDependencies", "peerDependencies"] as const;
@@ -27,47 +29,13 @@ const manifest = JSON.parse(
 
 const source = await fsPromise.readFile(path.join(repoRoot, "datamitsu.config.ts"), "utf8");
 
-/**
- * The literal is a TypeScript object inside a template of generated JSON, so it is read the way the
- * generators read their own output: by locating the field and parsing the balanced braces after it.
- * Importing the module instead would execute the whole config for two dozen strings.
- */
-function readField(field: string): Record<string, string> | undefined {
-  const start = source.indexOf(`\n              ${field}: {`);
-
-  if (start === -1) {
-    return undefined;
-  }
-
-  const open = source.indexOf("{", start);
-  let depth = 0;
-  let end = open;
-
-  for (; end < source.length; end++) {
-    if (source[end] === "{") depth++;
-    if (source[end] === "}") depth--;
-    if (depth === 0) break;
-  }
-
-  const body = source.slice(open + 1, end);
-  const entries: Record<string, string> = {};
-
-  for (const match of body.matchAll(/^\s*(?:"([^"]+)"|([\w$-]+)):\s*"([^"]+)",?\s*$/gm)) {
-    entries[(match[1] ?? match[2]) as string] = match[3] as string;
-  }
-
-  return entries;
-}
+const literal = readPackageLiteral(source);
 
 let failed = false;
 
 for (const field of DEPENDENCY_FIELDS) {
-  const declared = readField(field);
-  const actual = manifest[field];
-
-  if (!declared || !actual) {
-    continue;
-  }
+  const declared = literal[field] ?? {};
+  const actual = manifest[field] ?? {};
 
   const missing = Object.keys(actual).filter((name) => !(name in declared));
   const extra = Object.keys(declared).filter((name) => !(name in actual));
@@ -99,7 +67,7 @@ for (const field of DEPENDENCY_FIELDS) {
  * `packageManager` is one string rather than a map, and just as unguarded: `pull:node` writes the
  * manifest's, and the literal went on saying pnpm 12.4.1 after the manifest had moved to 12.5.1.
  */
-const declaredPackageManager = /\n {14}packageManager: "([^"]+)"/.exec(source)?.[1];
+const declaredPackageManager = literal.packageManager;
 const actualPackageManager = (manifest as Record<string, unknown>)["packageManager"];
 
 if (declaredPackageManager !== actualPackageManager) {
