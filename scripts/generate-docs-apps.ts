@@ -125,9 +125,8 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "shfmt",
     "skywalking-eyes",
     "sort-keys",
+    "protolint-fix",
     "sort-package-json",
-    "spectral",
-    "sqlfluff",
     "sqruff",
     "stylelint",
     "syncpack",
@@ -163,7 +162,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "zizmor",
   ],
   "Task Runners & Dev Servers": ["air", "just", "task"],
-  "Type Checkers": ["mypy", "tsc", "ty"],
+  "Type Checkers": ["tsc", "ty"],
   Utilities: ["allurectl", "oxipng"],
 };
 

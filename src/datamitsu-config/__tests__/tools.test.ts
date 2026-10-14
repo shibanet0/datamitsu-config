@@ -3,6 +3,22 @@ import { describe, expect, it } from "vitest";
 import { toolsConfig } from "../tools.js";
 
 describe("tools", () => {
+  describe("Python, SQL and OpenAPI", () => {
+    it("activates the default tools with native parsers and project context", () => {
+      for (const name of ["ty", "sqruff"] as const) {
+        expect(toolsConfig[name]!.skip).not.toBe(true);
+        expect(toolsConfig[name]!.outputParser).toEqual({ module: "core", parser: name });
+        expect(toolsConfig[name]!.operations.lint!.priority).toBeGreaterThan(0);
+        expect(toolsConfig[name]!.operations.lint!.granularity).not.toBe("file");
+      }
+      expect(toolsConfig.ty!.operations.fix).toBeUndefined();
+      expect(toolsConfig.sqruff!.operations.fix!.args).toContain("--parsing-errors");
+      expect(toolsConfig.sqruff!.operations.fix!.priority).toBeGreaterThan(0);
+      expect(toolsConfig.ty!.operations.lint!.invalidateOn).toContain("ty.toml");
+      expect(toolsConfig.ty!.operations.lint!.app).toBe("ty");
+      expect(toolsConfig.ty!.operations.lint!.args).toContain("{files}");
+    });
+  });
   describe("Kotlin", () => {
     it("keeps ktfmt as the sole writer and parses each tool's native output", () => {
       expect(toolsConfig.ktlint!.operations.fix).toBeUndefined();
@@ -238,8 +254,12 @@ describe("tools", () => {
         "--output.json.path=stdout",
       );
       expect(toolsConfig.protolint!.operations.fix!.args).toEqual(
-        expect.arrayContaining(["--reporter", "json"]),
+        expect.arrayContaining(["-fix", "--reporter", "json"]),
       );
+      expect(toolsConfig.protolint!.operations.fix!.priority).toBeLessThan(
+        toolsConfig["buf-format"]!.operations.fix!.priority!,
+      );
+      expect(toolsConfig["buf-format"]!.operations.fix!.args).toContain("--write");
     });
 
     it("lets datamitsu gate ESLint's structured severities", () => {

@@ -2,10 +2,14 @@ export const tombiToml: config.ManagedConfig = {
   content: (context) => {
     const data = TOML.parse(context.originalContent || "");
 
-    return TOML.stringify({
-      ...data,
-      "toml-version": "v1.1.0",
-    });
+    return TOML.stringify(
+      merge(
+        {
+          "toml-version": "v1.1.0",
+        },
+        data,
+      ),
+    );
   },
   otherFileNameList: ["tombi.toml", ".tombi.toml"],
   scope: "git-root",

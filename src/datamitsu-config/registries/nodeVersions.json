@@ -418,11 +418,6 @@
     "packageName": "sort-package-json",
     "version": "4.0.0"
   },
-  "spectral": {
-    "description": "[![](https://raw.githubusercontent.com/stoplightio/spectral/develop/docs/img/readme-header.svg)](https://stoplight.io/api-governance?utm_source=github&utm_medium=spectral&utm_campaign=readme) [![CircleCI](https://img.shields.io/circleci/build/github/stopl",
-    "packageName": "@stoplight/spectral-cli",
-    "version": "6.16.3"
-  },
   "stylelint": {
     "description": "A mighty CSS linter that helps you avoid errors and enforce conventions.",
     "packageName": "stylelint",

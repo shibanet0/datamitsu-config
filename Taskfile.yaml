@@ -44,6 +44,7 @@ tasks:
       - task: build:inline:cspell
       - task: build:inline:markdownlint-cli2
       - task: build:inline:sort-keys
+      - task: build:inline:protolint-fix
       - task: build:inline:oxfmt
       - task: build:inline:oxlint
       - task: build:inline:stylelint
@@ -90,6 +91,10 @@ tasks:
     cmds:
       - pnpm exec tsdown --config tsdown.config.prettier.ts --config-loader unrun
     desc: Build inline prettier config
+  build:inline:protolint-fix:
+    cmds:
+      - node scripts/bundle-dist-inline.ts src/apps/protolint-fix src/datamitsu-config/inline-config/protolint-fix.ts
+    desc: Bundle the native protolint fix adapter source
   build:inline:sort-keys:
     cmds:
       - pnpm exec tsdown --config tsdown.config.sort-keys.ts --config-loader unrun

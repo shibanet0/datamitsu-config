@@ -50,3 +50,4 @@ export const jsonAlwaysExpandedOverride = {
 
 // IntelliJ has no boolean switch for star imports; its thresholds use a signed 32-bit integer.
 export const KOTLIN_STAR_IMPORT_THRESHOLD = 2_147_483_647;
+export const PYTHON_SOURCE_EXTENSIONS: string[] = [".py", ".pyi", ".ipynb"];

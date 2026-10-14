@@ -71,14 +71,21 @@ Similarly, each file-type concern (linting, formatting) should be handled by **o
 
 When adding new tools, check that no existing tool already covers the same file types and operations.
 
+### Configuration format priority
+
+Unless explicitly instructed otherwise, choose the first configuration extension
+the tool supports in this order:
+
+`.mts` → `.ts` → `.mjs` → `.js` → `.toml` → `.yaml` → `.json` → `.ini`.
+
+Verify support in the pinned tool version, including its runtime and config loader,
+before choosing the canonical filename. Do not select a lower-priority format just
+because an existing example uses it. A tool that requires a particular native
+filename or format keeps that requirement.
+
 ### JS/TS config tools
 
-When a tool supports a JavaScript/TypeScript config, prefer it over JSON/YAML/TOML, and pick the extension in this order:
-
-1. `.js` (canonical — what `datamitsu init` generates)
-2. `.ts`
-
-Such a tool **must** export a `defineConfig(overrides?)` helper from its `src/apps/<tool>/index.ts`, and the generated config file **must** call it:
+A tool with a JS/TS config **must** export a `defineConfig(overrides?)` helper from its `src/apps/<tool>/index.ts`, and the generated config file **must** call it:
 
 ```js
 import { defineConfig } from "<.datamitsu/<tool>.config.js>";
@@ -99,7 +106,8 @@ export default defineConfig((base) => ({
 }));
 ```
 
-For new tools that support js/ts, default to this format (js-first) unless the user explicitly requests another.
+For new tools that support JS/TS, use this helper pattern with the highest-priority
+supported extension above unless explicitly instructed otherwise.
 
 ## Shared Formatter Settings
 
@@ -605,3 +613,57 @@ the input of the next chain-hash check as soon as formatting runs.
 Pass ktlint explicit file paths in operations. With the pinned CLI, a quoted absolute glob can
 walk from the filesystem root and fail on unrelated protected directories; keep `{files}` rather
 than turning the selection into an absolute glob or stdin pattern stream.
+
+## Protobuf ownership
+
+Protolint fixes supported rule violations before `buf-format` settles Protobuf
+layout. Both use the same configured rules for fix and lint. The `buf` schema linter runs per
+`protobuf-project`, detected by `buf.yaml`, at unit granularity so imports and
+package-wide rules are checked together. Bare `.proto` files still get formatting
+and protolint. A Buf workspace owns the module paths declared in its configuration;
+nested workspaces must declare module exclusions in the enclosing `buf.yaml`.
+The managed generator preserves v1/v2, module paths, dependencies and rule overrides.
+Use the core merge(...) helper to combine Buf defaults with existing YAML settings;
+project arrays replace default arrays rather than appending to them.
+Buf uses the published `github-annotations` parser with `--error-format github-actions`;
+the legacy `buf` parser reads stderr, while the current lint reporter writes stdout.
+Formatting differences are native diffs and fail by process exit code; syntax errors
+are parsed annotations. Buf's native layout has no configurable indent or line width.
+
+Protolint uses native -fix followed by lint through the Go protolint-fix adapter:
+the CLI reports pre-fix findings and exits 1 even after fixing them. Only the
+verification result is reported; parse/startup failures from fix still fail.
+Its explicit managed `.protolint.yaml` disables default
+rules and selects repeated-field pluralization and the shared maximum line width,
+which Buf STANDARD does not check. Project overrides survive reconciliation.
+
+## Python and SQL ownership
+
+ty invokes its native binary with the Python sources Datamitsu assigns to each project.
+It declares unit granularity explicitly: a narrowed source request requires the owning
+unit's full source set, not a recursive parent-directory scan. Only Python sources belong
+in argv; ty parses TOML as Python when passed as a positional path. pyproject.toml and
+ty.toml remain cache guards, not source globs or standalone selection triggers.
+A datamitsu config marks a source-only root, and ty.toml marks a Python type-checking unit
+without requiring a generated package manifest. No file/Git discovery wrapper is used.
+sqruff is the sole SQL writer; request JSON and parsing errors in both operations.
+Its canonical config is sqruff.toml, supported natively by the pinned 0.40.0.
+SQL defaults use PostgreSQL, max_line_length = 0, lowercase names/keywords,
+shorthand casts, required semicolons and aligned aliases/column definitions.
+Use the core merge(...) helper for nested project overrides without dropping the
+remaining shared rule settings; do not duplicate the helper in this package.
+The stable minimum is 0.5.2 because 0.5.1 lacks merge; unstable builds skip the
+version gate and must be pinned to a build that includes the helper.
+The generator reads TOML only and preserves existing TOML settings. Never add
+.sqruff or .sqruff.ini to otherFileNameList: existing configs must not be deleted.
+
+vacuum remains a native app for explicit API-project integration, not a default tool.
+Do not restore broad JSON/YAML scanning, a content-discovery adapter, or a second API
+checker without a concrete project setup. Its parser keeps annotation starts and drops
+unreliable end positions from the pinned reporter; legacy JSON ranges are retained.
+
+The published parser pin and core package pin must come from actual releases. Source
+changes do not publish the ty parser or the explicit-unit widening behavior.
+validate:pins reads the managed package.json template through the TypeScript AST
+and parses its cooked JSON text. Do not replace this with indentation-based
+matching or silently skip dependency comparisons when the template is missing.

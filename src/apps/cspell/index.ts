@@ -26,6 +26,7 @@ const words: string[] = [
   "shunsuke",
   "sqruff",
   "sqruffignore",
+  "templater",
   "zizmor",
   "zizmorcore",
   "aeslint",

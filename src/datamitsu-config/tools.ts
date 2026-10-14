@@ -39,6 +39,8 @@ import {
 type Tool =
   | "actionlint"
   | "bearer"
+  | "buf"
+  | "buf-format"
   | "checkmake"
   | "cspell"
   | "dclint"
@@ -74,6 +76,7 @@ type Tool =
   | "sort-keys-properties"
   | "sort-keys-yaml"
   | "sort-package-json"
+  | "sqruff"
   | "stylelint"
   | "syncpack"
   | "terraform-docs"
@@ -83,6 +86,7 @@ type Tool =
   | "toml"
   | "trivy"
   | "tsc"
+  | "ty"
   | "typos"
   | "typstyle"
   | "vale"
@@ -104,6 +108,7 @@ const _fixPriority: Tool[] = [
   "syncpack",
   "oxlint",
   "protolint",
+  "buf-format",
   "yq-json",
   "sort-keys-properties",
   "eslint",
@@ -119,6 +124,7 @@ const _fixPriority: Tool[] = [
   "golangci-lint-fmt",
   "ruff",
   "ruff-format",
+  "sqruff",
   "ktfmt",
   "typstyle",
   "dotenv-linter",
@@ -145,6 +151,8 @@ const _lintPriority: Tool[] = [
   "syncpack",
   "oxlint",
   "protolint",
+  "buf",
+  "buf-format",
   "actionlint",
   "tsc",
   "cspell",
@@ -160,6 +168,8 @@ const _lintPriority: Tool[] = [
   "golangci-lint-fmt",
   "ruff",
   "ruff-format",
+  "sqruff",
+  "ty",
   "ktfmt",
   "ktlint",
   "typstyle",
@@ -276,6 +286,65 @@ export const toolsConfig: config.MapOfTools = {
     },
     skip: true,
     skipReason: optInSkip,
+  },
+  buf: {
+    name: "buf - Protobuf schema lint",
+    operations: {
+      lint: {
+        app: "buf",
+        args: [
+          "lint",
+          ".",
+          "--config",
+          "{managedConfig:buf.yaml}",
+          "--error-format",
+          "github-actions",
+          "--disable-symlinks",
+        ],
+        globs: protoGlobs,
+        granularity: "unit",
+        invalidateOn: ["buf.yaml", "buf.lock", "buf.work.yaml"],
+        priority: lintPriority.buf,
+        scope: "per-project",
+      },
+    },
+    outputParser: { module: "core", parser: "github-annotations" },
+    projectTypes: ["protobuf-project"],
+  },
+  "buf-format": {
+    name: "buf - Protobuf formatter",
+    operations: {
+      fix: {
+        app: "buf",
+        args: [
+          "format",
+          "{file}",
+          "--write",
+          "--error-format",
+          "github-actions",
+          "--disable-symlinks",
+        ],
+        globs: protoGlobs,
+        priority: fixPriority["buf-format"],
+        scope: "per-file",
+      },
+      lint: {
+        app: "buf",
+        args: [
+          "format",
+          "{file}",
+          "--diff",
+          "--exit-code",
+          "--error-format",
+          "github-actions",
+          "--disable-symlinks",
+        ],
+        globs: protoGlobs,
+        priority: lintPriority["buf-format"],
+        scope: "per-file",
+      },
+    },
+    outputParser: { module: "core", parser: "github-annotations" },
   },
   "cargo-deny": {
     name: "cargo-deny - Rust dependency linter",
@@ -1143,15 +1212,31 @@ export const toolsConfig: config.MapOfTools = {
     name: "protolint - Protocol Buffer Linter",
     operations: {
       fix: {
-        app: "protolint",
-        args: ["lint", "-fix", "--reporter", "json", "{file}"],
+        app: "protolint-fix",
+        args: [
+          "{bin:protolint}",
+          "lint",
+          "-fix",
+          "--reporter",
+          "json",
+          "-config_path",
+          "{managedConfig:.protolint.yaml}",
+          "{file}",
+        ],
         globs: protoGlobs,
         priority: fixPriority.protolint,
         scope: "per-file",
       },
       lint: {
         app: "protolint",
-        args: ["lint", "--reporter", "json", "{file}"],
+        args: [
+          "lint",
+          "--reporter",
+          "json",
+          "-config_path",
+          "{managedConfig:.protolint.yaml}",
+          "{file}",
+        ],
         globs: protoGlobs,
         priority: lintPriority.protolint,
         scope: "per-file",
@@ -1322,26 +1407,39 @@ export const toolsConfig: config.MapOfTools = {
   },
   sqruff: {
     name: "sqruff - SQL linter & formatter",
-    // `--format human` is pinned: under GITHUB_ACTIONS sqruff switches to `::error` workflow
-    // commands on stdout, in `fix` as well as `lint`.
     operations: {
       fix: {
         app: "sqruff",
-        args: ["fix", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
+        args: [
+          "fix",
+          "--config",
+          "{managedConfig:sqruff.toml}",
+          "--format",
+          "json",
+          "--parsing-errors",
+          "{files}",
+        ],
         globs: sqlGlobs,
-        granularity: "file",
+        priority: fixPriority.sqruff,
         scope: "per-project",
       },
       lint: {
         app: "sqruff",
-        args: ["lint", "--config", "{managedConfig:.sqruff}", "--format", "human", "{files}"],
+        args: [
+          "lint",
+          "--config",
+          "{managedConfig:sqruff.toml}",
+          "--format",
+          "json",
+          "--parsing-errors",
+          "{files}",
+        ],
         globs: sqlGlobs,
-        granularity: "file",
+        priority: lintPriority.sqruff,
         scope: "per-project",
       },
     },
-    skip: true,
-    skipReason: optInSkip,
+    outputParser: { module: "core", parser: "sqruff" },
   },
   stylelint: {
     name: "Stylelint - CSS Linter",
@@ -1591,14 +1689,26 @@ export const toolsConfig: config.MapOfTools = {
       // ty checks .py/.pyi and Jupyter notebooks (.ipynb) — NOT Markdown.
       lint: {
         app: "ty",
-        args: ["check", "{files}"],
+        args: [
+          "check",
+          "--project",
+          ".",
+          "--output-format",
+          "concise",
+          "--color",
+          "never",
+          "--no-progress",
+          "--force-exclude",
+          "{files}",
+        ],
         globs: tyGlobs,
+        granularity: "unit",
+        invalidateOn: ["pyproject.toml", "ty.toml"],
+        priority: lintPriority.ty,
         scope: "per-project",
       },
     },
-    projectTypes: ["python-package"],
-    skip: true,
-    skipReason: optInSkip,
+    outputParser: { module: "core", parser: "ty" },
   },
   typos: {
     name: "typos - Source Code Spell Checker",
