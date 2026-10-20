@@ -58,6 +58,10 @@ export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult>
 
   const workspaceYaml = await fsPromise.readFile(workspaceYamlPath, "utf8");
   const version = readDatamitsuVersion(workspaceYaml);
+  const configTsContent = await fsPromise.readFile(configTsPath, "utf8");
+  const [updatedConfigTs, minVersionUpdated] = isUnstableVersion(version)
+    ? [configTsContent, false]
+    : updateMinVersion(configTsContent, version);
 
   const rootConfigTsPath = path.join(rootDir, "datamitsu.config.ts");
   const rootConfigTs = await fsPromise.readFile(rootConfigTsPath, "utf8");
@@ -76,8 +80,6 @@ export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult>
     };
   }
 
-  const configTsContent = await fsPromise.readFile(configTsPath, "utf8");
-  const [updatedConfigTs, minVersionUpdated] = updateMinVersion(configTsContent, version);
   if (minVersionUpdated) {
     await fsPromise.writeFile(configTsPath, updatedConfigTs, "utf8");
   }
@@ -99,6 +101,16 @@ export function updateMinVersion(content: string, version: string): [string, boo
 
   if (!match) {
     throw new Error('Could not find return "..." pattern in datamitsu.config.ts getMinVersion');
+  }
+
+  const currentCore = match[2]!.split("-")[0]!.split(".").map(Number);
+  const nextCore = version.split("-")[0]!.split(".").map(Number);
+  const changedPart = nextCore.findIndex((part, index) => part !== currentCore[index]);
+  if (
+    (changedPart !== -1 && nextCore[changedPart]! < currentCore[changedPart]!) ||
+    (changedPart === -1 && !match[2]!.includes("-") && version.includes("-"))
+  ) {
+    throw new Error(`Cannot lower the required datamitsu version from ${match[2]} to ${version}`);
   }
 
   if (match[2] === version) {

@@ -547,6 +547,17 @@ A fourth thing moves with the bump: the Dockerfiles, whose base image is `ghcr.i
 
 Do not hand-edit `parsers.ts`.
 
+The minimum core is a feature floor, not an install pin: `sync:datamitsu-version`
+must reject stable pins below the existing floor rather than lower it. Config
+generators use native `merge`, introduced in stable 0.5.2; 0.5.1 is unsupported.
+The package-local wrapper pins 0.5.2 so clean consumers use that same stable core.
+
+`task test:fresh-init` checks both sides: a SHA-256-verified published 0.5.1 binary
+must reject the built bundle before any managed-content callback runs; the pinned
+core must initialize the bundle as the auto config and then through a before-config
+layer before reconcile/check. Testing only the dev core in a layered fixture does
+not establish compatibility with a global stable binary.
+
 Two things are deliberately outside `refresh`:
 
 - **Registries** (`pull:*`) change because upstream published something, not because this repo did. Network access and a release-age policy make them a separate, deliberate step.
@@ -621,8 +632,8 @@ configuration change may require a manual local execution-cache reset. CI uses a
 cache. Do not disable the shared local cache to compensate for nested configuration files or add
 nested EditorConfig tracking to core.
 Both parser descriptors use UTF-16 columns. The new `ktfmt` parser
-key needs a rebuilt module; an older published core parser pin does not acquire it from a tool
-configuration edit. Validate local parser work using a local, SHA-256-verified module until release.
+key is published in the parser module pinned to core 0.5.2; parser and package pins
+must move together so initialization never relies on unpublished local parser work.
 
 The Kotlin file-name rules live in `alint-defaults.ts`, not ktlint: they accept Unicode letter
 stems, platform suffixes and Gradle script names. Keep `ktlint_standard_filename` off so a second

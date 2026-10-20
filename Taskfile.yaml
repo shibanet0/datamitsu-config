@@ -330,8 +330,9 @@ tasks:
   # ──────────────────────────────────────────────
   test:fresh-init:
     cmds:
+      - node scripts/test-core-compatibility.ts
       - node scripts/test-fresh-init.ts
-    desc: "Smoke-test a from-scratch consumer: init -> config reconcile -> check the built config (requires `pnpm build` first)"
+    desc: "Check unsupported stable-core rejection, then smoke-test auto and layered init, reconcile and check (requires build first)"
   test:platform:darwin:
     cmds:
       - node scripts/test-platforms.ts darwin --skip-passed

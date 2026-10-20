@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@datamitsu/datamitsu':
-      specifier: 0.0.0-unstable.20261013.c2808b6
-      version: 0.0.0-unstable.20261013.c2808b6
+      specifier: 0.5.2
+      version: 0.5.2
 
 overrides:
   debug@4.4.3: npm:debug@3.2.7
@@ -182,7 +182,7 @@ importers:
         version: 15.0.0(commander@15.0.0)
       '@datamitsu/datamitsu':
         specifier: 'catalog:'
-        version: 0.0.0-unstable.20261013.c2808b6
+        version: 0.5.2
       commander:
         specifier: 15.0.0
         version: 15.0.0
@@ -966,48 +966,38 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^7.1.1
 
-  '@datamitsu/datamitsu-darwin-arm64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-KUxN8bDzYpO3CWNrpc8eJSn4tZ+a2ssZMHKxzuYZLfx7PryFsQsp4pI/fFQHL3jjsJ7JpNqG78G6Mn6rd+lYcQ==}
+  '@datamitsu/datamitsu-darwin-arm64@0.5.2':
+    resolution: {integrity: sha512-2MkwmZAjd6eTXGI4ow3dO+2QvJZuc1qrHzMyIao5VU8Dlqi84PbkyGFkwStlFKvIEBGuO1Qum5SGL7tnXo5MyA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@datamitsu/datamitsu-darwin-x64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-FFtwoH/jsF2UeF2n+al7t4jZ1KxdYEw1GnHauCcQQoCNimGmebj0kZiaNior0cs2Jvr3iWg3en58aMeQfkE6lg==}
+  '@datamitsu/datamitsu-darwin-x64@0.5.2':
+    resolution: {integrity: sha512-cILTxf0QAcCN5JMVuBlisx/5uwVsVFYoNvjvxhEipyseDRPepB6GXTBH/k960dcL50XbUstMqTI2mKb+AP6ysA==}
     cpu: [x64]
     os: [darwin]
 
-  '@datamitsu/datamitsu-freebsd-arm64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-O0Y5UvA3+de+33f8Tscd1sKePy9x38lyc8akeFcfiyGSIo31ONcuxoS+nbgpFJs7ykoWZwyloGQ3bFfgJtcqdQ==}
+  '@datamitsu/datamitsu-freebsd-arm64@0.5.2':
+    resolution: {integrity: sha512-r76lqSQrABmia2wtDRlEREa5sYCjeEl/MhMwpd2p5tGCvORVvFueqpNjtE9shQhJcELZN5wBn40lwCr7VlivmA==}
     cpu: [arm64]
     os: [freebsd]
 
-  '@datamitsu/datamitsu-freebsd-x64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-AC1Nwf4vdAojryHHo2cKFGUuxU0A6ckS4xtR036SYZlpMody2fTGXCFHOvSO4PVibvRf2Q6yPRCLGX1GVk9H/w==}
+  '@datamitsu/datamitsu-freebsd-x64@0.5.2':
+    resolution: {integrity: sha512-zDMlK2VIf9RZj8y3o6WdzE5UL4l6A3Y2/IannJBy0gwgr93j6yXBANoSB8GUg/9LMo/ZXd18JeTxnfvikRW1/A==}
     cpu: [x64]
     os: [freebsd]
 
-  '@datamitsu/datamitsu-linux-arm64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-L+OkIuPoy5XJLU0dcpIlj2y7aITPerRuxhENxYnerXlDErBWibTqc6Haq3bzAPr0gIYPO2EzECveyHGBfmoBMQ==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@datamitsu/datamitsu-linux-x64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-5KwvSu1WLLbkZ6RX7/55bHQkO5yCUS5Ke7oWjMkWPVbzwinP05Ml+xXsOkumS3XmiP9gzmI6TZS0g+WZiCblyg==}
+  '@datamitsu/datamitsu-linux-x64@0.5.2':
+    resolution: {integrity: sha512-hviF87VvlfRyTsvevfY45XO6J9eWXlXmQdEVoQLWQkVwf6SZ+t3Xgmd2dqmz5gIwar2LCZ1609P+mpTcWxUcyw==}
     cpu: [x64]
     os: [linux]
 
-  '@datamitsu/datamitsu-win32-arm64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-QNLW76nyzstjysqE/hbDjmfcBtyCnBw4TDBc9N7V3LrQTC3c0DgSjdvkgj9msrZJj3JtAMBey/uOvZWvP2uJJA==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@datamitsu/datamitsu-win32-x64@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-Om11+lYChg5K/KBnq5LDH5zf5PyBqURLP6xcoXiLEMOO8xCefRZ4tmCMDfmH6zPHUfYS/0Z6vCy0M5u975ObEg==}
+  '@datamitsu/datamitsu-win32-x64@0.5.2':
+    resolution: {integrity: sha512-7qamexCOYUDB+st17tXYaNe5Z/W5TgmaaAn3Y9JUQ9af776yHBZWvX+3MJr21mnW5fPtXRy2FUxoAMF5Tmvxgg==}
     cpu: [x64]
     os: [win32]
 
-  '@datamitsu/datamitsu@0.0.0-unstable.20261013.c2808b6':
-    resolution: {integrity: sha512-dI9W4uz3XsA0yn4BAQATRA9ynFei71jjoozLYjarndZgP8oL9PwNnhs/rVFY4XhX4ILG0YivBc36FNa2pmw+Jg==}
+  '@datamitsu/datamitsu@0.5.2':
+    resolution: {integrity: sha512-LL4R73g8kCzzUP6f6jzr3g1F6qnlrcVOO4+jN+K4ae/VVeltizR34dh0L2Ifawl6sogvK/wOPRD7jMqRgPKL8A==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -2861,11 +2851,6 @@ packages:
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
 
   ajv@6.14.0:
     resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
@@ -3069,10 +3054,6 @@ packages:
 
   conventional-changelog-angular@9.2.0:
     resolution: {integrity: sha512-2EihZvM1KmbBGwuUow8lNXLe+ECRFsyOcV8X0197/WI7Rvvgfi55Oicfw0wxJTXGGIVXSfj+xBoNj+cxLlIiVw==}
-    engines: {node: '>=22'}
-
-  conventional-changelog-conventionalcommits@10.4.0:
-    resolution: {integrity: sha512-Rriac6ZrAlVm6cy9Bz4NSp+WMHpwNXoPIYex+HjCgduAVUSbnew29DQjQw0C4g9u3HtSYzGiGY+pdBXAZo+4aA==}
     engines: {node: '>=22'}
 
   conventional-changelog-conventionalcommits@10.4.1:
@@ -3976,10 +3957,6 @@ packages:
 
   globals@16.5.0:
     resolution: {integrity: sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==}
-    engines: {node: '>=18'}
-
-  globals@17.12.0:
-    resolution: {integrity: sha512-cezEd/DTyyht9cvSSURyygXPfy04GtWO/5e6ZPvH7fCtjKz9PYOmuawphw1Ctd1f6C+5JypXfGD7ahNMXvevBA==}
     engines: {node: '>=18'}
 
   globals@17.13.0:
@@ -5364,7 +5341,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.7
       '@babel/types': 7.29.7
-      '@typescript-eslint/utils': 8.70.0(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.71.2(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
@@ -5592,7 +5569,7 @@ snapshots:
   '@commitlint/config-conventional@21.2.3':
     dependencies:
       '@commitlint/types': 21.2.3
-      conventional-changelog-conventionalcommits: 10.4.0
+      conventional-changelog-conventionalcommits: 10.4.1
 
   '@commitlint/config-validator@21.2.3':
     dependencies:
@@ -5940,42 +5917,34 @@ snapshots:
     dependencies:
       postcss-selector-parser: 7.1.6
 
-  '@datamitsu/datamitsu-darwin-arm64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-darwin-arm64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-darwin-x64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-darwin-x64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-freebsd-arm64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-freebsd-arm64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-freebsd-x64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-freebsd-x64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-linux-arm64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-linux-x64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-linux-x64@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu-win32-x64@0.5.2':
     optional: true
 
-  '@datamitsu/datamitsu-win32-arm64@0.0.0-unstable.20261013.c2808b6':
-    optional: true
-
-  '@datamitsu/datamitsu-win32-x64@0.0.0-unstable.20261013.c2808b6':
-    optional: true
-
-  '@datamitsu/datamitsu@0.0.0-unstable.20261013.c2808b6':
+  '@datamitsu/datamitsu@0.5.2':
     dependencies:
       tinyexec: 1.3.1
     optionalDependencies:
-      '@datamitsu/datamitsu-darwin-arm64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-darwin-x64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-freebsd-arm64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-freebsd-x64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-linux-arm64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-linux-x64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-win32-arm64': 0.0.0-unstable.20261013.c2808b6
-      '@datamitsu/datamitsu-win32-x64': 0.0.0-unstable.20261013.c2808b6
+      '@datamitsu/datamitsu-darwin-arm64': 0.5.2
+      '@datamitsu/datamitsu-darwin-x64': 0.5.2
+      '@datamitsu/datamitsu-freebsd-arm64': 0.5.2
+      '@datamitsu/datamitsu-freebsd-x64': 0.5.2
+      '@datamitsu/datamitsu-linux-x64': 0.5.2
+      '@datamitsu/datamitsu-win32-x64': 0.5.2
 
   '@e18e/eslint-plugin@0.8.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(oxlint@1.87.0)':
     dependencies:
@@ -7245,8 +7214,8 @@ snapshots:
 
   acorn@8.18.0: {}
 
-  ajv-formats@3.0.1(ajv@8.20.0):
-    optionalDependencies:
+  ajv-formats@3.0.1:
+    dependencies:
       ajv: 8.20.0
 
   ajv@6.14.0:
@@ -7412,10 +7381,6 @@ snapshots:
   compare-versions@6.1.1: {}
 
   conventional-changelog-angular@9.2.0:
-    dependencies:
-      '@conventional-changelog/template': 1.4.0
-
-  conventional-changelog-conventionalcommits@10.4.0:
     dependencies:
       '@conventional-changelog/template': 1.4.0
 
@@ -7961,7 +7926,7 @@ snapshots:
     dependencies:
       '@eslint-community/eslint-utils': 4.10.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))
       ajv: 8.20.0
-      ajv-formats: 3.0.1(ajv@8.20.0)
+      ajv-formats: 3.0.1
       debug: 3.2.7(supports-color@7.2.0)
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
       eslint-json-compat-utils: 0.2.3(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(jsonc-eslint-parser@3.3.0)
@@ -8043,7 +8008,7 @@ snapshots:
   eslint-plugin-perfectionist@5.12.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
     dependencies:
       '@typescript-eslint/types': 8.70.0
-      '@typescript-eslint/utils': 8.70.0(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.71.2(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       natural-orderby: 5.0.0
     optionalDependencies:
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
@@ -8054,7 +8019,7 @@ snapshots:
   eslint-plugin-playwright@2.12.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0)):
     dependencies:
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
-      globals: 17.12.0
+      globals: 17.13.0
 
   eslint-plugin-pnpm@1.9.1(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0)):
     dependencies:
@@ -8221,7 +8186,7 @@ snapshots:
       bytes: 3.1.2
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
       functional-red-black-tree: 1.0.1
-      globals: 17.12.0
+      globals: 17.13.0
       jsx-ast-utils-x: 0.1.0
       lodash.merge: 4.6.2
       minimatch: 10.2.6
@@ -8234,7 +8199,7 @@ snapshots:
   eslint-plugin-storybook@10.6.2(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
     dependencies:
       '@typescript-eslint/types': 8.70.0
-      '@typescript-eslint/utils': 8.70.0(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.71.2(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
@@ -8276,7 +8241,7 @@ snapshots:
       entities: 8.1.0
       eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
       find-up-simple: 1.0.1
-      globals: 17.12.0
+      globals: 17.13.0
       identifier-regex: 1.1.0
       indent-string: 5.0.0
       is-builtin-module: 5.0.0
@@ -8548,8 +8513,6 @@ snapshots:
   globals@15.15.0: {}
 
   globals@16.5.0: {}
-
-  globals@17.12.0: {}
 
   globals@17.13.0: {}
 

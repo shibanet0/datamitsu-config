@@ -20,6 +20,17 @@ After installation, the `postinstall` script automatically builds the config. Yo
 pnpm dm init
 ```
 
+Use the package-local wrapper to run the exact stable core this configuration was
+tested with. Datamitsu 0.5.2 includes the native `merge` helper required by the
+configuration; a global 0.5.1 binary is unsupported and must be upgraded to 0.5.2
+or replaced by the package-local invocation below.
+
+To bypass a shell alias that routes `dm` to a global binary, invoke the wrapper directly:
+
+```bash
+node node_modules/@shibanet0/datamitsu-config/bin/datamitsu.js init
+```
+
 This installs managed tool binaries. To initialize configuration files, run:
 
 ```bash
@@ -168,6 +179,9 @@ The Docker images use the `--before-config` flag in the ENTRYPOINT, which loads 
 ### Method 3: Remote Config
 
 Reference this config as a remote base configuration in your project. datamitsu supports [remote configs](https://datamitsu.com/docs/how-to/use-remote-configs/) for centralized configuration management.
+
+Remote configs do not replace the executable running them. Use datamitsu 0.5.2
+or newer for this configuration: 0.5.1 lacks the native `merge` helper.
 
 **Create `datamitsu.config.js` in your project:**
 
