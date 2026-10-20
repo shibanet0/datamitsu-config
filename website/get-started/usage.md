@@ -28,6 +28,12 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
+`name` and `description` metadata. Codex discovers them automatically; invoke one
+with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack` or `$setup-tsconfig`.
+It removes the previous managed `.codex/prompts/<name>.md` files while preserving
+unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
+
 For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
 `trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
 
@@ -502,3 +508,12 @@ With the pinned Bun 1.4.1, ESLint can report a shifted column for TypeScript syn
 `.svelte` needs nothing configured. oxfmt formats components in every project, and oxlint reads the `<script>` block; ESLint adds `eslint-plugin-svelte` as soon as `svelte` (or `@sveltejs/kit`) is in the project's `package.json`, because its rules only mean something where components exist. stylelint lints the `<style>` block too, so a Svelte project gets CSS checks without naming anything either.
 
 The svelte compiler all of them need ships with the managed tools rather than being resolved from the project.
+
+## Kotlin
+
+`pnpm dm check` formats `.kt` and `.kts` files with ktfmt and checks Kotlin naming and idioms
+with ktlint. Both use the managed JVM; no Gradle plugin or application compilation is needed.
+
+The managed `.editorconfig` supplies shared indent and line width settings, preserves project
+overrides, and keeps lint rules separate from layout. See the [Kotlin configuration reference](../reference/kotlin.md)
+for the exact rule decisions, Compose support, IDE settings and parser requirements.

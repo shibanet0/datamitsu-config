@@ -24,20 +24,15 @@
 import type { KnownRuleName } from "./rule-names.generated";
 
 /**
- * Rules the 2026-09-27 dependency update brought in at error, parked so that the update itself
- * changes no verdicts.
- *
- * Each arrived with a plugin release in a preset this config already enables — unicorn 76, sonarjs
- * 4.2.1, escompat 4.1, playwright 2.12 — so without an entry here it would start failing consumers'
- * builds the moment they upgraded. None of them has been judged yet: decide each one (turn it on,
- * move it to `../permanent-disabled` with a reason, or keep it here as real deferred work) and
- * delete its line. The rules the same releases added outside their presets are off already and need
- * no entry.
+ * Rules dependency updates brought in at error, parked so that updating a tool does not silently
+ * enable a new check. Decide each rule before removing its entry.
  */
 const DEPENDENCY_UPDATE_RULES: Partial<Record<KnownRuleName, string>> = {
+  "@typescript-eslint/no-generated-empty-object-type": "new in oxlint 1.86.0 — off until decided",
   "escompat/no-bigint-function": "new in eslint-plugin-escompat 4.1 — off until decided",
   "escompat/no-private-in": "new in eslint-plugin-escompat 4.0 — off until decided",
   "playwright/no-identical-title": "new in eslint-plugin-playwright 2.12 — off until decided",
+  "security/detect-invisible-characters": "new in eslint-plugin-security 4.2.0 — off until decided",
   "sonarjs/avoid-mutating-nested-properties-of-shallow-clones":
     "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
   "sonarjs/no-debounce-throttle-in-render":
@@ -65,14 +60,50 @@ const DEPENDENCY_UPDATE_RULES: Partial<Record<KnownRuleName, string>> = {
     "new in eslint-plugin-sonarjs 4.2.1 — off until decided",
   "sonarjs/vitest-mock-at-module-scope":
     "new in eslint-plugin-sonarjs 4.2.1 — off until decided; may duplicate oxlint's vitest/hoisted-apis-on-top",
+  "unicorn/no-asterisk-prefix-in-documentation-comments":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
   "unicorn/no-async-iterator-callback": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/no-conflicting-constraints": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-incomplete-accessor-override":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-ineffective-csp-directives":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-boolean-attribute-value":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-dom-token": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-integrity": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-intl-options": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-property-descriptor":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-response-options": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-style-set-property":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-temporal-arithmetic":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-invalid-url-protocol-comparison":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-leading-empty-lines": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-prevent-default-in-passive-listener":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-unnecessary-parameters": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/no-unsafe-json-serialization": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
   "unicorn/no-unused-iterator-helper": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/no-url-in-search-params": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
   "unicorn/no-useless-set-construction": "new in eslint-plugin-unicorn 76 — off until decided",
   "unicorn/no-using-resource-escape": "new in eslint-plugin-unicorn 76 — off until decided",
   "unicorn/prefer-combined-guards": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/prefer-escaped-irregular-whitespace":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
   "unicorn/prefer-iterator-zip":
     "new in eslint-plugin-unicorn 76 — off until decided; Iterator.zip is in neither TypeScript 6's lib nor Node 26",
+  "unicorn/prefer-literal-ascii": "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/prefer-promise-static-methods":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
+  "unicorn/prefer-short-escape-sequences":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
   "unicorn/prefer-temporal-conversion": "new in eslint-plugin-unicorn 76 — off until decided",
+  "unicorn/require-text-decoder-streaming":
+    "new in eslint-plugin-unicorn 77.0.0 — off until decided",
 };
 
 /**

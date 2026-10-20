@@ -7,12 +7,12 @@
   "blint": {
     "description": "Linter and SBOM generator for binary files.",
     "packageName": "blint",
-    "version": "3.4.0"
+    "version": "4.0.1"
   },
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
-    "version": "3.3.19"
+    "version": "3.3.28"
   },
   "deptry": {
     "description": "A command line utility to check for unused, missing and transitive dependencies in a Python project.",
@@ -29,25 +29,15 @@
     "packageName": "httpstat",
     "version": "2.0.0"
   },
-  "mypy": {
-    "description": "Optional static typing for Python",
-    "packageName": "mypy",
-    "version": "2.3.1"
-  },
   "pre-commit": {
     "description": "A framework for managing and maintaining multi-language pre-commit hooks.",
     "packageName": "pre-commit",
-    "version": "4.6.2"
+    "version": "4.7.0"
   },
   "semgrep": {
     "description": "Lightweight static analysis for many languages. Find bug variants with patterns that look like source code.",
     "packageName": "semgrep",
-    "version": "1.177.0"
-  },
-  "sqlfluff": {
-    "description": "The SQL Linter for Humans",
-    "packageName": "sqlfluff",
-    "version": "4.3.0"
+    "version": "1.180.0"
   },
   "yamllint": {
     "description": "A linter for YAML files.",
@@ -57,6 +47,6 @@
   "zensical": {
     "description": "A modern static site generator built by the creators of Material for MkDocs",
     "packageName": "zensical",
-    "version": "0.0.62"
+    "version": "0.0.70"
   }
 }

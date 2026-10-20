@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { defineConfig } from "../index";
+import { oxlint } from "../plugins/oxlint";
 
 function getConfigNames(items: { name?: string }[]): string[] {
   return items.filter((item) => item.name).map((item) => item.name as string);
@@ -78,5 +79,47 @@ describe("defineConfig plugin registry", () => {
       [],
     )) as unknown as { name?: string }[];
     expect(withStorybook.length).toBeGreaterThan(withoutStorybook.length);
+  });
+});
+
+describe("oxlint React Hooks handoff", () => {
+  it("does not suppress an explicitly disabled React Compiler rule", async () => {
+    const items = await oxlint(
+      undefined,
+      { temporaryRules: false },
+      {
+        categories: { correctness: "error" },
+        plugins: ["react"],
+        rules: { "react/purity": "off" },
+      },
+    );
+
+    expect(items.every((item) => item.rules?.["react-hooks/purity"] === undefined)).toBe(true);
+    expect(items.some((item) => item.rules?.["react-hooks/immutability"] === "off")).toBe(true);
+  });
+
+  it("does not suppress React Refresh when its oxlint rule is off", async () => {
+    const items = await oxlint(undefined, undefined, {
+      categories: { restriction: "error" },
+      plugins: ["react"],
+      rules: { "react/only-export-components": "off" },
+    });
+
+    expect(
+      items.every((item) => item.rules?.["react-refresh/only-export-components"] === undefined),
+    ).toBe(true);
+  });
+
+  it("retains upstream Hooks suppressions only on files oxlint reads", async () => {
+    const items = await oxlint(undefined, undefined, {
+      categories: { correctness: "error" },
+      plugins: ["react"],
+      rules: { "react/purity": "error" },
+    });
+    const suppression = items.find((item) => item.rules?.["react-hooks/purity"] === "off");
+
+    expect(suppression).toBeDefined();
+    expect(suppression?.files).toBeDefined();
+    expect(items.every((item) => item.rules?.["react/purity"] === undefined)).toBe(true);
   });
 });

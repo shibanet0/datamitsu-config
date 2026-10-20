@@ -1,3 +1,5 @@
+import plugin from "eslint-plugin-oxlint";
+
 import type { OxlintDefineConfigOptions, OxlintPackageJson, Oxlintrc } from "../../oxlint";
 import type { TypedFlatConfigItem } from "../types";
 
@@ -11,9 +13,7 @@ import { GLOB_SRC, GLOB_SVELTE } from "../globs";
  * change the prefix, so the emitted names have to be rewritten or the duplicate suppression
  * silently stops matching and diagnostics get reported twice.
  *
- * `react/*` gets no blanket entry: @eslint-react renamed the rules themselves, not just the prefix,
- * so there is no mechanical mapping. Part of oxlint's `react` scope does have an exact ESLint home
- * though — see {@link reactHooksRuleNames}.
+ * `react/*` gets no blanket entry: @eslint-react renamed the rules themselves, not just the prefix.
  */
 const PREFIX_REMAP: Record<string, string> = {
   "import/": "import-x/",
@@ -43,11 +43,6 @@ export async function oxlint(
   options?: OxlintDefineConfigOptions,
   projectConfig?: unknown,
 ): Promise<TypedFlatConfigItem[]> {
-  const [plugin, reactHooks] = await Promise.all([
-    import("eslint-plugin-oxlint"),
-    reactHooksRuleNames(),
-  ]);
-
   // The project's own config when it passed one, this package's otherwise. See
   // `DefineConfigOptions.oxlintConfig`: a suppression here claims oxlint reports the rule, and a
   // project that turned that rule off in its own `oxlint.config.mts` has made the claim false.
@@ -62,13 +57,12 @@ export async function oxlint(
     remapPrefixes(
       dropSuppressionsOxlintDoesNotEarn(
         [
-          ...plugin.default.buildFromOxlintConfig(
-            config as Parameters<typeof plugin.default.buildFromOxlintConfig>[0],
+          ...plugin.buildFromOxlintConfig(
+            config as Parameters<typeof plugin.buildFromOxlintConfig>[0],
           ),
         ],
         silentInOxlint,
       ),
-      reactHooks,
     ),
   );
 }
@@ -136,31 +130,7 @@ function intersect(
   return emitted.flatMap((entry) => ours.map((glob) => [glob, ...[entry].flat()]));
 }
 
-/**
- * The rules oxlint files under `react/` that ESLint spells `react-hooks/`.
- *
- * Eslint-plugin-oxlint lifts exactly two of them out of the react scope by hand — `rules-of-hooks`
- * and `exhaustive-deps` — and leaves the React Compiler set behind. Those land under a `react/`
- * prefix no plugin here registers, so the suppression matches nothing and the finding is reported
- * twice on the same line and column, once by each tool. With `respectEslintDisableDirectives:
- * false`, silencing one takes two comments under two names.
- *
- * Read from the plugin rather than listed, so the next React Compiler rule is covered on the bump
- * that introduces it rather than on the day someone notices the duplicate.
- */
-async function reactHooksRuleNames(): Promise<Set<string>> {
-  const plugin = (await import("eslint-plugin-react-hooks")) as unknown as {
-    default?: { rules?: Record<string, unknown> };
-    rules?: Record<string, unknown>;
-  };
-
-  return new Set(Object.keys(plugin.default?.rules ?? plugin.rules ?? {}));
-}
-
-function remapPrefixes(
-  configs: TypedFlatConfigItem[],
-  reactHooks: Set<string>,
-): TypedFlatConfigItem[] {
+function remapPrefixes(configs: TypedFlatConfigItem[]): TypedFlatConfigItem[] {
   return configs.map((config) => {
     if (!config.rules) {
       return config;
@@ -169,28 +139,12 @@ function remapPrefixes(
     const rules: NonNullable<TypedFlatConfigItem["rules"]> = {};
 
     for (const [name, entry] of Object.entries(config.rules)) {
-      rules[remapRuleName(name, reactHooks)] = entry;
+      const prefix = Object.keys(PREFIX_REMAP).find((p) => name.startsWith(p));
+      rules[prefix ? PREFIX_REMAP[prefix] + name.slice(prefix.length) : name] = entry;
     }
 
     return { ...config, rules };
   });
-}
-
-function remapRuleName(name: string, reactHooks: Set<string>): string {
-  const prefix = Object.keys(PREFIX_REMAP).find((p) => name.startsWith(p));
-
-  if (prefix) {
-    return PREFIX_REMAP[prefix] + name.slice(prefix.length);
-  }
-
-  // Only names the react-hooks plugin actually has. Everything else oxlint files under `react/` is
-  // an @eslint-react rule under a different name, and inventing `react-hooks/no-clone-element`
-  // would suppress nothing while looking as though it did.
-  if (name.startsWith("react/") && reactHooks.has(name.slice("react/".length))) {
-    return `react-hooks/${name.slice("react/".length)}`;
-  }
-
-  return name;
 }
 
 /**

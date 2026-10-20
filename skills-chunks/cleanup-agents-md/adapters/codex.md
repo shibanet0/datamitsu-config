@@ -1,6 +1,10 @@
-# /cleanup-agents-md
+---
+name: cleanup-agents-md
+description: >-
+  Clean up and compact the project's AGENTS.md without losing rules, conditions, exceptions or commands. Use when deduplicating shared rules, extracting non-rule content, removing migration cruft or moving deferred work to docs/backlog/.
+---
 
-Cleanup and compact the project AGENTS.md — remove duplicates of the shared datamitsu chunks and of other rules in the same file, extract non-rule content (architecture docs, templates, release notes) to separate files, strip migration cruft, move deferred work to `docs/backlog/`, and shrink the rules that remain without losing a single rule, condition, exception, obligation or exact command.
+# Cleanup AGENTS.md
 
 Read `.datamitsu/ai/skills/cleanup-agents-md/instructions.md` from the project root and follow it precisely.
 

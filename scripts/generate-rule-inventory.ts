@@ -46,6 +46,7 @@ import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
 import { OXLINT_EXCLUDED_PLUGINS } from "../src/apps/oxlint/plugins.generated.ts";
+import { toESLintRuleName } from "../src/lint-rules/rule-mapping.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -163,18 +164,6 @@ function toConfigSpelling(name: string): string {
   }
   return name;
 }
-
-/**
- * Oxlint prefix → the longer one ESLint spells the same rule with. The mirror of
- * `ESLINT_TO_OXLINT_PREFIX` in `src/lint-rules/index.ts`, so a rule oxlint has and ESLint does not
- * can still be written in the ESLint spelling the shared lists use.
- */
-const OXLINT_TO_ESLINT_PREFIX: [string, string][] = [
-  ["import/", "import-x/"],
-  ["jsx-a11y/", "jsx-a11y-x/"],
-  ["node/", "n/"],
-  ["typescript/", "@typescript-eslint/"],
-];
 
 /**
  * Refuses to census a build older than the sources it was built from.
@@ -453,15 +442,6 @@ function sortKeys(rules: RuleMap): RuleMap {
   return sorted;
 }
 
-function toESLintSpelling(name: string): string {
-  for (const [oxlintPrefix, eslintPrefix] of OXLINT_TO_ESLINT_PREFIX) {
-    if (name.startsWith(oxlintPrefix)) {
-      return eslintPrefix + name.slice(oxlintPrefix.length);
-    }
-  }
-  return name;
-}
-
 await assertBuildIsCurrent();
 
 const printedOxlintConfig = await printOxlintConfig();
@@ -579,7 +559,7 @@ const union = (names: string[]) =>
 
 // A rule oxlint has and ESLint does not — `typescript/ban-types` outlived its ESLint counterpart —
 // still gets written in the ESLint spelling, so the union has to admit that spelling too.
-const oxlintAsESLint = [...new Set(Object.keys(inventory.oxlint).map(toESLintSpelling))]
+const oxlintAsESLint = [...new Set(Object.keys(inventory.oxlint).map(toESLintRuleName))]
   .filter((name) => !(name in inventory.eslint) && !(name in inventory.oxlint))
   .sort();
 
@@ -622,7 +602,7 @@ if (process.argv.includes("--check")) {
     const previous = JSON.parse(committed) as Inventory;
     const changes = [
       ...diff(previous.eslint, inventory.eslint).map((line) => `eslint${line}`),
-      ...diff(previous.oxlint, inventory.oxlint, toESLintSpelling).map((line) => `oxlint${line}`),
+      ...diff(previous.oxlint, inventory.oxlint, toESLintRuleName).map((line) => `oxlint${line}`),
     ];
 
     console.error(

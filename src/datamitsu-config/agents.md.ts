@@ -218,7 +218,7 @@ keep the shape**, which is what carries the meaning:
 
 > ❌ \`Measured on acme-storefront: apps/landing/pages/sitemap.xml.tsx fails to typecheck.\`
 > ✅ \`Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
-package fails to typecheck because a generated file is missing.\`
+> package fails to typecheck because a generated file is missing.\`
 
 ### Naming other projects requires explicit permission
 
@@ -507,7 +507,7 @@ export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb7
 export const CHUNK_00_BASE_HASH = "99f787a9542bbe75d2214c94b20525b3b85e1c0bd2c209d622b5416288058db4"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
-export const CHUNK_00_PRIVACY_HASH = "1ddad93a578148375649488c794902657f4542d55146687b2eb518cd3d2afe11"; // prettier-ignore
+export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
 export const CHUNK_00_STACK_HASH = "0fc75a6d218f9bf4b31ac605f61373da5818d14cb282c33ad62e9a84db2be9a0"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore

@@ -9,6 +9,7 @@ import {
   toOxlintRuleName,
 } from "..";
 import { OXLINT_KNOWN_RULES } from "../oxlint-known-rules.generated";
+import { toESLintRuleName } from "../rule-mapping";
 
 describe("disabled rule lists", () => {
   it("keeps the two lists disjoint", () => {
@@ -115,6 +116,15 @@ describe("rule aliases", () => {
   it("leaves a rule the prefix table already handles to the prefix table", () => {
     expect(toOxlintRuleName("@next/next/no-img-element")).toBe("nextjs/no-img-element");
     expect(toOxlintRuleName("n/no-process-exit")).toBe("node/no-process-exit");
+  });
+
+  it("maps shared React Hooks names in both directions without inventing rules", () => {
+    expect(toOxlintRuleName("react-hooks/purity")).toBe("react/purity");
+    expect(toESLintRuleName("react/purity")).toBe("react-hooks/purity");
+    expect(toOxlintRuleName("react-hooks/rules-of-hooks")).toBe("react/rules-of-hooks");
+    expect(toESLintRuleName("react/rules-of-hooks")).toBe("react-hooks/rules-of-hooks");
+    expect(toOxlintRuleName("react-hooks/unknown-rule")).toBe("react-hooks/unknown-rule");
+    expect(toESLintRuleName("react/no-clone-element")).toBe("react/no-clone-element");
   });
 
   it("emits every alias target, so no alias resolves to a name oxlint rejects", () => {

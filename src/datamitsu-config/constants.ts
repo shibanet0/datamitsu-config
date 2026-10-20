@@ -1,6 +1,6 @@
 export const runtimeVersions = {
-  node: "26.10.0",
-  python: "3.14.7",
+  node: "26.11.1",
+  python: "3.14.8",
 };
 
 // Consumer-facing support floor for `engines.node` — the lowest Node we promise
@@ -47,3 +47,7 @@ export const jsonAlwaysExpandedOverride = {
   files: ["*.json"],
   options: { printWidth: 1 },
 };
+
+// IntelliJ has no boolean switch for star imports; its thresholds use a signed 32-bit integer.
+export const KOTLIN_STAR_IMPORT_THRESHOLD = 2_147_483_647;
+export const PYTHON_SOURCE_EXTENSIONS: string[] = [".py", ".pyi", ".ipynb"];

@@ -1,6 +1,10 @@
-# /scaffold-stack
+---
+name: scaffold-stack
+description: >-
+  Scaffold or extend a project using the preferred stack, resolve dependency versions and wire pnpm-workspace, Turborepo and Taskfile conventions. Use when creating a project, app or library, or adding a major dependency to an existing one.
+---
 
-Scaffold or extend a project using the preferred stack: pick libraries from the Preferred Stack catalogue, resolve the right versions (match the repo, else latest stable), and wire the pnpm-workspace / Turborepo / Taskfile conventions.
+# Scaffold Preferred Stack
 
 Read `.datamitsu/ai/skills/scaffold-stack/instructions.md` from the project root and follow it precisely.
 
