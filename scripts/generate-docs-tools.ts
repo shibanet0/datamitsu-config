@@ -182,12 +182,28 @@ function extractUniqueGlobs(operations: Record<string, ToolOperation>): string[]
  * tools in it do not run: some are opt-in pending configuration, some only in CI. A reader had no
  * way to tell which, and the generated page was the only place anyone would look.
  */
+/**
+ * A generated glob list (schepherd's, from its schema catalog, runs past a thousand) would be one
+ * table cell, and the formatter pads every row of the table to that cell's width.
+ */
+const MAX_LISTED_GLOBS = 50;
+
+function formatGlobs(globs: string[]): string {
+  if (globs.length === 0) {
+    return "all";
+  }
+  if (globs.length > MAX_LISTED_GLOBS) {
+    return `${globs.length} patterns, too many to list`;
+  }
+  return globs.map((g) => `\`${g}\``).join("<br>");
+}
+
 function generateToolsTable(tools: ToolDocInfo[]): string {
   const header = "| Tool | Status | Operations | File Patterns | Project Types | Scope |";
   const separator = "| --- | --- | --- | --- | --- | --- |";
   const rows = tools.map((t) => {
     const operations = t.operations.join("<br>");
-    const globs = t.globs.length > 0 ? t.globs.map((g) => `\`${g}\``).join("<br>") : "all";
+    const globs = formatGlobs(t.globs);
     const projectTypes = t.projectTypes.length > 0 ? t.projectTypes.join("<br>") : "all";
     const scope = t.scope;
     const status = t.skipReason ? `off — ${t.skipReason}` : "runs";

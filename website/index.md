@@ -31,6 +31,7 @@ This config manages tools across multiple runtimes (Node.js, Go binaries, Python
 - **Build tools** — TypeScript, protobuf (buf, protoc), OpenAPI generators
 - **Git hooks** — commitlint, lefthook
 - **Spelling & docs** — cspell, markdownlint, lychee (links); Vale, Harper and Mermaid CLI on request
+- **Config validation** — JSON and YAML files checked against their JSON Schema (schepherd with the Sourcemeta `jsonschema` CLI)
 
 See [Apps](reference/apps.md) for the complete list.
 
