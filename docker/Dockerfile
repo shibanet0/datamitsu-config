@@ -289,6 +289,10 @@ FROM dm-build AS app-helm
 COPY --link --from=config-split /slices/app-helm.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install helm
 
+FROM dm-build AS app-helmfmt
+COPY --link --from=config-split /slices/app-helmfmt.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install helmfmt
+
 FROM dm-build AS app-jq
 COPY --link --from=config-split /slices/app-jq.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install jq
@@ -524,6 +528,7 @@ COPY --link --from=app-grype /dm/store/.bin/grype /dm/store/.bin/grype
 COPY --link --from=app-hadolint /dm/store/.bin/hadolint /dm/store/.bin/hadolint
 COPY --link --from=app-harper-cli /dm/store/.bin/harper-cli /dm/store/.bin/harper-cli
 COPY --link --from=app-helm /dm/store/.bin/helm /dm/store/.bin/helm
+COPY --link --from=app-helmfmt /dm/store/.bin/helmfmt /dm/store/.bin/helmfmt
 COPY --link --from=app-jq /dm/store/.bin/jq /dm/store/.bin/jq
 COPY --link --from=app-just /dm/store/.bin/just /dm/store/.bin/just
 COPY --link --from=app-kube-linter /dm/store/.bin/kube-linter /dm/store/.bin/kube-linter

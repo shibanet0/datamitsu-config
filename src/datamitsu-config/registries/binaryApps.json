@@ -163,6 +163,11 @@
       "source": "github",
       "tag": "v2.12.0"
     },
+    "helmfmt": {
+      "repository": "digitalstudium/helmfmt",
+      "source": "github",
+      "tag": "v0.7.0"
+    },
     "jq": {
       "repository": "jqlang/jq",
       "source": "github",
@@ -2457,6 +2462,73 @@
         "apiUrl": "https://api.github.com",
         "repository": "Automattic/harper",
         "tag": "v2.12.0",
+        "type": "github",
+        "url": "https://github.com"
+      }
+    },
+    "helmfmt": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "helmfmt",
+              "contentType": "tar.gz",
+              "hash": "sha256:fb0531e4844695360c9e0979e538f1eaeea9faeb49bb24e39e90590840cade46",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Darwin_x86_64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "helmfmt",
+              "contentType": "tar.gz",
+              "hash": "sha256:4de4d9425f41c5ac3cb79a745609a1e086d087072eafba48e59424091da77ef4",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "helmfmt",
+              "contentType": "tar.gz",
+              "hash": "sha256:56d1724e08188bfda84f32eaf447a0fba7f67c60b1423691e94a2ab3783d66b3",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_x86_64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "helmfmt",
+              "contentType": "tar.gz",
+              "hash": "sha256:06bf4a4f78fa4028d3ced7772d5d55718d82a63bb10456c9ec59619a5f96b7e4",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "helmfmt.exe",
+              "contentType": "tar.gz",
+              "hash": "sha256:43091637ea68b297322b6cd69f3711c822195150de2e704705203f4d1ed3377c",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Windows_x86_64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "helmfmt.exe",
+              "contentType": "tar.gz",
+              "hash": "sha256:7c2b8cf3362b4f005afa01e0f6eb18f4f3351dc25323076702e754b8d6cf263c",
+              "url": "https://github.com/digitalstudium/helmfmt/releases/download/v0.7.0/helmfmt_Windows_arm64.tar.gz"
+            }
+          }
+        }
+      },
+      "configHash": "0a762024550588c7cf3593cef31f2a57",
+      "description": "Code formatter for helm charts",
+      "source": {
+        "apiUrl": "https://api.github.com",
+        "repository": "digitalstudium/helmfmt",
+        "tag": "v0.7.0",
         "type": "github",
         "url": "https://github.com"
       }

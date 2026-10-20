@@ -54,6 +54,7 @@ type Tool =
   | "hadolint"
   | "harper-cli"
   | "helm"
+  | "helmfmt"
   | "knip"
   | "ktfmt"
   | "ktlint"
@@ -141,6 +142,7 @@ const _fixPriority: Tool[] = [
   // Orders lefthook configs before yamlfmt reformats them, so the formatter
   // always gets the last word on style.
   "lefthook-sort",
+  "helmfmt",
   "yamlfmt",
   "pre-commit",
 ];
@@ -183,6 +185,7 @@ const _lintPriority: Tool[] = [
   "dclint",
   "checkmake",
   "helm",
+  "helmfmt",
   "toml",
   "tflint",
   "terraform-fmt",
@@ -747,6 +750,30 @@ export const toolsConfig: config.MapOfTools = {
         args: ["lint", "{target}"],
         globs: helmGlobs,
         priority: lintPriority.helm,
+        scope: "per-project",
+      },
+    },
+    projectTypes: ["helm-chart"],
+  },
+  helmfmt: {
+    name: "helmfmt - Helm Template Formatter",
+    operations: {
+      fix: {
+        app: "helmfmt",
+        args: ["{target}"],
+        env: { HOME: "{cwd}", USERPROFILE: "{cwd}" },
+        granularity: "unit",
+        invalidateOn: [".helmfmt"],
+        priority: fixPriority.helmfmt,
+        scope: "per-project",
+      },
+      lint: {
+        app: "helmfmt",
+        args: ["--check", "{target}"],
+        env: { HOME: "{cwd}", USERPROFILE: "{cwd}" },
+        granularity: "unit",
+        invalidateOn: [".helmfmt"],
+        priority: lintPriority.helmfmt,
         scope: "per-project",
       },
     },

@@ -88,6 +88,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "grpcurl",
       "grype",
       "hadolint",
+      "helmfmt",
       "jq",
       "kube-linter",
       "kubeconform",

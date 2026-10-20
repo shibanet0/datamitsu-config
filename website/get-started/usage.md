@@ -531,3 +531,38 @@ with ktlint. Both use the managed JVM; no Gradle plugin or application compilati
 The managed `.editorconfig` supplies shared indent and line width settings, preserves project
 overrides, and keeps lint rules separate from layout. See the [Kotlin configuration reference](../reference/kotlin.md)
 for the exact rule decisions, Compose support, IDE settings and parser requirements.
+
+## Helm charts
+
+`Chart.yaml` identifies each Helm chart, including charts in a monorepo. Run
+`pnpm dm config reconcile` to create each chart's `.helmfmt` and merge template
+exclusions into its `.datamitsuignore`, preserving existing project rules.
+
+`pnpm dm check` formats `.yaml`, `.yml`, `.tpl` and `.gotmpl` files under the chart's
+`templates/` with helmfmt. Running from one chart, or naming one of its templates,
+processes that chart's templates without touching sibling charts. `Chart.yaml`,
+`values.yaml` and other ordinary YAML stay with yamlfmt, yamllint and the YAML key
+sorter; Go templates are excluded from those three tools.
+
+The generated `.helmfmt` takes its indentation from the shared formatter settings
+and preserves project overrides. Managed checks read the chart's configuration,
+not the developer's home-directory `.helmfmt`. helmfmt aligns template directives;
+it does not reformat the surrounding YAML. Helm's existing `helm lint` remains
+the chart-level validator.
+
+The managed config leaves `printf` indentation alone: moving an output-producing call
+to template depth can move its value out of a YAML block scalar. Native defaults
+also leave `include`, `tpl`, `template` and `toYaml` indentation alone. Keep those
+defaults unless the chart explicitly needs otherwise; project overrides are retained.
+
+helmfmt recognizes `.gotmpl`, but Helm rejects that extension inside a chart.
+Use `.tpl` for chart helpers; formatter support does not make a file a valid Helm template.
+
+Native helmfmt 0.7.0 requires a `templates/` directory, even for a valid chart with
+no templates. It also formats directives rather than rendered manifests. Run
+`helm template` for the values combinations your chart supports; `helm lint` alone
+does not exercise every conditional branch.
+
+There is a separate YAML limitation: yamlfmt 0.21.0 can require a second formatting
+pass for comments in an unmodified `helm create` chart's `values.yaml`. The first
+`check` then fails its formatting check. This is not suppressed by the Helm integration.

@@ -710,3 +710,30 @@ changes do not publish the ty parser or the explicit-unit widening behavior.
 validate:pins reads the managed package.json template through the TypeScript AST
 and parses its cooked JSON text. Do not replace this with indentation-based
 matching or silently skip dependency comparisons when the template is missing.
+
+## Helm templates
+
+`helm-chart` is detected by `Chart.yaml`. Run helmfmt's native chart mode with
+`{target}`, per-project scope and no source globs: the planner selects detected
+charts, and the formatter walks only each chart's `templates/`. Broad source globs
+would assign unrelated `templates/` directories to the planner's root fallback.
+
+The tool uses unit granularity with `.helmfmt` in `invalidateOn`; HOME and
+USERPROFILE bind to `{cwd}` so a developer's home config cannot change its output.
+Native helmfmt has no config-path argument, so `.helmfmt` is project-scoped and not
+ejectable. Its indent default comes from `indentSettings` and project overrides win.
+The managed config leaves `printf` indentation alone: the native default moved a
+standalone call out of a YAML block scalar and made `helm template` fail. Keep it
+disabled alongside upstream's `include`, `tpl`, `template` and `toYaml` defaults.
+Verify that rendered output survives formatting, including when a project overrides
+another nested rule; a shallow merge drops the shared `printf` decision.
+
+Native chart mode requires `templates/` to exist; a template-free library chart passes
+Helm lint but fails helmfmt 0.7.0. yamlfmt 0.21.0 also needs a second pass on some
+comments from `helm create` values. Do not hide either with a wrapper, a global skip,
+or a weakened linter; they are native limitations, not successful checks.
+Chart-scoped `.datamitsuignore` excludes `templates/**` from sort-keys-yaml, yamlfmt
+and yamllint through the shared ignore catalog. Do not globally ignore every
+`templates/` directory or send Go templates to plain YAML parsers. Keep Chart.yaml
+and values.yaml on the ordinary YAML path. The static upstream needs force-inclusion
+in Alpine generation because the registry deduplicates its musl record.
