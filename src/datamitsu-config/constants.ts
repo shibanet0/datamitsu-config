@@ -1,6 +1,6 @@
 export const runtimeVersions = {
-  node: "26.10.0",
-  python: "3.14.7",
+  node: "26.11.1",
+  python: "3.14.8",
 };
 
 // Consumer-facing support floor for `engines.node` — the lowest Node we promise

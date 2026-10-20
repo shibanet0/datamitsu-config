@@ -42,7 +42,6 @@ export const aiTools: config.MapOfManagedConfigs = {
     scope: "git-root",
   },
 
-  // Skills: Claude Code adapters
   ...Object.fromEntries(
     SKILLS.map((s) => [
       `.claude/skills/${s.name}/SKILL.md`,
@@ -53,24 +52,24 @@ export const aiTools: config.MapOfManagedConfigs = {
     ]),
   ),
 
-  // Skills: Codex CLI adapters
   ...Object.fromEntries(
     SKILLS.map((s) => [
-      `.codex/prompts/${s.name}.md`,
+      `.agents/skills/${s.name}/SKILL.md`,
       {
         content: () => withTrailingNewline(s.adapters.codex),
+        otherFileNameList: [`.codex/prompts/${s.name}.md`],
         scope: "git-root" as const,
       },
     ]),
   ),
 
-  // Cleanup adapters of removed skills
   ...(REMOVED_SKILLS.length > 0
     ? {
         "removed-skills-cleanup": {
           deleteOnly: true,
           otherFileNameList: REMOVED_SKILLS.flatMap((name) => [
             `.claude/skills/${name}/SKILL.md`,
+            `.agents/skills/${name}/SKILL.md`,
             `.codex/prompts/${name}.md`,
           ]),
           scope: "git-root" as const,

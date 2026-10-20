@@ -2,7 +2,7 @@
   "@antebudimir/eslint-plugin-vanilla-extract": {
     "description": "Comprehensive ESLint plugin for vanilla-extract with CSS property ordering, style validation, and best practices enforcement. Supports alphabetical, concentric and custom CSS ordering, auto-fixing, and zero-runtime safety.",
     "packageName": "@antebudimir/eslint-plugin-vanilla-extract",
-    "version": "1.17.0"
+    "version": "1.18.0"
   },
   "@commitlint/cli": {
     "description": "Lint your commit messages",
@@ -27,7 +27,7 @@
   "@cspell/dict-ru_ru": {
     "description": "Russian dictionary for cspell.",
     "packageName": "@cspell/dict-ru_ru",
-    "version": "2.3.2"
+    "version": "2.3.4"
   },
   "@e18e/eslint-plugin": {
     "description": "The official e18e ESLint plugin for modernizing code and improving performance.",
@@ -42,7 +42,7 @@
   "@eslint-react/eslint-plugin": {
     "description": "ESLint React's unified ESLint plugin that combines all individual plugins into one.",
     "packageName": "@eslint-react/eslint-plugin",
-    "version": "5.20.1"
+    "version": "5.26.5"
   },
   "@eslint/config-helpers": {
     "description": "Helper utilities for creating ESLint configuration",
@@ -57,7 +57,7 @@
   "@next/eslint-plugin-next": {
     "description": "ESLint plugin for Next.js.",
     "packageName": "@next/eslint-plugin-next",
-    "version": "16.3.5"
+    "version": "16.4.0"
   },
   "@prettier/plugin-xml": {
     "description": "prettier plugin for XML",
@@ -76,7 +76,7 @@
   "@typescript-eslint/utils": {
     "description": "Utilities for working with TypeScript + ESLint together",
     "packageName": "@typescript-eslint/utils",
-    "version": "8.70.0"
+    "version": "8.71.2"
   },
   "@vitest/eslint-plugin": {
     "description": "ESLint plugin for Vitest",
@@ -86,7 +86,7 @@
   "caniuse-lite": {
     "description": "A smaller version of caniuse-db, with only the essentials!",
     "packageName": "caniuse-lite",
-    "version": "1.0.30001810"
+    "version": "1.0.30001815"
   },
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
@@ -96,12 +96,12 @@
   "conventional-changelog-conventionalcommits": {
     "description": "Conventionalcommits.org preset for conventional-changelog.",
     "packageName": "conventional-changelog-conventionalcommits",
-    "version": "10.4.0"
+    "version": "10.4.1"
   },
   "cspell": {
     "description": "A Spelling Checker for Code!",
     "packageName": "cspell",
-    "version": "10.3.3"
+    "version": "10.3.6"
   },
   "dclint": {
     "description": "A command-line tool for validating and enforcing best practices in Docker Compose files.",
@@ -111,7 +111,7 @@
   "eslint": {
     "description": "An AST-based pattern checker for JavaScript.",
     "packageName": "eslint",
-    "version": "10.11.0"
+    "version": "10.12.0"
   },
   "eslint-config-prettier": {
     "description": "Turns off all rules that are unnecessary or might conflict with Prettier.",
@@ -136,7 +136,7 @@
   "eslint-plugin-baseline-js": {
     "description": "Enforce JavaScript Baseline (widely/newly/year) browser compatibility with a single ESLint rule. Prevent runtime errors by catching unsupported JavaScript features during development.",
     "packageName": "eslint-plugin-baseline-js",
-    "version": "0.7.1"
+    "version": "0.7.5"
   },
   "eslint-plugin-boundaries": {
     "description": "Eslint plugin checking architecture boundaries between elements",
@@ -161,7 +161,7 @@
   "eslint-plugin-de-morgan": {
     "description": "ESLint plugin for transforming negated boolean expressions via De Morgan’s laws",
     "packageName": "eslint-plugin-de-morgan",
-    "version": "2.1.3"
+    "version": "2.2.1"
   },
   "eslint-plugin-decorator-position": {
     "description": "ESLint plugin for enforcing decorator position",
@@ -176,7 +176,7 @@
   "eslint-plugin-es-x": {
     "description": "ESLint plugin about ECMAScript syntactic features.",
     "packageName": "eslint-plugin-es-x",
-    "version": "10.0.1"
+    "version": "10.1.0"
   },
   "eslint-plugin-escompat": {
     "description": "This plugin will report eslint errors for code which - if left untranspiled - will not work in some browsers or Node.js versions.",
@@ -211,7 +211,7 @@
   "eslint-plugin-jsdoc": {
     "description": "JSDoc linting rules for ESLint.",
     "packageName": "eslint-plugin-jsdoc",
-    "version": "64.5.4"
+    "version": "65.3.1"
   },
   "eslint-plugin-json": {
     "description": "eslint plugin for JSON files",
@@ -236,7 +236,7 @@
   "eslint-plugin-n": {
     "description": "Additional ESLint's rules for Node.js",
     "packageName": "eslint-plugin-n",
-    "version": "18.3.0"
+    "version": "18.4.1"
   },
   "eslint-plugin-no-unsanitized": {
     "description": "ESLint rule to disallow unsanitized code",
@@ -251,17 +251,17 @@
   "eslint-plugin-oxlint": {
     "description": "Turn off all rules already supported by oxlint",
     "packageName": "eslint-plugin-oxlint",
-    "version": "1.83.0"
+    "version": "1.87.0"
   },
   "eslint-plugin-perfectionist": {
     "description": "ESLint plugin for sorting various data such as objects, imports, types, enums, JSX props, etc.",
     "packageName": "eslint-plugin-perfectionist",
-    "version": "5.11.1"
+    "version": "5.12.1"
   },
   "eslint-plugin-playwright": {
     "description": "ESLint plugin for Playwright testing.",
     "packageName": "eslint-plugin-playwright",
-    "version": "2.12.0"
+    "version": "2.12.1"
   },
   "eslint-plugin-pnpm": {
     "description": "ESLint Plugin for pnpm",
@@ -301,32 +301,32 @@
   "eslint-plugin-security": {
     "description": "Security rules for eslint",
     "packageName": "eslint-plugin-security",
-    "version": "4.0.1"
+    "version": "4.2.0"
   },
   "eslint-plugin-sonarjs": {
     "description": "SonarJS rules for ESLint",
     "packageName": "eslint-plugin-sonarjs",
-    "version": "4.2.1"
+    "version": "4.2.2"
   },
   "eslint-plugin-storybook": {
     "description": "Storybook ESLint Plugin: Best practice rules for writing stories",
     "packageName": "eslint-plugin-storybook",
-    "version": "10.6.0"
+    "version": "10.6.2"
   },
   "eslint-plugin-svelte": {
     "description": "ESLint plugin for Svelte using AST",
     "packageName": "eslint-plugin-svelte",
-    "version": "3.23.0"
+    "version": "3.23.1"
   },
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
-    "version": "2.11.2"
+    "version": "2.11.7"
   },
   "eslint-plugin-unicorn": {
     "description": "More than 300 powerful ESLint rules",
     "packageName": "eslint-plugin-unicorn",
-    "version": "76.0.0"
+    "version": "78.0.0"
   },
   "eslint-plugin-unused-imports": {
     "description": "Report and remove unused es6 modules",
@@ -336,12 +336,12 @@
   "globals": {
     "description": "Global identifiers from different JavaScript environments",
     "packageName": "globals",
-    "version": "17.12.0"
+    "version": "17.13.0"
   },
   "knip": {
     "description": "Find and fix unused dependencies, exports and files in your TypeScript and JavaScript projects",
     "packageName": "knip",
-    "version": "6.37.0"
+    "version": "6.41.0"
   },
   "markdownlint-cli2": {
     "description": "A fast, flexible, configuration-based command-line interface for linting Markdown/CommonMark files with the `markdownlint` library",
@@ -351,32 +351,32 @@
   "mmdc": {
     "description": "Command-line interface for mermaid",
     "packageName": "@mermaid-js/mermaid-cli",
-    "version": "11.17.0"
+    "version": "12.0.0"
   },
   "oxfmt": {
     "description": "Formatter for the JavaScript Oxidation Compiler",
     "packageName": "oxfmt",
-    "version": "0.68.0"
+    "version": "0.72.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
-    "version": "1.83.0"
+    "version": "1.87.0"
   },
   "oxlint-tsgolint": {
     "description": "High-performance type-aware TypeScript linter powered by typescript-go, for use with oxlint.",
     "packageName": "oxlint-tsgolint",
-    "version": "7.0.2002"
+    "version": "7.0.2004"
   },
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
     "packageName": "playwright-chromium",
-    "version": "1.63.0"
+    "version": "1.64.0"
   },
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
     "packageName": "pnpm",
-    "version": "12.5.1"
+    "version": "12.12.1"
   },
   "postcss-html": {
     "description": "PostCSS syntax for parsing HTML (and HTML-like)",
@@ -386,12 +386,12 @@
   "prettier": {
     "description": "Prettier is an opinionated code formatter",
     "packageName": "prettier",
-    "version": "3.9.8"
+    "version": "3.9.10"
   },
   "prettier-plugin-embed": {
     "description": "A configurable Prettier plugin to format embedded languages in JS/TS files.",
     "packageName": "prettier-plugin-embed",
-    "version": "0.5.1"
+    "version": "0.7.1"
   },
   "prettier-plugin-jsdoc": {
     "description": "A Prettier plugin to format JSDoc comments.",
@@ -421,7 +421,7 @@
   "stylelint": {
     "description": "A mighty CSS linter that helps you avoid errors and enforce conventions.",
     "packageName": "stylelint",
-    "version": "17.15.0"
+    "version": "17.16.0"
   },
   "stylelint-config-html": {
     "description": "The shareable HTML config for Stylelint.",
@@ -446,12 +446,12 @@
   "svelte": {
     "description": "Cybernetically enhanced web apps",
     "packageName": "svelte",
-    "version": "5.57.1"
+    "version": "5.57.2"
   },
   "svelte-eslint-parser": {
     "description": "Svelte parser for ESLint",
     "packageName": "svelte-eslint-parser",
-    "version": "1.8.1"
+    "version": "1.9.0"
   },
   "syncpack": {
     "description": "Consistent dependency versions in large JavaScript Monorepos",
@@ -466,7 +466,7 @@
   "typescript-eslint": {
     "description": "Tooling which enables you to use TypeScript with ESLint",
     "packageName": "typescript-eslint",
-    "version": "8.70.0"
+    "version": "8.71.2"
   },
   "yaml": {
     "description": "JavaScript parser and stringifier for YAML",

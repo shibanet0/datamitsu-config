@@ -20,7 +20,7 @@ keep the shape**, which is what carries the meaning:
 
 > ❌ `Measured on acme-storefront: apps/landing/pages/sitemap.xml.tsx fails to typecheck.`
 > ✅ `Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
-package fails to typecheck because a generated file is missing.`
+> package fails to typecheck because a generated file is missing.`
 
 ### Naming other projects requires explicit permission
 
