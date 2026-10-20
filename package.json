@@ -80,7 +80,7 @@
     "fast-glob": "3.3.3",
     "tsx": "4.23.15",
     "type-fest": "5.10.0",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "devDependencies": {
     "@antebudimir/eslint-plugin-vanilla-extract": "1.18.0",
@@ -153,8 +153,8 @@
     "globals": "17.13.0",
     "json-schema-to-typescript": "16.0.0",
     "knip": "6.41.0",
-    "oxfmt": "0.72.0",
-    "oxlint": "1.87.0",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "prettier": "3.9.10",
     "prettier-plugin-embed": "0.7.1",
     "prettier-plugin-jsdoc": "1.8.1",
