@@ -33,7 +33,8 @@ const EJECTABLE = [
   ".editorconfig-checker.json",
   ".gitleaks.toml",
   ".ls-lint.yml",
-  ".sqruff",
+  ".protolint.yaml",
+  "sqruff.toml",
   ".trufflehog-exclude-paths.txt",
   ".vale.ini",
   ".yamlfmt.yaml",
@@ -65,7 +66,7 @@ describe("tool config paths", () => {
     ["editorconfig-checker", "-config", ".editorconfig-checker.json"],
     ["mdsf", "--config", "mdsf.json"],
     ["pinact", "--config", ".pinact.yaml"],
-    ["sqruff", "--config", ".sqruff"],
+    ["sqruff", "--config", "sqruff.toml"],
     ["zizmor", "--config", ".github/zizmor.yml"],
   ])("%s passes %s %s to every operation", (tool, flag, key) => {
     for (const [operation, op] of Object.entries(toolsConfig[tool]!.operations)) {
@@ -135,6 +136,6 @@ describe("tool config paths", () => {
   });
 
   it("leaves .sqruffignore alone: it is sqruff's ignore file, not another name for .sqruff", () => {
-    expect(managedConfigs[".sqruff"]!.otherFileNameList ?? []).not.toContain(".sqruffignore");
+    expect(managedConfigs["sqruff.toml"]!.otherFileNameList ?? []).not.toContain(".sqruffignore");
   });
 });

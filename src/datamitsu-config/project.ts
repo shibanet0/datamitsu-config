@@ -1,6 +1,10 @@
 /// <reference path="./datamitsu.config.d.ts" />
 
 export const projectTypes: config.MapOfProjectTypes = {
+  "datamitsu-project": {
+    description: "Source tree with a datamitsu configuration",
+    markers: ["datamitsu.config.js", "datamitsu.config.mjs", "datamitsu.config.ts"],
+  },
   "docker-project": {
     description: "Docker image (Dockerfile)",
     markers: ["**/Dockerfile", "**/Dockerfile.*", "**/*.Dockerfile"],
@@ -29,9 +33,17 @@ export const projectTypes: config.MapOfProjectTypes = {
     description: "Project using pre-commit framework",
     markers: [".pre-commit-config.yaml"],
   },
+  "protobuf-project": {
+    description: "Buf Protobuf module or workspace",
+    markers: ["**/buf.yaml"],
+  },
   "python-package": {
     description: "Python project",
     markers: ["**/pyproject.toml"],
+  },
+  "python-type-project": {
+    description: "Python source tree with a ty configuration",
+    markers: ["**/ty.toml"],
   },
   "rust-project": {
     description: "Rust crate",

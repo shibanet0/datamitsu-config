@@ -30,6 +30,10 @@
     "markdown-link-check": {
       "reason": "A second link checker with no operation wired to it: lychee already checks every link in the same Markdown globs, is faster, caches, and now runs in two profiles (offline everywhere, network in CI). Two checkers over one concern means two answers and two exclusion lists",
       "replacement": "Use lychee (GitHub release binary); see the lychee and lychee-offline tools"
+    },
+    "spectral": {
+      "reason": "vacuum is available for explicit API-project checks. No separate non-OpenAPI ruleset or custom function requiring Spectral has been established; this is not a claim of equivalent results.",
+      "replacement": "Use native vacuum in an explicitly configured API project. Reconsider Spectral with a demonstrated separate ruleset and file scope."
     }
   },
   "runtimes": {},
@@ -230,6 +234,10 @@
       "reason": "Replaced by Ruff (C90 rules - cyclomatic complexity)",
       "replacement": "ruff check --select C90"
     },
+    "mypy": {
+      "reason": "ty owns default Python type checking. No project requiring mypy plugins or a distinct mypy-only gate has been established; this is a default-tool selection, not a claim of equivalent semantics.",
+      "replacement": "Use ty. Reconsider mypy for a demonstrated plugin-dependent project with a separate checking scope."
+    },
     "pandas-vet": {
       "reason": "Replaced by Ruff (PD rules - pandas best practices)",
       "replacement": "ruff check --select PD"
@@ -253,6 +261,10 @@
     "pyupgrade": {
       "reason": "Replaced by Ruff (UP rules)",
       "replacement": "ruff check --select UP"
+    },
+    "sqlfluff": {
+      "reason": "sqruff owns default SQL linting and is the only SQL fixer. No project requiring a missing dialect or dbt templater has been established.",
+      "replacement": "Use sqruff with an explicit dialect. Reconsider a lint-only SQLFluff operation for a demonstrated unsupported dialect or templater."
     },
     "tombi": {
       "reason": "Python wrapper is unnecessary. Use native Tombi binary from GitHub instead",

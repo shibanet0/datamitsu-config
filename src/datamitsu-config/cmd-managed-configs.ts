@@ -14,7 +14,7 @@ import { markdownlintCli2Mjs } from "./managed-configs/_markdownlint_cli2_mjs";
 import { nodeVersion } from "./managed-configs/_node_version";
 import { npmrc } from "./managed-configs/_npmrc";
 import { pinactYaml } from "./managed-configs/_pinact_yaml";
-import { sqruff } from "./managed-configs/_sqruff";
+import { protolintYaml } from "./managed-configs/_protolint_yaml";
 import { syncpackrcJson } from "./managed-configs/_syncpackrc_json";
 import { tflintHcl } from "./managed-configs/_tflint_hcl";
 import { tombiToml } from "./managed-configs/_tombi_toml";
@@ -26,6 +26,7 @@ import { vscodeSettingsJson } from "./managed-configs/_vscode_settings_json";
 import { yamlfmtYaml } from "./managed-configs/_yamlfmt_yaml";
 import { yamllintYaml } from "./managed-configs/_yamllint_yaml";
 import { aiTools } from "./managed-configs/ai-tools";
+import { bufYaml } from "./managed-configs/buf_yaml";
 import { commitlintConfigMjs } from "./managed-configs/commitlint_config_mjs";
 import { cspellConfigMjs } from "./managed-configs/cspell_config_mjs";
 import { denyToml } from "./managed-configs/deny_toml";
@@ -44,6 +45,7 @@ import { pnpmWorkspaceYaml } from "./managed-configs/pnpm_workspace_yaml";
 import { prettierConfigMjs } from "./managed-configs/prettier_config_mjs";
 import { pyprojectToml } from "./managed-configs/pyproject_toml";
 import { rustfmtToml } from "./managed-configs/rustfmt_toml";
+import { sqruffToml } from "./managed-configs/sqruff_toml";
 import { stylelintConfigMjs } from "./managed-configs/stylelint_config_mjs";
 import { turboJson } from "./managed-configs/turbo_json";
 
@@ -64,7 +66,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".node-version": nodeVersion,
   ".npmrc": npmrc,
   ".pinact.yaml": pinactYaml,
-  ".sqruff": sqruff,
+  ".protolint.yaml": protolintYaml,
   ".syncpackrc.json": syncpackrcJson,
   ".tflint.hcl": tflintHcl,
   ".tombi.toml": tombiToml,
@@ -75,6 +77,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".vscode/settings.json": vscodeSettingsJson,
   ".yamlfmt.yaml": yamlfmtYaml,
   ".yamllint.yaml": yamllintYaml,
+  "buf.yaml": bufYaml,
   "commitlint.config.mjs": commitlintConfigMjs,
   "cspell.config.mjs": cspellConfigMjs,
   "deny.toml": denyToml,
@@ -93,6 +96,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "prettier.config.mjs": prettierConfigMjs,
   "pyproject.toml": pyprojectToml,
   "rustfmt.toml": rustfmtToml,
+  "sqruff.toml": sqruffToml,
   "stylelint.config.mjs": stylelintConfigMjs,
   "turbo.json": turboJson,
   ...aiTools,

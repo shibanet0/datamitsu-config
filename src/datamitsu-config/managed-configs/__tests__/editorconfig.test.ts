@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { editorconfig } from "../_editorconfig";
+import { indentSettings } from "../../constants";
 
 interface Section {
   name: string;
@@ -90,6 +91,47 @@ describe("editorconfig", () => {
 
   it("keeps a section it does not own", () => {
     expect(render("[*.go]\nindent_style = tab\n")).toContain("[*.go]");
+  });
+
+  it("gives Kotlin the shared formatter settings without enabling a second layout checker", () => {
+    const sections = ini.toRecord(ini.parse(render("")));
+    expect(sections["*.{kt,kts}"]).toMatchObject({
+      ij_continuation_indent_size: String(indentSettings.indentWidth),
+      indent_size: String(indentSettings.indentWidth),
+      ktlint_standard: "disabled",
+      "ktlint_standard_class-naming": "enabled",
+      "ktlint_standard_no-wildcard-imports": "enabled",
+      max_line_length: String(indentSettings.lineWidth),
+    });
+  });
+
+  it("preserves Kotlin overrides and their precedence across regeneration", () => {
+    const source = [
+      "[*.{kt,kts}]",
+      "indent_size = 4",
+      "ktlint_standard_no-wildcard-imports = disabled",
+      "",
+      "[*.kt]",
+      "max_line_length = 120",
+    ].join("\n");
+    const rendered = render(source);
+    const sections = ini.toRecord(ini.parse(rendered));
+    expect(sections["*.{kt,kts}"]?.["indent_size"]).toBe("4");
+    expect(sections["*.{kt,kts}"]?.["ktlint_standard_no-wildcard-imports"]).toBe("disabled");
+    expect(rendered.indexOf("[*.{kt,kts}]")).toBeLessThan(rendered.indexOf("[*.kt]"));
+    expect(render(rendered)).toBe(rendered);
+  });
+
+  it("inserts new Kotlin defaults before an existing project-specific section", () => {
+    const rendered = render(
+      "root = true\n[*]\nindent_size = 2\n[*.kt]\nindent_size = 4\nmax_line_length = 120\n",
+    );
+    expect(rendered.indexOf("[*.{kt,kts}]")).toBeLessThan(rendered.indexOf("[*.kt]"));
+    expect(ini.toRecord(ini.parse(rendered))["*.kt"]).toMatchObject({
+      indent_size: "4",
+      max_line_length: "120",
+    });
+    expect(render(rendered)).toBe(rendered);
   });
 
   it("is idempotent", () => {
