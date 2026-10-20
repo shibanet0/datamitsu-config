@@ -24,6 +24,7 @@ import {
   prettierGlobs,
   propertiesGlobs,
   protoGlobs,
+  schepherdGlobs,
   shellGlobs,
   sqlGlobs,
   stylelintGlobs,
@@ -71,6 +72,7 @@ type Tool =
   | "ruff"
   | "ruff-format"
   | "rustfmt"
+  | "schepherd"
   | "shellcheck"
   | "shfmt"
   | "sort-keys-properties"
@@ -188,6 +190,8 @@ const _lintPriority: Tool[] = [
   "terraform-fmt",
   "yamlfmt",
   "yamllint",
+  // The pinned catalog is prepared when the app is installed; validation reads it offline.
+  "schepherd",
   "lefthook-validate",
   // Last of the source analyses: whole-repository scope and tens of seconds, so
   // everything that can fail on one file gets to fail first.
@@ -1310,6 +1314,39 @@ export const toolsConfig: config.MapOfTools = {
     // The rustfmt app runs via a POSIX shell guard; Windows has no `sh` by default.
     skip: facts().os === "windows",
     skipReason: "rustfmt runs via a POSIX shell guard (sh), unavailable on Windows by default",
+  },
+  /**
+   * JSON Schema validation of configuration files against a pinned SchemaStore-derived catalog.
+   * schepherd resolves each file to its schema and hands the batch to the Sourcemeta validator;
+   * `--ignore-unmatched` skips a file that a negative catalog pattern excludes from every schema,
+   * which a flat glob list cannot express.
+   *
+   * `--workspace {root}` because the config lives in `.datamitsu/configs/` until ejected, and a
+   * relative `workspace` there would resolve catalog patterns against that directory.
+   */
+  schepherd: {
+    name: "schepherd - JSON Schema validation (Sourcemeta jsonschema)",
+    operations: {
+      lint: {
+        app: "schepherd",
+        args: [
+          "--config",
+          "{managedConfig:schepherd.toml}",
+          "--workspace",
+          "{root}",
+          "--quiet",
+          "run",
+          "--ignore-unmatched",
+          "--",
+          "{files}",
+        ],
+        env: { SCHEPHERD_OFFLINE: "1" },
+        globs: schepherdGlobs,
+        granularity: "file",
+        priority: lintPriority.schepherd,
+        scope: "repository",
+      },
+    },
   },
   shellcheck: {
     name: "ShellCheck - Shell Script Linter",

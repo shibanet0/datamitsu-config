@@ -96,6 +96,7 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "osv-scanner",
       "protoc",
       "protolint",
+      "schepherd",
       "scorecard",
       "shellcheck",
       "shfmt",

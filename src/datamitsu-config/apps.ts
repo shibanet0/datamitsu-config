@@ -20,6 +20,7 @@ import {
   binaries as externalBinariesJSON,
 } from "./registries/externalApps.json";
 import nodeVersions from "./registries/nodeVersions.json";
+import schepherdCatalog from "./registries/schepherdCatalog.json";
 import uvVersions from "./registries/uvVersions.json";
 
 const binaryApps = Object.entries(binaryBinariesJSON).reduce<BinManager.MapOfApps>(
@@ -456,6 +457,39 @@ const allApps: BinManager.MapOfApps = {
       ],
       name: "sh",
     },
+  },
+  /**
+   * Schepherd never validates a document itself: it materializes the pinned schema and runs the
+   * validator its config names, which `schepherd.toml` takes from `${JSONSCHEMA_BIN}`. Binding the
+   * exact path here keeps a system `jsonschema` of another version from standing in for this one.
+   */
+  schepherd: {
+    ...otherBinaryApps["schepherd"],
+    dependsOn: ["jsonschema"],
+    prepare: {
+      args: [
+        "--config",
+        "",
+        "--offline=false",
+        "--timeout",
+        "20m",
+        "--repository",
+        schepherdCatalog.repository,
+        "--catalog",
+        schepherdCatalog.digest,
+        "--cache-dir",
+        "${APP_PREPARED}",
+        "--quiet",
+        "materialize",
+      ],
+      network: true,
+    },
+    runtimeEnv: {
+      JSONSCHEMA_BIN: "${APP_BIN:jsonschema}",
+      SCHEPHERD_CACHE_DIR: "${APP_PREPARED}",
+    },
+    // `--version` is a usage error (exit 2); only the subcommand exists.
+    versionCheck: { args: ["version"] },
   },
   semgrep: {
     description: uvVersions.semgrep.description,

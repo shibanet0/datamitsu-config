@@ -293,6 +293,10 @@ FROM dm-build AS app-jq
 COPY --link --from=config-split /slices/app-jq.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install jq
 
+FROM dm-build AS app-jsonschema
+COPY --link --from=config-split /slices/app-jsonschema.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install jsonschema
+
 FROM dm-build AS app-just
 COPY --link --from=config-split /slices/app-just.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install just
@@ -332,6 +336,10 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install protoli
 FROM dm-build AS app-ruff
 COPY --link --from=config-split /slices/app-ruff.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install ruff
+
+FROM dm-build AS app-schepherd
+COPY --link --from=config-split /slices/app-schepherd.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install schepherd
 
 FROM dm-build AS app-scorecard
 COPY --link --from=config-split /slices/app-scorecard.js /opt/datamitsu-config/datamitsu.config.js
@@ -525,6 +533,7 @@ COPY --link --from=app-hadolint /dm/store/.bin/hadolint /dm/store/.bin/hadolint
 COPY --link --from=app-harper-cli /dm/store/.bin/harper-cli /dm/store/.bin/harper-cli
 COPY --link --from=app-helm /dm/store/.bin/helm /dm/store/.bin/helm
 COPY --link --from=app-jq /dm/store/.bin/jq /dm/store/.bin/jq
+COPY --link --from=app-jsonschema /dm/store/.bin/jsonschema /dm/store/.bin/jsonschema
 COPY --link --from=app-just /dm/store/.bin/just /dm/store/.bin/just
 COPY --link --from=app-kube-linter /dm/store/.bin/kube-linter /dm/store/.bin/kube-linter
 COPY --link --from=app-kubeconform /dm/store/.bin/kubeconform /dm/store/.bin/kubeconform
@@ -535,6 +544,7 @@ COPY --link --from=app-oxipng /dm/store/.bin/oxipng /dm/store/.bin/oxipng
 COPY --link --from=app-protoc /dm/store/.bin/protoc /dm/store/.bin/protoc
 COPY --link --from=app-protolint /dm/store/.bin/protolint /dm/store/.bin/protolint
 COPY --link --from=app-ruff /dm/store/.bin/ruff /dm/store/.bin/ruff
+COPY --link --from=app-schepherd /dm/store/.bin/schepherd /dm/store/.bin/schepherd
 COPY --link --from=app-scorecard /dm/store/.bin/scorecard /dm/store/.bin/scorecard
 COPY --link --from=app-shellcheck /dm/store/.bin/shellcheck /dm/store/.bin/shellcheck
 COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
@@ -562,6 +572,7 @@ COPY --link --from=app-xh /dm/store/.bin/xh /dm/store/.bin/xh
 COPY --link --from=app-yamlfmt /dm/store/.bin/yamlfmt /dm/store/.bin/yamlfmt
 COPY --link --from=app-yq /dm/store/.bin/yq /dm/store/.bin/yq
 COPY --link --from=parser-core /dm/store/.parsers/core /dm/store/.parsers/core
+COPY --link --from=app-schepherd /dm/store/.prepared/schepherd /dm/store/.prepared/schepherd
 USER root
 RUN find /dm /opt/datamitsu-config -type d -exec chown datamitsu:0 {} + -exec chmod g=u {} +
 USER datamitsu

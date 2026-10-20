@@ -59,7 +59,7 @@ interface OciMap {
 
 interface OciMapEntry {
   app?: string;
-  kind: "app" | "binary" | "runtime" | "uv-python";
+  kind: "app" | "binary" | "parser" | "prepared" | "runtime" | "uv-python";
   subtree: string;
 }
 

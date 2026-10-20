@@ -352,6 +352,47 @@ Two runtime facts that are easy to get wrong, both measured rather than assumed:
 
 The census sees svelte only because `scripts/generate-rule-inventory.ts` adds `svelte` to the synthetic manifest and `probe.svelte` / `probe.svelte.ts` to the probe list — the same reason storybook and vanilla-extract needed their own shapes. 86 svelte rules, 37 at error.
 
+## JSON Schema Validation
+
+schepherd validates JSON and YAML configs against a SchemaStore-derived catalog in an OCI registry,
+pinned by digest. It never validates anything itself: it materializes the schema and runs the
+Sourcemeta `jsonschema` CLI, which the schepherd app declares in `dependsOn` and binds exactly with
+`runtimeEnv.JSONSCHEMA_BIN`. `schepherd --version` is a usage error, hence `versionCheck: ["version"]`.
+
+Schepherd prepares the whole pinned catalog with `materialize` when the managed app is
+installed. The app's `prepare.args` contain the repository and digest, so a catalog change selects
+a new prepared state. `runtimeEnv.SCHEPHERD_CACHE_DIR` binds `${APP_PREPARED}`; the lint operation
+sets `SCHEPHERD_OFFLINE=1`, so checks never fetch a missing schema. Preparation needs the network
+unless its ready state was restored from an OCI bundle. Both Docker variants and OCI maps carry
+`.prepared/schepherd`, including its readiness marker, not just the native binary.
+
+The catalog puller removes the app's `SCHEPHERD_CACHE_DIR` binding from its child environment: it
+must use the ordinary writable cache, or the developer's explicit cache override, when checking
+another catalog. Never mutate the prepared state of the current release from a registry update.
+
+[src/datamitsu-config/registries/schepherdCatalog.json](src/datamitsu-config/registries/schepherdCatalog.json)
+is generated — never edit it. `task pull:external:update` pins the newest `catalog-*` revision past
+the minimum release age and regenerates it; `task pull:external` recomputes it and fails on drift.
+It holds the digest the managed `schepherd.toml` renders, and the operation's `globs`, which are
+derived from the catalog rather than written by hand, because the validator decides what may reach
+it:
+
+- **Only JSON and YAML.** The validator reads nothing else and reports a TOML, JSON5 or
+  extensionless file as a parse failure of a valid file.
+- **No JSONC.** It parses strict JSON, so a `tsconfig.json` with a comment fails. The `.json`
+  patterns of the IDs in `JSONC_SCHEMA_IDS` (`scripts/pull-schepherd-catalog.ts`) are dropped; their
+  YAML patterns stay.
+- **Only schemas it compiles.** Measured on catalog 20260929.1809 with jsonschema 16.12.0: 144 of
+  890 schemas with `fileMatch` do not compile — mostly `$defs` under draft-07, and a top-level
+  `$ref` with siblings — among them `buf`, `kustomization`, `pulumi`, `firebase`, `yamlfmt` and
+  `.claude/settings.json`. Every such file would fail on a defect of the schema. They are recorded
+  in `unusable` with the validator's message, so the pull diff shows a schema that stops or starts
+  compiling. A validator bump changes the set: rerun `pull:external:update` after it.
+
+The managed config always takes the digest from this package — the globs are only right for that
+catalog — and leaves `repository` to the project, since a mirror keeps the digest. `--continue` is on
+because the validator otherwise stops at the first invalid file of a batch.
+
 ## No Warn Severity
 
 Every rule is `error` or `off`. Nothing is `warn`.

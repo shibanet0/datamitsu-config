@@ -29,6 +29,9 @@ const words: string[] = [
   "templater",
   "zizmor",
   "zizmorcore",
+  // JSON Schema validation: schepherd and the Sourcemeta validator it runs.
+  "schepherd",
+  "sourcemeta",
   "aeslint",
   "anchore",
   "antebudimir",

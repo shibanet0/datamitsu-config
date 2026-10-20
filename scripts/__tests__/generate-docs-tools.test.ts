@@ -199,6 +199,13 @@ describe("generateToolsMarkdown", () => {
     expect(result).not.toMatch(/\d{4}-\d{2}-\d{2}/);
   });
 
+  it("should summarize a glob list too long for a table cell", () => {
+    const globs = Array.from({ length: 51 }, (_, index) => `**/file-${index}.json`);
+    const result = generateToolsMarkdown([{ ...sampleTools[0]!, globs }]);
+    expect(result).toContain("51 patterns, too many to list");
+    expect(result).not.toContain("**/file-0.json");
+  });
+
   it("should include tool count", () => {
     const result = generateToolsMarkdown(sampleTools);
     expect(result).toContain("**2 tools**");

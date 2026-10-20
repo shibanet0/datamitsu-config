@@ -365,6 +365,11 @@
       "app": "jq"
     },
     {
+      "subtree": ".bin/jsonschema",
+      "kind": "binary",
+      "app": "jsonschema"
+    },
+    {
       "subtree": ".bin/just",
       "kind": "binary",
       "app": "just"
@@ -413,6 +418,11 @@
       "subtree": ".bin/ruff",
       "kind": "binary",
       "app": "ruff"
+    },
+    {
+      "subtree": ".bin/schepherd",
+      "kind": "binary",
+      "app": "schepherd"
     },
     {
       "subtree": ".bin/scorecard",
@@ -548,6 +558,11 @@
       "subtree": ".parsers/core",
       "kind": "parser",
       "app": "core"
+    },
+    {
+      "subtree": ".prepared/schepherd",
+      "kind": "prepared",
+      "app": "schepherd"
     }
   ]
 }

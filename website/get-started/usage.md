@@ -323,6 +323,24 @@ globalThis.getConfig = getConfig;
 pnpm dm config reconcile --tools gitleaks
 ```
 
+JSON and YAML files with a known schema — `package.json`, workflows, `dependabot.yml`,
+`pnpm-workspace.yaml` and some 1,300 other patterns — are validated by schepherd. The schemas come
+from a catalog pinned by digest in this package. Installing Schepherd prepares the whole
+catalog from `ghcr.io` once; checks then run offline against that verified cache. Docker images
+and OCI toolchain bundles include the prepared catalog, so restored installations need no schema
+downloads. A fresh installation without that prepared state needs network access. Files the
+validator cannot read are left out: TOML, JSON5, and known JSONC configurations such as `tsconfig.json`.
+
+To validate a file against a schema of your own, eject `schepherd` as above and declare it in
+`schepherd.toml`, then add its path to the operation's `globs` in your `datamitsu.config.*`:
+schepherd validates only the files datamitsu hands it.
+
+```toml
+[schemas."company-config"]
+path = "schemas/company-config.schema.json"
+file_match = ["config/company.json"]
+```
+
 Naming checks are opt-in and split between two tools: alint checks file names, ls-lint checks
 directory names. Enable either with `tools["alint"].skip: false` or `tools["ls-lint"].skip: false`,
 then run `pnpm dm init` and `pnpm dm config reconcile` so both the managed base in `.datamitsu/`
