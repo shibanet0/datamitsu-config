@@ -1,8 +1,12 @@
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
   isUnstableVersion,
   readDatamitsuVersion,
+  syncDatamitsuVersion,
   updateMinVersion,
   updateSelfPin,
 } from "../sync-datamitsu-version.ts";
@@ -92,9 +96,54 @@ describe("updateMinVersion", () => {
     expect(result).toContain('return "0.0.11-rc.1"');
   });
 
+  it.each(["0.5.1", "0.4.99", "0.5.2-rc.1"])(
+    "rejects a core pin %s below the configuration's required features",
+    (version) => {
+      const config = 'const getMinVersion = () => { return "0.5.2"; };';
+      expect(() => updateMinVersion(config, version)).toThrow(
+        "Cannot lower the required datamitsu version",
+      );
+    },
+  );
+
+  it("does not mistake a newer minor for a downgrade from a larger patch", () => {
+    const config = 'const getMinVersion = () => { return "0.5.12"; };';
+    expect(updateMinVersion(config, "0.6.0")).toEqual([
+      'const getMinVersion = () => { return "0.6.0"; };',
+      true,
+    ]);
+  });
+
   it("should throw on missing return pattern", () => {
     expect(() => updateMinVersion("const x = 1;", "0.0.11")).toThrow(
       'Could not find return "..." pattern',
     );
+  });
+});
+
+describe("syncDatamitsuVersion", () => {
+  it("rejects an incompatible stable core before rewriting either configuration", async () => {
+    const root = await mkdtemp(path.join(tmpdir(), "datamitsu-min-version-"));
+    try {
+      const configPath = path.join(root, "src/datamitsu-config/datamitsu.config.ts");
+      const rootConfigPath = path.join(root, "datamitsu.config.ts");
+      const source = 'const getMinVersion = () => { return "0.5.2"; };';
+      const rootSource = 'catalog:\n  "@datamitsu/datamitsu": 0.5.2\n';
+      await mkdir(path.dirname(configPath), { recursive: true });
+      await writeFile(configPath, source);
+      await writeFile(rootConfigPath, rootSource);
+      await writeFile(
+        path.join(root, "pnpm-workspace.yaml"),
+        'catalog:\n  "@datamitsu/datamitsu": 0.5.1\n',
+      );
+
+      await expect(syncDatamitsuVersion(root)).rejects.toThrow(
+        "Cannot lower the required datamitsu version",
+      );
+      expect(await readFile(configPath, "utf8")).toBe(source);
+      expect(await readFile(rootConfigPath, "utf8")).toBe(rootSource);
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
   });
 });

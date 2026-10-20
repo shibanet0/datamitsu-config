@@ -8,11 +8,10 @@
  *
  * How it works, and two deliberate choices:
  *
- * 1. Inheritance, not copying. The temp repo's own datamitsu.config.js declares `getBeforeConfigs()`
- *    pointing at this repo's datamitsu.config.base.js by its absolute path. That exercises the real
- *    config-inheritance path a consumer uses, with no npm pack / install of the config package. It
- *    also lets the fixture layer `skip: true` onto prose/spell tools that a fresh project has not
- *    configured yet (vale, harper-cli, cspell) and knip (no source tree).
+ * 1. Both entry paths. First copy the built bundle as the auto-discovered config and initialize it
+ *    without wrapper flags. Then use getBeforeConfigs() to exercise layer inheritance before
+ *    reconcile/check, skipping only prose tools without project dictionaries and knip without a
+ *    source tree. The separate compatibility smoke checks an unsupported stable binary.
  * 2. Isolated pnpm store. `datamitsu config reconcile`/`init` patch files inside the temp repo's
  *    node_modules, which hard-link into whatever pnpm store the install used. Pointing the store at
  *    a throwaway dir (npm_config_store_dir) keeps those writes off the developer's global store —
@@ -27,10 +26,11 @@
  * Usage: node scripts/test-fresh-init.ts [--keep] [--verbose]
  */
 import { execa } from "execa";
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
+import { fixtureEnvironment } from "../src/apps/test-support/env.ts";
 import { readDatamitsuVersion } from "./sync-datamitsu-version.ts";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
@@ -137,7 +137,7 @@ async function main(): Promise<void> {
   await mkdir(work, { recursive: true });
   await mkdir(storeDir, { recursive: true });
   // Isolated store keeps reconcile/init's node_modules patches off the global store.
-  const env: NodeJS.ProcessEnv = { ...process.env, npm_config_store_dir: storeDir };
+  const env = fixtureEnvironment({ npm_config_store_dir: storeDir });
 
   try {
     await writeFile(
@@ -155,8 +155,8 @@ async function main(): Promise<void> {
       path.join(work, "pnpm-workspace.yaml"),
       `allowBuilds:\n  esbuild: false\nstoreDir: ${storeDir}\n`,
     );
-    await writeFile(path.join(work, "datamitsu.config.js"), fixtureConfig(BASE_CONFIG));
-    // The fixture installs the unstable core into node_modules. Its Go toolchain can temporarily
+    await copyFile(BASE_CONFIG, path.join(work, "datamitsu.config.js"));
+    // The fixture installs the pinned core into node_modules. Its Go toolchain can temporarily
     // carry newly disclosed vulnerabilities before the next core build; that is not consumer code
     // and must not make this configuration onboarding smoke depend on the core's release cadence.
     await writeFile(path.join(work, ".datamitsuignore"), "**/*: grype\n");
@@ -173,6 +173,11 @@ async function main(): Promise<void> {
       await run("install", "pnpm", ["add", "-D", `@datamitsu/datamitsu@${version}`], work, env),
     ); // cspell:disable-line
     assertOk("init", await run("datamitsu init", "pnpm", ["exec", "datamitsu", "init"], work, env));
+    await writeFile(path.join(work, "datamitsu.config.js"), fixtureConfig(BASE_CONFIG));
+    assertOk(
+      "layered init",
+      await run("layered datamitsu init", "pnpm", ["exec", "datamitsu", "init"], work, env),
+    );
     assertOk(
       "reconcile",
       await run(
@@ -216,7 +221,7 @@ async function main(): Promise<void> {
     if (KEEP) {
       console.log(`\n(kept fixture at ${work})`);
     } else {
-      await rm(work, { force: true, recursive: true });
+      await rm(base, { force: true, recursive: true });
     }
   }
 }
