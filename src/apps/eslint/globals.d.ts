@@ -48,10 +48,3 @@ declare module "eslint-plugin-no-use-extend-native" {
   };
   export { configs };
 }
-
-declare module "eslint-plugin-security" {
-  const configs: {
-    recommended: any;
-  };
-  exports = { configs };
-}

@@ -215,9 +215,13 @@ Read \`.datamitsu/ai/skills/backlog/instructions.md\` from the project root and 
 
 The instructions file is the source of truth for this skill — it is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it is always up to date with the current chunks.`;
 
-const SKILL_BACKLOG_ADAPTER_CODEX = `# /backlog
+const SKILL_BACKLOG_ADAPTER_CODEX = `---
+name: backlog
+description: >-
+  Read, create, triage and work deferred-work items in docs/backlog/, one Markdown file per item tracked in git. Use when recording a defect to fix later, reviewing the backlog or picking up a deferred item.
+---
 
-Read, create, triage and work deferred-work items in \`docs/backlog/\` — one Markdown file per item, tracked in git.
+# Backlog
 
 Read \`.datamitsu/ai/skills/backlog/instructions.md\` from the project root and follow it precisely.
 
@@ -867,9 +871,13 @@ Read \`.datamitsu/ai/skills/cleanup-agents-md/instructions.md\` from the project
 
 The instructions file is the source of truth for this skill — it is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it is always up to date with the current chunks.`;
 
-const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX = `# /cleanup-agents-md
+const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX = `---
+name: cleanup-agents-md
+description: >-
+  Clean up and compact the project's AGENTS.md without losing rules, conditions, exceptions or commands. Use when deduplicating shared rules, extracting non-rule content, removing migration cruft or moving deferred work to docs/backlog/.
+---
 
-Cleanup and compact the project AGENTS.md — remove duplicates of the shared datamitsu chunks and of other rules in the same file, extract non-rule content (architecture docs, templates, release notes) to separate files, strip migration cruft, move deferred work to \`docs/backlog/\`, and shrink the rules that remain without losing a single rule, condition, exception, obligation or exact command.
+# Cleanup AGENTS.md
 
 Read \`.datamitsu/ai/skills/cleanup-agents-md/instructions.md\` from the project root and follow it precisely.
 
@@ -1019,9 +1027,13 @@ Read \`.datamitsu/ai/skills/scaffold-stack/instructions.md\` from the project ro
 
 The instructions file is the source of truth for this skill — it is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it always reflects the current Preferred Stack rules.`;
 
-const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX = `# /scaffold-stack
+const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX = `---
+name: scaffold-stack
+description: >-
+  Scaffold or extend a project using the preferred stack, resolve dependency versions and wire pnpm-workspace, Turborepo and Taskfile conventions. Use when creating a project, app or library, or adding a major dependency to an existing one.
+---
 
-Scaffold or extend a project using the preferred stack: pick libraries from the Preferred Stack catalogue, resolve the right versions (match the repo, else latest stable), and wire the pnpm-workspace / Turborepo / Taskfile conventions.
+# Scaffold Preferred Stack
 
 Read \`.datamitsu/ai/skills/scaffold-stack/instructions.md\` from the project root and follow it precisely.
 
@@ -1281,9 +1293,13 @@ Read \`.datamitsu/ai/skills/setup-tsconfig/instructions.md\` from the project ro
 
 The instructions file is the source of truth for this skill — it is regenerated automatically by \`datamitsu\` from the central \`datamitsu-config\` repository, so it is always up to date with the current presets and rules in \`.datamitsu/tsconfig.md\`.`;
 
-const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX = `# /setup-tsconfig
+const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX = `---
+name: setup-tsconfig
+description: >-
+  Configure or fix tsconfig.json to extend the matching @shibanet0/datamitsu-config/tsconfig preset using .datamitsu/tsconfig.md. Use when setting up TypeScript or choosing a preset for an app, library, service, CLI or monorepo workspace.
+---
 
-Configure or fix the project's \`tsconfig.json\` to extend the correct preset from \`@shibanet0/datamitsu-config/tsconfig/*\` based on the rules in \`.datamitsu/tsconfig.md\`.
+# Setup TypeScript Config
 
 Read \`.datamitsu/ai/skills/setup-tsconfig/instructions.md\` from the project root and follow it precisely.
 
@@ -1342,13 +1358,13 @@ export const REMOVED_SKILLS: string[] = [];
 // ── Hashes (sha256, computed at build time) ────────────────────────────────
 export const SKILL_BACKLOG_INSTRUCTIONS_HASH = "58242e544744f1c611638ba10c38ef65c5efe70e60604b8ac11fa6766897db08"; // prettier-ignore
 export const SKILL_BACKLOG_ADAPTER_CLAUDE_HASH = "1e13794a51fe1b104c87a556145626df9d71f513f8355c6ac2a85f4aadbc7391"; // prettier-ignore
-export const SKILL_BACKLOG_ADAPTER_CODEX_HASH = "84ee9c13520e092e58b370bed9de566d96632870fc011c9f12b6a63c7e962ac0"; // prettier-ignore
+export const SKILL_BACKLOG_ADAPTER_CODEX_HASH = "231d30525bd99eab96c16443c88831b2806aa4e02e781bda8302989b8bb7895f"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_INSTRUCTIONS_HASH = "622d852ca069742cf6dd803d5744b008e6f9480c75c74b42c4884b06bfddf3ce"; // prettier-ignore
 export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CLAUDE_HASH = "ba21e41a641e6c6f01309fe6563e0c961a4acbd9b55c9eabadb2c8459d55dda2"; // prettier-ignore
-export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "85dab71e883e003e2ee4a9d3f3728c30e0d4535c6062956b412e6e50a5287b9c"; // prettier-ignore
+export const SKILL_CLEANUP_AGENTS_MD_ADAPTER_CODEX_HASH = "ddb73c25ea30cdb4bf7aa451e1eeadd5171806d1e8127d288a7fe7790bb48ee8"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "962b799e2cbafcae04fd096d331e193194e6d7a0251472efb7581a545858decb"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
-export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "b0deeb09ffdc91f7ae267fecb849ca1dd9e530304502492601f6caa345ee22aa"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "fddbcdcb5bd8d7928cfcf15fc885d2b8376b4d462acc157f341d9de6a1eeb0f0"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "db4dfb22d2e3e211e494826d9da9ecf365b68cfa1b44682fd67e40b50fa8c617"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_ADAPTER_CLAUDE_HASH = "923a388c3ec8d1ab8bb8859c2c4ed13ead607d253aec01a428d0df654bc23911"; // prettier-ignore
-export const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX_HASH = "b47e306d7f1804b6907cd262893d71b39ba82c13f7cdbb810fc695526f4a519c"; // prettier-ignore
+export const SKILL_SETUP_TSCONFIG_ADAPTER_CODEX_HASH = "03749b08fd1dc64f5be2c7ac8e3f5a8742b168f15d41469eb0d688cdc7d13028"; // prettier-ignore

@@ -60,7 +60,7 @@ async function uvSupportedPythonVersions(uvVersion: string): Promise<string[]> {
     // Not cached yet — fall through to the network.
   }
 
-  const url = `https://raw.githubusercontent.com/astral-sh/uv/${uvVersion}/crates/uv-python/download-metadata.json`;
+  const url = `https://raw.githubusercontent.com/astral-sh/uv/${uvVersion}/crates/uv-python-managed/download-metadata.json`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`${url} returned ${response.status}`);

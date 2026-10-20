@@ -148,7 +148,7 @@ The work has three deliverables, in this order:
       `{ id, kind, note?, git?: string, glob?: string, regex?: string, negate?: true }`
   - `id` is a stable camelCase key
   - `kind` is metadata only (`dependency | build | cache | lockfile | generated | vendored | encrypted
-| secret | release | metadata | fixture | editor | log`), allowed to grow and never used to
+    | secret | release | metadata | fixture | editor | log`), allowed to grow and never used to
     select
   - one entry may carry spellings for several syntaxes
 - [x] `src/ignore/profile.ts`: `resolve(profile)`

@@ -28,6 +28,12 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
+`name` and `description` metadata. Codex discovers them automatically; invoke one
+with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack` or `$setup-tsconfig`.
+It removes the previous managed `.codex/prompts/<name>.md` files while preserving
+unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
+
 For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
 `trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
 

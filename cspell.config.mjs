@@ -6,6 +6,8 @@ export default defineConfig((prev) => {
     "datetimez",
     "extglobs",
     "frontmatter",
+    "gomod",
+    "rightarg",
     "triaging",
     "errmsg",
     "flynt",
