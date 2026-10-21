@@ -360,6 +360,11 @@
       "app": "helm"
     },
     {
+      "subtree": ".bin/helmfmt",
+      "kind": "binary",
+      "app": "helmfmt"
+    },
+    {
       "subtree": ".bin/jq",
       "kind": "binary",
       "app": "jq"

@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **116 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **117 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -23,7 +23,7 @@ This configuration manages **116 apps** across multiple runtimes (binary, bun, n
 - **Git & Releases** (8 apps): commitlint, conventional-changelog, dm-internal-lefthook-upstream, etc.
 - **HTTP & gRPC Clients** (3 apps): grpcurl, httpstat, xh
 - **Infrastructure as Code** (4 apps): terraform-docs, terragrunt, tfupdate, etc.
-- **Linters & Formatters** (41 apps): actionlint, alint, ast-grep, etc.
+- **Linters & Formatters** (42 apps): actionlint, alint, ast-grep, etc.
 - **Package Managers** (2 apps): pnpm, utpm
 - **Secrets & Signing** (4 apps): age, age-keygen, cosign, etc.
 - **Security Scanners** (20 apps): bandit, bearer, blint, etc.
@@ -80,6 +80,7 @@ This configuration manages **116 apps** across multiple runtimes (binary, bun, n
 | hadolint                      | Linters & Formatters       | binary  | [Info](https://github.com/hadolint/hadolint){:target="_blank"}                                                                         | Dockerfile linter, validate inline bash, written in Haskell                                                                                                                                             |
 | harper-cli                    | Documentation & Spelling   | binary  | [Info](https://github.com/Automattic/harper){:target="_blank"}                                                                         | Offline, privacy-first grammar checker. Fast, open-source, Rust-powered                                                                                                                                 |
 | helm                          | Containers & Kubernetes    | binary  | N/A                                                                                                                                    | The Kubernetes Package Manager                                                                                                                                                                          |
+| helmfmt                       | Linters & Formatters       | binary  | [Info](https://github.com/digitalstudium/helmfmt){:target="_blank"}                                                                    | Code formatter for helm charts                                                                                                                                                                          |
 | httpstat                      | HTTP & gRPC Clients        | python  | [Info](https://pypi.org/project/httpstat){:target="_blank"}                                                                            | curl statistics made simple                                                                                                                                                                             |
 | jq                            | Data Processing            | binary  | [Info](https://github.com/jqlang/jq){:target="_blank"}                                                                                 | Command-line JSON processor                                                                                                                                                                             |
 | just                          | Task Runners & Dev Servers | binary  | [Info](https://github.com/casey/just){:target="_blank"}                                                                                | 🤖 Just a command runner                                                                                                                                                                                |

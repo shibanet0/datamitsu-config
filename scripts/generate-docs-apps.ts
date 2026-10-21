@@ -108,6 +108,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "eslint",
     "golangci-lint",
     "hadolint",
+    "helmfmt",
     "knip",
     "ktfmt",
     "ktlint",

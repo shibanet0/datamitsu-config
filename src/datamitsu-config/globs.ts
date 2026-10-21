@@ -124,6 +124,7 @@ export const helmGlobs: string[] = [
   "**/templates/**/*.yaml",
   "**/templates/**/*.yml",
   "**/templates/**/*.tpl",
+  "**/templates/**/*.gotmpl",
 ];
 
 export const jsonGlobs: string[] = ["**/*.json"];

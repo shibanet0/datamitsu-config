@@ -4,6 +4,9 @@ export default defineConfig((prev) => {
   const words = [
     "browserslistrc",
     "datetimez",
+    "digitalstudium",
+    "helmfmt",
+    "gotmpl",
     "extglobs",
     "frontmatter",
     "gomod",

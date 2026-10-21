@@ -1,5 +1,6 @@
 import { alintYml } from "./managed-configs/_alint_yml";
 import { formatTerraformSpacingSh } from "./managed-configs/_datamitsu_scripts_format_terraform_spacing_sh";
+import { datamitsuignore } from "./managed-configs/_datamitsuignore";
 import { dclintYaml } from "./managed-configs/_dclint_yaml";
 import { dockerignore } from "./managed-configs/_dockerignore";
 import { editorconfig } from "./managed-configs/_editorconfig";
@@ -9,6 +10,7 @@ import { githubZizmorYml } from "./managed-configs/_github_zizmor_yml";
 import { gitignore } from "./managed-configs/_gitignore";
 import { gitleaksToml } from "./managed-configs/_gitleaks_toml";
 import { golangciYaml } from "./managed-configs/_golangci_yaml";
+import { helmfmt } from "./managed-configs/_helmfmt";
 import { lsLintYml } from "./managed-configs/_ls_lint_yml";
 import { markdownlintCli2Mjs } from "./managed-configs/_markdownlint_cli2_mjs";
 import { nodeVersion } from "./managed-configs/_node_version";
@@ -52,6 +54,7 @@ import { turboJson } from "./managed-configs/turbo_json";
 export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
   ".datamitsu/scripts/format-terraform-spacing.sh": formatTerraformSpacingSh,
+  ".datamitsuignore": datamitsuignore,
   ".dclint.yaml": dclintYaml,
   ".dockerignore": dockerignore,
   ".editorconfig": editorconfig,
@@ -61,6 +64,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".gitignore": gitignore,
   ".gitleaks.toml": gitleaksToml,
   ".golangci.yaml": golangciYaml,
+  ".helmfmt": helmfmt,
   ".ls-lint.yml": lsLintYml,
   ".markdownlint-cli2.mjs": markdownlintCli2Mjs,
   ".node-version": nodeVersion,
