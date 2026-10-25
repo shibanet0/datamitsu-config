@@ -611,7 +611,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:53f1be1c35663dddcb15e67dd8148736",
+      expectChainHash: "xxh3:352dfb052f13cbc68dcef0bd09d23143",
     },
   },
   tools: {
