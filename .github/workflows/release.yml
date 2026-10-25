@@ -21,22 +21,14 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - env:
+          RELEASE_VERSION: ${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
+        name: Select and persist release version
+        run: node scripts/select-release-version.mjs
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-      - name: Sync version to package.json
-        run: |
-          VERSION=${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
-          node -e "
-            const pkg = require('./package.json');
-            pkg.version = '$VERSION';
-            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
-          echo "Version set to: $VERSION"
-          grep '"version":' package.json
       - name: Verify critical files exist
         run: |
-          # The build produces the gitignored baseline; the shipped artifact
-          # (datamitsu.config.js, what consumers load) is materialized from it.
           test -f datamitsu.config.base.js || { echo "Error: datamitsu.config.base.js missing"; exit 1; }
           cp datamitsu.config.base.js datamitsu.config.js
           test -f dist-datamitsu-config/datamitsu.config.d.ts || { echo "Error: dist-datamitsu-config/datamitsu.config.d.ts missing"; exit 1; }
@@ -418,6 +410,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - env:
+          RELEASE_VERSION: ${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
+        name: Select and persist release version
+        run: node scripts/select-release-version.mjs
       - name: Setup environment
         uses: ./.github/actions/setup-environment
         with:

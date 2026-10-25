@@ -16,7 +16,6 @@ const _getConfig = (config: config.Config): config.Config => ({
       },
     },
   },
-  // These carry rules of this repository's own, so they stay in the repository; every other
   // ejectable config lives in .datamitsu/configs/.
   ejectConfigs: ["alint", "droast", "ls-lint", "yamlfmt"],
   managedConfigs: {
@@ -484,7 +483,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261025.6558ed0
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261025.a25a13a
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.28.1
@@ -611,7 +610,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:d1cf701a1f1ccd9a810982735b97837c",
+      expectChainHash: "xxh3:f231b599d8979363bcd259b9ae9a8a22",
     },
   },
   tools: {
