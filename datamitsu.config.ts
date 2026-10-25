@@ -383,7 +383,7 @@ post-checkout:
     "@stylistic/eslint-plugin": "5.10.0",
     "@types/node": "26.6.5",
     "@typescript-eslint/utils": "8.71.2",
-    "@vitest/coverage-v8": "5.0.4",
+    "@vitest/coverage-v8": "5.0.5",
     "@vitest/eslint-plugin": "1.6.27",
     "caniuse-lite": "1.0.30001816",
     "conventional-changelog-conventionalcommits": "10.4.1",
@@ -449,7 +449,7 @@ post-checkout:
     "tsdown": "0.23.1",
     "typescript-eslint": "8.71.2",
     "unrun": "0.3.1",
-    "vitest": "5.0.4",
+    "vitest": "5.0.5",
     "yaml": "2.9.1"
   },
   "packageManager": "pnpm@12.14.0",
@@ -465,7 +465,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:f80be4c5b9b52df14fd1af3cd895e236",
+      expectChainHash: "xxh3:a48f7b003d8d5c7bae7d9cd92ac1a00d",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -496,7 +496,7 @@ catalog:
   "@types/node": 26.6.5
   "@types/remove-markdown": 0.3.4
   "@typescript-eslint/utils": 8.71.2
-  "@vitest/coverage-v8": 5.0.4
+  "@vitest/coverage-v8": 5.0.5
   "@vitest/eslint-plugin": 1.6.27
   caniuse-lite: 1.0.30001816
   commander: 15.0.0
@@ -568,7 +568,7 @@ catalog:
   typescript: 6.0.3
   typescript-eslint: 8.71.2
   unrun: 0.3.1
-  vitest: 5.0.4
+  vitest: 5.0.5
   yaml: 2.9.1
 dangerouslyAllowAllBuilds: false
 dedupeDirectDeps: true
@@ -610,7 +610,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:f231b599d8979363bcd259b9ae9a8a22",
+      expectChainHash: "xxh3:93502b8cb151c6760bccd144b6c90ee5",
     },
   },
   tools: {

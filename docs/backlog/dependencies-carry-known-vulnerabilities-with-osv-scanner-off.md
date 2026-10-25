@@ -39,4 +39,14 @@ get osv-scanner 2.6.0 in CI and will see their own findings.
 
 Found during the 2026-09 registry bump that moved osv-scanner from 2.5.1 to 2.6.0.
 
+Rechecked on 2026-10-25 after the registry updates. A targeted in-range lock refresh
+plus Vitest/coverage 5.0.5 reduced `pnpm audit` from 42 findings (2 critical, 22 high,
+13 moderate, 5 low) to 10 (2 critical, 1 high, 4 moderate, 3 low). These are npm audit
+counts, not a new OSV measurement. The remaining reported packages are Handlebars
+4.7.9 and deepmerge-ts 7.1.5. eslint-plugin-boundaries 7.2.0 pins Handlebars 4.7.9
+exactly, so an in-range refresh cannot select the fixed 4.7.10. deepmerge-ts requires
+the 8.x major. Neither parent constraint was overridden and scanning stays disabled;
+the original triage remains worth fixing. Prefer parent releases that adopt the fixes
+over forcing incompatible versions into their dependency graphs.
+
 <!-- cspell:ignore humanfs smol -->
