@@ -484,7 +484,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.5.2
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261025.6558ed0
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.26.5
