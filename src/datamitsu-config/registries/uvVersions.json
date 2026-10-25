@@ -12,7 +12,7 @@
   "checkov": {
     "description": "Infrastructure as code static analysis",
     "packageName": "checkov",
-    "version": "3.3.28"
+    "version": "3.3.29"
   },
   "deptry": {
     "description": "A command line utility to check for unused, missing and transitive dependencies in a Python project.",
@@ -37,7 +37,7 @@
   "semgrep": {
     "description": "Lightweight static analysis for many languages. Find bug variants with patterns that look like source code.",
     "packageName": "semgrep",
-    "version": "1.180.0"
+    "version": "1.181.0"
   },
   "yamllint": {
     "description": "A linter for YAML files.",
@@ -47,6 +47,6 @@
   "zensical": {
     "description": "A modern static site generator built by the creators of Material for MkDocs",
     "packageName": "zensical",
-    "version": "0.0.70"
+    "version": "0.0.71"
   }
 }

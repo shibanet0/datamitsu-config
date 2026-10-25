@@ -7,8 +7,8 @@ copyright = "Copyright &copy; 2026 Alexander Svinarev (shibanet0)"
 repo_url = "https://github.com/shibanet0/datamitsu-config"
 repo_name = "shibanet0/datamitsu-config"
 
-# zensical publishes every file under docs_dir and reads no exclude list, so the site has a
-# directory of its own and docs/ keeps what must not be published (backlog, plans).
+# Zensical supports exclusions, but keeping unpublished backlog and plans outside
+# docs_dir prevents publication if an exclusion is missed.
 docs_dir = "website"
 site_dir = "site"
 extra_css = ["assets/stylesheets/extra.css"]
