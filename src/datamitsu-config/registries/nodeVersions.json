@@ -2,7 +2,7 @@
   "@antebudimir/eslint-plugin-vanilla-extract": {
     "description": "Comprehensive ESLint plugin for vanilla-extract with CSS property ordering, style validation, and best practices enforcement. Supports alphabetical, concentric and custom CSS ordering, auto-fixing, and zero-runtime safety.",
     "packageName": "@antebudimir/eslint-plugin-vanilla-extract",
-    "version": "1.18.0"
+    "version": "1.18.1"
   },
   "@commitlint/cli": {
     "description": "Lint your commit messages",
@@ -42,7 +42,7 @@
   "@eslint-react/eslint-plugin": {
     "description": "ESLint React's unified ESLint plugin that combines all individual plugins into one.",
     "packageName": "@eslint-react/eslint-plugin",
-    "version": "5.26.5"
+    "version": "5.28.1"
   },
   "@eslint/config-helpers": {
     "description": "Helper utilities for creating ESLint configuration",
@@ -57,7 +57,7 @@
   "@next/eslint-plugin-next": {
     "description": "ESLint plugin for Next.js.",
     "packageName": "@next/eslint-plugin-next",
-    "version": "16.4.0"
+    "version": "16.4.2"
   },
   "@prettier/plugin-xml": {
     "description": "prettier plugin for XML",
@@ -86,7 +86,7 @@
   "caniuse-lite": {
     "description": "A smaller version of caniuse-db, with only the essentials!",
     "packageName": "caniuse-lite",
-    "version": "1.0.30001815"
+    "version": "1.0.30001816"
   },
   "conventional-changelog": {
     "description": "Generate a changelog from git metadata.",
@@ -101,7 +101,7 @@
   "cspell": {
     "description": "A Spelling Checker for Code!",
     "packageName": "cspell",
-    "version": "10.3.6"
+    "version": "10.4.0"
   },
   "dclint": {
     "description": "A command-line tool for validating and enforcing best practices in Docker Compose files.",
@@ -111,7 +111,7 @@
   "eslint": {
     "description": "An AST-based pattern checker for JavaScript.",
     "packageName": "eslint",
-    "version": "10.12.0"
+    "version": "10.13.0"
   },
   "eslint-config-prettier": {
     "description": "Turns off all rules that are unnecessary or might conflict with Prettier.",
@@ -211,7 +211,7 @@
   "eslint-plugin-jsdoc": {
     "description": "JSDoc linting rules for ESLint.",
     "packageName": "eslint-plugin-jsdoc",
-    "version": "65.3.1"
+    "version": "65.3.11"
   },
   "eslint-plugin-json": {
     "description": "eslint plugin for JSON files",
@@ -251,7 +251,7 @@
   "eslint-plugin-oxlint": {
     "description": "Turn off all rules already supported by oxlint",
     "packageName": "eslint-plugin-oxlint",
-    "version": "1.87.0"
+    "version": "1.88.0"
   },
   "eslint-plugin-perfectionist": {
     "description": "ESLint plugin for sorting various data such as objects, imports, types, enums, JSX props, etc.",
@@ -321,7 +321,7 @@
   "eslint-plugin-turbo": {
     "description": "ESLint plugin for Turborepo",
     "packageName": "eslint-plugin-turbo",
-    "version": "2.11.7"
+    "version": "2.11.9"
   },
   "eslint-plugin-unicorn": {
     "description": "More than 300 powerful ESLint rules",
@@ -356,12 +356,12 @@
   "oxfmt": {
     "description": "Formatter for the JavaScript Oxidation Compiler",
     "packageName": "oxfmt",
-    "version": "0.72.0"
+    "version": "0.73.0"
   },
   "oxlint": {
     "description": "Linter for the JavaScript Oxidation Compiler",
     "packageName": "oxlint",
-    "version": "1.87.0"
+    "version": "1.88.0"
   },
   "oxlint-tsgolint": {
     "description": "High-performance type-aware TypeScript linter powered by typescript-go, for use with oxlint.",
@@ -371,7 +371,7 @@
   "playwright-chromium": {
     "description": "A high-level API to automate Chromium",
     "packageName": "playwright-chromium",
-    "version": "1.64.0"
+    "version": "1.64.1"
   },
   "pnpm": {
     "description": "Fast, disk space efficient package manager",
@@ -391,7 +391,7 @@
   "prettier-plugin-embed": {
     "description": "A configurable Prettier plugin to format embedded languages in JS/TS files.",
     "packageName": "prettier-plugin-embed",
-    "version": "0.7.1"
+    "version": "0.7.3"
   },
   "prettier-plugin-jsdoc": {
     "description": "A Prettier plugin to format JSDoc comments.",
@@ -416,7 +416,7 @@
   "sort-package-json": {
     "description": "Sort an Object or package.json based on the well-known package.json keys",
     "packageName": "sort-package-json",
-    "version": "4.0.0"
+    "version": "4.1.0"
   },
   "stylelint": {
     "description": "A mighty CSS linter that helps you avoid errors and enforce conventions.",
