@@ -88,6 +88,12 @@ function getConfig(cfg: config.Config): config.Config {
     projectTypes,
     runtimes: {
       ...mapOfRuntimes,
+      "uv-python314": {
+        ...mapOfRuntimes.uv,
+        kind: "uv",
+        mode: "managed",
+        uv: { pythonVersion: "3.14.8" },
+      },
       ...(mapOfRuntimes?.node
         ? {
             node: {

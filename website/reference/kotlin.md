@@ -3,6 +3,10 @@
 ktfmt owns layout; ktlint checks names and Kotlin idioms. Both run on `.kt` and `.kts`, including
 Gradle scripts, using the managed JVM without invoking Gradle or compiling the application.
 
+The managed JDK 27 runtime supports macOS arm64, Linux amd64/arm64 and Windows
+amd64. It does not provide an Intel Mac runtime. ktlint may print JVM native-access
+or deprecated Unsafe warnings; these are upstream startup warnings, not Kotlin findings.
+
 ## Formatter policy
 
 The CLI starts from `--google-style` and enables `.editorconfig` overrides explicitly. The

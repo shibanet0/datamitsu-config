@@ -453,7 +453,7 @@ post-checkout:
     "vitest": "5.0.4",
     "yaml": "2.9.1"
   },
-  "packageManager": "pnpm@12.12.1",
+  "packageManager": "pnpm@12.14.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -461,12 +461,12 @@ post-checkout:
     "runtime": {
       "name": "node",
       "onFail": "warn",
-      "version": ">=26.11.1"
+      "version": ">=26.12.1"
     }
   }
 }
 `,
-      expectChainHash: "xxh3:f3bec14b23e6d08300ba173a3bb6ce81",
+      expectChainHash: "xxh3:1ad350ea8dfcdb9b7202ec20f9c749dd",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],

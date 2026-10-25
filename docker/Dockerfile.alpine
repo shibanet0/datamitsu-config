@@ -43,12 +43,16 @@ FROM dm-build AS rt-uv
 COPY --link --from=config-split /slices/rt-uv.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install --runtime uv
 
+FROM dm-build AS rt-uv-python314
+COPY --link --from=config-split /slices/rt-uv-python314.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install --runtime uv-python314
+
 # --- App stages (runtime-managed; inherit their runtime stage) ---
-FROM rt-uv AS app-bandit
+FROM rt-uv-python314 AS app-bandit
 COPY --link --from=config-split /slices/app-bandit.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install bandit
 
-FROM rt-uv AS app-checkov
+FROM rt-uv-python314 AS app-checkov
 COPY --link --from=config-split /slices/app-checkov.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install checkov
 
@@ -64,7 +68,7 @@ FROM rt-node AS app-cspell
 COPY --link --from=config-split /slices/app-cspell.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install cspell
 
-FROM rt-uv AS app-detect-secrets
+FROM rt-uv-python314 AS app-detect-secrets
 COPY --link --from=config-split /slices/app-detect-secrets.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install detect-secrets
 
@@ -120,7 +124,7 @@ FROM rt-node AS app-pnpm
 COPY --link --from=config-split /slices/app-pnpm.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pnpm
 
-FROM rt-uv AS app-pre-commit
+FROM rt-uv-python314 AS app-pre-commit
 COPY --link --from=config-split /slices/app-pre-commit.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install pre-commit
 
@@ -136,7 +140,7 @@ FROM rt-node AS app-quicktype
 COPY --link --from=config-split /slices/app-quicktype.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install quicktype
 
-FROM rt-uv AS app-semgrep
+FROM rt-uv-python314 AS app-semgrep
 COPY --link --from=config-split /slices/app-semgrep.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install semgrep
 
@@ -160,11 +164,11 @@ FROM rt-node AS app-tsc
 COPY --link --from=config-split /slices/app-tsc.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install tsc
 
-FROM rt-uv AS app-yamllint
+FROM rt-uv-python314 AS app-yamllint
 COPY --link --from=config-split /slices/app-yamllint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install yamllint
 
-FROM rt-uv AS app-zensical
+FROM rt-uv-python314 AS app-zensical
 COPY --link --from=config-split /slices/app-zensical.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install zensical
 
@@ -415,6 +419,7 @@ COPY --link --from=rt-bun /dm/store/.runtimes/bun /dm/store/.runtimes/bun
 COPY --link --from=rt-jvm /dm/store/.runtimes/jvm /dm/store/.runtimes/jvm
 COPY --link --from=rt-node /dm/store/.runtimes/node /dm/store/.runtimes/node
 COPY --link --from=rt-uv /dm/store/.runtimes/uv /dm/store/.runtimes/uv
+COPY --link --from=rt-uv-python314 /dm/store/.runtimes/uv-python314 /dm/store/.runtimes/uv-python314
 COPY --link --from=app-bandit /dm/store/.apps/uv/bandit /dm/store/.apps/uv/bandit
 COPY --link --from=app-bandit /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-checkov /dm/store/.apps/uv/checkov /dm/store/.apps/uv/checkov
