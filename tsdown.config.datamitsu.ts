@@ -2,9 +2,14 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "tsdown";
 
+import { resolveDatamitsuConfigVersion } from "./scripts/config-version";
 import { tsdownConfigBanner } from "./tsdown.config-banner";
 
+const datamitsuConfigVersion = resolveDatamitsuConfigVersion();
 export default defineConfig({
+  define: {
+    __DATAMITSU_CONFIG_VERSION__: JSON.stringify(datamitsuConfigVersion),
+  },
   entry: ["src/datamitsu-config/datamitsu.config.ts"],
   fixedExtension: false,
   hooks: {

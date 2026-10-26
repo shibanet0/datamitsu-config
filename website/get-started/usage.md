@@ -39,6 +39,14 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+The managed JVM is JDK 27, available on macOS arm64, Linux amd64/arm64 and
+Windows amd64. Intel Macs no longer have a managed JVM for ktfmt, ktlint or
+openapi-generator.
+
+The default Python is 3.15.0. Apps whose locked native dependencies lack Python
+3.15 wheels explicitly select the separate `uv-python314` runtime (Python 3.14.8).
+Both runtimes use uv 0.13.1; managed installs continue to prohibit source builds.
+
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
 with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack` or `$setup-tsconfig`.

@@ -16,7 +16,6 @@ const _getConfig = (config: config.Config): config.Config => ({
       },
     },
   },
-  // These carry rules of this repository's own, so they stay in the repository; every other
   // ejectable config lives in .datamitsu/configs/.
   ejectConfigs: ["alint", "droast", "ls-lint", "yamlfmt"],
   managedConfigs: {
@@ -368,28 +367,28 @@ post-checkout:
     "typescript": "6.0.3"
   },
   "devDependencies": {
-    "@antebudimir/eslint-plugin-vanilla-extract": "1.18.0",
+    "@antebudimir/eslint-plugin-vanilla-extract": "1.18.1",
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
     "@commitlint/format": "21.2.3",
     "@commitlint/types": "21.2.3",
     "@e18e/eslint-plugin": "0.8.1",
     "@eslint-community/eslint-plugin-eslint-comments": "4.8.1",
-    "@eslint-react/eslint-plugin": "5.26.5",
+    "@eslint-react/eslint-plugin": "5.28.1",
     "@eslint/config-helpers": "0.7.0",
     "@eslint/js": "10.0.1",
-    "@next/eslint-plugin-next": "16.4.0",
+    "@next/eslint-plugin-next": "16.4.2",
     "@ovineko/clean-pkg-json": "0.0.4",
     "@prettier/plugin-xml": "3.4.2",
     "@stylistic/eslint-plugin": "5.10.0",
     "@types/node": "26.6.5",
     "@typescript-eslint/utils": "8.71.2",
-    "@vitest/coverage-v8": "5.0.4",
+    "@vitest/coverage-v8": "5.0.5",
     "@vitest/eslint-plugin": "1.6.27",
-    "caniuse-lite": "1.0.30001815",
+    "caniuse-lite": "1.0.30001816",
     "conventional-changelog-conventionalcommits": "10.4.1",
-    "cspell": "10.3.6",
-    "eslint": "10.12.0",
+    "cspell": "10.4.0",
+    "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-flat-config-utils": "3.2.0",
     "eslint-import-resolver-typescript": "4.4.5",
@@ -409,7 +408,7 @@ post-checkout:
     "eslint-plugin-html": "8.2.1",
     "eslint-plugin-i18next": "6.1.5",
     "eslint-plugin-import-x": "4.17.1",
-    "eslint-plugin-jsdoc": "65.3.1",
+    "eslint-plugin-jsdoc": "65.3.11",
     "eslint-plugin-json": "5.0.0",
     "eslint-plugin-json-schema-validator": "6.3.1",
     "eslint-plugin-jsonc": "3.4.2",
@@ -417,7 +416,7 @@ post-checkout:
     "eslint-plugin-n": "18.4.1",
     "eslint-plugin-no-unsanitized": "4.1.5",
     "eslint-plugin-no-use-extend-native": "0.7.3",
-    "eslint-plugin-oxlint": "1.87.0",
+    "eslint-plugin-oxlint": "1.88.0",
     "eslint-plugin-perfectionist": "5.12.1",
     "eslint-plugin-playwright": "2.12.1",
     "eslint-plugin-pnpm": "1.9.1",
@@ -431,17 +430,17 @@ post-checkout:
     "eslint-plugin-sonarjs": "4.2.2",
     "eslint-plugin-storybook": "10.6.2",
     "eslint-plugin-svelte": "3.23.1",
-    "eslint-plugin-turbo": "2.11.7",
+    "eslint-plugin-turbo": "2.11.9",
     "eslint-plugin-unicorn": "78.0.0",
     "eslint-plugin-unused-imports": "4.4.1",
     "eslint-typegen": "2.3.1",
     "globals": "17.13.0",
     "json-schema-to-typescript": "16.0.0",
     "knip": "6.41.0",
-    "oxfmt": "0.72.0",
-    "oxlint": "1.87.0",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "prettier": "3.9.10",
-    "prettier-plugin-embed": "0.7.1",
+    "prettier-plugin-embed": "0.7.3",
     "prettier-plugin-jsdoc": "1.8.1",
     "prettier-plugin-sql": "0.20.0",
     "remove-markdown": "0.8.0",
@@ -450,10 +449,10 @@ post-checkout:
     "tsdown": "0.23.1",
     "typescript-eslint": "8.71.2",
     "unrun": "0.3.1",
-    "vitest": "5.0.4",
+    "vitest": "5.0.5",
     "yaml": "2.9.1"
   },
-  "packageManager": "pnpm@12.12.1",
+  "packageManager": "pnpm@12.14.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -461,12 +460,12 @@ post-checkout:
     "runtime": {
       "name": "node",
       "onFail": "warn",
-      "version": ">=26.11.1"
+      "version": ">=26.12.1"
     }
   }
 }
 `,
-      expectChainHash: "xxh3:f3bec14b23e6d08300ba173a3bb6ce81",
+      expectChainHash: "xxh3:a48f7b003d8d5c7bae7d9cd92ac1a00d",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -478,32 +477,32 @@ audit:
 autoInstallPeers: true
 blockExoticSubdeps: true
 catalog:
-  "@antebudimir/eslint-plugin-vanilla-extract": 1.18.0
+  "@antebudimir/eslint-plugin-vanilla-extract": 1.18.1
   "@commander-js/extra-typings": 15.0.0
   "@commitlint/cli": 21.2.3
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.5.2
+  "@datamitsu/datamitsu": 0.5.3
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
-  "@eslint-react/eslint-plugin": 5.26.5
+  "@eslint-react/eslint-plugin": 5.28.1
   "@eslint/config-helpers": 0.7.0
   "@eslint/js": 10.0.1
-  "@next/eslint-plugin-next": 16.4.0
+  "@next/eslint-plugin-next": 16.4.2
   "@ovineko/clean-pkg-json": 0.0.4
   "@prettier/plugin-xml": 3.4.2
   "@stylistic/eslint-plugin": 5.10.0
   "@types/node": 26.6.5
   "@types/remove-markdown": 0.3.4
   "@typescript-eslint/utils": 8.71.2
-  "@vitest/coverage-v8": 5.0.4
+  "@vitest/coverage-v8": 5.0.5
   "@vitest/eslint-plugin": 1.6.27
-  caniuse-lite: 1.0.30001815
+  caniuse-lite: 1.0.30001816
   commander: 15.0.0
   conventional-changelog-conventionalcommits: 10.4.1
-  cspell: 10.3.6
-  eslint: 10.12.0
+  cspell: 10.4.0
+  eslint: 10.13.0
   eslint-config-prettier: 10.1.8
   eslint-flat-config-utils: 3.2.0
   eslint-import-resolver-typescript: 4.4.5
@@ -523,7 +522,7 @@ catalog:
   eslint-plugin-html: 8.2.1
   eslint-plugin-i18next: 6.1.5
   eslint-plugin-import-x: 4.17.1
-  eslint-plugin-jsdoc: 65.3.1
+  eslint-plugin-jsdoc: 65.3.11
   eslint-plugin-json: 5.0.0
   eslint-plugin-json-schema-validator: 6.3.1
   eslint-plugin-jsonc: 3.4.2
@@ -531,7 +530,7 @@ catalog:
   eslint-plugin-n: 18.4.1
   eslint-plugin-no-unsanitized: 4.1.5
   eslint-plugin-no-use-extend-native: 0.7.3
-  eslint-plugin-oxlint: 1.87.0
+  eslint-plugin-oxlint: 1.88.0
   eslint-plugin-perfectionist: 5.12.1
   eslint-plugin-playwright: 2.12.1
   eslint-plugin-pnpm: 1.9.1
@@ -545,7 +544,7 @@ catalog:
   eslint-plugin-sonarjs: 4.2.2
   eslint-plugin-storybook: 10.6.2
   eslint-plugin-svelte: 3.23.1
-  eslint-plugin-turbo: 2.11.7
+  eslint-plugin-turbo: 2.11.9
   eslint-plugin-unicorn: 78.0.0
   eslint-plugin-unused-imports: 4.4.1
   eslint-typegen: 2.3.1
@@ -554,10 +553,10 @@ catalog:
   globals: 17.13.0
   json-schema-to-typescript: 16.0.0
   knip: 6.41.0
-  oxfmt: 0.72.0
-  oxlint: 1.87.0
+  oxfmt: 0.73.0
+  oxlint: 1.88.0
   prettier: 3.9.10
-  prettier-plugin-embed: 0.7.1
+  prettier-plugin-embed: 0.7.3
   prettier-plugin-jsdoc: 1.8.1
   prettier-plugin-sql: 0.20.0
   remove-markdown: 0.8.0
@@ -569,7 +568,7 @@ catalog:
   typescript: 6.0.3
   typescript-eslint: 8.71.2
   unrun: 0.3.1
-  vitest: 5.0.4
+  vitest: 5.0.5
   yaml: 2.9.1
 dangerouslyAllowAllBuilds: false
 dedupeDirectDeps: true
@@ -611,7 +610,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:53f1be1c35663dddcb15e67dd8148736",
+      expectChainHash: "xxh3:93502b8cb151c6760bccd144b6c90ee5",
     },
   },
   tools: {

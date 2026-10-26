@@ -1,3 +1,5 @@
+declare const __DATAMITSU_CONFIG_VERSION__: string;
+
 import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents.md";
 import { buildManagedAlintYaml } from "./alint-defaults";
 import { mapOfApps } from "./apps";
@@ -83,11 +85,17 @@ function getConfig(cfg: config.Config): config.Config {
     initCommands,
     // Display metadata only: the inspector header and its exported atlas name the configuration by
     // this. A consuming project inherits it until a layer of its own sets one — the last layer wins.
-    name: "@shibanet0/datamitsu-config",
+    name: "shibanet0/datamitsu-config",
     parsers,
     projectTypes,
     runtimes: {
       ...mapOfRuntimes,
+      "uv-python314": {
+        ...mapOfRuntimes.uv,
+        kind: "uv",
+        mode: "managed",
+        uv: { pythonVersion: "3.14.8" },
+      },
       ...(mapOfRuntimes?.node
         ? {
             node: {
@@ -103,6 +111,7 @@ function getConfig(cfg: config.Config): config.Config {
           }
         : {}),
     },
+    version: __DATAMITSU_CONFIG_VERSION__,
     // Release builds carry the OCI bundle pin (see ./oci.ts); consumers'
     // datamitsu then seeds the tool store from the bundle on demand instead
     // of downloading every tool individually.
@@ -120,7 +129,7 @@ function getConfig(cfg: config.Config): config.Config {
 globalThis.getConfig = getConfig;
 
 const getMinVersion = (): string => {
-  return "0.5.2";
+  return "0.5.3";
 };
 
 globalThis.getMinVersion = getMinVersion;

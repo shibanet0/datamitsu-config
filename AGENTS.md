@@ -599,6 +599,14 @@ never scan the store or probe binaries to discover it.
 
 The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.
 
+The default uv runtime pins Python 3.15.0. Apps whose locked wheels do not support it
+select `uv-python314` (Python 3.14.8), with the exact blocking dependency explained
+beside `uv.runtime`. Keep the default current rather than downgrading every app.
+Lock generation alone does not prove installability: run the real locked, no-build
+install on each selected interpreter before removing a compatibility binding.
+The managed JDK 27 deliberately drops macOS x64; the remaining JVM platform loss is accepted,
+not an asset-detection error. Do not suppress ktlint's upstream JVM startup warnings.
+
 ## pnpm Workspace Migration
 
 The `pnpm_workspace_yaml` managed config converts legacy `trustPolicy: { allowDowngrade: [...] }` into `trustPolicy: no-downgrade` and `trustPolicyExclude` during reconciliation. Merge existing exclusions without duplicates and preserve package selectors exactly. Modern scalar policies must retain their value. Keep this migration in the content callback so it applies to consuming projects; editing this repository's workspace file cannot migrate consumers. Test with isolated YAML inputs, including repeated reconciliation and malformed lists.

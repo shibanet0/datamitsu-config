@@ -23,6 +23,11 @@
       "app": "uv"
     },
     {
+      "subtree": ".runtimes/uv-python314",
+      "kind": "runtime",
+      "app": "uv-python314"
+    },
+    {
       "subtree": ".apps/uv/bandit",
       "kind": "app",
       "app": "bandit"

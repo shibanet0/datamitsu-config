@@ -32,6 +32,25 @@ describe("workflow CI guards", () => {
     expect(resolver).toBeGreaterThanOrEqual(0);
     expect(publish).toBeGreaterThan(resolver);
   });
+  it("selects the release config version before dependency installation in both release jobs", () => {
+    const release = readFileSync(join(WORKFLOW_DIR, "release.yml"), "utf8");
+    const build = release.slice(
+      release.indexOf("  build:"),
+      release.indexOf("  determine-release-type:"),
+    );
+    const publishNpm = release.slice(
+      release.indexOf("  publish-npm:"),
+      release.indexOf("  publish-oci-bundle:"),
+    );
+
+    for (const job of [build, publishNpm]) {
+      const selection = job.indexOf("scripts/select-release-version.mjs");
+      const setup = job.indexOf("uses: ./.github/actions/setup-environment");
+      expect(selection).toBeGreaterThanOrEqual(0);
+      expect(setup).toBeGreaterThan(selection);
+      expect(job).toContain("RELEASE_VERSION");
+    }
+  });
 
   it("found at least one workflow to scan", () => {
     expect(files.length).toBeGreaterThan(0);
