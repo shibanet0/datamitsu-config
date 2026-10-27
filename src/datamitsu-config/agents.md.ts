@@ -366,6 +366,7 @@ Every datamitsu command follows the same rule:
 
 - Inside a pnpm monorepo wired with this config: \`pnpm dm <command>\` — \`pnpm dm check\`, \`pnpm dm config reconcile\`, and managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
 - If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly — \`datamitsu check\`, \`datamitsu config reconcile\`, \`datamitsu exec <tool>\`.
+- A subproject newly added to a monorepo is provisioned by the shipped hook: \`<invocation> config reconcile --create-missing\` creates only the managed configs that are missing and never touches an existing file. Run it by hand after adding a subproject if you do not want to wait for the next commit.
 
 ### Web
 
@@ -509,7 +510,7 @@ export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996c
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "0fc75a6d218f9bf4b31ac605f61373da5818d14cb282c33ad62e9a84db2be9a0"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "f7788874939182fa6df5a2a098806210aa223b4da256679f859dc7546c2a8dbd"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "c966e49af479f77fc45d99b41dce062b873f3ab1af62c44ab5324b05374d505a"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "c2e1ca1dd5e32d27e2f82955bbf703b3cb4c6e0b4d9427a78907e01844cb6dbf"; // prettier-ignore

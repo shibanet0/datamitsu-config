@@ -35,15 +35,32 @@ describe("lefthookYaml", () => {
     expect(commands["datamitsu-check"].run).toBe("node bin/datamitsu.js check --file-scoped");
   });
 
-  it("orders the fix band so init runs before check", () => {
+  it("orders the fix band so init runs before ensure-configs and check", () => {
     const commands = preCommitCommands();
     const initP = commands["datamitsu-init"].priority as number;
+    const ensureP = commands["datamitsu-ensure-configs"].priority as number;
     const checkP = commands["datamitsu-check"].priority as number;
 
-    expect(initP).toBeLessThan(checkP);
-    // both sit in the fix band (10–90)
+    expect(initP).toBeLessThan(ensureP);
+    expect(ensureP).toBeLessThan(checkP);
+    // all sit in the fix band (10–90)
     expect(initP).toBeGreaterThanOrEqual(10);
     expect(checkP).toBeLessThanOrEqual(90);
+  });
+
+  it("provisions new monorepo subprojects before check via create-missing", () => {
+    const commands = preCommitCommands();
+    expect(commands["datamitsu-ensure-configs"].run).toBe(
+      "node bin/datamitsu.js config reconcile --create-missing",
+    );
+    // post-checkout gets the same treatment right after init: a branch switch
+    // can bring in a new subproject.
+    const postCheckout = render()["post-checkout"].commands as Record<string, any>;
+    expect(postCheckout["datamitsu-ensure-configs"]).toEqual({
+      priority: 3,
+      run: "node bin/datamitsu.js config reconcile --create-missing",
+    });
+    expect(postCheckout["init datamitsu"].priority).toBeLessThan(3);
   });
 
   it("keeps hooks sequential so priority is honoured", () => {

@@ -20,6 +20,12 @@ export const lefthookYaml: config.ManagedConfig = {
             priority: 2,
             run: `${facts().binaryCommand} init`,
           },
+          // A branch switch can bring in new subprojects; init refreshes the
+          // launcher marker and this creates their missing configs.
+          [`${facts().packageName}-ensure-configs`]: {
+            priority: 3,
+            run: `${facts().binaryCommand} config reconcile --create-missing`,
+          },
           "install deps": {
             priority: 1,
             run: `pnpm i -y`,
@@ -44,6 +50,14 @@ export const lefthookYaml: config.ManagedConfig = {
             priority: 40,
             run: `${facts().binaryCommand} check --file-scoped`,
             stage_fixed: true,
+          },
+          // Runs between init and check so a subproject newly added to a
+          // monorepo gets its missing managed configs created before the check
+          // reads them. Idempotent by contract: every existing file stays
+          // byte-for-byte untouched, so steady-state runs are no-ops.
+          [`${facts().packageName}-ensure-configs`]: {
+            priority: 15,
+            run: `${facts().binaryCommand} config reconcile --create-missing`,
           },
           [`${facts().packageName}-init`]: {
             priority: 10,

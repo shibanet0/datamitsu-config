@@ -232,6 +232,9 @@ pre-commit:
     datamitsu-init:
       priority: 10
       run: node bin/datamitsu.js init
+    datamitsu-ensure-configs:
+      priority: 15
+      run: node bin/datamitsu.js config reconcile --create-missing
     sync-datamitsu-version:
       priority: 20
       run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu-config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
@@ -276,9 +279,12 @@ post-checkout:
     init datamitsu:
       priority: 2
       run: node bin/datamitsu.js init
+    ensure configs:
+      priority: 3
+      run: node bin/datamitsu.js config reconcile --create-missing
   parallel: false
 `,
-      expectChainHash: "xxh3:8fbcfe09403767c5060f2d88e055d2fa",
+      expectChainHash: "xxh3:9c066d23096284979234e84e53848755",
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
