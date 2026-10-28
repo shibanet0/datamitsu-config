@@ -1,6 +1,6 @@
 {
   "name": "@shibanet0/datamitsu-config",
-  "version": "0.0.1",
+  "version": "0.0.3-alpha-28",
   "description": "Shared datamitsu configuration with 79+ managed development tools",
   "keywords": [],
   "repository": {

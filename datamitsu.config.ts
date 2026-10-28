@@ -278,7 +278,7 @@ post-checkout:
       run: node bin/datamitsu.js init
   parallel: false
 `,
-      expectChainHash: "xxh3:98ebd786075cf9840a865dc9036fc428",
+      expectChainHash: "xxh3:8fbcfe09403767c5060f2d88e055d2fa",
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
@@ -465,7 +465,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:a48f7b003d8d5c7bae7d9cd92ac1a00d",
+      expectChainHash: "xxh3:a362f6aa7fb1abed6399aaf4b1212a30",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -610,7 +610,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:93502b8cb151c6760bccd144b6c90ee5",
+      expectChainHash: "xxh3:62932ae6f1d57aad84f91dbccec9235c",
     },
   },
   tools: {
@@ -855,4 +855,7 @@ const cspellWords: string[] = [
   // for (apps.ts).
   "blintdb",
   "btrfs",
+  "digitalstudium",
+  "helmfmt",
+  "gotmpl",
 ];
