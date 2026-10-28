@@ -4,9 +4,11 @@ import { getExePath } from "@datamitsu/datamitsu/get-exe.js";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
+import { detectBinaryCommand } from "./detect-binary-command.js";
+
 const args = process.argv.slice(2);
 if (!args.includes("--binary-command")) {
-  args.unshift("--binary-command", "pnpm datamitsu");
+  args.unshift("--binary-command", detectBinaryCommand(process.env.npm_config_user_agent));
 }
 
 const result = spawnSync(

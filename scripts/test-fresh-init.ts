@@ -216,6 +216,70 @@ async function main(): Promise<void> {
     }
     console.log(`  ✓ scaffold present (${expected.join(", ")})`);
 
+    // Create-missing: a subproject newly added to the monorepo is provisioned
+    // by `config reconcile --create-missing` — its missing configs are
+    // created, and every existing file stays byte-for-byte untouched.
+    await mkdir(path.join(work, "packages", "demo"), { recursive: true });
+    await writeFile(
+      path.join(work, "packages", "demo", "package.json"),
+      JSON.stringify({ name: "demo", private: true }) + "\n",
+    );
+    const ensure = await run(
+      "create-missing",
+      "pnpm",
+      ["exec", "datamitsu", "config", "reconcile", "--create-missing", "--json"],
+      work,
+      env,
+      { captureStdout: true },
+    );
+    assertOk("create-missing", ensure);
+    const ensureDoc = JSON.parse(ensure.stdout) as {
+      counts: { created: number; failed: number };
+      createMissing: boolean;
+    };
+    if (
+      !ensureDoc.createMissing ||
+      ensureDoc.counts.created <= 0 ||
+      ensureDoc.counts.failed !== 0
+    ) {
+      throw new Error(
+        `create-missing did not provision packages/demo: ${JSON.stringify(ensureDoc.counts)}`,
+      );
+    }
+    const demoConfig = path.join(work, "packages", "demo", "eslint.config.mjs");
+    if (!(await exists(demoConfig))) {
+      throw new Error("create-missing did not create packages/demo/eslint.config.mjs");
+    }
+    console.log("  ✓ create-missing provisioned packages/demo");
+
+    // The safety contract, exercised: a customized file survives a re-run,
+    // and the idempotent second run creates nothing.
+    await writeFile(demoConfig, "// mine\n");
+    const ensureAgain = await run(
+      "create-missing idempotent",
+      "pnpm",
+      ["exec", "datamitsu", "config", "reconcile", "--create-missing", "--json"],
+      work,
+      env,
+      { captureStdout: true },
+    );
+    assertOk("create-missing idempotent", ensureAgain);
+    const againDoc = JSON.parse(ensureAgain.stdout) as {
+      counts: { created: number; failed: number; skippedExisting: number };
+    };
+    if (againDoc.counts.created !== 0 || againDoc.counts.failed !== 0) {
+      throw new Error(
+        `create-missing re-run was not idempotent: ${JSON.stringify(againDoc.counts)}`,
+      );
+    }
+    if (againDoc.counts.skippedExisting <= 0) {
+      throw new Error("create-missing re-run reported no skipped-existing files");
+    }
+    if ((await readFile(demoConfig, "utf8")) !== "// mine\n") {
+      throw new Error("create-missing rewrote a customized config file");
+    }
+    console.log("  ✓ create-missing idempotent and left existing files untouched");
+
     console.log("\n✓ fresh-init smoke test passed");
   } finally {
     if (KEEP) {
@@ -232,6 +296,9 @@ async function run(
   cmdArgs: string[],
   cwd: string,
   env: NodeJS.ProcessEnv,
+  // Machine-readable consumers parse stdout, so a --json call must capture it
+  // even under --verbose, whose default pipes inherited streams through.
+  opts?: { captureStdout?: boolean },
 ): Promise<StepResult> {
   console.log(`\n▶ ${label}: ${file} ${cmdArgs.join(" ")}`);
   const proc = execa(file, cmdArgs, {
@@ -241,7 +308,7 @@ async function run(
     forceKillAfterDelay: 2000,
     reject: false,
     stderr: VERBOSE ? "inherit" : "pipe",
-    stdout: VERBOSE ? "inherit" : "pipe",
+    stdout: VERBOSE && !opts?.captureStdout ? "inherit" : "pipe",
   });
   runningProcesses.add(proc);
   try {
