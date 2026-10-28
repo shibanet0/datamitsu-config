@@ -76,6 +76,10 @@ FROM rt-bun AS app-eslint
 COPY --link --from=config-split /slices/app-eslint.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install eslint
 
+FROM rt-go AS app-golangci-lint
+COPY --link --from=config-split /slices/app-golangci-lint.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golangci-lint
+
 FROM rt-go AS app-govulncheck
 COPY --link --from=config-split /slices/app-govulncheck.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install govulncheck
@@ -248,10 +252,6 @@ RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install gitleak
 FROM dm-build AS app-golang-migrate
 COPY --link --from=config-split /slices/app-golang-migrate.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golang-migrate
-
-FROM dm-build AS app-golangci-lint
-COPY --link --from=config-split /slices/app-golangci-lint.js /opt/datamitsu-config/datamitsu.config.js
-RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install golangci-lint
 
 FROM dm-build AS app-goose
 COPY --link --from=config-split /slices/app-goose.js /opt/datamitsu-config/datamitsu.config.js
@@ -430,6 +430,7 @@ COPY --link --from=app-cspell /dm/store/.apps/node/cspell /dm/store/.apps/node/c
 COPY --link --from=app-detect-secrets /dm/store/.apps/uv/detect-secrets /dm/store/.apps/uv/detect-secrets
 COPY --link --from=app-detect-secrets /dm/store/.uv/python /dm/store/.uv/python
 COPY --link --from=app-eslint /dm/store/.apps/bun/eslint /dm/store/.apps/bun/eslint
+COPY --link --from=app-golangci-lint /dm/store/.apps/go/golangci-lint /dm/store/.apps/go/golangci-lint
 COPY --link --from=app-govulncheck /dm/store/.apps/go/govulncheck /dm/store/.apps/go/govulncheck
 COPY --link --from=app-httpstat /dm/store/.apps/uv/httpstat /dm/store/.apps/uv/httpstat
 COPY --link --from=app-httpstat /dm/store/.uv/python /dm/store/.uv/python
@@ -478,7 +479,6 @@ COPY --link --from=app-gcrane /dm/store/.bin/gcrane /dm/store/.bin/gcrane
 COPY --link --from=app-git-cliff /dm/store/.bin/git-cliff /dm/store/.bin/git-cliff
 COPY --link --from=app-gitleaks /dm/store/.bin/gitleaks /dm/store/.bin/gitleaks
 COPY --link --from=app-golang-migrate /dm/store/.bin/golang-migrate /dm/store/.bin/golang-migrate
-COPY --link --from=app-golangci-lint /dm/store/.bin/golangci-lint /dm/store/.bin/golangci-lint
 COPY --link --from=app-goose /dm/store/.bin/goose /dm/store/.bin/goose
 COPY --link --from=app-grpcurl /dm/store/.bin/grpcurl /dm/store/.bin/grpcurl
 COPY --link --from=app-grype /dm/store/.bin/grype /dm/store/.bin/grype
