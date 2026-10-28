@@ -23,17 +23,17 @@
  * edit. Both values change on every release even when the parser sources do not, because the
  * module's version string is compiled into it.
  *
- * Pinned to datamitsu 0.5.3.
+ * Pinned to datamitsu unstable-20261027-a5d9075.
  */
 
-const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers";
+const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
 // Wrapped because prettier does: "sha256:" plus 64 hex characters always overruns the line width,
 // and an unwrapped line here would leave every `task refresh` with a file the formatter rewrites
 // and `validate:parsers` then rejects.
 const PARSERS_OCI_DIGEST =
-  "sha256:8e1691785a30e6a7b5b57affd9846b0be65335449ec355656f785269fc873f12";
+  "sha256:03514cce42005e15df710fdeb48b26572c43cc06eaaaf6c957b933abcc327896";
 
-const CORE_PARSER_HASH = "sha256:fd91feab89759d8a019eaea50360f49ab2c0861bbd8d618aaab34a98c321d39f";
+const CORE_PARSER_HASH = "sha256:1cd4efd0858edd1179e150018039cf2b32e1fe746ad81a0d4c9c8ab41bfd59b8";
 
 export const parsers: config.MapOfParsers = {
   core: {

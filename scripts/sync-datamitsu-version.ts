@@ -54,7 +54,7 @@ export function readDatamitsuVersion(content: string): string {
  */
 export async function syncDatamitsuVersion(rootDir: string): Promise<SyncResult> {
   const workspaceYamlPath = path.join(rootDir, "pnpm-workspace.yaml");
-  const configTsPath = path.join(rootDir, "src/datamitsu-config/datamitsu.config.ts");
+  const configTsPath = path.join(rootDir, "src/datamitsu-config/datamitsu-config.ts");
 
   const workspaceYaml = await fsPromise.readFile(workspaceYamlPath, "utf8");
   const version = readDatamitsuVersion(workspaceYaml);
@@ -160,7 +160,7 @@ if (isDirectRun) {
       console.log(result.skipReason);
     } else if (result.minVersionUpdated) {
       console.log(
-        `Synced min version ${result.version} to src/datamitsu-config/datamitsu.config.ts`,
+        `Synced min version ${result.version} to src/datamitsu-config/datamitsu-config.ts`,
       );
     } else {
       console.log(`Min version already in sync with ${result.version}`);

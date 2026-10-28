@@ -10,7 +10,7 @@ export default defineConfig((prev) => ({
     // One tsdown config per inline-config bundle; see tsdown.config.*.ts.
     "src/apps/*/index.ts",
     "src/datamitsu-api/index.ts",
-    "src/datamitsu-config/datamitsu.config.ts",
+    "src/datamitsu-config/datamitsu-config.ts",
     "src/s0/index.ts",
     "src/type-fest/index.ts",
     "src/type-fest/globals/index.ts",

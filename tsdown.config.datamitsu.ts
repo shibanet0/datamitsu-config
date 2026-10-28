@@ -10,7 +10,7 @@ export default defineConfig({
   define: {
     __DATAMITSU_CONFIG_VERSION__: JSON.stringify(datamitsuConfigVersion),
   },
-  entry: ["src/datamitsu-config/datamitsu.config.ts"],
+  entry: { "datamitsu.config": "src/datamitsu-config/datamitsu-config.ts" },
   fixedExtension: false,
   hooks: {
     "build:done": () => {
