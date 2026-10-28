@@ -7,13 +7,17 @@
 export function detectBinaryCommand(userAgent) {
   const pm = userAgent?.split(" ")[0]?.split("/")[0];
   switch (pm) {
-    case "npm":
-      return "npm exec --no -- datamitsu";
-    case "yarn":
-      return "yarn datamitsu";
-    case "bun":
+    case "bun": {
       return "bun run datamitsu";
-    default:
+    }
+    case "npm": {
+      return "npm exec --no -- datamitsu";
+    }
+    case "yarn": {
+      return "yarn datamitsu";
+    }
+    default: {
       return "pnpm datamitsu";
+    }
   }
 }

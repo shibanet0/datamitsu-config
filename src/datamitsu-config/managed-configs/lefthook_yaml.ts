@@ -26,6 +26,10 @@ export const lefthookYaml: config.ManagedConfig = {
             priority: 2,
             run: `${facts().binaryCommand} init`,
           },
+          [`init ${facts().packageName}`]: {
+            priority: 2,
+            run: `${facts().binaryCommand} init`,
+          },
           "install deps": {
             priority: 1,
             run: `pnpm i -y`,

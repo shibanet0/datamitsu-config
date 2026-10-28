@@ -234,10 +234,14 @@ async function main(): Promise<void> {
     );
     assertOk("create-missing", ensure);
     const ensureDoc = JSON.parse(ensure.stdout) as {
-      createMissing: boolean;
       counts: { created: number; failed: number };
+      createMissing: boolean;
     };
-    if (!ensureDoc.createMissing || ensureDoc.counts.created <= 0 || ensureDoc.counts.failed !== 0) {
+    if (
+      !ensureDoc.createMissing ||
+      ensureDoc.counts.created <= 0 ||
+      ensureDoc.counts.failed !== 0
+    ) {
       throw new Error(
         `create-missing did not provision packages/demo: ${JSON.stringify(ensureDoc.counts)}`,
       );
@@ -261,10 +265,12 @@ async function main(): Promise<void> {
     );
     assertOk("create-missing idempotent", ensureAgain);
     const againDoc = JSON.parse(ensureAgain.stdout) as {
-      counts: { created: number; skippedExisting: number; failed: number };
+      counts: { created: number; failed: number; skippedExisting: number };
     };
     if (againDoc.counts.created !== 0 || againDoc.counts.failed !== 0) {
-      throw new Error(`create-missing re-run was not idempotent: ${JSON.stringify(againDoc.counts)}`);
+      throw new Error(
+        `create-missing re-run was not idempotent: ${JSON.stringify(againDoc.counts)}`,
+      );
     }
     if (againDoc.counts.skippedExisting <= 0) {
       throw new Error("create-missing re-run reported no skipped-existing files");
