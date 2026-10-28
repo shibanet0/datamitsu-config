@@ -125,7 +125,7 @@ describe("syncDatamitsuVersion", () => {
   it("rejects an incompatible stable core before rewriting either configuration", async () => {
     const root = await mkdtemp(path.join(tmpdir(), "datamitsu-min-version-"));
     try {
-      const configPath = path.join(root, "src/datamitsu-config/datamitsu.config.ts");
+      const configPath = path.join(root, "src/datamitsu-config/datamitsu-config.ts");
       const rootConfigPath = path.join(root, "datamitsu.config.ts");
       const source = 'const getMinVersion = () => { return "0.5.2"; };';
       const rootSource = 'catalog:\n  "@datamitsu/datamitsu": 0.5.2\n';

@@ -124,7 +124,7 @@ export default defineConfig((prev) => ({
     // One tsdown config per inline-config bundle; see tsdown.config.*.ts.
     "src/apps/*/index.ts",
     "src/datamitsu-api/index.ts",
-    "src/datamitsu-config/datamitsu.config.ts",
+    "src/datamitsu-config/datamitsu-config.ts",
     "src/s0/index.ts",
     "src/type-fest/index.ts",
     "src/type-fest/globals/index.ts",
@@ -234,7 +234,7 @@ pre-commit:
       run: node bin/datamitsu.js init
     sync-datamitsu-version:
       priority: 20
-      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu.config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
+      run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu-config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
       stage_fixed: true
     docs-generate:
       priority: 30
@@ -483,7 +483,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.5.3
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261027.a5d9075
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.28.1
