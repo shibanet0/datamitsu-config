@@ -38,10 +38,12 @@ const dirsFor = (result: Record<string, any>, ecosystem: string): string[] =>
 
 describe("githubDependabotYml", () => {
   beforeAll(() => {
-    (globalThis as Record<string, unknown>).YAML = {
+    const globals = globalThis as Record<string, unknown>;
+    globals.YAML = {
       parse: (text: string) => (text ? JSON.parse(text) : undefined),
       stringify: (value: unknown) => JSON.stringify(value),
     };
+    globals.datamitsuConfigInputs = { minimumReleaseAgeMinutes: 10_080 };
   });
 
   describe("manage-if-present", () => {
@@ -59,7 +61,7 @@ describe("githubDependabotYml", () => {
   });
 
   describe("policy", () => {
-    it("applies conventional commits, weekly schedule, grouping, and a PR cap", () => {
+    it("applies conventional commits, weekly schedule, grouping, cooldown, and a PR cap", () => {
       const result = render(JSON.stringify({ updates: [], version: 2 }), [
         { path: ".", type: "npm-package" },
       ])!;
@@ -67,10 +69,29 @@ describe("githubDependabotYml", () => {
       const npm = entryFor(result, "npm")!;
       expect(npm.directory).toBe("/");
       expect(npm.schedule).toEqual({ interval: "weekly" });
+      expect(npm.cooldown).toEqual({ "default-days": 7 });
       expect(npm["open-pull-requests-limit"]).toBe(10);
       expect(npm.groups).toEqual({ "all-dependencies": { patterns: ["*"] } });
       // include:scope yields chore(deps): / chore(deps-dev): — no prefix-development.
       expect(npm["commit-message"]).toEqual({ include: "scope", prefix: "chore" });
+    });
+
+    it.each([
+      [1440, 1],
+      [1500, 2],
+      [0, 0],
+    ])("derives cooldown days from the configured release age (%i minutes)", (minutes, days) => {
+      const globals = globalThis as Record<string, unknown>;
+      globals.datamitsuConfigInputs = { minimumReleaseAgeMinutes: minutes };
+
+      try {
+        const result = render(JSON.stringify({ updates: [], version: 2 }), [
+          { path: ".", type: "npm-package" },
+        ])!;
+        expect(entryFor(result, "npm")!.cooldown).toEqual({ "default-days": days });
+      } finally {
+        globals.datamitsuConfigInputs = { minimumReleaseAgeMinutes: 10_080 };
+      }
     });
 
     it("never sets versioning-strategy (left to Dependabot's default)", () => {

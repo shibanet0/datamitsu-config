@@ -45,9 +45,10 @@ const directoryKey = (entry: PackageEcosystem): string => {
 
 // The nailed-down policy for one ecosystem: conventional-commit messages
 // (`include: scope` yields `chore(deps):` / `chore(deps-dev):` automatically), a
-// weekly schedule, a single grouped PR, and a capped open-PR count. These keys
-// overwrite the user's; everything else on the entry (directory/directories,
-// registries, ignore, allow, target-branch, ...) is preserved.
+// weekly schedule, the configured minimum release age as a cooldown, a single
+// grouped PR, and a capped open-PR count. These keys overwrite the user's;
+// everything else on the entry (directory/directories, registries, ignore,
+// allow, target-branch, ...) is preserved.
 //
 // versioning-strategy is intentionally not set — Dependabot's default ("auto")
 // is appropriate and avoids a per-ecosystem allowlist that some ecosystems
@@ -60,6 +61,9 @@ const policyFor = (ecosystem: string): Record<string, unknown> => {
 
   return {
     "commit-message": commitMessage,
+    cooldown: {
+      "default-days": Math.ceil(datamitsuConfigInputs.minimumReleaseAgeMinutes / (24 * 60)),
+    },
     groups: { "all-dependencies": { patterns: ["*"] } },
     ...(labels ? { labels } : {}),
     "open-pull-requests-limit": 10,
