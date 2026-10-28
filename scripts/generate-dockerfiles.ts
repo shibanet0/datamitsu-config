@@ -28,12 +28,13 @@ const LABELS: Record<string, string> = {
 /**
  * Build-time ARGs. The generator emits each as an `ARG`→`ENV` in a `dm-build` stage that every
  * install stage derives from, so `datamitsu install` inherits it; the final image is built FROM
- * `dm-base`, so these never leak into the shipped image. Raise the install timeout above the 600s
- * default so heavy tools (e.g. snyk) don't time out under parallel download contention. Overridable
- * at build time via `docker build --build-arg DATAMITSU_INSTALL_TIMEOUT=…`.
+ * `dm-base`, so these never leak into the shipped image. The timeout is raised above the 600s
+ * default so heavy tools don't time out under parallel download contention, and high enough for
+ * source-built Go apps (golangci-lint compiles ~1500 packages). Overridable at build time via
+ * `docker build --build-arg DATAMITSU_INSTALL_TIMEOUT=…`.
  */
 const BUILD_ARGS: Record<string, string> = {
-  DATAMITSU_INSTALL_TIMEOUT: "1200",
+  DATAMITSU_INSTALL_TIMEOUT: "3600",
 };
 
 /**

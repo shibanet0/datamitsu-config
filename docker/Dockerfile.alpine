@@ -14,7 +14,7 @@ WORKDIR /opt/datamitsu-config
 
 # --- Build env: ARGs promoted to ENV so every install stage inherits them ---
 FROM dm-base AS dm-build
-ARG DATAMITSU_INSTALL_TIMEOUT="1200"
+ARG DATAMITSU_INSTALL_TIMEOUT="3600"
 ENV DATAMITSU_INSTALL_TIMEOUT=$DATAMITSU_INSTALL_TIMEOUT
 
 # --- Config split: one minimal config slice per stage (build-cache isolation) ---
