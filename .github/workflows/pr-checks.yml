@@ -63,7 +63,10 @@ jobs:
     name: Docker Build Test
     needs:
       - build-verify
-    runs-on: ubuntu-latest
+    # Each arch builds natively on its own runner: under QEMU the arm64 leg
+    # cannot finish the source-built Go apps (golangci-lint) inside any
+    # reasonable DATAMITSU_INSTALL_TIMEOUT — module downloads alone outrun it.
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -72,8 +75,6 @@ jobs:
         with:
           name: pr-artifacts
           path: .
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
         with:
@@ -88,22 +89,22 @@ jobs:
         with:
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.arch }}
           push: false
-          tags: datamitsu-config:pr-${{ github.event.pull_request.number }}${{ matrix.variant == 'alpine' && '-alpine' || '' }}
-      # The builder above still holds every amd64 layer, so this only exports the image into
-      # the Docker daemon for the smoke check below.
-      - name: Load amd64 image
+          tags: datamitsu-config:pr-${{ github.event.pull_request.number }}${{ matrix.variant == 'alpine' && '-alpine' || '' }}-${{ matrix.arch }}
+      # The builder above still holds every layer of this leg's arch, so this
+      # only exports the image into the Docker daemon for the smoke check below.
+      - name: Load image
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           load: true
-          platforms: linux/amd64
-          tags: datamitsu-config:smoke-${{ matrix.variant }}
+          platforms: linux/${{ matrix.arch }}
+          tags: datamitsu-config:smoke-${{ matrix.variant }}-${{ matrix.arch }}
       - name: Verify key binaries run inside the image
         run: |
-          IMG=datamitsu-config:smoke-${{ matrix.variant }}
+          IMG=datamitsu-config:smoke-${{ matrix.variant }}-${{ matrix.arch }}
           # The image ENTRYPOINT is `datamitsu --before-config <config>`, so tools
           # must be invoked via `exec <app> -- <args>`. OFFLINE forces use of the
           # store baked into the image (no network).
@@ -112,6 +113,9 @@ jobs:
           docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec task -- --version
     strategy:
       matrix:
+        arch:
+          - amd64
+          - arm64
         variant:
           - debian
           - alpine

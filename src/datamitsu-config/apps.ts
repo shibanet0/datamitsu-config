@@ -1,6 +1,7 @@
 import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
+import { golangciLintApp } from "./apps/golangci-lint";
 import { knipApp } from "./apps/knip";
 import { lefthookProxyApp } from "./apps/lefthook-proxy";
 import { lefthookSortApp } from "./apps/lefthook-sort";
@@ -268,6 +269,7 @@ const allApps: BinManager.MapOfApps = {
     },
   },
   eslint: eslintApp,
+  "golangci-lint": golangciLintApp,
   govulncheck: {
     // https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck
     description: "Govulncheck reports known vulnerabilities that affect Go code.",
