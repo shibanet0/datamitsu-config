@@ -16,6 +16,16 @@ export const lefthookYaml: config.ManagedConfig = {
         ...existing?.["post-checkout"],
         commands: {
           ...existing?.["post-checkout"]?.commands,
+          // A branch switch can bring in new subprojects; init refreshes the
+          // launcher marker and this creates their missing configs.
+          [`${facts().packageName}-ensure-configs`]: {
+            priority: 3,
+            run: `${facts().binaryCommand} config reconcile --create-missing --no-verify-hash`,
+          },
+          [`init ${facts().packageName}`]: {
+            priority: 2,
+            run: `${facts().binaryCommand} init`,
+          },
           [`init ${facts().packageName}`]: {
             priority: 2,
             run: `${facts().binaryCommand} init`,
@@ -44,6 +54,18 @@ export const lefthookYaml: config.ManagedConfig = {
             priority: 40,
             run: `${facts().binaryCommand} check --file-scoped`,
             stage_fixed: true,
+          },
+          // Runs between init and check so a subproject newly added to a
+          // monorepo gets its missing managed configs created before the check
+          // reads them. Idempotent by contract: every existing file stays
+          // byte-for-byte untouched, so steady-state runs are no-ops.
+          // --no-verify-hash belongs here: create-missing never overwrites, so
+          // the chain-hash gate (which protects overwrites) has nothing to
+          // guard, and a pin baked under a different invocation channel would
+          // otherwise break this hook.
+          [`${facts().packageName}-ensure-configs`]: {
+            priority: 15,
+            run: `${facts().binaryCommand} config reconcile --create-missing --no-verify-hash`,
           },
           [`${facts().packageName}-init`]: {
             priority: 10,

@@ -14,6 +14,7 @@ Every datamitsu command follows the same rule:
 
 - Inside a pnpm monorepo wired with this config: `pnpm dm <command>` — `pnpm dm check`, `pnpm dm config reconcile`, and managed tools via `pnpm dm exec <tool>` (`pnpm dm exec air`, `pnpm dm exec goose`, `pnpm dm exec task -- <task>`, …).
 - If the repo has no pnpm stack initialized: call the system-installed `datamitsu` binary directly — `datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`.
+- A subproject newly added to a monorepo is provisioned by the shipped hook: `<invocation> config reconcile --create-missing` creates only the managed configs that are missing and never touches an existing file. Run it by hand after adding a subproject if you do not want to wait for the next commit.
 
 ### Web
 
