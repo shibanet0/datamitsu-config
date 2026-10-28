@@ -8,14 +8,14 @@ blockExoticSubdeps: true
 catalog:
   "@antebudimir/eslint-plugin-vanilla-extract": 1.18.1
   "@commander-js/extra-typings": 15.0.0
-  "@commitlint/cli": 21.2.3
-  "@commitlint/config-conventional": 21.2.3
+  "@commitlint/cli": 21.2.4
+  "@commitlint/config-conventional": 21.2.4
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261028.28f309f
+  "@datamitsu/datamitsu": 0.5.2
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
-  "@eslint-react/eslint-plugin": 5.28.1
+  "@eslint-react/eslint-plugin": 5.28.4
   "@eslint/config-helpers": 0.7.0
   "@eslint/js": 10.0.1
   "@next/eslint-plugin-next": 16.4.2
@@ -24,10 +24,10 @@ catalog:
   "@stylistic/eslint-plugin": 5.10.0
   "@types/node": 26.6.5
   "@types/remove-markdown": 0.3.4
-  "@typescript-eslint/utils": 8.71.2
+  "@typescript-eslint/utils": 8.72.0
   "@vitest/coverage-v8": 5.0.5
   "@vitest/eslint-plugin": 1.6.27
-  caniuse-lite: 1.0.30001816
+  caniuse-lite: 1.0.30001818
   commander: 15.0.0
   conventional-changelog-conventionalcommits: 10.4.1
   cspell: 10.4.0
@@ -37,7 +37,7 @@ catalog:
   eslint-import-resolver-typescript: 4.4.5
   eslint-plugin-array-func: 5.1.1
   eslint-plugin-baseline-js: 0.7.5
-  eslint-plugin-boundaries: 7.2.0
+  eslint-plugin-boundaries: 7.2.1
   eslint-plugin-clsx: 0.1.0
   eslint-plugin-command: 4.0.0
   eslint-plugin-compat: 7.0.2
@@ -51,16 +51,16 @@ catalog:
   eslint-plugin-html: 8.2.1
   eslint-plugin-i18next: 6.1.5
   eslint-plugin-import-x: 4.17.1
-  eslint-plugin-jsdoc: 65.3.11
+  eslint-plugin-jsdoc: 65.4.0
   eslint-plugin-json: 5.0.0
   eslint-plugin-json-schema-validator: 6.3.1
   eslint-plugin-jsonc: 3.4.2
   eslint-plugin-jsx-a11y-x: 0.2.0
-  eslint-plugin-n: 18.4.1
+  eslint-plugin-n: 18.5.0
   eslint-plugin-no-unsanitized: 4.1.5
   eslint-plugin-no-use-extend-native: 0.7.3
-  eslint-plugin-oxlint: 1.88.0
-  eslint-plugin-perfectionist: 5.12.1
+  eslint-plugin-oxlint: 1.89.0
+  eslint-plugin-perfectionist: 5.13.0
   eslint-plugin-playwright: 2.12.1
   eslint-plugin-pnpm: 1.9.1
   eslint-plugin-promise: 7.3.0
@@ -71,21 +71,21 @@ catalog:
   eslint-plugin-regexp: 3.3.1
   eslint-plugin-security: 4.2.0
   eslint-plugin-sonarjs: 4.2.2
-  eslint-plugin-storybook: 10.6.2
+  eslint-plugin-storybook: 10.6.3
   eslint-plugin-svelte: 3.23.1
-  eslint-plugin-turbo: 2.11.9
+  eslint-plugin-turbo: 2.11.10
   eslint-plugin-unicorn: 78.0.0
   eslint-plugin-unused-imports: 4.4.1
   eslint-typegen: 2.3.1
-  execa: 10.1.1
+  execa: 10.2.0
   fast-glob: 3.3.3
   globals: 17.13.0
   json-schema-to-typescript: 16.0.0
-  knip: 6.41.0
-  oxfmt: 0.73.0
-  oxlint: 1.88.0
+  knip: 6.42.1
+  oxfmt: 0.74.0
+  oxlint: 1.89.0
   prettier: 3.9.10
-  prettier-plugin-embed: 0.7.3
+  prettier-plugin-embed: 0.8.1
   prettier-plugin-jsdoc: 1.8.1
   prettier-plugin-sql: 0.20.0
   remove-markdown: 0.8.0
@@ -94,8 +94,8 @@ catalog:
   tsdown: 0.23.1
   tsx: 4.23.15
   type-fest: 5.10.0
-  typescript: 6.0.3
-  typescript-eslint: 8.71.2
+  typescript: 7.0.2
+  typescript-eslint: 8.72.0
   unrun: 0.3.1
   vitest: 5.0.5
   yaml: 2.9.1
