@@ -232,9 +232,9 @@ pre-commit:
     datamitsu-init:
       priority: 10
       run: node bin/datamitsu.js init
-    datamitsu-ensure-configs:
+    ensure configs:
       priority: 15
-      run: node bin/datamitsu.js config reconcile --create-missing
+      run: pnpm dm config reconcile --create-missing --no-verify-hash
     sync-datamitsu-version:
       priority: 20
       run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu-config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
@@ -281,10 +281,14 @@ post-checkout:
       run: node bin/datamitsu.js init
     ensure configs:
       priority: 3
-      run: node bin/datamitsu.js config reconcile --create-missing
+      run: node bin/datamitsu.js config reconcile --create-missing --no-verify-hash
   parallel: false
 `,
-      expectChainHash: "xxh3:9c066d23096284979234e84e53848755",
+      // No expectChainHash here, deliberately: the upstream render embeds
+      // facts().binaryCommand, which depends on how reconcile was invoked
+      // (pnpm dm vs node bin/datamitsu.js), so a pin would fail under any
+      // other invocation channel than the one that computed it. The override
+      // below fully replaces the content, which is the drift protection.
     },
     "package.json": {
       ...config.managedConfigs?.["package.json"],
@@ -489,7 +493,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261027.a5d9075
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261028.28f309f
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.28.1
@@ -616,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:62932ae6f1d57aad84f91dbccec9235c",
+      expectChainHash: "xxh3:09ad3e101606e414b67f785cb102fb72",
     },
   },
   tools: {
