@@ -93,6 +93,23 @@ commit `pnpm-lock.yaml` together with `package.json`.
 - Projects using npm/pnpm for dependency management
 - When you need the npm package ecosystem integration
 
+### Experimental tools
+
+Tools whose configuration is not ready for the default check are disabled by default. Enable
+specific tools for a local experiment by passing their names as a comma-separated list:
+
+```bash
+DATAMITSU_EXPERIMENTAL_TOOLS=alint,ls-lint pnpm dm check
+```
+
+The current experimental allowlist is:
+
+`alint`, `blint`, `cargo-deny`, `deptry`, `govulncheck`, `kubeconform`, `ls-lint`, `mdsf`, `zizmor`.
+
+The variable is deliberately an allowlist rather than a boolean switch. Unknown names are ignored,
+and tools with a separate policy — CI-only scanners, `oxfmt`'s formatter ownership, and the
+alternative prose checkers `harper-cli` and `vale` — are not enabled by this variable.
+
 ### Method 2: Docker Images
 
 Pre-built Docker images with all tools pre-installed for fast, consistent CI/CD.

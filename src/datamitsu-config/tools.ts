@@ -38,18 +38,23 @@ import {
 
 type Tool =
   | "actionlint"
+  | "alint"
   | "bearer"
+  | "blint"
   | "buf"
   | "buf-format"
+  | "cargo-deny"
   | "checkmake"
   | "cspell"
   | "dclint"
+  | "deptry"
   | "dotenv-linter"
   | "droast"
   | "editorconfig-checker"
   | "eslint"
   | "golangci-lint"
   | "golangci-lint-fmt"
+  | "govulncheck"
   | "grype"
   | "hadolint"
   | "harper-cli"
@@ -58,11 +63,14 @@ type Tool =
   | "knip"
   | "ktfmt"
   | "ktlint"
+  | "kubeconform"
   | "lefthook-sort"
   | "lefthook-validate"
+  | "ls-lint"
   | "lychee"
   | "lychee-offline"
   | "markdownlint-cli2"
+  | "mdsf"
   | "osv-scanner"
   | "oxfmt"
   | "oxlint"
@@ -93,7 +101,8 @@ type Tool =
   | "vale"
   | "yamlfmt"
   | "yamllint"
-  | "yq-json";
+  | "yq-json"
+  | "zizmor";
 
 const toPriorityMap = (list: Tool[]): Record<Tool, number> =>
   [...new Set<Tool>(list)].reduce<Record<Tool, number>>(
@@ -145,6 +154,7 @@ const _fixPriority: Tool[] = [
   "helmfmt",
   "yamlfmt",
   "pre-commit",
+  "mdsf",
 ];
 
 // Priority order for `lint` operations. Only includes tools that expose a lint.
@@ -201,6 +211,15 @@ const _lintPriority: Tool[] = [
   "trivy",
   "osv-scanner",
   "bearer",
+  "alint",
+  "blint",
+  "cargo-deny",
+  "deptry",
+  "govulncheck",
+  "kubeconform",
+  "ls-lint",
+  "zizmor",
+  "mdsf",
 ];
 
 const fixPriority = toPriorityMap(_fixPriority);
@@ -210,7 +229,25 @@ const runtimeFacts = facts();
 const isCI =
   runtimeFacts.ci?.isCI ?? (runtimeFacts.env.CI === "true" || runtimeFacts.env.CI === "1");
 
-// Reason shown in the skipped report for the opt-in batch below.
+const experimentalToolNames = [
+  "alint",
+  "blint",
+  "cargo-deny",
+  "deptry",
+  "govulncheck",
+  "kubeconform",
+  "ls-lint",
+  "mdsf",
+  "zizmor",
+] as const satisfies readonly Tool[];
+
+const experimentalTools = new Set(
+  (runtimeFacts.env.DATAMITSU_EXPERIMENTAL_TOOLS ?? "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean),
+);
+
 const optInSkip = "opt-in: pending manual review & config tuning";
 
 // vale and harper both ship as a second spell checker with no project dictionary, so cspell — which
@@ -241,11 +278,8 @@ export const toolsConfig: config.MapOfTools = {
     },
     outputParser: { module: "core", parser: "actionlint" },
   },
-  // ── opt-in tools (disabled by default) ──────────────────────────────────
-  // Registered as apps + wired here, but held at `skip: true` until each is
-  // manually validated and its config tuned. To enable a tool: drop `skip`
-  // (network scanners noted below should become `skip: !isCI` instead) and
-  // give it a `priority`. Added 2026-08-11.
+  // Opt-in tools stay skipped unless named in DATAMITSU_EXPERIMENTAL_TOOLS; the
+  // allowlist and the test below keep unfinished configs explicit and reviewable.
   alint: {
     name: "alint - language-agnostic repository structure linter",
     operations: {
@@ -1887,3 +1921,9 @@ export const toolsConfig: config.MapOfTools = {
     skipReason: optInSkip,
   },
 };
+
+for (const tool of experimentalToolNames) {
+  if (experimentalTools.has(tool) && toolsConfig[tool]?.skip === true) {
+    toolsConfig[tool].skip = false;
+  }
+}

@@ -178,6 +178,11 @@ One env module per project (Go: an \`env\` package; TS: an \`env.ts\`). ALL env 
 - Do ALL parsing, normalization, and validation here — bool/int parsing, enum checks, coercion to the type the app expects. The rest of the app consumes an already-valid, typed value, never a raw string.
 - Centralize the KEYS too, so renaming a variable is a one-line change.
 
+\`DATAMITSU_EXPERIMENTAL_TOOLS\` is the one config-owned rollout switch for tools marked
+\`opt-in: pending manual review & config tuning\`. It accepts a comma-separated allowlist of tool
+names, defaults to empty, and ignores unknown names. Do not use it for stable tools, CI-only tools,
+or tools excluded because another tool owns the same concern.
+
 ### Build-Time Flags
 
 Go \`ldflags\` and build tags, Rust \`build.rs\` / \`cfg\` / \`env!\`, and equivalents.
@@ -505,7 +510,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
 export const CHUNK_00_BASE_HASH = "99f787a9542bbe75d2214c94b20525b3b85e1c0bd2c209d622b5416288058db4"; // prettier-ignore
-export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
+export const CHUNK_00_CONFIG_INPUTS_HASH = "7b5e7ca344d4c07f1ef91c5aff72c066502a426c4e016fddcefb063a60041b02"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "2f7c6dcf065ff965f9f20b06768aad43fadadf0cad15f60bc72af10e750f1454"; // prettier-ignore

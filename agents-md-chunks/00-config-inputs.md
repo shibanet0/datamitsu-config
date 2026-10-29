@@ -19,6 +19,11 @@ One env module per project (Go: an `env` package; TS: an `env.ts`). ALL env acce
 - Do ALL parsing, normalization, and validation here — bool/int parsing, enum checks, coercion to the type the app expects. The rest of the app consumes an already-valid, typed value, never a raw string.
 - Centralize the KEYS too, so renaming a variable is a one-line change.
 
+`DATAMITSU_EXPERIMENTAL_TOOLS` is the one config-owned rollout switch for tools marked
+`opt-in: pending manual review & config tuning`. It accepts a comma-separated allowlist of tool
+names, defaults to empty, and ignores unknown names. Do not use it for stable tools, CI-only tools,
+or tools excluded because another tool owns the same concern.
+
 ### Build-Time Flags
 
 Go `ldflags` and build tags, Rust `build.rs` / `cfg` / `env!`, and equivalents.
