@@ -50,9 +50,11 @@ import { rustfmtToml } from "./managed-configs/rustfmt_toml";
 import { sqruffToml } from "./managed-configs/sqruff_toml";
 import { stylelintConfigMjs } from "./managed-configs/stylelint_config_mjs";
 import { turboJson } from "./managed-configs/turbo_json";
+import { wtToml } from "./managed-configs/wt_toml";
 
 export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
+  ".config/wt.toml": wtToml,
   ".datamitsu/scripts/format-terraform-spacing.sh": formatTerraformSpacingSh,
   ".datamitsuignore": datamitsuignore,
   ".dclint.yaml": dclintYaml,
