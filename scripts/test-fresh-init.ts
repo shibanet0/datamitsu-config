@@ -173,7 +173,10 @@ async function main(): Promise<void> {
       await run("install", "pnpm", ["add", "-D", `@datamitsu/datamitsu@${version}`], work, env),
     ); // cspell:disable-line
     assertOk("init", await run("datamitsu init", "pnpm", ["exec", "datamitsu", "init"], work, env));
-    await writeFile(path.join(work, "datamitsu.config.js"), fixtureConfig(BASE_CONFIG));
+    await writeFile(
+      path.join(work, "datamitsu.config.js"),
+      fixtureConfig(path.relative(work, BASE_CONFIG)),
+    );
     assertOk(
       "layered init",
       await run("layered datamitsu init", "pnpm", ["exec", "datamitsu", "init"], work, env),

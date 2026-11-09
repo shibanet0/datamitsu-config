@@ -8,6 +8,7 @@ const words: string[] = [
   // opt-in tool names, owners, and their config-file stems (added with the
   // droast/ty/zizmor/… tool batch).
   "alint",
+  "armv",
   "asamarts",
   "blint",
   "containerfile",
@@ -41,6 +42,7 @@ const words: string[] = [
   "llmstxt",
   "codegen",
   "reinitialise",
+  "riscv",
   "axaml",
   "pressly",
   "allurectl",
@@ -66,6 +68,7 @@ const words: string[] = [
   "conftest",
   "containerregistry",
   "contentlayer",
+  "cpython",
   "cssnanorc",
   "curlies",
   "ctsx",
@@ -103,6 +106,8 @@ const words: string[] = [
   "getsops",
   "gitmessage",
   "gitmojirc",
+  "gnueabi",
+  "gnueabihf",
   "golangci",
   "goodwithtech",
   "gpgtty",

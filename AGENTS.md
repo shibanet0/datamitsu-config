@@ -599,13 +599,22 @@ never scan the store or probe binaries to discover it.
 
 The managed `eslint`, `oxlint`, and `oxfmt` apps run on pinned Bun. Their `bun.binPath` must point to the package JavaScript entrypoint, never a `node_modules/.bin` shell shim. Preserve the dependency lock files, ESLint package extensions, and oxlint type-aware engine when updating these apps. Run `task refresh` to regenerate app documentation and Docker/OCI paths after runtime changes.
 
-The default uv runtime pins Python 3.15.0. Apps whose locked wheels do not support it
-select `uv-python314` (Python 3.14.8), with the exact blocking dependency explained
-beside `uv.runtime`. Keep the default current rather than downgrading every app.
+The default uv runtime's Python version and SHA-256-pinned download catalog live in
+`src/datamitsu-config/registries/runtimes.json`. Apps whose locked wheels do not
+support it select `uv-python314`, whose version and catalog live together in
+`src/datamitsu-config/registries/uv-python314.json`, with the blocking dependency
+explained beside `uv.runtime`. Refresh both catalogs through `task pull:runtimes:update`;
+the compatibility generator preserves its separately declared Python version.
+Keep the default current rather than downgrading every app.
 Lock generation alone does not prove installability: run the real locked, no-build
 install on each selected interpreter before removing a compatibility binding.
 The managed JDK 27 deliberately drops macOS x64; the remaining JVM platform loss is accepted,
 not an asset-detection error. Do not suppress ktlint's upstream JVM startup warnings.
+
+golangci-lint is a locked Go app built with the managed Go runtime, not a binary
+release entry. Keep its compiler at least as new as the Go version being analyzed:
+the standard importer embedded in Go 1.27.0 cannot read the V5 export data introduced
+in Go 1.27.2. Do not disable `gocritic` or restore the prebuilt executable as a fix.
 
 ## pnpm Workspace Migration
 

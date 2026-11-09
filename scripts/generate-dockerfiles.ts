@@ -1,5 +1,8 @@
 import { execa } from "execa";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+
+import { normalizePythonExportDockerfile } from "./lib/python-export-shell.ts";
 
 /**
  * Regenerate docker/Dockerfile and docker/Dockerfile.alpine from the current datamitsu config via
@@ -83,7 +86,6 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "gcrane",
       "gitleaks",
       "golang-migrate",
-      "golangci-lint",
       "goose",
       "grpcurl",
       "grype",
@@ -150,5 +152,7 @@ for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
     // apps.ts) so the image stays under the overlay2 128-layer limit.
     { env: { DATAMITSU_OCI_MINIMAL: "1" }, preferLocal: true, stdio: "inherit" },
   );
+  const content = await readFile(output, "utf8");
+  await writeFile(output, normalizePythonExportDockerfile(content));
   console.log(`Generated ${output} + ${ociMap}`);
 }

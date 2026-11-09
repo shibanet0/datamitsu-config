@@ -1,0 +1,243 @@
+{
+  "pythonDownloads": {
+    "cpython-3.14.8-darwin-aarch64-none": {
+      "arch": {
+        "family": "aarch64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:994adadc202c5df0b4570192cc9a70e3f2c131e512f4a125c56efa8562f44b28",
+      "libc": "none",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "darwin",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-apple-darwin-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-darwin-x86_64-none": {
+      "arch": {
+        "family": "x86_64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:f0137337ecf6234b30c9c955219dae2d71e1a00387c4d204d6c6929e24bf9a90",
+      "libc": "none",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "darwin",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-apple-darwin-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-aarch64-gnu": {
+      "arch": {
+        "family": "aarch64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:d8ae14f303d3971431184cf423ae5467202de2bc19bf6491a490250b87647d4b",
+      "libc": "gnu",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-aarch64-musl": {
+      "arch": {
+        "family": "aarch64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:7b6714675192dc381e14de4f2615c73d8ce5c15775562f4843282c34c3df8b6c",
+      "libc": "musl",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-unknown-linux-musl-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-armv7-gnueabi": {
+      "arch": {
+        "family": "armv7",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:e2d0bb61e92ef723148cd0e9832e129a3c120547b185dc52e28281f3b9b6c43e",
+      "libc": "gnueabi",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-armv7-unknown-linux-gnueabi-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-armv7-gnueabihf": {
+      "arch": {
+        "family": "armv7",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:e110679c0b93ad5ebe2af32288a7c8240514442049b7b06510496a866b835189",
+      "libc": "gnueabihf",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-armv7-unknown-linux-gnueabihf-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-powerpc64le-gnu": {
+      "arch": {
+        "family": "powerpc64le",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:aca672050e22b2b14099cc25ac10fc507aa5e10b6d6eb1bb8601685e2c50b3b2",
+      "libc": "gnu",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-ppc64le-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-riscv64-gnu": {
+      "arch": {
+        "family": "riscv64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:19357f1d0acf942e04c6994ec56b1ff1c7fa2c8406ad3d6437c1dff128e5cb77",
+      "libc": "gnu",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-riscv64-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-s390x-gnu": {
+      "arch": {
+        "family": "s390x",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:f5bad0228cfd6d5c9825c403b7ed11e234efa0e12c82e17b764a09ec7f206c18",
+      "libc": "gnu",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-s390x-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-x86_64-gnu": {
+      "arch": {
+        "family": "x86_64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:d8faa1b588506b9e3e5a3f57807bb056d534a1641a6b10d15b6ea3f0b413b960",
+      "libc": "gnu",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-linux-x86_64-musl": {
+      "arch": {
+        "family": "x86_64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:6ee5218694c3ddf1098aa306bb01b621d14c0bca4134b317614d9daa99f16ba2",
+      "libc": "musl",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "linux",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-unknown-linux-musl-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-windows-aarch64-none": {
+      "arch": {
+        "family": "aarch64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:9c0b221413b0353550bdbf8f0b7bba21c02c8a1199b39dd6af08f06cd6be6851",
+      "libc": "none",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "windows",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-pc-windows-msvc-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-windows-i686-none": {
+      "arch": {
+        "family": "i686",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:91d627ad00e633fcd04d7fb867ee30afdf2c6f455704c293a035f752d0c4725c",
+      "libc": "none",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "windows",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-i686-pc-windows-msvc-install_only_stripped.tar.gz",
+      "variant": ""
+    },
+    "cpython-3.14.8-windows-x86_64-none": {
+      "arch": {
+        "family": "x86_64",
+        "variant": ""
+      },
+      "build": "20261013",
+      "hash": "sha256:dce851f280b986764037bd952d40819e94ccceb08ac914004123f43ce17f4095",
+      "libc": "none",
+      "major": 3,
+      "minor": 14,
+      "name": "cpython",
+      "os": "windows",
+      "patch": 8,
+      "prerelease": "",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+      "variant": ""
+    }
+  },
+  "pythonVersion": "3.14.8"
+}

@@ -257,7 +257,8 @@ tasks:
   pull:runtimes:update:
     cmds:
       - pnpm dm devtools pull-runtimes --update ./src/datamitsu-config/registries/runtimes.json
-      - pnpm dm fix ./src/datamitsu-config/registries/runtimes.json
+      - node scripts/sync-python-downloads.ts
+      - pnpm dm fix ./src/datamitsu-config/registries/runtimes.json ./src/datamitsu-config/registries/uv-python314.json
     desc: Pull runtimes registry with update flag
   pull:uv:
     cmds:

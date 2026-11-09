@@ -33,17 +33,9 @@
       "app": "bandit"
     },
     {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/uv/checkov",
       "kind": "app",
       "app": "checkov"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
     },
     {
       "subtree": ".apps/node/commitlint",
@@ -66,13 +58,14 @@
       "app": "detect-secrets"
     },
     {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/bun/eslint",
       "kind": "app",
       "app": "eslint"
+    },
+    {
+      "subtree": ".apps/go/golangci-lint",
+      "kind": "app",
+      "app": "golangci-lint"
     },
     {
       "subtree": ".apps/go/govulncheck",
@@ -83,10 +76,6 @@
       "subtree": ".apps/uv/httpstat",
       "kind": "app",
       "app": "httpstat"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
     },
     {
       "subtree": ".apps/node/knip",
@@ -144,10 +133,6 @@
       "app": "pre-commit"
     },
     {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/node/prettier",
       "kind": "app",
       "app": "prettier"
@@ -166,10 +151,6 @@
       "subtree": ".apps/uv/semgrep",
       "kind": "app",
       "app": "semgrep"
-    },
-    {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
     },
     {
       "subtree": ".apps/bun/sort-keys",
@@ -202,17 +183,19 @@
       "app": "yamllint"
     },
     {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
-    },
-    {
       "subtree": ".apps/uv/zensical",
       "kind": "app",
       "app": "zensical"
     },
     {
-      "subtree": ".uv/python",
-      "kind": "uv-python"
+      "subtree": ".runtime-data/uv",
+      "kind": "python-data",
+      "app": "httpstat"
+    },
+    {
+      "subtree": ".runtime-data/uv-python314",
+      "kind": "python-data",
+      "app": "bandit"
     },
     {
       "subtree": ".bin/actionlint",
@@ -328,11 +311,6 @@
       "subtree": ".bin/golang-migrate",
       "kind": "binary",
       "app": "golang-migrate"
-    },
-    {
-      "subtree": ".bin/golangci-lint",
-      "kind": "binary",
-      "app": "golangci-lint"
     },
     {
       "subtree": ".bin/goose",

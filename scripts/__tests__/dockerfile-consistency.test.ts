@@ -39,14 +39,6 @@ describe("Dockerfile consistency", () => {
     expect(countFromStages(readFile("docker/Dockerfile.alpine"))).toBeGreaterThan(50);
   });
 
-  it("oci-map.json golangci-lint entry is a binary at .bin/golangci-lint", () => {
-    const map = readOciMap("docker/oci-map.json");
-    const entry = map.layers.find((e) => e.app === "golangci-lint");
-    expect(entry, "golangci-lint must be in oci-map.json layers").toBeDefined();
-    expect(entry!.subtree).toBe(".bin/golangci-lint");
-    expect(entry!.kind).toBe("binary");
-  });
-
   it("oci-map.alpine.json lefthook entry present", () => {
     const map = readOciMap("docker/oci-map.alpine.json");
     expect(map.layers.find((e) => e.app === "lefthook")).toBeDefined();
