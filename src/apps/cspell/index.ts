@@ -110,6 +110,7 @@ const words: string[] = [
   "gnueabihf",
   "golangci",
   "goodwithtech",
+  "GOROOT",
   "gpgtty",
   "graphqls",
   "grpcurl",

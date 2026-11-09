@@ -60,10 +60,13 @@ jobs:
             tsconfig/
           retention-days: 1
   docker-build:
-    name: Docker Build Test (${{ matrix.variant }}, ${{ matrix.arch }})
+    name: Docker Build Test
     needs:
       - build-verify
-    runs-on: ${{ matrix.runner }}
+    # Each arch builds natively on its own runner: under QEMU the arm64 leg
+    # cannot finish the source-built Go apps (golangci-lint) inside any
+    # reasonable DATAMITSU_INSTALL_TIMEOUT — module downloads alone outrun it.
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -86,9 +89,18 @@ jobs:
         with:
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
-          load: true
           platforms: linux/${{ matrix.arch }}
           push: false
+          tags: datamitsu-config:pr-${{ github.event.pull_request.number }}${{ matrix.variant == 'alpine' && '-alpine' || '' }}-${{ matrix.arch }}
+      # The builder above still holds every layer of this leg's arch, so this
+      # only exports the image into the Docker daemon for the smoke check below.
+      - name: Load image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
+          load: true
+          platforms: linux/${{ matrix.arch }}
           tags: datamitsu-config:smoke-${{ matrix.variant }}-${{ matrix.arch }}
       - name: Verify key binaries run inside the image
         run: |
@@ -104,11 +116,6 @@ jobs:
         arch:
           - amd64
           - arm64
-        include:
-          - arch: amd64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
         variant:
           - debian
           - alpine
@@ -205,6 +212,4 @@ jobs:
         run: pnpm exec vitest run scripts/__tests__/bin-node-wrappers.test.ts
 name: PR Checks
 on:
-  pull_request:
-    branches:
-      - main
+  pull_request: {}

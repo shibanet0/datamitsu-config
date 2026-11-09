@@ -66,3 +66,7 @@ pnpm dm check
 golangci-lint is a locked Go app, not an entry in the binary release registry.
 Keep the Go runtime that builds it at least as new as the Go versions being linted;
 the compiler also supplies the standard export-data importer embedded in the tool.
+The linter also starts `go` from PATH to load the analyzed project. CI adds the
+configured SDK's bin directory to PATH through `datamitsu runtime run go -- env GOROOT`;
+building the linter alone does not select that subprocess's Go version. Consumer
+environments must likewise provide a Go SDK compatible with their project's go.mod.
