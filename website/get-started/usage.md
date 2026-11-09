@@ -283,20 +283,26 @@ pnpm dm runtime list
 pnpm dm runtime list --json
 ```
 
+The human table includes `RUNNABLE` and `REASON`, distinguishing interpreter support
+from installation status and explaining why pnpm cannot run directly.
+
 Run an interpreter by its exact configured name. The `--` separator is required;
 everything after it belongs to the interpreter:
 
 ```bash
 pnpm dm runtime run node -- script.js "with space"
+pnpm dm runtime run bun -- script.ts "with space"
 pnpm dm runtime run uv-python314 -- -c 'import sys; print(sys.version)'
 pnpm dm runtime run go -- run ./cmd/tool
 pnpm dm runtime run jvm -- -jar tool.jar
 ```
 
 `uv` and `uv-python314` run their pinned CPython directly, not `uv run`. They do not
-sync a project, run pip, or install script dependencies. Bun and pnpm appear in the
-inventory but are not direct `runtime run` targets. Add `--dry-run` before the
-runtime name to inspect a JSON execution plan without provisioning or execution.
+sync a project, run pip, or install script dependencies. Bun runs directly with
+implicit package installation disabled, while preserving project bunfig and `.env`
+loading. pnpm appears in the inventory but is not a direct `runtime run` target.
+Add `--dry-run` before the runtime name to inspect a JSON execution plan without
+provisioning or execution.
 
 A normal run installs missing managed components automatically and preserves the
 calling directory, arguments, streams and exit status. Runtime-owned caches are
