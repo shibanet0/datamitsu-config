@@ -75,6 +75,11 @@
       "app": "eslint"
     },
     {
+      "subtree": ".apps/go/golangci-lint",
+      "kind": "app",
+      "app": "golangci-lint"
+    },
+    {
       "subtree": ".apps/go/govulncheck",
       "kind": "app",
       "app": "govulncheck"
@@ -328,11 +333,6 @@
       "subtree": ".bin/golang-migrate",
       "kind": "binary",
       "app": "golang-migrate"
-    },
-    {
-      "subtree": ".bin/golangci-lint",
-      "kind": "binary",
-      "app": "golangci-lint"
     },
     {
       "subtree": ".bin/goose",

@@ -195,6 +195,14 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
+          # Measured 2026-10-28: the app-golangci-lint stage under arm64 QEMU
+          # takes 313s on a 30-thread host and ~5min natively on a 4-vCPU
+          # arm64 runner, so a 4-vCPU QEMU leg estimates to ~40min. 5400s
+          # keeps a >2x margin; the 1200s default did not (downloads alone
+          # outran it). Move publishing to native arch runners + manifest
+          # merge if this budget is ever exceeded.
+          build-args: |
+            DATAMITSU_INSTALL_TIMEOUT=5400
           context: .
           file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
           labels: ${{ steps.meta.outputs.labels }}
