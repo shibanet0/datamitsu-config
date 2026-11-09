@@ -1,0 +1,2 @@
+[post-start]
+datamitsu-cache-copy = "sh -c 'datamitsu cache copy --source \"$1\"' sh '{{ base_worktree_path }}'"

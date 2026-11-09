@@ -1,4 +1,4 @@
-description: Setup Node.js, pnpm, and caching for datamitsu-config
+description: Setup Node.js, pnpm, managed Go, and caching for datamitsu-config
 inputs:
   cache-datamitsu:
     default: "true"
@@ -39,5 +39,11 @@ runs:
     - if: ${{ inputs.install-dependencies == 'true' }}
       name: Install dependencies
       run: pnpm install --frozen-lockfile
+      shell: bash
+    - if: ${{ inputs.install-dependencies == 'true' }}
+      name: Activate configured Go SDK
+      run: |
+        GOROOT="$(node bin/datamitsu.js runtime run go -- env GOROOT)"
+        printf '%s/bin\n' "$GOROOT" >> "$GITHUB_PATH"
       shell: bash
   using: composite

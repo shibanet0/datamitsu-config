@@ -10,6 +10,7 @@ import { ociBundle } from "./oci";
 import { parsers } from "./parsers";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
+import uvPython314 from "./registries/uv-python314.json";
 import { SKILLS } from "./skills";
 import { toolsConfig } from "./tools";
 import { TSCONFIG_MD } from "./tsconfig.md";
@@ -94,7 +95,7 @@ function getConfig(cfg: config.Config): config.Config {
         ...mapOfRuntimes.uv,
         kind: "uv",
         mode: "managed",
-        uv: { pythonVersion: "3.14.8" },
+        uv: uvPython314 as unknown as BinManager.RuntimeConfigUV,
       },
       ...(mapOfRuntimes?.node
         ? {

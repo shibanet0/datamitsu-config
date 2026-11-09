@@ -212,6 +212,4 @@ jobs:
         run: pnpm exec vitest run scripts/__tests__/bin-node-wrappers.test.ts
 name: PR Checks
 on:
-  pull_request:
-    branches:
-      - main
+  pull_request: {}

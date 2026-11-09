@@ -1696,6 +1696,26 @@ declare global {
 
     type MapOfRuntimes = Record<string, RuntimeConfig>;
 
+    interface PythonDownload {
+      arch: PythonDownloadArch;
+      build: string;
+      hash: string;
+      libc: string;
+      major: number;
+      minor: number;
+      name: "cpython";
+      os: string;
+      patch: number;
+      prerelease: string;
+      url: string;
+      variant: string;
+    }
+
+    interface PythonDownloadArch {
+      family: string;
+      variant: string;
+    }
+
     interface RuntimeConfig {
       /**
        * Bun-specific runtime configuration (bunVersion, pnpmRuntime). Required when kind is "bun".
@@ -1793,6 +1813,7 @@ declare global {
     }
 
     interface RuntimeConfigUV {
+      pythonDownloads?: Record<string, PythonDownload>;
       pythonVersion?: string;
     }
 

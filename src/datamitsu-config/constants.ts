@@ -1,6 +1,8 @@
+import runtimes from "./registries/runtimes.json";
+
 export const runtimeVersions = {
-  node: "26.12.1",
-  python: "3.15.0",
+  node: runtimes.node.node.nodeVersion,
+  python: runtimes.uv.uv.pythonVersion,
 };
 
 // Consumer-facing support floor for `engines.node` — the lowest Node we promise

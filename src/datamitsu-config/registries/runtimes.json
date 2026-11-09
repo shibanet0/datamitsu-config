@@ -403,16 +403,16 @@
             "unknown": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:bb7b805bdcf3d0bc8c74ceb94569e6b3e8aa35bd492acdbb9d46bf46d9d4ff6b",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-x86_64-apple-darwin.tar.gz"
+              "hash": "sha256:63ba17fdda55ad1a230d4b37fc6017ffa10c23688c83818bd3bfdf914c652a02",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-x86_64-apple-darwin.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:cfe454573412ff7380d15fc7dae5997ab53ffce72fce0a78e91ddbc84001acd2",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-aarch64-apple-darwin.tar.gz"
+              "hash": "sha256:60fbd5c8a1ed681845eea28d9d622fcde03c51e91a43465b64a1e17db1ed3472",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-aarch64-apple-darwin.tar.gz"
             }
           }
         },
@@ -421,28 +421,28 @@
             "glibc": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:eadd9d27c134ab5ac1ffd4473b97a741407f3ea238288f03121fc4deddf90220",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-x86_64-unknown-linux-gnu.tar.gz"
+              "hash": "sha256:f29c3e94ffabd7e6f3ba521dba169a9b7ec12100bf3257087f0f24f6123f3645",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-x86_64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:6c86040a8f045ab9adc9e3ec4cdafa03fd00e9a988ed2bf28971c7fc2d0debd0",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-x86_64-unknown-linux-musl.tar.gz"
+              "hash": "sha256:5d61f26b6c7213779eda90edc6971ea6b0b796bfb8d49a574c8ad69b59838548",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-x86_64-unknown-linux-musl.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:9041c73c99fdc5892cf128140beb354eca9231d502068cc36e6cb53a8e59ad14",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-aarch64-unknown-linux-gnu.tar.gz"
+              "hash": "sha256:229e194255c7958d86d56e8790d969a6f74736592133f0dfd0076f754c642c1d",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-aarch64-unknown-linux-gnu.tar.gz"
             },
             "musl": {
               "binaryPath": "uv",
               "contentType": "tar.gz",
-              "hash": "sha256:345a8308e4d1835cdfaadf692836fd3137a6d45864773f05ad7bf59442b1ba16",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-aarch64-unknown-linux-musl.tar.gz"
+              "hash": "sha256:819692e404d23e5aae6bc44c0e260f1f5492fd1910ab4693b2c650f926dbe800",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-aarch64-unknown-linux-musl.tar.gz"
             }
           }
         },
@@ -451,16 +451,16 @@
             "unknown": {
               "binaryPath": "uv.exe",
               "contentType": "zip",
-              "hash": "sha256:3b2661a463a5baea7f5076ea2b25ab71d77f36a6c0d809e5350651792f80a672",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-x86_64-pc-windows-msvc.zip"
+              "hash": "sha256:a2a8820d5eea32f08ef467ef3b7f66883a9b076d5737a2fc2fbb5f458d1bb50f",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-x86_64-pc-windows-msvc.zip"
             }
           },
           "arm64": {
             "unknown": {
               "binaryPath": "uv.exe",
               "contentType": "zip",
-              "hash": "sha256:ec7846a5939b4654afee24f2d82bf6fde71bd7a6952d7748f1135ab301dd0a49",
-              "url": "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-aarch64-pc-windows-msvc.zip"
+              "hash": "sha256:c2426c0c8e28b53d8c440e47a18d96ad4db51e159866c0e81435b196d7f0081c",
+              "url": "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-aarch64-pc-windows-msvc.zip"
             }
           }
         }
@@ -468,7 +468,145 @@
     },
     "mode": "managed",
     "uv": {
-      "pythonVersion": "3.15.0"
+      "pythonDownloads": {
+        "cpython-3.15.2-darwin-aarch64-none": {
+          "arch": {
+            "family": "aarch64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:1b1b03fca8aa351698403f3d100ee83db7a5d99748fc7707681ac31a6a846ad9",
+          "libc": "none",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "darwin",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-aarch64-apple-darwin-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-darwin-x86_64-none": {
+          "arch": {
+            "family": "x86_64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:6ec04346b578656b5d5597144cbe0f4773acea6af6048cb8fe0cac3e92c702ac",
+          "libc": "none",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "darwin",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-x86_64-apple-darwin-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-linux-aarch64-gnu": {
+          "arch": {
+            "family": "aarch64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:0f23351c03b39beb880de668976074fcc3c082d9c3b03d0b43185632b2b270a0",
+          "libc": "gnu",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "linux",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-aarch64-unknown-linux-gnu-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-linux-aarch64-musl": {
+          "arch": {
+            "family": "aarch64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:2996760114a56a9cbe9111f8a55e8a2e67735c1ff5b5da1bbdedf06ccc26dbb4",
+          "libc": "musl",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "linux",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-aarch64-unknown-linux-musl-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-linux-x86_64-gnu": {
+          "arch": {
+            "family": "x86_64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:7b03163a980c607ba8194709d4a4086735a7a9c488cc475b098157306927b36b",
+          "libc": "gnu",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "linux",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-linux-x86_64-musl": {
+          "arch": {
+            "family": "x86_64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:9723f525ec21a52e5e3b18165ad3d553f1af38aba76125ddae25b156ed9c9202",
+          "libc": "musl",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "linux",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-x86_64-unknown-linux-musl-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-windows-aarch64-none": {
+          "arch": {
+            "family": "aarch64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:8218fe27434a1d69d54deea9caa338cd2351f65aaf2b409bcb6b25d009f53258",
+          "libc": "none",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "windows",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-aarch64-pc-windows-msvc-install_only_stripped.tar.gz",
+          "variant": ""
+        },
+        "cpython-3.15.2-windows-x86_64-none": {
+          "arch": {
+            "family": "x86_64",
+            "variant": ""
+          },
+          "build": "20261026",
+          "hash": "sha256:02e532b60e720aa3d77e757c349ae9cc945441c05851fa646336fc9ff0403041",
+          "libc": "none",
+          "major": 3,
+          "minor": 15,
+          "name": "cpython",
+          "os": "windows",
+          "patch": 2,
+          "prerelease": "",
+          "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.15.2%2B20261026-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+          "variant": ""
+        }
+      },
+      "pythonVersion": "3.15.2"
     }
   }
 }

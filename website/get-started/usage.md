@@ -20,10 +20,10 @@ After installation, the `postinstall` script automatically builds the config. Yo
 pnpm dm init
 ```
 
-Use the package-local wrapper to run the exact stable core this configuration was
-tested with. Datamitsu 0.5.2 includes the native `merge` helper required by the
-configuration; a global 0.5.1 binary is unsupported and must be upgraded to 0.5.2
-or replaced by the package-local invocation below.
+Use the package-local wrapper to run the exact core this configuration was tested
+with. The package pins its core dependency; a separately installed global binary
+does not inherit that pin. In particular, an older core cannot provide the verified
+Python provisioning and named-runtime execution this configuration uses.
 
 To bypass a shell alias that routes `dm` to a global binary, invoke the wrapper directly:
 
@@ -43,9 +43,10 @@ The managed JVM is JDK 27, available on macOS arm64, Linux amd64/arm64 and
 Windows amd64. Intel Macs no longer have a managed JVM for ktfmt, ktlint or
 openapi-generator.
 
-The default Python is 3.15.0. Apps whose locked native dependencies lack Python
+The default Python is 3.15.2. Apps whose locked native dependencies lack Python
 3.15 wheels explicitly select the separate `uv-python314` runtime (Python 3.14.8).
-Both runtimes use uv 0.13.1; managed installs continue to prohibit source builds.
+Both runtimes use uv 0.13.6 and explicit SHA-256-pinned Python catalogs; managed
+installs continue to prohibit source builds.
 
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
@@ -127,8 +128,8 @@ docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable
 docker pull ghcr.io/shibanet0/datamitsu-config-unstable:unstable-alpine
 ```
 
-The PR workflow builds both image variants and runs an offline smoke test for each.
-Each variant has its own build-cache scope; its smoke test reuses that same scope.
+The PR workflow builds and runs an offline smoke test for both image variants on
+native amd64 and arm64 runners, so source-built Go tools do not compile under QEMU.
 
 **Docker image features:**
 
@@ -188,8 +189,9 @@ The Docker images use the `--before-config` flag in the ENTRYPOINT, which loads 
 
 Reference this config as a remote base configuration in your project. datamitsu supports [remote configs](https://datamitsu.com/docs/how-to/use-remote-configs/) for centralized configuration management.
 
-Remote configs do not replace the executable running them. Use datamitsu 0.5.2
-or newer for this configuration: 0.5.1 lacks the native `merge` helper.
+Remote configs do not replace the executable running them. Use the core version
+pinned by the corresponding configuration package. A configuration using an
+unstable core can require features that are not yet available in stable releases.
 
 **Create `datamitsu.config.js` in your project:**
 
@@ -271,6 +273,53 @@ pnpm dm check
 ```
 
 This executes fixers (formatters, auto-fixes) followed by linters (type checking, ESLint, etc.). It should complete with no errors on a clean codebase.
+
+### Named runtimes
+
+List the configured runtimes without installing or starting an interpreter:
+
+```bash
+pnpm dm runtime list
+pnpm dm runtime list --json
+```
+
+The human table includes `RUNNABLE` and `REASON`, distinguishing interpreter support
+from installation status and explaining why pnpm cannot run directly.
+
+Run an interpreter by its exact configured name. The `--` separator is required;
+everything after it belongs to the interpreter:
+
+```bash
+pnpm dm runtime run node -- script.js "with space"
+pnpm dm runtime run bun -- script.ts "with space"
+pnpm dm runtime run uv-python314 -- -c 'import sys; print(sys.version)'
+pnpm dm runtime run go -- run ./cmd/tool
+pnpm dm runtime run jvm -- -jar tool.jar
+```
+
+`uv` and `uv-python314` run their pinned CPython directly, not `uv run`. They do not
+sync a project, run pip, or install script dependencies. Bun runs directly with
+implicit package installation disabled, while preserving project bunfig and `.env`
+loading. pnpm appears in the inventory but is not a direct `runtime run` target.
+Add `--dry-run` before the runtime name to inspect a JSON execution plan without
+provisioning or execution.
+
+A normal run installs missing managed components automatically and preserves the
+calling directory, arguments, streams and exit status. Runtime-owned caches are
+separate for each runtime name and identity; `HOME` is unchanged. With
+`DATAMITSU_OFFLINE=1`, an installed interpreter still runs, while a missing one fails
+instead of falling back to a host interpreter.
+
+Upgrading from the earlier shared-cache layout rebuilds managed app environments.
+Old store entries remain until an explicit `store clear`; `cache clear` does not
+remove runtime data. Clearing the store is not required for this upgrade and can
+disrupt tools already running from it.
+
+golangci-lint is built from its locked Go module using the configured Go runtime,
+rather than downloaded as a prebuilt executable. Its compiler must be at least as
+new as the Go version it analyzes: the standard importer embedded in an older
+compiler may not decode newer export data. Keep the managed Go runtime aligned
+with the projects you lint; disabling `gocritic` is not the compatibility fix.
 
 ### Running a specific tool
 
