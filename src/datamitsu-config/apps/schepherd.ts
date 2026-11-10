@@ -95,6 +95,8 @@ export const schepherdApp: BinManager.App = {
       "${APP_PREPARED}",
       "--quiet",
       "materialize",
+      "--concurrency",
+      "2",
       "--compile-persistable",
       "--json",
     ],

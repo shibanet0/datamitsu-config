@@ -48,8 +48,6 @@ jobs:
         # removes any datamitsu.config.js, so the Docker COPY (and the artifact)
         # would otherwise be missing it. Mirrors release.yml.
         run: cp datamitsu.config.base.js datamitsu.config.js
-      - name: Instrument Schepherd preparation diagnostics
-        run: node scripts/trace-schepherd-preparation.ts
       - name: Upload build artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -60,8 +58,6 @@ jobs:
             package.json
             bin/
             tsconfig/
-            docker/Dockerfile
-            docker/Dockerfile.alpine
           retention-days: 1
   docker-build:
     name: Docker Build Test
@@ -116,7 +112,6 @@ jobs:
           docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec lefthook -- version
           docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec task -- --version
     strategy:
-      fail-fast: false
       matrix:
         arch:
           - amd64
@@ -142,16 +137,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-      - name: Instrument lint preparation diagnostics
-        run: node scripts/trace-schepherd-preparation.ts datamitsu.config.base.js --config-only
       - name: Run lint
-        run: |
-          status=0
-          pnpm dm lint --fail-fast=false || status=$?
-          if ! pnpm dm exec trace-sourcemeta -- --trace-report; then
-            printf '%s\n' 'Preparation diagnostic report failed' >&2
-          fi
-          exit "$status"
+        run: pnpm dm lint --fail-fast=false
       # `validate` rather than `validate:blocklist` alone: the parser pin and the rule-inventory
       # census had no CI gate at all, and both are exactly the kind of drift a Dependabot bump
       # produces. Without this, a plugin bump that adds or re-categorises a rule merges with a

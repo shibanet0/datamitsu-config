@@ -445,6 +445,12 @@ invocation-local. Preparation needs the network unless its ready state was resto
 bundle. Both Docker variants and OCI maps carry `.prepared/schepherd`, including the readiness marker,
 not just the native binary.
 
+Preparation uses `--concurrency 2`. The client's compiler helper has a hard 30-second probe limit,
+independent of `runner.timeout`. Four competing workers make check-jsonschema's CloudFormation
+capability probe time out on constrained CI CPUs; fully serial cold preparation exceeds core's
+default ten-minute install budget. Bound concurrency instead of extending deadlines or converting
+a timeout into an unsupported verdict; the complete catalog and validator coverage stay unchanged.
+
 An unsupported catalog entry is never dropped or treated as a successful validation. The pinned v2
 `barba-cv` schema is malformed: it has no `$defs` but eight references into `$defs`. Preparation
 records the validator rejections visibly; a project file mapped to it still fails with those reasons.
