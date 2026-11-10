@@ -3,7 +3,7 @@ import fs from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
-const bundlePath = resolve(root, "datamitsu.config.js");
+const bundlePath = resolve(root, process.argv[2] ?? "datamitsu.config.js");
 const processors = [
   ["trace-sourcemeta", "JSONSCHEMA_BIN"],
   ["trace-check-jsonschema", "CHECK_JSONSCHEMA_FRONTEND"],
@@ -135,7 +135,10 @@ const wrapper = `
 })();
 `;
 
-for (const path of ["docker/Dockerfile", "docker/Dockerfile.alpine"]) {
+const dockerFiles = process.argv.includes("--config-only")
+  ? []
+  : ["docker/Dockerfile", "docker/Dockerfile.alpine"];
+for (const path of dockerFiles) {
   const file = resolve(root, path);
   const content = fs.readFileSync(file, "utf8");
   const run =
