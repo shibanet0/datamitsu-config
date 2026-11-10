@@ -65,6 +65,90 @@ jobs:
             bin/
             tsconfig/
           retention-days: 1
+  build-docker:
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build.result == 'success'
+    name: Build Docker Image (${{ matrix.variant }}, ${{ matrix.arch }})
+    needs:
+      - build
+      - determine-release-type
+      - validate-stable
+      - generate-unstable-version
+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-24.04-arm' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
+      - name: Download build artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-artifacts
+          path: .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        with:
+          buildkitd-config: docker/buildkitd.toml
+          cleanup: false
+      - name: Login to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+      - id: image-name
+        name: Determine image name
+        run: |
+          IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
+          if [[ "$IS_STABLE" == "true" ]]; then
+            echo "name=ghcr.io/shibanet0/datamitsu-config" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> "$GITHUB_OUTPUT"
+          fi
+      - id: meta
+        name: Generate Docker metadata
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          flavor: |
+            suffix=${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+          images: ${{ steps.image-name.outputs.name }}
+          labels: |
+            org.opencontainers.image.version=${{ needs.determine-release-type.outputs.is_stable == 'true' && needs.validate-stable.outputs.version || needs.generate-unstable-version.outputs.version }}
+      - id: build
+        name: Build and push image by digest
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          build-args: |
+            DATAMITSU_INSTALL_TIMEOUT=5400
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ steps.image-name.outputs.name }},push-by-digest=true,name-canonical=true,push=true,compression=zstd,compression-level=19,force-compression=true,oci-mediatypes=true
+          platforms: linux/${{ matrix.arch }}
+      - env:
+          ARCH: ${{ matrix.arch }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        name: Record image digest
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          printf '%s' "$DIGEST" > "$RUNNER_TEMP/digests/$ARCH.txt"
+      - name: Upload image digest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          if-no-files-found: error
+          name: release-image-digests-${{ matrix.variant }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*.txt
+          retention-days: 1
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - arm64
+        variant:
+          - debian
+          - alpine
   determine-release-type:
     name: Determine Release Type
     outputs:
@@ -133,10 +217,10 @@ jobs:
     if: |
       always() &&
       !cancelled() &&
-      needs.build.result == 'success'
-    name: Publish Docker Images
+      needs.build-docker.result == 'success'
+    name: Publish Docker Images (${{ matrix.variant }})
     needs:
-      - build
+      - build-docker
       - determine-release-type
       - validate-stable
       - generate-unstable-version
@@ -146,18 +230,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.determine-release-type.outputs.checkout_ref }}
-      - name: Download build artifacts
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: release-artifacts
-          path: .
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
         with:
           buildkitd-config: docker/buildkitd.toml
-          # The runner is thrown away after the job; removing the builder's state only costs time.
           cleanup: false
       - name: Login to GHCR
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -171,10 +247,8 @@ jobs:
           IS_STABLE="${{ needs.determine-release-type.outputs.is_stable }}"
           if [[ "$IS_STABLE" == "true" ]]; then
             echo "name=ghcr.io/shibanet0/datamitsu-config" >> "$GITHUB_OUTPUT"
-            echo "Image: ghcr.io/shibanet0/datamitsu-config (stable)"
           else
             echo "name=ghcr.io/shibanet0/datamitsu-config-unstable" >> "$GITHUB_OUTPUT"
-            echo "Image: ghcr.io/shibanet0/datamitsu-config-unstable (unstable)"
           fi
       - id: meta
         name: Generate Docker metadata
@@ -192,23 +266,26 @@ jobs:
             type=raw,value=latest,enable=${{ needs.determine-release-type.outputs.is_stable == 'true' && !contains(needs.validate-stable.outputs.version, '-rc.') && !contains(needs.validate-stable.outputs.version, '-alpha.') }}
             type=raw,value=unstable,enable=${{ needs.determine-release-type.outputs.is_unstable == 'true' }}
             type=raw,value=${{ needs.generate-unstable-version.outputs.tag_name }},enable=${{ needs.determine-release-type.outputs.is_unstable == 'true' }}
-      - name: Build and push
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      - name: Download image digests
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          # Measured 2026-10-28: the app-golangci-lint stage under arm64 QEMU
-          # takes 313s on a 30-thread host and ~5min natively on a 4-vCPU
-          # arm64 runner, so a 4-vCPU QEMU leg estimates to ~40min. 5400s
-          # keeps a >2x margin; the 1200s default did not (downloads alone
-          # outran it). Move publishing to native arch runners + manifest
-          # merge if this budget is ever exceeded.
-          build-args: |
-            DATAMITSU_INSTALL_TIMEOUT=5400
-          context: .
-          file: ${{ matrix.variant == 'alpine' && './docker/Dockerfile.alpine' || './docker/Dockerfile' }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,push=true,compression=zstd,compression-level=19,force-compression=true,oci-mediatypes=true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          merge-multiple: true
+          path: ${{ runner.temp }}/digests
+          pattern: release-image-digests-${{ matrix.variant }}-*
+      - env:
+          IMAGE: ${{ steps.image-name.outputs.name }}
+          META_TAGS: ${{ steps.meta.outputs.tags }}
+        name: Create and push multi-platform image
+        run: |
+          DIGESTS=(
+            "$IMAGE@$(cat "$RUNNER_TEMP/digests/amd64.txt")"
+            "$IMAGE@$(cat "$RUNNER_TEMP/digests/arm64.txt")"
+          )
+          TAG_ARGS=()
+          while IFS= read -r TAG; do
+            [[ -z "$TAG" ]] || TAG_ARGS+=(--tag "$TAG")
+          done <<< "$META_TAGS"
+          docker buildx imagetools create "${TAG_ARGS[@]}" "${DIGESTS[@]}"
     strategy:
       matrix:
         variant:

@@ -728,7 +728,16 @@ The same callback brings a file up to pnpm 12, which fails every command on a wo
 
 ## Docker CI Cache
 
-PR Docker builds use no GitHub Actions cache. The smoke check runs in the same job as the multi-platform build and loads the amd64 image from the builder that just built it. Do not bring `cache-to: type=gha` back: a cache a PR writes is visible only to that PR, no build step ever came back from it, exporting it took 9-31 minutes per variant, and the repository cache ran past its quota until evictions failed builds.
+PR Docker builds use native architecture runners and no GitHub Actions cache. Each smoke check loads
+the image from the builder that just built its architecture. Do not bring `cache-to: type=gha` back:
+a cache a PR writes is visible only to that PR, no build step ever came back from it, exporting it
+took 9-31 minutes per variant, and the repository cache ran past its quota until evictions failed builds.
+
+Release Docker builds use the same native amd64/arm64 runner split, never QEMU. An emulated compiler
+probe can hit Schepherd's own 30-second deadline even when the install budget is much larger.
+Architecture jobs publish only image digests; the variant-level merge publishes the existing tags
+after every native build succeeds. OCI bundles and mirrors depend on that completed manifest merge,
+not on an individual architecture. Preserve zstd compression and the stable/unstable tag policy.
 
 The Lefthook proxy's `versionCheck.args` uses `--proxy-version` to verify the proxy artifact itself.
 Dependency-aware Docker slices also provision the private upstream. Keep the proxy version probe
