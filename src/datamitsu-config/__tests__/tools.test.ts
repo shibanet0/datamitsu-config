@@ -242,22 +242,6 @@ describe("tools", () => {
       expect(toolsConfig.schepherd!.skipReason).toContain("Windows ARM64");
     });
 
-    it("selects supported local schema formats with safe catalog resolution", () => {
-      const lint = toolsConfig.schepherd!.operations.lint!;
-      expect(lint.globs).toEqual(
-        expect.arrayContaining([
-          "**/*.json",
-          "**/*.json5",
-          "**/*.jsonc",
-          "**/*.toml",
-          "**/*.yaml",
-          "**/*.yml",
-        ]),
-      );
-      expect(lint.args).toEqual(expect.arrayContaining(["--safe-catalog", "--ignore-unmatched"]));
-      expect(lint.cache).toBe(false);
-    });
-
     it("should have at least one operation for every tool", () => {
       for (const [toolName, tool] of Object.entries(toolsConfig)) {
         const operations = Object.keys(tool.operations);

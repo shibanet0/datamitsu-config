@@ -13,10 +13,8 @@ const legacyRunner = {
 
 export const schepherdToml: config.ManagedConfig = {
   /**
-   * The digest always comes from this package: the operation's globs are generated from that exact
-   * catalog, so a project pinning another one would hand the validator files nothing matches, and
-   * miss files its catalog does. The repository is the project's to change — a mirror keeps the
-   * catalog digest — and so is everything else, `[[mappings]]` and `[schemas]` included.
+   * The default digest matches the app's prepared catalog for offline execution. A project can
+   * select a repository mirror without changing that digest; mappings and local schemas are kept.
    */
   content: (context) => {
     const data = TOML.parse(context.originalContent || "") as Record<string, unknown>;

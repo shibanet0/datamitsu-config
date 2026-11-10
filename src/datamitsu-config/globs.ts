@@ -2,7 +2,6 @@ import { resolve } from "../ignore/profile";
 import { jsonExcludeProfile } from "../ignore/profiles/json-exclude";
 import { yamlExcludeProfile } from "../ignore/profiles/yaml-exclude";
 import { PYTHON_SOURCE_EXTENSIONS } from "./constants";
-import schepherdCatalog from "./registries/schepherdCatalog.json";
 
 export const actionlintGlobs: string[] = [
   "**/.github/workflows/*.yml",
@@ -71,21 +70,8 @@ export const goFormatExcludeGlobs: string[] = [
 
 export const sqlGlobs: string[] = ["**/*.sql"];
 
-// Broader supported formats ensure local schepherd.toml mappings are selected even when no
-// catalog fileMatch knows their names. Safe catalog mode skips ambiguous/unknown associations;
-// explicit project mappings and local schemas remain strict.
-const schepherdLocalGlobs: string[] = [
-  "**/*.json",
-  "**/*.json5",
-  "**/*.jsonc",
-  "**/*.toml",
-  "**/*.yaml",
-  "**/*.yml",
-];
-
-export const schepherdGlobs: string[] = [
-  ...new Set([...schepherdCatalog.globs, ...schepherdLocalGlobs]),
-].toSorted();
+// Schepherd resolves catalog associations and explicit mappings, including extensionless files.
+export const schepherdGlobs: string[] = ["**/*"];
 
 /**
  * What stylelint lints. Stylesheets, plus the three shapes that carry a `<style>` block — the

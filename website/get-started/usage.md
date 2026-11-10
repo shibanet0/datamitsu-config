@@ -645,12 +645,11 @@ already selected processors or inherited another configuration. Existing project
 are preserved. yq is bound as the Sourcemeta converter for formats Schepherd delegates to it. Documents
 are revalidated on every run so a changed local schema cannot reuse an earlier successful result.
 
-The operation also selects common JSON, JSONC, JSON5, YAML, YML and TOML files so local schemas and
-project mappings work even when a filename is absent from the shared catalog. `--safe-catalog` skips
-ambiguous or unknown-format automatic catalog associations with an explanation; explicit mappings and
-local schemas remain strict. Generic names such as `manifest.json` and `plugin.yml` have multiple
-catalog schemas, so add an explicit `[[mappings]]` entry to validate one rather than relying on an
-arbitrary schema choice. Files with no mapping are skipped.
+Schepherd resolves schemas for discovered files itself, including extensionless names and custom
+project mappings. `--safe-catalog` skips ambiguous or unknown-format automatic catalog associations
+with an explanation; explicit mappings and local schemas remain strict. Generic names such as
+`manifest.json` and `plugin.yml` have multiple catalog schemas, so add an explicit `[[mappings]]` entry
+to validate one rather than relying on an arbitrary schema choice. Files with no mapping are skipped.
 
 The validator client, source frontends and parser module use released artifacts and run with the
 package-pinned Datamitsu core; no local release candidate or development core is needed. The published

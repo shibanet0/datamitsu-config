@@ -169,8 +169,7 @@ function extractUniqueGlobs(operations: Record<string, ToolOperation>): string[]
  * way to tell which, and the generated page was the only place anyone would look.
  */
 /**
- * A generated glob list (schepherd's, from its schema catalog, runs past a thousand) would be one
- * table cell, and the formatter pads every row of the table to that cell's width.
+ * Long glob lists widen every padded Markdown table row, so summarize them instead.
  */
 const MAX_LISTED_GLOBS = 50;
 

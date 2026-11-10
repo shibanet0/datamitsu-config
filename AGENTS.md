@@ -450,25 +450,24 @@ An unsupported catalog entry is never dropped or treated as a successful validat
 records the validator rejections visibly; a project file mapped to it still fails with those reasons.
 Only a real catalog revision may fix or remove the source schema.
 
-The catalog puller removes the app's `SCHEPHERD_CACHE_DIR` binding from its child environment: it
-must use the ordinary writable cache, or the developer's explicit cache override, when checking
-another catalog. Never mutate the prepared state of the current release from a registry update.
+The catalog puller invokes native `pin`, which fetches the catalog descriptor without reading or
+writing `SCHEPHERD_CACHE_DIR`. Keep catalog updates separate from the installed app's prepared state.
 
-`src/datamitsu-config/registries/schepherdCatalog.json` is generated — never edit it. `task
-pull:external:update` pins the newest `catalog-*` revision past the minimum release age and regenerates
-it; `task pull:external` recomputes it and fails on drift. The puller requests
-`patterns --validators sourcemeta,check-jsonschema,ajv --covering --json`, stores covering globs and,
-for v3 catalogs, schema/profile digests plus source formats. It trusts only complete v3 metadata with
-matching tool and settings identity at runtime. V2 catalogs lack recorded compatibility metadata; the
-new client keeps their discovery conservative and probes the configured validators at runtime. The
-published v0.2.1 client lacks covering-pattern discovery, so catalog pulls require the corresponding
-Schepherd release; the existing v2 catalog pin remains usable through its already-generated globs.
-Do not infer unsupported status from missing v2 metadata or turn probe failures into incompatibility.
+`src/datamitsu-config/registries/schepherdCatalog.json` is a generated pin containing only the OCI
+repository, immutable digest and revision. `task pull:external:update` selects the newest `catalog-*`
+revision past the minimum release age; `task pull:external` verifies the recorded pin. Do not copy
+schema lists, fileMatch patterns or validator compatibility profiles into this package. Schepherd
+owns their discovery, ambiguity checks and runtime compatibility decisions.
 
-The managed config always takes the digest from this package — its discovery globs are tied to that
-catalog — and leaves `repository` to the project, since a mirror keeps the digest. Catalog profiles
-record unsupported validators with stable reasons; update metadata when validator or conversion
-settings change.
+The operation selects discovered files with `**/*` and delegates association to native
+`run --safe-catalog --ignore-unmatched`. This also covers extensionless names and custom mappings
+without a second filename catalog. Do not replace the pattern with an empty list: a repository-scoped
+operation with empty globs runs without file arguments. Unmatched files are not validation failures;
+explicit mappings and local schemas remain strict.
+
+The managed config takes its default digest from this package so its prepared state is available
+offline, and preserves a project's repository mirror. Catalog contents and compiled artifacts live
+in Schepherd's prepared cache, not in the configuration source.
 
 ## No Warn Severity
 

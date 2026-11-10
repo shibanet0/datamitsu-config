@@ -232,7 +232,7 @@ tasks:
       - task: build:datamitsu-config
       - node scripts/pull-schepherd-catalog.ts --update ./src/datamitsu-config/registries/schepherdCatalog.json
       - pnpm dm fix ./src/datamitsu-config/registries/schepherdCatalog.json
-    desc: Move external apps to the newest release past the minimum age and update the Schepherd catalog pin from v3 compatibility metadata or the client's v2 runtime validator probes
+    desc: Move external apps and the Schepherd catalog pin to the newest release past the minimum age
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────
