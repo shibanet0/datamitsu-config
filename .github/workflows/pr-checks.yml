@@ -48,6 +48,8 @@ jobs:
         # removes any datamitsu.config.js, so the Docker COPY (and the artifact)
         # would otherwise be missing it. Mirrors release.yml.
         run: cp datamitsu.config.base.js datamitsu.config.js
+      - name: Instrument Schepherd preparation diagnostics
+        run: node scripts/trace-schepherd-preparation.ts
       - name: Upload build artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -58,6 +60,8 @@ jobs:
             package.json
             bin/
             tsconfig/
+            docker/Dockerfile
+            docker/Dockerfile.alpine
           retention-days: 1
   docker-build:
     name: Docker Build Test
@@ -112,6 +116,7 @@ jobs:
           docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec lefthook -- version
           docker run --rm -e DATAMITSU_OFFLINE=1 "$IMG" exec task -- --version
     strategy:
+      fail-fast: false
       matrix:
         arch:
           - amd64
