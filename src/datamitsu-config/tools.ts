@@ -1343,16 +1343,16 @@ export const toolsConfig: config.MapOfTools = {
     skipReason: "rustfmt runs via a POSIX shell guard (sh), unavailable on Windows by default",
   },
   /**
-   * JSON Schema validation of configuration files against a pinned SchemaStore-derived catalog.
-   * schepherd resolves each file to its schema and hands the batch to the Sourcemeta validator;
-   * `--ignore-unmatched` skips a file that a negative catalog pattern excludes from every schema,
-   * which a flat glob list cannot express.
+   * JSON Schema validation against a pinned SchemaStore-derived catalog, plus project-local
+   * mappings. `--safe-catalog` skips ambiguous or unknown-format automatic catalog associations
+   * with reasons; explicit project mappings and local schemas remain strict. `--ignore-unmatched`
+   * skips files with no mapping at all.
    *
    * `--workspace {root}` because the config lives in `.datamitsu/configs/` until ejected, and a
    * relative `workspace` there would resolve catalog patterns against that directory.
    */
   schepherd: {
-    name: "schepherd - JSON Schema validation (Sourcemeta jsonschema)",
+    name: "schepherd - JSON Schema validation (Sourcemeta, check-jsonschema, AJV)",
     operations: {
       lint: {
         app: "schepherd",
@@ -1363,10 +1363,14 @@ export const toolsConfig: config.MapOfTools = {
           "{root}",
           "--quiet",
           "run",
+          "--safe-catalog",
+          "--json",
           "--ignore-unmatched",
           "--",
           "{files}",
         ],
+        // A project's local schemas and extends can change without changing an input document.
+        cache: false,
         env: { SCHEPHERD_OFFLINE: "1" },
         globs: schepherdGlobs,
         granularity: "file",
@@ -1374,6 +1378,10 @@ export const toolsConfig: config.MapOfTools = {
         scope: "repository",
       },
     },
+    outputParser: { module: "schepherd", parser: "schepherd" },
+    skip: facts().os === "windows" && facts().arch === "arm64",
+    skipReason:
+      "Sourcemeta jsonschema has no Windows ARM64 binary; the managed Schepherd processor set requires it",
   },
   shellcheck: {
     name: "ShellCheck - Shell Script Linter",

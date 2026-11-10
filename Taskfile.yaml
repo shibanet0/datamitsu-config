@@ -221,18 +221,18 @@ tasks:
   pull:external:
     cmds:
       - node scripts/pull-external-apps.ts ./src/datamitsu-config/registries/externalApps.json
-      # The catalog check runs the managed schepherd and jsonschema, so it needs a config built from
-      # the registries as they are now — `pull:binary:update` may just have moved the validator.
+      # The catalog check needs the current Schepherd and validator registry state, so build the
+      # wrapper before querying metadata or running the v2 compatibility probe.
       - task: build:datamitsu-config
       - node scripts/pull-schepherd-catalog.ts ./src/datamitsu-config/registries/schepherdCatalog.json
-    desc: Re-download every external app and check it against the recorded hash and upstream's checksum file, then recompute the schepherd catalog pin and check it against the recorded one; writes nothing
+    desc: Re-download every external app, verify its recorded hash and upstream checksum, then recompute the Schepherd catalog pin and fail on drift
   pull:external:update:
     cmds:
       - node scripts/pull-external-apps.ts --update ./src/datamitsu-config/registries/externalApps.json
       - task: build:datamitsu-config
       - node scripts/pull-schepherd-catalog.ts --update ./src/datamitsu-config/registries/schepherdCatalog.json
       - pnpm dm fix ./src/datamitsu-config/registries/schepherdCatalog.json
-    desc: Move external apps to the newest release past the minimum release age, checked against upstream's checksum files, and pin the newest schepherd catalog past it, with the globs of every schema the pinned jsonschema compiles
+    desc: Move external apps to the newest release past the minimum age and update the Schepherd catalog pin from v3 compatibility metadata or the client's v2 runtime validator probes
   # ──────────────────────────────────────────────
   # Pull / registry update
   # ──────────────────────────────────────────────

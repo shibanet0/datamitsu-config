@@ -39,7 +39,7 @@ The intended responsibilities were:
 - A catalog digest is released with datamitsu-config. Prepared schemas and notices travel in OCI
   layers, not inside the JavaScript configuration bundle.
 
-## Verified baseline
+## Recovered pre-C1 baseline: 2026-10-20
 
 | Surface                                          | Current state                                                                                        | Evidence                                                                                            |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -52,9 +52,35 @@ The intended responsibilities were:
 | Rust parser implementation                       | No production Rust crate or WASM module found in main or the retained local branches                 | No Cargo manifests or Rust sources; concept 03c describes only an external research prototype       |
 | Additional processors and compatibility metadata | Proposed, not implemented in the inspected client and publisher                                      | Current catalog format is 2; current client explicitly rejects format 3                             |
 
-The installed datamitsu parser pin, npm manifest, OCI manifest, payload hash and loaded WASM version
-agree. Neither the latest published stable module nor the latest published unstable module provides a
-Schepherd or Sourcemeta parser. This is missing functionality, not a stale parser pin.
+At this pre-C1 inspection point, the installed datamitsu parser pin, npm manifest, OCI manifest,
+payload hash and loaded WASM version agreed; neither published parser module provided a Schepherd or
+Sourcemeta parser. The subsequent released C1 section records that gap's resolution.
+
+### Released C1 integration: 2026-10-20
+
+Schepherd v0.2.1 publishes report version 2, configurable processors and a separate WASM parser
+module (ABI 2, capability schema 3). The wrapper now adopts the released binary and the
+`schepherd` module/key together. The original catalog digest, 1,291 globs, unusable-schema list and
+sole Sourcemeta validator remain unchanged.
+
+The default `native` processor is explicitly custom with `sourcemeta-json` output, retaining the
+existing validator arguments without requiring compiled-cache preparation. Typed processors,
+additional validators, conversion and catalog compatibility metadata remain separate work.
+
+Exercised through the managed tool and published OCI parser: two failing files have distinct
+file/position/keyword findings; valid input emits no validator JSON; malformed input and a missing
+local schema fail visibly; changing only a local schema invalidates an unchanged document on the
+next run. Operation-result caching is disabled for this dependency boundary. Catalog-backed
+offline checks pass from a relocated read-only source cache without its service directories and
+leave its snapshot unchanged. Anonymous manifest/config/WASM retrieval matches the release hashes.
+
+Release prerequisite found during that proof: v0.2.1 opens a compiler cache for all-local custom
+processors, even though they never compile. A copied read-only source cache without `v1/locks`
+therefore fails before validation. The upstream `fix/custom-processor-cache` branch now skips that
+open for custom-only configurations, with regression tests for absent, non-directory and minimal
+prepared cache paths. Its built CLI validates both valid and invalid local inputs against the
+same read-only copy without mutation. The wrapper must adopt the published fix before C1 is
+release-ready; do not substitute a development binary or claim v0.2.1 includes it.
 
 ## Working rules
 
@@ -94,47 +120,39 @@ flowchart TD
   C2 --> E1
 ```
 
-Existing preparation/offline delivery is a preserved baseline, not a prerequisite to reimplement.
-Task C0 can proceed independently of the main protocol work. Tasks R0, S1 and S2 can proceed in
-parallel after the decisions relevant to their public interfaces are settled.
+Existing preparation/offline delivery remains a preserved baseline, not a prerequisite to reimplement.
+The dependency graph records the original implementation order; the statuses below supersede its
+early open-state assumptions.
 
 ## Task D0: settle durable public contracts
 
-Owner: cross-repository design. Status: open. Dependencies: none.
+Owner: cross-repository design. Status: settled locally; downstream release sequencing remains open. Dependencies: none.
 
-Record decisions on these unresolved points before publishing the affected interface:
+The selected public identities and behaviors are:
 
-- Processor identity for Sourcemeta: existing `jsonschema`, or a disambiguated `sourcemeta` name.
-- AJV frontend: a minimal owned adapter over the maintained AJV library, or an explicitly supported
-  existing CLI. The old design recommended an owned adapter; that was not a settled requirement.
-- Unsupported schema/format behavior and catalog-only ambiguity: explicit error versus visible skip,
-  with project overrides. Never silently choose one ambiguous schema.
-- Default validator set and selection order. Separate the desired fallback capability from a decision
-  to install and enable every validator for every consuming project.
-- Envelope versioning, supported parser ABI/descriptor versions, processor output labels, and shared
-  Go/Rust manifest ownership. Reconcile the draft report version with current contracts first.
+- Processor types are `sourcemeta`, `check-jsonschema` and `ajv`; the Sourcemeta runtime tool is the managed `jsonschema` executable. The managed defaults run in that order. Explicit project selection and order win; legacy generated runner defaults migrate to these presets, while custom runner/processor settings remain untouched.
+- Processor support is not validation success. An exact, matching unsupported profile allows the next configured processor; an invalid document or operational failure does not trigger retry. Missing or stale profile identity is unknown and causes a runtime probe, never a false unsupported result.
+- The check-jsonschema frontend is the upstream Python adapter, with its exact Python dependencies in one locked UV environment. The AJV frontend is the upstream AJV library adapter, with exact Bun dependencies. AJV handles JSON only. JSONC and extensionless format routing uses explicit source-format metadata and a frontend that accepts `--format`; no validator parses input code as JavaScript or treats literal paths as globs.
+- Conversion is replaceable external tooling: yq is bound exactly and configured for Sourcemeta TOML conversion. Converted diagnostics do not claim original positions unless the source mapping proves them.
+- Catalog v3 entries record the SHA-256 of the final bundled schema, profiles keyed by canonical processor/tool identity and settings digest, an explicit result and stable reason when unsupported, plus source-format names, extensions and filenames. The client trusts a profile only when all identities match. Catalog v2 remains readable and gets runtime probes; missing v2 metadata is not a compatibility verdict.
+- Discovery uses `schepherd patterns --validators sourcemeta,check-jsonschema,ajv --covering --json`; rows preserve original `fileMatch`, including negations. The wrapper omits exact duplicate positive globs from automatic catalog selection only when each affected row records `covering.excluded` with every candidate schema ID. The default operation unions those catalog globs with JSON, JSONC, JSON5, YAML, YML and TOML globs so project-local mappings are reachable. `--safe-catalog` skips ambiguous/unknown-format automatic associations with reasons; `--ignore-unmatched` keeps unmapped files from failing. Explicit mappings/local schemas take priority and still fail on invalid documents.
+- The execution envelope is report v3 over parser ABI 2/capability schema 4 (`input-skips`); report v1/v2 remain readable. Classified safe skips are preserved as non-gating, partial input coverage, not fabricated diagnostics or a clean full validation. The parser remains a separately pinned WASM module; no core-owned duplicate parser is introduced.
 
-Acceptance: a concise decision record distinguishes selected behavior from deferred options; later
-config, parser and catalog tasks refer to the same names and semantics.
+These decisions are implemented in local client and wrapper branches. They are not a claim that unreleased artifacts or the v3 catalog have shipped.
 
 ## Task C0: correct known wrapper selection boundaries
 
-Owner: datamitsu-config. Status: open. Dependencies: none; preserve current behavior elsewhere.
+Owner: datamitsu-config. Status: implemented and locally exercised; release sequencing remains open. Dependencies: none; preserve current behavior elsewhere.
 
 - Exclude Cspell JSONC configurations from strict-JSON validation while retaining their YAML forms.
-- Resolve the default `manifest.json` and `plugin.yml` collisions without selecting an arbitrary
-  schema. Prefer explicit project mappings or omit unsafe automatic selection until Schepherd has a
-  supported catalog-only ambiguity policy.
-- Align advertised platforms with the mandatory validator dependency. Schepherd's Windows ARM64
-  binary currently has no matching Sourcemeta dependency target.
+- Keep automatic catalog selection conservative: duplicate positive globs are recorded with every candidate schema ID and excluded from generated auto-globs, never assigned to an arbitrary schema. Managed safe-catalog mode visibly skips ambiguous or unsupported automatic associations with a reason; the invocation records incomplete input coverage. Explicit mappings and local schemas take priority and still validate strictly.
+- The default operation also includes JSON/JSONC/JSON5, YAML/YML and TOML source globs, so project-local mappings do not depend on a SchemaStore filename match. Schepherd's Windows ARM64 binary still has no matching Sourcemeta dependency target and remains excluded from advertised platforms.
 
-Acceptance: valid commented Cspell config is not rejected; valid extension/plugin manifests do not
-fail merely because catalog filenames collide; unsupported dependency targets have an explicit
-outcome. Preserve tests and temporary-project smoke cases for these boundaries.
+Acceptance: valid commented Cspell config is not rejected; ambiguous extension/plugin manifests never select an arbitrary schema; explicit mappings validate valid documents and report invalid ones; safe skips are visible and cannot become a complete clean result; unsupported dependency targets have an explicit outcome. Preserve tests and temporary-project smoke cases for these boundaries.
 
 ## Task S1: emit an attributed Schepherd execution envelope
 
-Owner: Schepherd. Status: open. Dependencies: D0 for public schema and names.
+Owner: Schepherd. Status: shipped in v0.2.1 as report version 2; parser contract and attributable execution are in use. Dependencies: D0 for public schema and names.
 
 Add an opt-in machine-output mode that emits one versioned document for the complete run. Include
 processor identity/output format, schema identity, exact working directory, original input paths,
@@ -153,7 +171,7 @@ bounded results. No error can be attributed to a neighboring file or made green 
 
 ## Task S2: manage the validator toolset and capture real fixtures
 
-Owner: Schepherd. Status: open. Dependencies: D0 for stable processor identities and AJV frontend.
+Owner: Schepherd. Status: published frontends in v0.2.1; local RC adds explicit format handling and source identity. Release of that expanded frontend protocol is pending. Dependencies: D0 for stable processor identities and AJV frontend.
 
 Use one pinned toolset for Sourcemeta, check-jsonschema and AJV in tests and publisher probes, installed
 through datamitsu. Preserve the publisher's independently pinned bundling recipe when moving its
@@ -168,7 +186,7 @@ paths as globs.
 
 ## Task R0: add reproducible Rust parser infrastructure and publication
 
-Owner: Schepherd. Status: open. Dependencies: none for infrastructure; D0 before public metadata.
+Owner: Schepherd. Status: shipped with the v0.2.1 parser module and OCI artifact. Dependencies: none for infrastructure; D0 before public metadata.
 
 Create the production parser crate beside the Go code, with one pinned Rust toolchain, locked
 minimal dependencies and separated ABI/parse logic. Go-only development must not require Rust.
@@ -182,7 +200,7 @@ publish an empty module merely to complete infrastructure.
 
 ## Task R1: implement the Schepherd-owned validator parser module
 
-Owner: Schepherd. Status: open. Dependencies: R0, S1 and S2.
+Owner: Schepherd. Status: shipped with the v0.2.1 parser module, ABI 2. Dependencies: R0, S1 and S2.
 
 Implement the Schepherd envelope parser and direct parser entrypoints for the selected validators.
 Share validator parsing logic rather than implementing a second copy in the Go client or the core.
@@ -198,7 +216,7 @@ loaded and exercised through the actual datamitsu parser host.
 
 ## Task S3: add configurable processor presets and selection
 
-Owner: Schepherd. Status: open. Dependencies: S1, S2 and D0.
+Owner: Schepherd. Status: implemented in the local release-candidate branch; focused processor/runtime tests pass, publication pending. Dependencies: S1, S2 and D0.
 
 Add configured processor types for Sourcemeta, check-jsonschema and AJV, plus custom commands. Keep
 exact managed binary bindings separate from processor identity. Make explicit project selection win;
@@ -212,7 +230,7 @@ incompatibility, invalid documents and operational failures.
 
 ## Task F1: support replaceable external format conversion
 
-Owner: Schepherd. Status: open. Dependencies: S3 and D0 for unsupported-format policy.
+Owner: Schepherd. Status: implemented in the local release-candidate branch with yq delegation and explicit source-format routing; publication pending. Dependencies: S3 and D0 for unsupported-format policy.
 
 Determine document format explicitly, including extensionless files and known JSONC configurations.
 Delegate conversion to configured external tools, initially yq where suitable; do not embed a second
@@ -225,7 +243,7 @@ without fabricated coordinates after transformation.
 
 ## Task V1: publish incremental validator compatibility metadata
 
-Owner: Schepherd client and publisher. Status: open. Dependencies: S2, S3 and D0.
+Owner: Schepherd client and publisher. Status: v3 client reader/runtime profiles and publisher v3 output are implemented locally; real-validator and publisher profile tests pass. Publication pending. Dependencies: S2, S3 and D0.
 
 Add client support for versioned compatibility profiles and document-format metadata before the
 publisher emits it. Probe schema compilation using the pinned toolset in isolation. Reuse probe
@@ -238,7 +256,7 @@ unsupported schemas stay visible in metadata instead of disappearing silently.
 
 ## Task G1: expose safe covering discovery patterns
 
-Owner: Schepherd. Status: open. Dependencies: V1 for validator-filtered behavior.
+Owner: Schepherd. Status: implemented in the local release-candidate client; covering globs, validator filters and v2 runtime probes are tested locally. Publication pending. Dependencies: V1 for validator-filtered behavior.
 
 Provide covering globs for known extensions while preserving extensionless and path-specific cases.
 Support an optional validator filter using catalog profiles; define union semantics and unknown IDs.
@@ -264,7 +282,7 @@ No Schepherd-specific core API or a new WASM ABI is required solely for the exte
 
 ## Task C1: cut over the wrapper to the published parser contract
 
-Owner: datamitsu-config. Status: open. Dependencies: published S1 and R1 artifacts.
+Owner: datamitsu-config. Status: shipped against Schepherd v0.2.1 and parser ABI 2; catalog-backed offline checks and local-schema invalidation were verified. The v0.2.1 custom-only cache limitation remains only for custom-only configurations. Dependencies: published S1 and R1 artifacts.
 
 Pin the Schepherd-owned module separately from the core parser. Adopt its machine-output mode,
 processor configuration and `outputParser` together, verifying ABI/report compatibility and payload
@@ -278,20 +296,21 @@ cannot become a successful cache entry.
 
 ## Task C2: adopt compatibility metadata and the selected validator set
 
-Owner: datamitsu-config. Status: open. Dependencies: C1, V1, G1, F1 and D0 default-set decisions.
+Owner: datamitsu-config. Status: implementation and published-artifact consuming-project proof passed on Linux x64 (2026-11-10).
+The native client, source frontends and independent parser pins target published Schepherd v0.3.1;
+the published v2 catalog remains unchanged. Published core `0.0.0-unstable.20261110.e7b3456` supplies
+Node/Bun executable bindings, UV dependency maps and structured input-skip host support.
+Dependencies: C1, V1, G1, F1 and D0.
 
-Generate discovery patterns and reviewed coverage changes from the upstream catalog and client,
-removing local compilation and handwritten exclusion logic only when their responsibilities are
-fully replaced. Pin each selected validator/converter and runtime with exact dependency bindings.
-Keep project overrides and supported platform intersections explicit.
+The puller requests `patterns --validators sourcemeta,check-jsonschema,ajv --covering --json`, persists covering globs and any complete v3 schema/profile metadata, and uses v2 discovery data only with runtime probes. It no longer compiles the whole catalog or carries a JSONC schema-ID list. Exact duplicate positive globs are excluded only with their `covering.excluded` candidate-ID provenance. Default operations union catalog coverage with local JSON/JSONC/JSON5/YAML/YML/TOML patterns.
 
-Acceptance: catalog and validator bumps produce reviewable coverage diffs; previously unsafe JSONC and
-ambiguous filenames have sound runtime treatment; no tool is installed as a fake fallback; ordinary
-and air-gapped consuming projects validate with the same declared policy.
+The wrapper registers Sourcemeta, check-jsonschema and AJV in that order, with exact managed bindings and generated locks. Its Go check-jsonschema launcher runs the verified upstream adapter source staged from the archive with the Python interpreter in the managed UV app; AJV uses the managed Node runtime. The yq converter remains an exact external-tool binding. Project processor order, local schemas and mappings remain preserved.
+
+Acceptance: catalog generation preserves collision provenance and the published v2 pin remains usable through runtime probes; JSONC and ambiguous filenames have sound runtime treatment; no tool is installed as a fake fallback; ordinary and air-gapped consuming projects validate with the same declared policy.
 
 ## Task E1: prove the complete release chain
 
-Owner: all three repositories. Status: open. Dependencies: C1 and the adopted C2 scope; K1 independently.
+Owner: all three repositories. Status: published core/Schepherd consuming-project proof passed on Linux x64 (2026-11-10); Docker/OCI image execution remains a CI gate. Dependencies: C1 and C2; K1 independently.
 
 Exercise released or release-candidate artifacts across clean consuming projects, including nested
 projects, project-local schemas, malformed/invalid/valid documents, multiple processors and copied
@@ -304,7 +323,40 @@ CI annotations; no network on offline checks; no preparation rerun after a compl
 passing relevant hooks/tests/builds and documented platform/runtime limits. Remove replaced wrapper
 workarounds in the same migration rather than leaving compatibility shims without consumers.
 
-## First implementation slice
+Local evidence (2026-11-08; not a release claim): the fixture used the published v2 catalog digest, a hash-pinned local Schepherd CLI/source RC and the actual parser WASM SHA-256 `6ec760b38d8c65172dfd4c7a0f4b16cea188d994d1030e35c1ff83c9a7e4d7a9` (ABI 2, capability schema 4). Offline materialization completed with 997 schemas and no missing entries; the read-only snapshot hash remained `fff0173f67470b4e3f13597000318e8c28f33a439532cb7fbb61a105971c306f`. The ordinary no-map managed run exited 0 but reported both categorized skips and `complete:false` with `input-skipped`/`narrowed-selection`; an explicit mapping validated a valid manifest and reported two attributed errors for an invalid one. Root `pnpm test` with the local `DATAMITSU_BIN` core override passed 66 files/760 tests, `go test ./...` passed 52 packages, and the Rust parser suite passed 38 tests. The full cross-repository check was not green: the Go `gocritic` run panicked and the Python `ty` environment could not resolve Hatchling.
+
+## Published Schepherd v0.3.1 verification: 2026-11-09
+
+- Generated only the Schepherd native registry entry in a scratch registry, then downloaded and hash/extraction-verified all six platform archives. Other registry entries were not refreshed.
+- Pinned the actual source archive and its observed `ovineko-schepherd-e0c1af5` root; frontend dependency versions and existing lock inputs did not change.
+- Verified the published WASM payload against its SHA-256 and loaded its OCI descriptor into a clean parser cache using published core `0.0.0-unstable.20261109.b5ccf8e`.
+- The released native client passes a valid local document and rejects an invalid one. The released parser produces an attributed Sourcemeta `required` diagnostic from the real report-v3 output.
+- The updated configuration bundle builds, and 33 focused configuration/catalog tests pass. Removed an incidental test that duplicated archive paths, hashes and dependency constants instead of exercising behavior.
+- At this checkpoint, full consuming-project initialization was blocked by the published core rejecting the AJV binding. The published-core verification below supersedes that blocker; the local-core evidence above remains historical rather than release proof.
+
+## Published core consuming-project verification: 2026-11-10
+
+- Installed `@datamitsu/datamitsu@0.0.0-unstable.20261110.e7b3456` from npm, removed the workspace dev-link override, and verified the selected native executable resolves from the published platform package rather than a core worktree. Core parser metadata and Docker/OCI descriptions were regenerated from that installed release.
+- `task refresh`, the full `datamitsu check`, all 763 tests, TypeScript checking and the fresh-init suite passed. Fresh init exercised both automatic and layered configuration loading, reconciliation/check, and idempotent create-missing behavior in a nested project. Core 0.5.1 rejected the bundle before managed-content callbacks.
+- The clean consuming project used the released Schepherd v0.3.1 client, source frontends and independent parser. Sourcemeta, check-jsonschema and AJV produced attributed findings; JSONC, multi-document YAML, TOML conversion, nested projects, malformed input and two-file attribution were exercised. GitHub annotations retained the failing file names. A changed local schema invalidated an earlier successful result.
+- Extensionless JSON was validated through an explicit custom processor with `output = "sourcemeta-json"`. A mapping alone does not supply an unknown format; a custom processor without a declared output remains raw and reports an honest operational failure rather than invented diagnostics.
+- A meaningful unsupported-format skip remained non-gating while marking JSON coverage incomplete; JUnit represented one skipped input rather than a passing duplicate, and JSONL completion retained the skip count.
+- A copied read-only prepared catalog validated both local and catalog-backed inputs with zero requests to the rejecting HTTP proxy. Invalid and malformed inputs remained attributed; copied file metadata and the original preparation marker did not change, proving no writes or preparation rerun in this check.
+- Validation covered Linux x64. Dockerfiles and OCI maps were generated, not built; multi-platform image execution remains with CI. No registry-wide refresh or project-wide reconciliation write was performed.
+
+## Release sequence
+
+The working-tree pins use published Schepherd v0.3.1 and core `0.0.0-unstable.20261110.e7b3456`, retaining the recorded v2 catalog. Published-core and consuming-project checks have passed as recorded above; wrapper publication and multi-platform image CI remain separate release gates.
+
+1. Core executable bindings and UV dependency maps are available in the pinned published unstable release. Keep the existing stable minimum until a real stable release supplies those features; do not invent a stable version.
+2. The client/runtime, source frontends and parser use published Schepherd v0.3.1 artifacts, not local RC sources or invented versions.
+3. Publish a v3 catalog only after the client reader and publisher probe contract are released. Keep the v2 catalog pin unchanged and operational through runtime probes; v3 publication is not a prerequisite for that compatibility path.
+4. Update wrapper source/binary/catalog pins from those published artifacts, generate Bun/Go/UV locks through `datamitsu config lockfile`, regenerate docs and Docker/OCI outputs, and verify the package minimum and lock identities.
+5. Exercise a clean consuming project using only released artifacts: JSONC/extensionless inputs, multi-document YAML, TOML conversion, invalid and operational failures, two-file attribution, explicit AJV selection, local-schema invalidation, and offline execution after restoring the prepared catalog.
+
+The historical local RC proof used temporary SHA-256-verified archives served from localhost. The published-core proof uses the actual npm core package and released client/frontend/parser pins; no local core override or release-candidate transport was used.
+
+## Original implementation slice (historical)
 
 After D0, start S1, S2 and R0 as independent tasks; then implement R1 and C1. This restores the
 original ownership model and fixes the present reporting problem before broadening catalog discovery

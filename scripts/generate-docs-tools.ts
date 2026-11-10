@@ -1,5 +1,4 @@
-import { execSync } from "node:child_process";
-
+import { configShow } from "./lib/datamitsu-cli.ts";
 import { writeAndFix } from "./lib/write-and-fix.ts";
 
 export interface ConfigShowOutput {
@@ -58,20 +57,7 @@ export function environmentWithoutCI(source: NodeJS.ProcessEnv): NodeJS.ProcessE
 }
 
 export function executeConfigShow(): string {
-  return execSync("pnpm --silent dm config show", {
-    encoding: "utf8",
-    /**
-     * CI markers are cleared so the page says the same thing wherever it is generated. Several
-     * tools carry `skip: !isCI`, so a run inside CI — which is where the documentation workflow
-     * runs — resolved them to "runs" and the published table claimed knip, lychee and trufflehog
-     * were part of an ordinary `dm check`. Outside CI they resolve to their real condition, which
-     * is the one worth printing: "off — runs in CI only".
-     */
-    env: environmentWithoutCI(process.env),
-    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
-    stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
-    timeout: 30_000,
-  });
+  return configShow(environmentWithoutCI(process.env));
 }
 
 export function extractToolsInfo(config: ConfigShowOutput): ToolDocInfo[] {

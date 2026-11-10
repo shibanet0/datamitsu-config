@@ -1,3 +1,8 @@
+import {
+  checkJsonschemaApp,
+  schepherdAjvApp,
+  schepherdCheckJsonschemaApp,
+} from "../apps/schepherd-frontends";
 import { commitlintApp } from "./apps/commitlint";
 import { cspellApp } from "./apps/cspell";
 import { eslintApp } from "./apps/eslint";
@@ -7,6 +12,7 @@ import { lefthookProxyApp } from "./apps/lefthook-proxy";
 import { lefthookSortApp } from "./apps/lefthook-sort";
 import { prettierApp } from "./apps/prettier";
 import { protolintFixApp } from "./apps/protolint-fix";
+import { schepherdApp } from "./apps/schepherd";
 import { sortKeysApp } from "./apps/sort-keys";
 import { stylelintApp } from "./apps/stylelint";
 import { data as archiveMarkdownlintCli2Config } from "./inline-config/markdownlint-cli2";
@@ -21,7 +27,6 @@ import {
   binaries as externalBinariesJSON,
 } from "./registries/externalApps.json";
 import nodeVersions from "./registries/nodeVersions.json";
-import schepherdCatalog from "./registries/schepherdCatalog.json";
 import uvVersions from "./registries/uvVersions.json";
 
 const binaryApps = Object.entries(binaryBinariesJSON).reduce<BinManager.MapOfApps>(
@@ -86,11 +91,67 @@ const externalApps = Object.entries(externalBinariesJSON).reduce<BinManager.MapO
   {},
 );
 
-// The private name lets the proxy own `lefthook`; its dependsOn provisions this binary.
-const { lefthook: lefthookUpstreamApp, ...otherBinaryApps } = binaryApps;
+// The private names let small launchers own the public app command without duplicating native pins.
+const {
+  lefthook: lefthookUpstreamApp,
+  schepherd: schepherdUpstreamApp,
+  ...otherBinaryApps
+} = binaryApps;
 if (!lefthookUpstreamApp) {
   throw new Error("binaryApps registry no longer defines lefthook; the proxy has nothing to wrap");
 }
+if (!schepherdUpstreamApp?.binary) {
+  throw new Error(
+    "binaryApps registry no longer defines schepherd; the managed launcher has nothing to wrap",
+  );
+}
+const sourcemetaTargets = binaryApps.jsonschema?.binary?.binaries as
+  | Record<string, Record<string, Record<string, unknown>>>
+  | undefined;
+if (!sourcemetaTargets) {
+  throw new Error("binaryApps registry no longer defines Sourcemeta targets for Schepherd");
+}
+// Keep the private upstream asset payload exact, narrowing only to Sourcemeta-supported targets.
+const schepherdNativeBinaries = Object.fromEntries(
+  Object.entries(schepherdUpstreamApp.binary.binaries).flatMap(([os, byArch]) => {
+    const sourcemetaByArch = sourcemetaTargets[os];
+    if (!sourcemetaByArch) {
+      return [];
+    }
+
+    const architectures = Object.fromEntries(
+      Object.entries(byArch ?? {}).flatMap(([arch, byLibc]) => {
+        const sourcemetaByLibc = sourcemetaByArch[arch];
+        if (!sourcemetaByLibc) {
+          return [];
+        }
+
+        const libcs = Object.fromEntries(
+          Object.entries(byLibc ?? {}).flatMap(([libc, info]) => {
+            if (!Object.prototype.hasOwnProperty.call(sourcemetaByLibc, libc)) {
+              return [];
+            }
+            return [[libc, info]];
+          }),
+        );
+        return Object.keys(libcs).length > 0 ? [[arch, libcs]] : [];
+      }),
+    );
+
+    return Object.keys(architectures).length > 0 ? [[os, architectures]] : [];
+  }),
+) as BinManager.MapOfBinaries;
+if (Object.keys(schepherdNativeBinaries).length === 0) {
+  throw new Error("Schepherd native and Sourcemeta platform maps have no intersection");
+}
+const schepherdNativeApp: BinManager.App = {
+  ...schepherdUpstreamApp,
+  binary: {
+    ...schepherdUpstreamApp.binary,
+    binaries: schepherdNativeBinaries,
+  },
+  versionCheck: { args: ["version"] },
+};
 
 /**
  * The well-known types protoc imports — `google/protobuf/timestamp.proto` and the rest — live in
@@ -187,6 +248,7 @@ const allApps: BinManager.MapOfApps = {
     // install-time version check fails — skip it. Integrity is still hash-verified.
     versionCheck: { disabled: true },
   },
+  "check-jsonschema": checkJsonschemaApp,
   checkov: {
     description: uvVersions.checkov.description,
     uv: {
@@ -240,6 +302,7 @@ const allApps: BinManager.MapOfApps = {
     },
   },
   "dm-internal-lefthook-upstream": lefthookUpstreamApp,
+  "dm-internal-schepherd-upstream": schepherdNativeApp,
   // droast finds ShellCheck only as `shellcheck` on PATH; dependsOn is what puts the managed one
   // there under that name.
   // Built from source: its release assets carry no SHA-256 digests, which the binary registry
@@ -472,39 +535,10 @@ const allApps: BinManager.MapOfApps = {
       name: "sh",
     },
   },
-  /**
-   * Schepherd never validates a document itself: it materializes the pinned schema and runs the
-   * validator its config names, which `schepherd.toml` takes from `${JSONSCHEMA_BIN}`. Binding the
-   * exact path here keeps a system `jsonschema` of another version from standing in for this one.
-   */
-  schepherd: {
-    ...otherBinaryApps["schepherd"],
-    dependsOn: ["jsonschema"],
-    prepare: {
-      args: [
-        "--config",
-        "",
-        "--offline=false",
-        "--timeout",
-        "20m",
-        "--repository",
-        schepherdCatalog.repository,
-        "--catalog",
-        schepherdCatalog.digest,
-        "--cache-dir",
-        "${APP_PREPARED}",
-        "--quiet",
-        "materialize",
-      ],
-      network: true,
-    },
-    runtimeEnv: {
-      JSONSCHEMA_BIN: "${APP_BIN:jsonschema}",
-      SCHEPHERD_CACHE_DIR: "${APP_PREPARED}",
-    },
-    // `--version` is a usage error (exit 2); only the subcommand exists.
-    versionCheck: { args: ["version"] },
-  },
+  // The Go launcher embeds the shared recipe and forwards every command to this exact upstream app.
+  schepherd: schepherdApp,
+  "schepherd-ajv": schepherdAjvApp,
+  "schepherd-check-jsonschema": schepherdCheckJsonschemaApp,
   semgrep: {
     description: uvVersions.semgrep.description,
     uv: {

@@ -241,7 +241,7 @@
     "schepherd": {
       "repository": "ovineko/schepherd",
       "source": "github",
-      "tag": "v0.1.2"
+      "tag": "v0.3.1"
     },
     "scorecard": {
       "repository": "ossf/scorecard",
@@ -3455,64 +3455,64 @@
         "darwin": {
           "amd64": {
             "unknown": {
-              "binaryPath": "schepherd-0.1.2/schepherd",
+              "binaryPath": "schepherd-0.3.1/schepherd",
               "contentType": "tar.gz",
-              "hash": "sha256:327e3186c4c7d155660d5544d85ef6a728460ce7e4ee76aaf56ea1295137b838",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_darwin_amd64.tar.gz"
+              "hash": "sha256:8c61fd5b4b30a052a50f12e2ed12b1d7a67c064512edb2b70e44d84a689afd1c",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_darwin_amd64.tar.gz"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "schepherd-0.1.2/schepherd",
+              "binaryPath": "schepherd-0.3.1/schepherd",
               "contentType": "tar.gz",
-              "hash": "sha256:474ad67d0c805ccad167eef8c469c283df0be4d6dcae36cdc62784f484b575c8",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_darwin_arm64.tar.gz"
+              "hash": "sha256:9fef220ecce55e237d2e3bd7e18fa7c970d9e90a12bf21b1334ee5978887045e",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_darwin_arm64.tar.gz"
             }
           }
         },
         "linux": {
           "amd64": {
             "glibc": {
-              "binaryPath": "schepherd-0.1.2/schepherd",
+              "binaryPath": "schepherd-0.3.1/schepherd",
               "contentType": "tar.gz",
-              "hash": "sha256:36b5935f7e27395fc867e5ad9534980a94240694728768df1a48bc968ff627ec",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_linux_amd64.tar.gz"
+              "hash": "sha256:6ba355c3065f93cda2d7e5a8c31fa39769008df3683048ca99f166c80905fbbb",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_linux_amd64.tar.gz"
             }
           },
           "arm64": {
             "glibc": {
-              "binaryPath": "schepherd-0.1.2/schepherd",
+              "binaryPath": "schepherd-0.3.1/schepherd",
               "contentType": "tar.gz",
-              "hash": "sha256:5ded151ac9293cf2527ae1a3b75fdbba2385b499fd459e9049467b90f02860e4",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_linux_arm64.tar.gz"
+              "hash": "sha256:31789c0aa5737d9d41888f3abea1f46c0b7bb3639331dad4a19c9f4e413a2f89",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_linux_arm64.tar.gz"
             }
           }
         },
         "windows": {
           "amd64": {
             "unknown": {
-              "binaryPath": "schepherd-0.1.2/schepherd.exe",
+              "binaryPath": "schepherd-0.3.1/schepherd.exe",
               "contentType": "zip",
-              "hash": "sha256:072e54762bc7bf6da75692099b8e1c46ae226afb7acf63c1750296033eabab4b",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_windows_amd64.zip"
+              "hash": "sha256:e02f76e8110aa5dc8c286f8e1db97d207bf54218ae968ea7f804b367989d7b22",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_windows_amd64.zip"
             }
           },
           "arm64": {
             "unknown": {
-              "binaryPath": "schepherd-0.1.2/schepherd.exe",
+              "binaryPath": "schepherd-0.3.1/schepherd.exe",
               "contentType": "zip",
-              "hash": "sha256:aabdb544cbcdb25236ab08b026344d6713f74a14e3ab75cd89b5a73a36fa2973",
-              "url": "https://github.com/ovineko/schepherd/releases/download/v0.1.2/schepherd_0.1.2_windows_arm64.zip"
+              "hash": "sha256:27c8a9bbbc1d2e59b40f0dc4b0ecbaf8537d6064fc5061fc9a0e338d332189ab",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_windows_arm64.zip"
             }
           }
         }
       },
-      "configHash": "8254c0d9d664b82f9c0d554401256d54",
+      "configHash": "8547d4f45376124042277ae7f3e748fc",
       "description": "Delivers pinned JSON Schemas from an OCI catalog to verified local files",
       "source": {
         "apiUrl": "https://api.github.com",
         "repository": "ovineko/schepherd",
-        "tag": "v0.1.2",
+        "tag": "v0.3.1",
         "type": "github",
         "url": "https://github.com"
       }

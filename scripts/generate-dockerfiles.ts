@@ -1,7 +1,9 @@
 import { execa } from "execa";
-import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 
+import { selectDatamitsuBin } from "./lib/datamitsu-cli.ts";
+import { resolveDockerfileOutputs, selectDockerfileOutputDir } from "./lib/dockerfile-output.ts";
 import { normalizePythonExportDockerfile } from "./lib/python-export-shell.ts";
 
 /**
@@ -13,9 +15,9 @@ import { normalizePythonExportDockerfile } from "./lib/python-export-shell.ts";
  * The OCI labels live here (not in the generated file) so they survive every regeneration; the
  * generator emits whatever --label flags it receives.
  *
- * Extra CLI args are forwarded to every invocation, e.g.: node scripts/generate-dockerfiles.ts
- * --offline # unpinned, deterministic (CI/local default) node scripts/generate-dockerfiles.ts #
- * best-effort digest pinning (release push)
+ * Pass `--datamitsu-bin /absolute/path` or set `DATAMITSU_BIN`; custom cores require `--output-dir`
+ * or `DATAMITSU_DOCKER_OUTPUT_DIR` outside `docker/` so RC image tags cannot overwrite production
+ * artifacts.
  */
 
 const LABELS: Record<string, string> = {
@@ -97,6 +99,8 @@ const VARIANTS: { flags: string[]; forceInclude: string[]; ociMap: string; outpu
       "kubeconform",
       // The static upstream runs on musl, but its registry entry only declares glibc.
       "dm-internal-lefthook-upstream",
+      // Schepherd is statically linked; its native registry entry only declares glibc.
+      "dm-internal-schepherd-upstream",
       "osv-scanner",
       "protoc",
       "protolint",
@@ -125,36 +129,45 @@ const buildArgFlags = Object.entries(BUILD_ARGS).flatMap(([key, value]) => [
   "--build-arg",
   `${key}=${value}`,
 ]);
-const passthrough = process.argv.slice(2);
-const beforeConfig = join(import.meta.dirname, "../datamitsu.config.base.js");
+const root = resolve(import.meta.dirname, "..");
+const { outputDir, passthrough: generatorArgs } = selectDockerfileOutputDir(process.argv.slice(2));
+const { bin, passthrough } = selectDatamitsuBin(generatorArgs);
+const outputs = resolveDockerfileOutputs(root, VARIANTS, outputDir, bin !== undefined);
+const outputRoot = outputDir === undefined ? undefined : resolve(root, outputDir);
+if (outputRoot) await mkdir(outputRoot, { recursive: true });
+const datamitsuBin = bin ?? "datamitsu";
+const beforeConfig = join(root, "datamitsu.config.base.js");
 
-for (const { flags, forceInclude, ociMap, output } of VARIANTS) {
+for (const [index, { flags, forceInclude }] of VARIANTS.entries()) {
+  const { ociMap: ociMapFile, output: outputFile } = outputs[index]!;
+
   const forceIncludeFlags =
     forceInclude.length > 0 ? ["--force-include", forceInclude.join(",")] : [];
   await execa(
-    "datamitsu",
+    datamitsuBin,
     [
       "--before-config",
       beforeConfig,
       "devtools",
       "dockerfile",
       "--output",
-      output,
-      // Layer→subtree map consumed by scripts/oci-bundle-postprocess.ts to
-      // annotate the pushed image manifests and assemble the OCI bundle index.
+      outputFile,
       "--emit-oci-map",
-      ociMap,
+      ociMapFile,
       ...flags,
       ...labelArgs,
       ...buildArgFlags,
       ...forceIncludeFlags,
       ...passthrough,
     ],
-    // DATAMITSU_OCI_MINIMAL drops the opt-in tool apps from mapOfApps (see
-    // apps.ts) so the image stays under the overlay2 128-layer limit.
-    { env: { DATAMITSU_OCI_MINIMAL: "1" }, preferLocal: true, stdio: "inherit" },
+    {
+      cwd: root,
+      env: { DATAMITSU_OCI_MINIMAL: "1" },
+      preferLocal: bin === undefined,
+      stdio: "inherit",
+    },
   );
-  const content = await readFile(output, "utf8");
-  await writeFile(output, normalizePythonExportDockerfile(content));
-  console.log(`Generated ${output} + ${ociMap}`);
+  const content = await readFile(outputFile, "utf8");
+  await writeFile(outputFile, normalizePythonExportDockerfile(content));
+  console.log(`Generated ${outputFile} + ${ociMapFile}`);
 }

@@ -283,20 +283,26 @@ pnpm dm runtime list
 pnpm dm runtime list --json
 ```
 
+The human table includes `RUNNABLE` and `REASON`, distinguishing interpreter support
+from installation status and explaining why pnpm cannot run directly.
+
 Run an interpreter by its exact configured name. The `--` separator is required;
 everything after it belongs to the interpreter:
 
 ```bash
 pnpm dm runtime run node -- script.js "with space"
+pnpm dm runtime run bun -- script.ts "with space"
 pnpm dm runtime run uv-python314 -- -c 'import sys; print(sys.version)'
 pnpm dm runtime run go -- run ./cmd/tool
 pnpm dm runtime run jvm -- -jar tool.jar
 ```
 
 `uv` and `uv-python314` run their pinned CPython directly, not `uv run`. They do not
-sync a project, run pip, or install script dependencies. Bun and pnpm appear in the
-inventory but are not direct `runtime run` targets. Add `--dry-run` before the
-runtime name to inspect a JSON execution plan without provisioning or execution.
+sync a project, run pip, or install script dependencies. Bun runs directly with
+implicit package installation disabled, while preserving project bunfig and `.env`
+loading. pnpm appears in the inventory but is not a direct `runtime run` target.
+Add `--dry-run` before the runtime name to inspect a JSON execution plan without
+provisioning or execution.
 
 A normal run installs missing managed components automatically and preserves the
 calling directory, arguments, streams and exit status. Runtime-owned caches are
@@ -392,24 +398,6 @@ globalThis.getConfig = getConfig;
 
 ```bash
 pnpm dm config reconcile --tools gitleaks
-```
-
-JSON and YAML files with a known schema — `package.json`, workflows, `dependabot.yml`,
-`pnpm-workspace.yaml` and some 1,300 other patterns — are validated by schepherd. The schemas come
-from a catalog pinned by digest in this package. Installing Schepherd prepares the whole
-catalog from `ghcr.io` once; checks then run offline against that verified cache. Docker images
-and OCI toolchain bundles include the prepared catalog, so restored installations need no schema
-downloads. A fresh installation without that prepared state needs network access. Files the
-validator cannot read are left out: TOML, JSON5, and known JSONC configurations such as `tsconfig.json`.
-
-To validate a file against a schema of your own, eject `schepherd` as above and declare it in
-`schepherd.toml`, then add its path to the operation's `globs` in your `datamitsu.config.*`:
-schepherd validates only the files datamitsu hands it.
-
-```toml
-[schemas."company-config"]
-path = "schemas/company-config.schema.json"
-file_match = ["config/company.json"]
 ```
 
 Naming checks are opt-in and split between two tools: alint checks file names, ls-lint checks
@@ -635,3 +623,37 @@ does not exercise every conditional branch.
 There is a separate YAML limitation: yamlfmt 0.21.0 can require a second formatting
 pass for comments in an unmodified `helm create` chart's `values.yaml`. The first
 `check` then fails its formatting check. This is not suppressed by the Helm integration.
+
+## JSON Schema validation
+
+Schepherd checks matching configuration files with a managed validator chain. It uses Sourcemeta first,
+then check-jsonschema and AJV when a schema or source format is unsupported by the earlier validator.
+The validators run in that order, with exact managed executable bindings; they do not retry an invalid
+document against another validator. Installation prepares the pinned schema catalog, checks use it
+offline, and findings retain the original input file. Catalog compatibility profiles are used when present;
+the pinned v2 catalog remains readable and is checked with runtime probes for the installed validators.
+
+To run only this check:
+
+```bash
+pnpm dm lint --tools schepherd
+```
+
+The managed `schepherd.toml` retains project mappings, local schemas, catalog mirrors and explicit
+processor settings. Its generated defaults add the three validators only when the project has not
+already selected processors or inherited another configuration. Existing project selection and order
+are preserved. yq is bound as the Sourcemeta converter for formats Schepherd delegates to it. Documents
+are revalidated on every run so a changed local schema cannot reuse an earlier successful result.
+
+The operation also selects common JSON, JSONC, JSON5, YAML, YML and TOML files so local schemas and
+project mappings work even when a filename is absent from the shared catalog. `--safe-catalog` skips
+ambiguous or unknown-format automatic catalog associations with an explanation; explicit mappings and
+local schemas remain strict. Generic names such as `manifest.json` and `plugin.yml` have multiple
+catalog schemas, so add an explicit `[[mappings]]` entry to validate one rather than relying on an
+arbitrary schema choice. Files with no mapping are skipped.
+
+The validator client, source frontends and parser module use released artifacts and run with the
+package-pinned Datamitsu core; no local release candidate or development core is needed. The published
+v2 catalog remains supported. An explicit mapping selects a schema, not an input format: an
+extensionless document whose format is unknown needs a custom processor that owns that format and
+declares its structured `output` contract, such as `sourcemeta-json` for Sourcemeta JSON output.

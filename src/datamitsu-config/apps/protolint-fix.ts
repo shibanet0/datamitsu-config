@@ -10,5 +10,7 @@ export const protolintFixApp: BinManager.App = {
     packageName: "datamitsu.local/protolint-fix",
     version: "v0.0.0",
   },
+  officialUrl:
+    "https://github.com/shibanet0/datamitsu-config/tree/main/src/datamitsu-config/inline-config",
   versionCheck: { disabled: true },
 };

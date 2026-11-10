@@ -2,11 +2,18 @@ import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((prev) => {
   const words = [
+    "barba",
     "browserslistrc",
     "datetimez",
     "extglobs",
+    "Fprintln",
+    "frontends",
     "frontmatter",
     "gomod",
+    "libcs",
+    "lockfiles",
+    "persistable",
+    "PYTHONDONTWRITEBYTECODE",
     "rightarg",
     "triaging",
     "errmsg",

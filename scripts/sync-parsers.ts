@@ -46,8 +46,8 @@ const SHA256 = /^sha256:[\da-f]{64}$/;
 function assertShape(source: ParsersOCI): void {
   if (source.module !== "core") {
     throw new Error(
-      `parsers-oci.json declares module ${JSON.stringify(source.module)}; this config only wires up "core". ` +
-        `A second module means parsers.ts needs a real entry for it, not a renamed one.`,
+      `parsers-oci.json declares module ${JSON.stringify(source.module)}; this generator only wires up "core". ` +
+        `A second core-owned module needs its own generated entry, not a renamed one.`,
     );
   }
   if (!source.ref) {
@@ -73,9 +73,9 @@ function render(source: ParsersOCI): string {
  * Rust→WASM parser module. Tools opt in by name via \`outputParser\` (see ./tools.ts); a module
  * declared but unreferenced is harmless.
  *
- * The single module dispatches every tool's parser by name, so one \`parsers\` entry ("core") serves
- * all of them. It is downloaded once and SHA-256 verified against \`hash\` before it is loaded into
- * the sandboxed WASM runtime.
+ * This module dispatches the core-owned tool parsers by name. Independently released modules, such
+ * as Schepherd's, are pinned separately and combined in datamitsu.config.ts. Each module is
+ * downloaded once and SHA-256 verified before it is loaded into the sandboxed WASM runtime.
  *
  * Sourced from the registry rather than a release asset. The module is delivered over two channels
  * — a GitHub release asset (\`url\`) and an OCI artifact (\`oci\`) — and an entry declares exactly one;

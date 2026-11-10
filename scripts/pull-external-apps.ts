@@ -80,6 +80,13 @@ export function minReleaseAgeCutoff(minutes: string | undefined, now: Date): Dat
   return value === 0 ? undefined : new Date(now.getTime() - value * 60_000);
 }
 
+export function minReleaseAgeCutoffFromEnvironment(
+  now: Date,
+  environment: NodeJS.ProcessEnv = process.env,
+): Date | undefined {
+  return minReleaseAgeCutoff(environment.DATAMITSU_MIN_RELEASE_AGE, now);
+}
+
 /**
  * The first sha256 in a checksum file: either a bare hash or `<hash> <file name>`.
  */
@@ -198,7 +205,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const cutoff = minReleaseAgeCutoff(process.env.DATAMITSU_MIN_RELEASE_AGE, new Date());
+  const cutoff = minReleaseAgeCutoffFromEnvironment(new Date());
   const githubToken = process.env.GITHUB_TOKEN;
   const registry: ExternalRegistry = JSON.parse(await fsPromise.readFile(registryPath, "utf8"));
   const errors: string[] = [];

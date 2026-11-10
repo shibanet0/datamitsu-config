@@ -5,9 +5,9 @@
  * Rust→WASM parser module. Tools opt in by name via `outputParser` (see ./tools.ts); a module
  * declared but unreferenced is harmless.
  *
- * The single module dispatches every tool's parser by name, so one `parsers` entry ("core") serves
- * all of them. It is downloaded once and SHA-256 verified against `hash` before it is loaded into
- * the sandboxed WASM runtime.
+ * This module dispatches the core-owned tool parsers by name. Independently released modules, such
+ * as Schepherd's, are pinned separately and combined in datamitsu.config.ts. Each module is
+ * downloaded once and SHA-256 verified before it is loaded into the sandboxed WASM runtime.
  *
  * Sourced from the registry rather than a release asset. The module is delivered over two channels
  * — a GitHub release asset (`url`) and an OCI artifact (`oci`) — and an entry declares exactly one;
@@ -23,7 +23,7 @@
  * edit. Both values change on every release even when the parser sources do not, because the
  * module's version string is compiled into it.
  *
- * Pinned to datamitsu unstable-20261109-b5ccf8e.
+ * Pinned to datamitsu unstable-20261110-e7b3456.
  */
 
 const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
@@ -31,9 +31,9 @@ const PARSERS_OCI_REF = "ghcr.io/datamitsu/datamitsu-parsers-unstable";
 // and an unwrapped line here would leave every `task refresh` with a file the formatter rewrites
 // and `validate:parsers` then rejects.
 const PARSERS_OCI_DIGEST =
-  "sha256:4f30f5821add9ce4f54bdda1ff9b8066727e4314eea341fc245e912d6793e285";
+  "sha256:dcef4ec4fa351f666c29103dbafc61dff2acb09518f18798d0a3c197cacf1201";
 
-const CORE_PARSER_HASH = "sha256:90ec4bac4e8768738f9c038ba85f27963552a162ed918c1720b8c4588017247d";
+const CORE_PARSER_HASH = "sha256:4a982a32e6f34489614fe46b7bec1e07e037fcb62c19e2e8e309d17a3fe785c4";
 
 export const parsers: config.MapOfParsers = {
   core: {

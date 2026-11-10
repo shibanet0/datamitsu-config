@@ -11,6 +11,7 @@ import { parsers } from "./parsers";
 import { projectTypes } from "./project";
 import runtimes from "./registries/runtimes.json";
 import uvPython314 from "./registries/uv-python314.json";
+import { schepherdParser } from "./schepherd-parser";
 import { SKILLS } from "./skills";
 import { toolsConfig } from "./tools";
 import { TSCONFIG_MD } from "./tsconfig.md";
@@ -87,7 +88,7 @@ function getConfig(cfg: config.Config): config.Config {
     // Display metadata only: the inspector header and its exported atlas name the configuration by
     // this. A consuming project inherits it until a layer of its own sets one — the last layer wins.
     name: "shibanet0/datamitsu-config",
-    parsers,
+    parsers: { ...parsers, schepherd: schepherdParser },
     projectTypes,
     runtimes: {
       ...mapOfRuntimes,

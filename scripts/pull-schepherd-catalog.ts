@@ -2,29 +2,46 @@ import { spawn, spawnSync } from "node:child_process";
 import fsPromise from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { minReleaseAgeCutoff } from "./pull-external-apps.ts";
+import { minReleaseAgeCutoffFromEnvironment } from "./pull-external-apps.ts";
 
 export interface CatalogPattern {
+  covering?: {
+    excluded?: CoveringExclusion[];
+    globs: string[];
+    recordedExcluded?: { processor: string; reason: string }[];
+    recordedSupported?: string[];
+    validators: string[];
+  };
   fileMatch: string[];
   id: string;
+  metadata?: {
+    profiles: {
+      processor: string;
+      reason?: string;
+      result: "supported" | "unsupported";
+      settingsDigest: string;
+      tool: string;
+    }[];
+    schemaDigest: string;
+  };
+  sourceFormats?: { extensions: string[]; filenames: string[]; format: string }[];
 }
 
 export interface CatalogPin {
+  covering?: Record<string, NonNullable<CatalogPattern["covering"]>>;
   digest: string;
   globs: string[];
+  metadata?: Record<string, CatalogPattern["metadata"]>;
   repository: string;
   revision: string;
-  /**
-   * Schemas the validator cannot compile, with its first error. Their patterns are left out of
-   * `globs`, so a file only they match never reaches the validator and cannot fail the run on a
-   * defect of the schema.
-   */
-  unusable: Record<string, string>;
-  /**
-   * The `jsonschema` version the schemas were compiled with: a validator bump changes which of them
-   * compile, so the globs are only valid for this version.
-   */
-  validator: string;
+  sourceFormats?: Record<string, CatalogPattern["sourceFormats"]>;
+  validators?: string[];
+}
+
+export interface CoveringExclusion {
+  glob: string;
+  reason: string;
+  schemaIds: string[];
 }
 
 interface ManagedApp {
@@ -33,66 +50,188 @@ interface ManagedApp {
   env: NodeJS.ProcessEnv;
 }
 
+interface PullerOptions {
+  configPath?: string;
+  refreshDiscovery: boolean;
+  registryPath?: string;
+  update: boolean;
+}
+
 interface RunResult {
   code: null | number;
   stderr: string;
   stdout: string;
 }
 
-/**
- * Catalog IDs whose `.json` files their own tool reads with comments and trailing commas. The
- * Sourcemeta validator parses strict JSON only, so it would reject a valid config as unparsable.
- * Their YAML patterns are kept. An ID the catalog no longer has fails the pull, because a renamed
- * one would silently start handing JSONC files to the validator again.
- */
-export const JSONC_SCHEMA_IDS: readonly string[] = [
-  "babelrc",
-  // deno.json
-  "config-file.v1",
-  // .oxfmtrc.json
-  "configuration_schema",
-  // .oxlintrc.json
-  "configuration_schema-raw-githubusercontent-com",
-  "eslintrc",
-  "jsconfig",
-  "markdownlint-config-schema",
-  "mocharc",
-  "tsconfig",
-  "tslint",
-];
-
 const CATALOG_TAG = /^catalog-(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})$/;
 
-/**
- * The formats `jsonschema validate` reads. Anything else — TOML, JSON5, JSONC, a name without an
- * extension — would be reported as a parse failure of a perfectly valid file.
- */
-const VALIDATOR_FORMATS = /\.(json|ya?ml)$/;
+export function parsePullerArgs(args: readonly string[]): PullerOptions {
+  let configPath: string | undefined;
+  let refreshDiscovery = false;
+  let registryPath: string | undefined;
+  let update = false;
 
-const COMPILE_CONCURRENCY = 8;
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index]!;
+    switch (arg) {
+      case "--config": {
+        const value = args[index + 1];
+        if (!value || value.startsWith("--")) {
+          throw new Error("--config requires a path");
+        }
+        configPath = value;
+        index += 1;
 
-const root = resolve(import.meta.dirname, "..");
+        break;
+      }
+      case "--refresh-discovery": {
+        refreshDiscovery = true;
 
-/**
- * The positive, validator-readable patterns of every usable schema as workspace-relative globs,
- * translated the way schepherd's integration guide describes. Negative patterns are dropped: they
- * exclude a file from their own schema only, which `run --ignore-unmatched` already honors.
- */
-export function buildGlobs(patterns: CatalogPattern[], unusable: Record<string, string>): string[] {
-  const globs = new Set<string>();
-  for (const { fileMatch, id } of patterns) {
-    if (id in unusable) {
-      continue;
-    }
-    const jsonc = JSONC_SCHEMA_IDS.includes(id);
-    for (const pattern of fileMatch) {
-      const glob = toGlob(pattern);
-      if (glob !== undefined && (!jsonc || !glob.endsWith(".json"))) {
-        globs.add(glob);
+        break;
+      }
+      case "--update": {
+        update = true;
+
+        break;
+      }
+      default: {
+        if (arg.startsWith("--config=")) {
+          configPath = arg.slice("--config=".length);
+          if (!configPath) throw new Error("--config requires a path");
+        } else if (!arg.startsWith("--") && registryPath === undefined) {
+          registryPath = arg;
+        }
       }
     }
   }
-  return [...globs].toSorted();
+
+  if (update && refreshDiscovery) {
+    throw new Error("--update and --refresh-discovery are mutually exclusive");
+  }
+  return { configPath, refreshDiscovery, registryPath, update };
+}
+
+const root = resolve(import.meta.dirname, "..");
+const DEFAULT_VALIDATORS = ["sourcemeta", "check-jsonschema", "ajv"] as const;
+
+export function buildCoveringData(
+  patterns: CatalogPattern[],
+  validators: string[],
+): { covering: NonNullable<CatalogPin["covering"]>; globs: string[] } {
+  const requested = new Set(validators);
+  const owners = new Map<string, Set<string>>();
+  for (const { covering, id } of patterns) {
+    if (!covering) {
+      throw new Error("Schepherd returned catalog patterns without covering metadata");
+    }
+    if (
+      covering.validators.length !== requested.size ||
+      covering.validators.some((id) => !requested.has(id))
+    ) {
+      throw new Error("Schepherd covering metadata does not match the requested validators");
+    }
+    for (const glob of covering.globs) {
+      const ids = owners.get(glob) ?? new Set<string>();
+      ids.add(id);
+      owners.set(glob, ids);
+    }
+  }
+
+  const collisions = [...owners]
+    .filter(([, ids]) => ids.size > 1)
+    .map(([glob, ids]) => ({
+      glob,
+      reason: "multiple catalog schemas share this fileMatch glob; add an explicit mapping",
+      schemaIds: [...ids].toSorted(),
+    }))
+    .toSorted((left, right) => left.glob.localeCompare(right.glob));
+  const collisionGlobs = new Set(collisions.map(({ glob }) => glob));
+  const covering = Object.fromEntries(
+    patterns.map(({ covering, id }) => {
+      const exclusions = new Map<string, CoveringExclusion>();
+      for (const exclusion of covering!.excluded ?? []) {
+        exclusions.set(exclusion.glob, exclusion);
+      }
+      for (const collision of collisions.filter(({ schemaIds }) => schemaIds.includes(id))) {
+        const schemaIds = new Set([
+          ...(exclusions.get(collision.glob)?.schemaIds ?? []),
+          ...collision.schemaIds,
+        ]);
+        exclusions.set(collision.glob, {
+          glob: collision.glob,
+          reason: collision.reason,
+          schemaIds: [...schemaIds].toSorted(),
+        });
+      }
+      const excluded = [...exclusions.values()].toSorted((left, right) =>
+        left.glob.localeCompare(right.glob),
+      );
+      return [id, { ...covering!, ...(excluded.length > 0 ? { excluded } : {}) }];
+    }),
+  );
+  const globs = [...owners.keys()].filter((glob) => !collisionGlobs.has(glob)).toSorted();
+  return { covering, globs };
+}
+
+export function buildCoveringGlobs(patterns: CatalogPattern[], validators: string[]): string[] {
+  return buildCoveringData(patterns, validators).globs;
+}
+
+export function buildValidatorMetadata(
+  patterns: CatalogPattern[],
+  validators: readonly string[] = DEFAULT_VALIDATORS,
+): {
+  metadata: NonNullable<CatalogPin["metadata"]>;
+  sourceFormats: NonNullable<CatalogPin["sourceFormats"]>;
+} {
+  const metadata: NonNullable<CatalogPin["metadata"]> = {};
+  const sourceFormats: NonNullable<CatalogPin["sourceFormats"]> = {};
+  for (const pattern of patterns) {
+    if (!pattern.metadata || !pattern.sourceFormats) {
+      throw new Error(`Schepherd returned incomplete catalog metadata for ${pattern.id}`);
+    }
+    if (!/^sha256:[a-f0-9]{64}$/.test(pattern.metadata.schemaDigest)) {
+      throw new Error(`Schepherd returned an invalid schema digest for ${pattern.id}`);
+    }
+    const profileIds = new Set(pattern.metadata.profiles.map(({ processor }) => processor));
+    if (profileIds.size !== pattern.metadata.profiles.length) {
+      throw new Error(`Schepherd returned duplicate processor profiles for ${pattern.id}`);
+    }
+    for (const validator of validators) {
+      if (!profileIds.has(validator)) {
+        throw new Error(`Schepherd omitted the ${validator} profile for ${pattern.id}`);
+      }
+    }
+    for (const profile of pattern.metadata.profiles) {
+      if (!/^sha256:[a-f0-9]{64}$/.test(profile.settingsDigest)) {
+        throw new Error(
+          `Schepherd returned an invalid settings digest for ${pattern.id}/${profile.processor}`,
+        );
+      }
+      const toolDigestPattern =
+        profile.processor === "sourcemeta"
+          ? /^sha256:[a-f0-9]{64}$/
+          : /^sha256:[a-f0-9]{64}:sha256:[a-f0-9]{64}$/;
+      if (!toolDigestPattern.test(profile.tool)) {
+        throw new Error(
+          `Schepherd returned an invalid tool identity for ${pattern.id}/${profile.processor}`,
+        );
+      }
+      if (profile.result !== "supported" && profile.result !== "unsupported") {
+        throw new Error(
+          `Schepherd returned an invalid profile result for ${pattern.id}/${profile.processor}`,
+        );
+      }
+      if (profile.result === "unsupported" && !profile.reason) {
+        throw new Error(
+          `Schepherd omitted the unsupported reason for ${pattern.id}/${profile.processor}`,
+        );
+      }
+    }
+    metadata[pattern.id] = pattern.metadata;
+    sourceFormats[pattern.id] = pattern.sourceFormats;
+  }
+  return { metadata, sourceFormats };
 }
 
 /**
@@ -121,19 +260,9 @@ export function selectCatalogTag(tags: string[], cutoff: Date | undefined): stri
     .at(-1);
 }
 
-export function toGlob(pattern: string): string | undefined {
-  if (pattern.startsWith("!") || !VALIDATOR_FORMATS.test(pattern)) {
-    return undefined;
-  }
-  if (/^\.?\//.test(pattern)) {
-    return pattern.replace(/^\.?\//, "");
-  }
-  return pattern.includes("/") ? pattern : `**/${pattern}`;
-}
-
 function describeDrift(recorded: Partial<CatalogPin>, next: CatalogPin): string[] {
   const lines: string[] = [];
-  for (const key of ["repository", "revision", "digest", "validator"] as const) {
+  for (const key of ["repository", "revision", "digest"] as const) {
     if (recorded[key] !== next[key]) {
       lines.push(`${key}: ${recorded[key] ?? "(none)"} -> ${next[key]}`);
     }
@@ -145,23 +274,19 @@ function describeDrift(recorded: Partial<CatalogPin>, next: CatalogPin): string[
   if (added.length > 0 || removed.length > 0) {
     lines.push(`globs: +${added.length} -${removed.length}`);
   }
-  const recordedUnusable = recorded.unusable ?? {};
-  for (const id of Object.keys({ ...recordedUnusable, ...next.unusable }).toSorted()) {
-    if (recordedUnusable[id] !== next.unusable[id]) {
-      lines.push(
-        next.unusable[id] === undefined
-          ? `unusable: ${id} compiles now`
-          : `unusable: ${id}: ${next.unusable[id]}`,
-      );
+  for (const key of ["validators", "metadata", "sourceFormats", "covering"] as const) {
+    if (JSON.stringify(recorded[key] ?? null) !== JSON.stringify(next[key] ?? null)) {
+      lines.push(`${key}: changed`);
     }
   }
   return lines;
 }
 
-function dmExec(app: string, args: string[]): string {
+function dmExec(app: string, args: string[], configPath?: string): string {
+  const configArgs = configPath ? ["--config", configPath] : [];
   const result = spawnSync(
     process.execPath,
-    [resolve(root, "bin/datamitsu.js"), "exec", app, "--", ...args],
+    [resolve(root, "bin/datamitsu.js"), ...configArgs, "exec", app, "--", ...args],
     { cwd: root, encoding: "utf8", maxBuffer: 64 << 20 },
   );
   if (result.status !== 0) {
@@ -171,13 +296,23 @@ function dmExec(app: string, args: string[]): string {
 }
 
 async function main(): Promise<void> {
-  const arguments_ = process.argv.slice(2);
-  const update = arguments_.includes("--update");
-  const registryPath = arguments_.find((a) => !a.startsWith("--"));
+  const options = parsePullerArgs(process.argv.slice(2));
+  const update = options.update;
+  const refreshDiscovery = options.refreshDiscovery;
+  const registryPath = options.registryPath ? resolve(root, options.registryPath) : undefined;
+  const configPath = options.configPath ? resolve(root, options.configPath) : undefined;
 
   if (!registryPath) {
-    console.error("Usage: pull-schepherd-catalog.ts [--update] <path-to-schepherdCatalog.json>");
+    console.error(
+      "Usage: pull-schepherd-catalog.ts [--update | --refresh-discovery] [--config <datamitsu-layer>] <path-to-schepherdCatalog.json>",
+    );
     process.exit(1);
+  }
+
+  if (refreshDiscovery) {
+    console.log(
+      "Refreshing catalog discovery for the recorded digest without selecting a new revision",
+    );
   }
 
   const recorded = JSON.parse(
@@ -186,13 +321,13 @@ async function main(): Promise<void> {
 
   let reference = `${recorded.repository}@${recorded.digest}`;
   if (update) {
-    const cutoff = minReleaseAgeCutoff(process.env.DATAMITSU_MIN_RELEASE_AGE, new Date());
+    const cutoff = minReleaseAgeCutoffFromEnvironment(new Date());
     console.log(
       cutoff
         ? `Minimum release age: catalogs published before ${cutoff.toISOString()}`
         : "Minimum release age: disabled",
     );
-    const tags = dmExec("crane", ["ls", recorded.repository]).split("\n");
+    const tags = dmExec("crane", ["ls", recorded.repository], configPath).split("\n");
     const tag = selectCatalogTag(tags, cutoff);
     if (tag === undefined) {
       if (!recorded.digest) {
@@ -206,7 +341,9 @@ async function main(): Promise<void> {
     }
   }
 
-  const pin = JSON.parse(dmExec("schepherd", ["--quiet", "pin", reference, "--json"])) as {
+  const pin = JSON.parse(
+    dmExec("schepherd", ["--quiet", "pin", reference, "--json"], configPath),
+  ) as {
     digest: string;
     repository: string;
     revision: string;
@@ -219,47 +356,69 @@ async function main(): Promise<void> {
   }
   console.log(`${pin.repository}: revision ${pin.revision}, ${pin.schemas} schemas, ${pin.digest}`);
 
-  const validator = dmExec("jsonschema", ["version"]).trim();
-  const schepherd = managedApp("schepherd");
+  const validatorIds = [...DEFAULT_VALIDATORS];
+  const schepherd = managedApp("schepherd", configPath);
   const catalogArgs = ["--quiet", "--repository", pin.repository, "--catalog", pin.digest];
-  const patternsResult = await run(
+  const selected = await run(
     schepherd.command,
-    [...schepherd.args, ...catalogArgs, "patterns", "--json"],
+    [
+      ...schepherd.args,
+      ...catalogArgs,
+      "patterns",
+      "--validators",
+      validatorIds.join(","),
+      "--covering",
+      "--json",
+    ],
     schepherd.env,
-    true,
   );
-  if (patternsResult.code !== 0) {
+
+  if (selected.code !== 0) {
     throw new Error(
-      `schepherd patterns exited with ${patternsResult.code}:\n${patternsResult.stderr}`,
+      `schepherd patterns --validators failed with ${selected.code}:\n${selected.stderr}\n` +
+        "Use a Schepherd client that supports covering pattern discovery and v2 runtime probes.",
     );
   }
-  const patterns = JSON.parse(patternsResult.stdout) as CatalogPattern[];
+  const patterns = JSON.parse(selected.stdout) as CatalogPattern[];
+  const ids = new Set(patterns.map(({ id }) => id));
+  if (ids.size !== patterns.length)
+    throw new Error("Schepherd returned duplicate catalog schema IDs");
+  const { covering, globs } = buildCoveringData(patterns, validatorIds);
+  const hasMetadata = patterns.every(({ metadata, sourceFormats }) => metadata && sourceFormats);
+  const lacksMetadata = patterns.every(
+    ({ metadata, sourceFormats }) => !metadata && !sourceFormats,
+  );
+  if (!hasMetadata && !lacksMetadata)
+    throw new Error("Schepherd returned partial catalog metadata");
+  const normalized = hasMetadata ? buildValidatorMetadata(patterns, validatorIds) : undefined;
+  const metadata = normalized?.metadata;
+  const sourceFormats = normalized?.sourceFormats;
 
-  const missing = JSONC_SCHEMA_IDS.filter((id) => patterns.every((entry) => entry.id !== id));
-  if (missing.length > 0) {
-    throw new Error(
-      `the catalog no longer has JSONC schema IDs ${missing.join(", ")}; update JSONC_SCHEMA_IDS`,
+  const excludedGlobs = new Set(
+    Object.values(covering).flatMap(({ excluded }) => excluded?.map(({ glob }) => glob) ?? []),
+  );
+  if (excludedGlobs.size > 0) {
+    console.log(
+      `Excluded ${excludedGlobs.size} colliding catalog globs; add explicit mappings to validate them: ${[...excludedGlobs].toSorted().join(", ")}`,
     );
   }
-
-  console.log(`Compiling ${patterns.length} schemas with jsonschema ${validator}...`);
-  const unusable = await unusableSchemas(
-    schepherd,
-    catalogArgs,
-    patterns.map((entry) => entry.id),
+  console.log(
+    hasMetadata
+      ? `Using catalog compatibility metadata for ${patterns.length} schemas and ${validatorIds.join(", ")}`
+      : `Using runtime validator probes for ${patterns.length} schemas from the v2 catalog`,
   );
 
   const next: CatalogPin = {
+    covering,
     digest: pin.digest,
-    globs: buildGlobs(patterns, unusable),
+    globs,
+    ...(metadata ? { metadata } : {}),
     repository: pin.repository,
     revision: pin.revision,
-    unusable,
-    validator,
+    ...(sourceFormats ? { sourceFormats } : {}),
+    validators: validatorIds,
   };
-  console.log(
-    `${next.globs.length} globs from ${patterns.length - Object.keys(unusable).length} schemas; ${Object.keys(unusable).length} do not compile`,
-  );
+  console.log(`${next.globs.length} covering globs from ${patterns.length} schemas`);
 
   const drift = describeDrift(recorded, next);
   if (drift.length === 0) {
@@ -269,7 +428,7 @@ async function main(): Promise<void> {
   for (const line of drift) {
     console.log(`  ${line}`);
   }
-  if (!update) {
+  if (!update && !refreshDiscovery) {
     console.error("\nThe recorded catalog pin has drifted; run `task pull:external:update`.");
     process.exit(1);
   }
@@ -281,10 +440,11 @@ async function main(): Promise<void> {
  * The installed schepherd with its runtime environment — `JSONSCHEMA_BIN` included — so the
  * per-schema calls below skip datamitsu's start-up, which dominates nine hundred short processes.
  */
-function managedApp(name: string): ManagedApp {
+function managedApp(name: string, configPath?: string): ManagedApp {
+  const configArgs = configPath ? ["--config", configPath] : [];
   const result = spawnSync(
     process.execPath,
-    [resolve(root, "bin/datamitsu.js"), "source", "status", "--json"],
+    [resolve(root, "bin/datamitsu.js"), ...configArgs, "source", "status", "--json"],
     { cwd: root, encoding: "utf8", maxBuffer: 64 << 20 },
   );
   if (result.status !== 0) {
@@ -309,72 +469,16 @@ function managedApp(name: string): ManagedApp {
   return { args: app.args ?? [], command: app.command, env: { ...process.env, ...environment } };
 }
 
-async function mapConcurrently<T, R>(
-  items: T[],
-  limit: number,
-  callback: (item: T) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = Array.from({ length: items.length });
-  let next = 0;
-  const worker = async (): Promise<void> => {
-    while (next < items.length) {
-      const index = next++;
-      results[index] = await callback(items[index]!);
-    }
-  };
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return results;
-}
-
-function run(
-  command: string,
-  args: string[],
-  env: NodeJS.ProcessEnv,
-  keepStdout: boolean,
-): Promise<RunResult> {
-  return new Promise((resolvePromise, reject) => {
-    const child = spawn(command, args, {
-      env,
-      stdio: ["ignore", keepStdout ? "pipe" : "ignore", "pipe"],
-    });
-    let stdout = "";
-    let stderr = "";
-    child.stdout?.on("data", (chunk: Buffer) => (stdout += chunk.toString()));
-    child.stderr.on("data", (chunk: Buffer) => (stderr += chunk.toString()));
-    child.on("error", reject);
-    child.on("close", (code) => resolvePromise({ code, stderr, stdout }));
-  });
-}
-
-async function unusableSchemas(
-  schepherd: ManagedApp,
-  catalogArgs: string[],
-  ids: string[],
-): Promise<Record<string, string>> {
-  const validator = schepherd.env.JSONSCHEMA_BIN;
-  if (!validator) {
-    throw new Error("schepherd's runtime environment carries no JSONSCHEMA_BIN");
-  }
-  const reasons = await mapConcurrently(ids, COMPILE_CONCURRENCY, async (id) => {
-    const path = await run(
-      schepherd.command,
-      [...schepherd.args, ...catalogArgs, "path", id],
-      schepherd.env,
-      true,
-    );
-    if (path.code !== 0) {
-      throw new Error(`schepherd path ${id} exited with ${path.code}:\n${path.stderr}`);
-    }
-    const compiled = await run(validator, ["compile", path.stdout.trim()], schepherd.env, false);
-    if (compiled.code === 0) {
-      return undefined;
-    }
-    const message = /^error: (.*)$/m.exec(compiled.stderr)?.[1] ?? `exit ${compiled.code}`;
-    return `does not compile: ${message}`;
-  });
-  return Object.fromEntries(
-    ids.flatMap((id, index) => (reasons[index] === undefined ? [] : [[id, reasons[index]]])),
-  );
+function run(command: string, args: string[], env: NodeJS.ProcessEnv): Promise<RunResult> {
+  const { promise, reject, resolve: resolveResult } = Promise.withResolvers<RunResult>();
+  const child = spawn(command, args, { env, stdio: ["ignore", "pipe", "pipe"] });
+  let stdout = "";
+  let stderr = "";
+  child.stdout?.on("data", (chunk: Buffer) => (stdout += chunk.toString()));
+  child.stderr.on("data", (chunk: Buffer) => (stderr += chunk.toString()));
+  child.on("error", reject);
+  child.on("close", (code) => resolveResult({ code, stderr, stdout }));
+  return promise;
 }
 
 const isDirectRun =

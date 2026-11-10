@@ -1,6 +1,9 @@
 import { fix } from "@datamitsu/datamitsu";
+import { execa } from "execa";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+
+import { selectDatamitsuBin } from "./datamitsu-cli.ts";
 
 export interface WriteAndFixOptions {
   content: string;
@@ -40,11 +43,25 @@ export async function writeAndFix(options: WriteAndFixOptions): Promise<WriteAnd
     }
 
     // Step 3: Run fix on the specific file
-    const fixResult = await fix({
-      beforeConfig: [join(import.meta.dirname, "../../datamitsu.config.base.js")],
-      files: [filePath],
-      stdio: "pipe",
-    });
+    const { bin } = selectDatamitsuBin();
+    const fixResult = bin
+      ? await execa(
+          bin,
+          [
+            "--before-config",
+            join(import.meta.dirname, "../../datamitsu.config.base.js"),
+            "--binary-command",
+            "pnpm",
+            "fix",
+            filePath,
+          ],
+          { stdio: "pipe" },
+        ).then(() => ({ success: true as const }))
+      : await fix({
+          beforeConfig: [join(import.meta.dirname, "../../datamitsu.config.base.js")],
+          files: [filePath],
+          stdio: "pipe",
+        });
 
     if (verbose && fixResult.success) {
       console.log(`Fixed ${filePath}`);
