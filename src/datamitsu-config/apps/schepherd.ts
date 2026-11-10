@@ -3,7 +3,7 @@ import schepherdCatalog from "../registries/schepherdCatalog.json";
 import { schepherdPrepareToml } from "../schepherd-processors";
 
 // Bump only when the launcher contract changes; this is not a Schepherd upstream version.
-const schepherdAppVersion = "v0.1.0";
+const schepherdAppVersion = "v0.2.0";
 
 const schepherdGoMod = `module datamitsu.local/schepherd
 
@@ -21,6 +21,15 @@ import (
 
 const proxyVersion = "${schepherdAppVersion}"
 
+func exitOnError(err error) {
+	var exitError *exec.ExitError
+	if errors.As(err, &exitError) {
+		os.Exit(exitError.ExitCode())
+	}
+	fmt.Fprintln(os.Stderr, err)
+	os.Exit(127)
+}
+
 func main() {
 	if len(os.Args) == 2 && os.Args[1] == "--proxy-version" {
 		fmt.Fprintln(os.Stdout, proxyVersion)
@@ -31,15 +40,47 @@ func main() {
 		fmt.Fprintln(os.Stderr, "managed Schepherd binary binding is missing")
 		os.Exit(127)
 	}
-	args := append([]string{binary}, os.Args[1:]...)
-	if err := execManagedCommand(binary, args, os.Environ()); err != nil {
-		var exitError *exec.ExitError
-		if errors.As(err, &exitError) {
-			os.Exit(exitError.ExitCode())
+	nativeArgs := os.Args[1:]
+	if len(nativeArgs) > 0 && nativeArgs[0] == "--prepare-catalog" {
+		nativeArgs = nativeArgs[1:]
+		fetchArgs, err := preparationArgs(nativeArgs)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(2)
 		}
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(127)
+		// Unix forwarding replaces this process, so only the final phase may use it.
+		command := exec.Command(binary, fetchArgs...)
+		command.Stdin = os.Stdin
+		command.Stdout = os.Stdout
+		command.Stderr = os.Stderr
+		command.Env = os.Environ()
+		if err := command.Run(); err != nil {
+			exitOnError(err)
+		}
 	}
+	args := append([]string{binary}, nativeArgs...)
+	if err := execManagedCommand(binary, args, os.Environ()); err != nil {
+		exitOnError(err)
+	}
+}
+
+func preparationArgs(args []string) ([]string, error) {
+	result := make([]string, 0, len(args))
+	for index := 0; index < len(args); index++ {
+		if args[index] == "--compile-persistable" {
+			continue
+		}
+		if args[index] == "--concurrency" {
+			if index+1 >= len(args) {
+				return nil, errors.New("--concurrency requires a value")
+			}
+			index++
+			result = append(result, "--concurrency", "4")
+			continue
+		}
+		result = append(result, args[index])
+	}
+	return result, nil
 }
 `;
 
@@ -82,6 +123,7 @@ export const schepherdApp: BinManager.App = {
   officialUrl: "https://github.com/ovineko/schepherd",
   prepare: {
     args: [
+      "--prepare-catalog",
       "--config",
       "${APP_DIR}/schepherd-prepare.toml",
       "--offline=false",

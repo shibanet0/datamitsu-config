@@ -1,6 +1,7 @@
 const schepherdDefaultProcessors = {
   ajv: {
     command: "${AJV_FRONTEND}",
+    env: { NODE_OPTIONS: "", NODE_PATH: "" },
     type: "ajv",
   },
   check_jsonschema: {
@@ -33,6 +34,10 @@ export const schepherdPrepareToml = `config_version = 1
 [processors.ajv]
 command = '\${AJV_FRONTEND}'
 type = 'ajv'
+
+[processors.ajv.env]
+NODE_OPTIONS = ''
+NODE_PATH = ''
 
 [processors.check_jsonschema]
 command = '\${CHECK_JSONSCHEMA_FRONTEND}'

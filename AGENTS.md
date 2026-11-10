@@ -424,18 +424,13 @@ The verified Linux binary is static; the Alpine OCI generator force-includes thi
 the registry has no musl entry.
 The private dependency also keeps its native `version` check; the wrapper's separate `--proxy-version`
 probe never substitutes for it.
-The launcher reports its own internal `v0.1.0` for `--proxy-version`; change it only when its
+The launcher reports its own internal `v0.2.0` for `--proxy-version`; change it only when its
 forwarding contract changes so unrelated package releases do not invalidate prepared catalog state.
 
-The published v0.2.1 frontend source does not accept explicit `--format` arguments, and its native CLI
-does not yet provide `--compile-persistable`; the current release candidate has both. Keep the
-published native/source pins and v2 catalog digest unchanged, but do not claim this prepared
-integration is release-ready until matching upstream releases ship. Regenerate the source archive and
-its locks only after the frontend release; AJV remains JSON-only.
-
-Schepherd prepares the whole pinned catalog with `materialize --compile-persistable --json`, using an
-embedded project-independent TOML recipe generated from the same shared processor definitions as
-`schepherd.toml`. The recipe has no project mappings or local schemas. Preparation records compiler
+The launcher's `--prepare-catalog` mode first runs native `materialize` with four download workers,
+then native `materialize --compile-persistable --json` with two compilation workers. Both calls use
+one embedded project-independent TOML recipe generated from the same processor definitions as
+`schepherd.toml`, without project mappings or local schemas. Preparation records compiler
 artifacts only where they are persistable; unsupported and invocation-local cases stay visible in
 the JSON summary instead of failing as if they were infrastructure errors. The recipe is a Go app
 file and the compiler arguments are part of its app preparation identity. The app binds the compiled
@@ -445,11 +440,15 @@ invocation-local. Preparation needs the network unless its ready state was resto
 bundle. Both Docker variants and OCI maps carry `.prepared/schepherd`, including the readiness marker,
 not just the native binary.
 
-Preparation uses `--concurrency 2`. The client's compiler helper has a hard 30-second probe limit,
-independent of `runner.timeout`. Four competing workers make check-jsonschema's CloudFormation
-capability probe time out on constrained CI CPUs; fully serial cold preparation exceeds core's
-default ten-minute install budget. Bound concurrency instead of extending deadlines or converting
-a timeout into an unsupported verdict; the complete catalog and validator coverage stay unchanged.
+The compiler helper has a hard 30-second probe limit, independent of `runner.timeout`. Four competing
+compilation workers make check-jsonschema's CloudFormation probe time out on constrained CI CPUs;
+using two workers for downloads too makes cold preparation exceed core's ten-minute install budget.
+Separate the native transport and compilation phases instead of extending deadlines or converting
+a timeout into an unsupported verdict. A failed fetch stops preparation before compilation.
+
+The managed AJV processor clears `NODE_OPTIONS` and `NODE_PATH` in both its preparation recipe and
+generated defaults. pnpm injects a workspace-specific module resolver through those variables;
+inheriting it makes global compilation keys depend on whichever project first prepared the app.
 
 An unsupported catalog entry is never dropped or treated as a successful validation. The pinned v2
 `barba-cv` schema is malformed: it has no `$defs` but eight references into `$defs`. Preparation
