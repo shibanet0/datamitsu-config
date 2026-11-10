@@ -407,6 +407,12 @@ sandbox/security tests target Node; its identity includes the actual Node runtim
 `APP_BIN` and UV dependency bindings require a matching core release; do not lower the wrapper minimum
 below that published feature release.
 
+The frontend commands expose `identity`, `probe` and `validate`, not a generic `--version`.
+The AJV app verifies with `identity`; the standard-library check-jsonschema Go launcher verifies
+its own build with `--proxy-version` before resolving Python. Keep these explicit version checks:
+standalone Docker app stages run `datamitsu install <app>` and verify each selected app directly,
+even when dependency provisioning has already made the same frontend usable locally.
+
 The public `schepherd` app is a standard-library Go launcher around the private
 `dm-internal-schepherd-upstream` binary dependency. Datamitsu forbids files or archives on binary
 apps, so the launcher carries the shared prepare recipe in its Go source app files; it forwards

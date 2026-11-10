@@ -4,6 +4,8 @@ const sourceArchive = {
   url: "https://api.github.com/repos/ovineko/schepherd/tarball/v0.3.1",
 } as const;
 
+const checkJsonschemaLauncherVersion = "v0.0.0";
+
 const checkJsonschemaGoMod = `module datamitsu.local/schepherd-check-jsonschema
 
 go 1.22.0
@@ -20,7 +22,13 @@ import (
 	"runtime"
 )
 
+const proxyVersion = "${checkJsonschemaLauncherVersion}"
+
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--proxy-version" {
+		fmt.Fprintln(os.Stdout, proxyVersion)
+		return
+	}
 	frontend := os.Getenv("CHECK_JSONSCHEMA_BIN")
 	executable, err := os.Executable()
 	if frontend == "" || err != nil {
@@ -110,6 +118,7 @@ export const schepherdAjvApp: BinManager.App = {
     version: "8.20.0",
   },
   officialUrl: "https://github.com/ovineko/schepherd",
+  versionCheck: { args: ["identity"] },
 };
 
 export const schepherdCheckJsonschemaApp: BinManager.App = {
@@ -126,12 +135,13 @@ export const schepherdCheckJsonschemaApp: BinManager.App = {
     lockFile:
       "br:G1IAGBSh0i03VZacZkuUfsdanaopbMCBe8TT626DXB1I9IgUMKaoD3MHOACMmPW5XylL3b7Eo8QriCzR7r1GBy1aeTMjrZWaFjhqEw74AQ==",
     packageName: "datamitsu.local/schepherd-check-jsonschema",
-    version: "v0.0.0",
+    version: checkJsonschemaLauncherVersion,
   },
   officialUrl: "https://github.com/ovineko/schepherd",
   runtimeEnv: {
     CHECK_JSONSCHEMA_BIN: "${APP_BIN:check-jsonschema}",
   },
+  versionCheck: { args: ["--proxy-version"] },
 };
 
 export const checkJsonschemaApp: BinManager.App = {
