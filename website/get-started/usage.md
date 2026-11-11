@@ -57,6 +57,15 @@ consumer's configured release tooling and project conventions.
 It removes the previous managed `.codex/prompts/<name>.md` files while preserving
 unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
 
+Shared agent instructions default to English for documentation, code comments, and
+commit messages, without setting the language of conversation with the user.
+ASD-STE100 principles guide the writing style: prefer short sentences, familiar
+words, active voice, and direct instructions where appropriate. Accuracy and
+completeness take priority over simplicity; preserve precise technical terms,
+conditions, normative requirements, exact identifiers, and syntax. An explicit
+request for another language or style overrides this default. Formal ASD-STE100
+compliance is not required.
+
 For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
 `trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
 

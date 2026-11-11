@@ -52,7 +52,19 @@ const CHUNK_00_BASE = `**These rules are binding for every repository that refer
 
 ## Language Policy
 
-**All documentation, READMEs, code comments, commit messages, and identifiers (function/variable/type names) MUST be written in English only. No exceptions.** Non-English text is allowed only in explicit localization assets and tests that validate localized output.
+Write documentation, code comments, and commit messages in English unless
+explicitly instructed otherwise. This rule does not set the language of
+conversation with the user.
+
+Use clear, concise technical English, guided by ASD-STE100 principles:
+prefer short sentences, familiar words, active voice, and direct instructions
+where appropriate. Accuracy and completeness take priority over simplicity.
+Preserve precise technical terms, conditions, and normative requirements.
+This is style guidance, not a requirement for formal ASD-STE100 compliance.
+
+Keep new function, variable, and type names in English. Preserve existing identifiers,
+API names, commands, quoted text, and explicit localization assets or tests. An explicit
+request for another language or writing style takes precedence over this default.
 
 ## Code Commenting Guidelines
 
@@ -510,7 +522,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "6a881c8bffbfa3c4fe387ae24576e9e5e1ca42604b0771fc5b58ac697204d02c"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "622db73a20a8443e123b09fcb34989cf6dc04f3a342feeef6c56fb7acbaead1d"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
