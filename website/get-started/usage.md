@@ -321,6 +321,18 @@ new as the Go version it analyzes: the standard importer embedded in an older
 compiler may not decode newer export data. Keep the managed Go runtime aligned
 with the projects you lint; disabling `gocritic` is not the compatibility fix.
 
+### Go linter migration
+
+The shared baseline enables `exhaustruct_v5`, which checks struct field initialization.
+Reconciliation replaces legacy `exhaustruct` references in enabled/disabled linter lists
+and exclusion rules. Its old `include`, `exclude` and `allow-empty-rx` settings become
+`enforce-patterns`, `ignore-patterns` and `allow-empty-patterns`.
+
+A nonempty legacy `include` list enables `explicit-mode` to preserve opt-in checking;
+an empty list keeps implicit checking. Explicit v5 settings take precedence, and arrays
+replace migrated arrays. Repeating reconciliation preserves the result. The baseline
+already uses the supported `gomodguard_v2` and `wsl_v5` names.
+
 ### Running a specific tool
 
 Execute any managed tool directly:
