@@ -146,6 +146,7 @@ export const schepherdCheckJsonschemaApp: BinManager.App = {
 
 export const checkJsonschemaApp: BinManager.App = {
   description: "check-jsonschema schema validator used by Schepherd's managed frontend",
+  files: { "uv.toml": "compile-bytecode = true\n" },
   uv: {
     dependencies: {
       json5: "0.17.3",

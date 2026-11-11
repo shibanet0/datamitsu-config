@@ -398,6 +398,10 @@ than duplicated here. Bun, Go, Node and UV apps must carry exact lockfiles gener
 config lockfile`.
 The check-jsonschema Go launcher derives Python from its exact managed executable binding,
 sets `PYTHONPATH` to the staged source and disables bytecode writes; it never searches the host PATH.
+The managed check-jsonschema UV app ships `uv.toml` with `compile-bytecode = true`. Catalog
+preparation probes it once per schema; precompile dependency modules once rather than parsing
+their source on every read-only invocation. App files participate in the install identity, while
+app environment alone does not rebuild an existing venv. Keep runtime bytecode writes disabled.
 The generated check-jsonschema processor explicitly forwards `CHECK_JSONSCHEMA_BIN` through its
 processor `env`, so projects that set `runner.inherit_env = false` still use the exact managed UV
 interpreter. The Go bridge derives its staged source root from its own executable path.
@@ -427,7 +431,7 @@ probe never substitutes for it.
 The launcher reports its own internal `v0.2.0` for `--proxy-version`; change it only when its
 forwarding contract changes so unrelated package releases do not invalidate prepared catalog state.
 
-The launcher's `--prepare-catalog` mode first runs native `materialize` with eight download workers,
+The launcher's `--prepare-catalog` mode first runs native `materialize` with sixteen download workers,
 then native `materialize --compile-persistable --json` with two compilation workers. Both calls use
 one embedded project-independent TOML recipe generated from the same processor definitions as
 `schepherd.toml`, without project mappings or local schemas. Preparation records compiler
@@ -445,12 +449,12 @@ compilation workers make check-jsonschema's CloudFormation probe time out on con
 using two workers for downloads too makes cold preparation exceed core's ten-minute install budget.
 Separate the native transport and compilation phases instead of extending deadlines or converting
 a timeout into an unsupported verdict. A failed fetch stops preparation before compilation.
-The four-download-worker version still exceeded that budget in PR checks. A cold transport-only
-measurement fetched all 997 schemas in 177 seconds with four workers and 88 seconds with eight;
-keep compilation at two workers rather than spending the saved network time on more compiler load.
-CI prepares Schepherd explicitly before whole-repository lint. Fresh-init preparation succeeds in
-isolation, while lint's parallel source-built Go tools can still push it past ten minutes even with
-eight download workers. Keep the normal preparation deadline and serialize these provisioning phases.
+Cold transport-only measurements fetched all 997 schemas in 177 seconds with four workers,
+88 seconds with eight and 45 seconds with sixteen. Keep compilation at two workers rather than
+spending the saved network time on more compiler load.
+CI prepares Schepherd explicitly before whole-repository lint to avoid competing source-built Go
+tools. Isolation alone did not eliminate the fresh-init timeout; keep its full cold provisioning
+regression and the normal preparation deadline.
 
 The managed AJV processor clears `NODE_OPTIONS` and `NODE_PATH` in both its preparation recipe and
 generated defaults. pnpm injects a workspace-specific module resolver through those variables;

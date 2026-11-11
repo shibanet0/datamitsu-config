@@ -75,7 +75,7 @@ func preparationArgs(args []string) ([]string, error) {
 				return nil, errors.New("--concurrency requires a value")
 			}
 			index++
-			result = append(result, "--concurrency", "8")
+			result = append(result, "--concurrency", "16")
 			continue
 		}
 		result = append(result, args[index])
