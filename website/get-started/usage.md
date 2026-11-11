@@ -50,7 +50,10 @@ installs continue to prohibit source builds.
 
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
-with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack` or `$setup-tsconfig`.
+with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack`, `$setup-tsconfig`,
+`$conventional-commit-message` or `$conventional-changelog`. The commit-message
+skill follows Conventional Commit conventions; the changelog skill uses the
+consumer's configured release tooling and project conventions.
 It removes the previous managed `.codex/prompts/<name>.md` files while preserving
 unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
 
