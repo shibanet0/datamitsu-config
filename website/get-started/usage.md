@@ -406,8 +406,11 @@ then run `pnpm dm init` and `pnpm dm config reconcile` so both the managed base 
 and your own file exist.
 
 - `.alint.yml` extends `.datamitsu/alint-managed.yml`. Redefine a rule by its `id` (for example
-  `s0-js-ts-file-names`) to narrow it. Keep `allow_out_of_root: true`: the managed file is linked
-  from outside the repository.
+  `s0-js-ts-file-names`) to narrow it. The managed filename rules reject Git-tracked `.key`,
+  `.p12` and `.pfx` files, including files force-added despite `.gitignore`. Ignored, untracked
+  local keys do not trigger this rule. It checks names, not contents. `.crt` and `.pem` filenames
+  remain allowed because they can hold public certificates. Keep `allow_out_of_root: true`:
+  the managed file is linked from outside the repository.
 - `.ls-lint.yml` layers over `.datamitsu/ls-lint-managed.yml`. `ignore` adds exclusions, and a
   literal path such as `apps/web/src/generated` is free. Redefining `.dir` replaces the base rule,
   so include `regex:\.[a-z0-9_-]+` to keep dot-directories valid.
