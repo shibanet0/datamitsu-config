@@ -42,6 +42,7 @@ const EJECTABLE = [
   "droast.toml",
   "hadolint.yaml",
   "mdsf.json",
+  "stylua.toml",
 ];
 
 describe("tool config paths", () => {

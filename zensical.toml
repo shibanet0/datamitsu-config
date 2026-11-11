@@ -78,6 +78,7 @@ Home = "index.md"
 [[project.nav]]
 Reference = [
   { Apps = "reference/apps.md" },
+  { "Lua Formatting" = "reference/lua.md" },
   { Tools = "reference/tools.md" },
   { "Kotlin Configuration" = "reference/kotlin.md" },
   { "Project Types" = "reference/project-types.md" },

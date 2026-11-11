@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **117 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **118 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -23,7 +23,7 @@ This configuration manages **117 apps** across multiple runtimes (binary, bun, n
 - **Git & Releases** (8 apps): commitlint, conventional-changelog, dm-internal-lefthook-upstream, etc.
 - **HTTP & gRPC Clients** (3 apps): grpcurl, httpstat, xh
 - **Infrastructure as Code** (4 apps): terraform-docs, terragrunt, tfupdate, etc.
-- **Linters & Formatters** (42 apps): actionlint, alint, ast-grep, etc.
+- **Linters & Formatters** (43 apps): actionlint, alint, ast-grep, etc.
 - **Package Managers** (2 apps): pnpm, utpm
 - **Secrets & Signing** (4 apps): age, age-keygen, cosign, etc.
 - **Security Scanners** (20 apps): bandit, bearer, blint, etc.
@@ -125,6 +125,7 @@ This configuration manages **117 apps** across multiple runtimes (binary, bun, n
 | sqlc                          | Code Generation            | binary  | [Info](https://github.com/sqlc-dev/sqlc){:target="_blank"}                                                                             | Generate type-safe code from SQL                                                                                                                                                                        |
 | sqruff                        | Linters & Formatters       | binary  | [Info](https://github.com/quarylabs/sqruff){:target="_blank"}                                                                          | Fast SQL formatter/linter                                                                                                                                                                               |
 | stylelint                     | Linters & Formatters       | node    | N/A                                                                                                                                    | A mighty CSS linter that helps you avoid errors and enforce conventions.                                                                                                                                |
+| stylua                        | Linters & Formatters       | binary  | [Info](https://github.com/JohnnyMorganz/StyLua){:target="_blank"}                                                                      | A Lua code formatter                                                                                                                                                                                    |
 | swag                          | Code Generation            | binary  | [Info](https://github.com/swaggo/swag){:target="_blank"}                                                                               | Automatically generate RESTful API documentation with Swagger 2.0 for Go.                                                                                                                               |
 | syft                          | Security Scanners          | binary  | [Info](https://github.com/anchore/syft){:target="_blank"}                                                                              | CLI tool and library for generating a Software Bill of Materials from container images and filesystems                                                                                                  |
 | syncpack                      | Linters & Formatters       | node    | [Info](https://www.npmjs.com/package/syncpack){:target="_blank"}                                                                       | Consistent dependency versions in large JavaScript Monorepos                                                                                                                                            |

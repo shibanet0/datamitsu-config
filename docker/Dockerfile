@@ -365,6 +365,10 @@ FROM dm-build AS app-sqlc
 COPY --link --from=config-split /slices/app-sqlc.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqlc
 
+FROM dm-build AS app-stylua
+COPY --link --from=config-split /slices/app-stylua.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install stylua
+
 FROM dm-build AS app-swag
 COPY --link --from=config-split /slices/app-swag.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install swag
@@ -552,6 +556,7 @@ COPY --link --from=app-shfmt /dm/store/.bin/shfmt /dm/store/.bin/shfmt
 COPY --link --from=app-snyk /dm/store/.bin/snyk /dm/store/.bin/snyk
 COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
 COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
+COPY --link --from=app-stylua /dm/store/.bin/stylua /dm/store/.bin/stylua
 COPY --link --from=app-swag /dm/store/.bin/swag /dm/store/.bin/swag
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
 COPY --link --from=app-task /dm/store/.bin/task /dm/store/.bin/task

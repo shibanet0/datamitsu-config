@@ -49,6 +49,7 @@ import { pyprojectToml } from "./managed-configs/pyproject_toml";
 import { rustfmtToml } from "./managed-configs/rustfmt_toml";
 import { sqruffToml } from "./managed-configs/sqruff_toml";
 import { stylelintConfigMjs } from "./managed-configs/stylelint_config_mjs";
+import { styluaToml } from "./managed-configs/stylua_toml";
 import { turboJson } from "./managed-configs/turbo_json";
 import { wtToml } from "./managed-configs/wt_toml";
 
@@ -104,6 +105,7 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   "rustfmt.toml": rustfmtToml,
   "sqruff.toml": sqruffToml,
   "stylelint.config.mjs": stylelintConfigMjs,
+  "stylua.toml": styluaToml,
   "turbo.json": turboJson,
   ...aiTools,
 };
