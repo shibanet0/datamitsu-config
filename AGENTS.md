@@ -427,7 +427,7 @@ probe never substitutes for it.
 The launcher reports its own internal `v0.2.0` for `--proxy-version`; change it only when its
 forwarding contract changes so unrelated package releases do not invalidate prepared catalog state.
 
-The launcher's `--prepare-catalog` mode first runs native `materialize` with four download workers,
+The launcher's `--prepare-catalog` mode first runs native `materialize` with eight download workers,
 then native `materialize --compile-persistable --json` with two compilation workers. Both calls use
 one embedded project-independent TOML recipe generated from the same processor definitions as
 `schepherd.toml`, without project mappings or local schemas. Preparation records compiler
@@ -445,6 +445,9 @@ compilation workers make check-jsonschema's CloudFormation probe time out on con
 using two workers for downloads too makes cold preparation exceed core's ten-minute install budget.
 Separate the native transport and compilation phases instead of extending deadlines or converting
 a timeout into an unsupported verdict. A failed fetch stops preparation before compilation.
+The four-download-worker version still exceeded that budget in PR checks. A cold transport-only
+measurement fetched all 997 schemas in 177 seconds with four workers and 88 seconds with eight;
+keep compilation at two workers rather than spending the saved network time on more compiler load.
 
 The managed AJV processor clears `NODE_OPTIONS` and `NODE_PATH` in both its preparation recipe and
 generated defaults. pnpm injects a workspace-specific module resolver through those variables;
@@ -738,6 +741,11 @@ probe can hit Schepherd's own 30-second deadline even when the install budget is
 Architecture jobs publish only image digests; the variant-level merge publishes the existing tags
 after every native build succeeds. OCI bundles and mirrors depend on that completed manifest merge,
 not on an individual architecture. Preserve zstd compression and the stable/unstable tag policy.
+
+Python data map entries use kind `python-data` and a runtime COPY root such as `.runtime-data/uv`.
+The postprocessor must resolve the identity from the layer and annotate its exact `python` child:
+`.runtime-data/uv/<identity>/python`, never the identity directory or its sibling `uv-cache`.
+Core intentionally rejects parent paths as non-owned targets; do not weaken that integrity check.
 
 The Lefthook proxy's `versionCheck.args` uses `--proxy-version` to verify the proxy artifact itself.
 Dependency-aware Docker slices also provision the private upstream. Keep the proxy version probe

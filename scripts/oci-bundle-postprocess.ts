@@ -59,7 +59,7 @@ interface OciMap {
 
 interface OciMapEntry {
   app?: string;
-  kind: "app" | "binary" | "parser" | "prepared" | "runtime" | "uv-python";
+  kind: "app" | "binary" | "parser" | "prepared" | "python-data" | "runtime";
   subtree: string;
 }
 
@@ -203,6 +203,36 @@ class Registry {
     }
     return response;
   }
+}
+
+/**
+ * Derives the hash-level subtree for a map entry by reading the layer's tar listing: the annotation
+ * contract is `.bin/<app>/<hash>` while the COPY root in the map is `.bin/<app>` — the single child
+ * directory observed in the layer supplies the `<hash>` segment. Python data instead owns
+ * `.runtime-data/<runtime>/<hash>/python`, not the hash directory itself.
+ */
+export async function resolveSubtree(
+  registry: Pick<Registry, "blobStream">,
+  layer: Descriptor,
+  entry: OciMapEntry,
+  storeRootRelative: string,
+): Promise<string | undefined> {
+  const pythonData = entry.kind === "python-data";
+  const copyRoot = `${storeRootRelative}/${entry.subtree}/`;
+  let child: string | undefined;
+  await scanLayerEntries(registry, layer.digest, 16, (rawName) => {
+    const name = rawName.replace(/^\.?\//, "");
+    if (!name.startsWith(copyRoot)) {
+      return false;
+    }
+    const segments = name.slice(copyRoot.length).split("/");
+    if (!segments[0] || (pythonData && segments[1] !== "python")) {
+      return false;
+    }
+    child = segments[0];
+    return true;
+  });
+  return child ? `${entry.subtree}/${child}${pythonData ? "/python" : ""}` : undefined;
 }
 
 async function annotateVariantManifest(
@@ -411,47 +441,12 @@ function parseArgs(): {
 }
 
 /**
- * Derives the hash-level subtree for a map entry by reading the layer's tar listing: the annotation
- * contract is `.bin/<app>/<hash>` while the COPY root in the map is `.bin/<app>` — the single child
- * directory observed in the layer supplies the `<hash>` segment.
- */
-async function resolveSubtree(
-  registry: Registry,
-  layer: Descriptor,
-  entry: OciMapEntry,
-  storeRootRelative: string,
-): Promise<string | undefined> {
-  if (entry.kind === "uv-python") {
-    return entry.subtree; // already exact, no hash segment
-  }
-
-  // A subtree layer opens with the directory chain down to the COPY root,
-  // then its content — the matching entry appears within the first handful of
-  // names, so the probe needs only the first kilobytes of the blob.
-  const copyRoot = `${storeRootRelative}/${entry.subtree}/`;
-  let child: string | undefined;
-  await scanLayerEntries(registry, layer.digest, 16, (rawName) => {
-    const name = rawName.replace(/^\.?\//, "");
-    if (!name.startsWith(copyRoot)) {
-      return false;
-    }
-    const segment = name.slice(copyRoot.length).split("/")[0];
-    if (!segment) {
-      return false;
-    }
-    child = segment;
-    return true;
-  });
-  return child ? `${entry.subtree}/${child}` : undefined;
-}
-
-/**
  * Streams tar entry NAMES from a compressed layer blob. Stops the moment the caller returns true
  * from onEntry — the HTTP download is aborted, so only the first kilobytes of the blob are ever
  * fetched.
  */
 async function scanLayerEntries(
-  registry: Registry,
+  registry: Pick<Registry, "blobStream">,
   digest: string,
   maxEntries: number,
   onEntry: (name: string) => boolean,
@@ -507,4 +502,6 @@ function sha256Hex(data: Uint8Array): string {
   return createHash("sha256").update(data).digest("hex");
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
