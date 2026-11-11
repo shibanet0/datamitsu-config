@@ -448,6 +448,9 @@ a timeout into an unsupported verdict. A failed fetch stops preparation before c
 The four-download-worker version still exceeded that budget in PR checks. A cold transport-only
 measurement fetched all 997 schemas in 177 seconds with four workers and 88 seconds with eight;
 keep compilation at two workers rather than spending the saved network time on more compiler load.
+CI prepares Schepherd explicitly before whole-repository lint. Fresh-init preparation succeeds in
+isolation, while lint's parallel source-built Go tools can still push it past ten minutes even with
+eight download workers. Keep the normal preparation deadline and serialize these provisioning phases.
 
 The managed AJV processor clears `NODE_OPTIONS` and `NODE_PATH` in both its preparation recipe and
 generated defaults. pnpm injects a workspace-specific module resolver through those variables;
