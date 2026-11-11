@@ -350,7 +350,7 @@ post-checkout:
   "scripts": {
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
     "build:local": "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
-    "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\\"./dist\\" bin/datamitsu.js --binary-command \\"node bin/datamitsu.js\\"",
+    "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\\\"./dist\\\" bin/datamitsu.js --binary-command \\\"pnpm dm\\\"",
     "dm": "pnpm --silent datamitsu",
     "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
     "docker:build:alpine:amd64": "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",

@@ -1,5 +1,16 @@
 # Contributing
 
+## Development launcher
+
+Use `pnpm dm` in this repository. Its package script sets `DATAMITSU_DEV_MODE` and
+`DATAMITSU_PACKAGE_NAME`, and records `pnpm dm` for later invocations by generated hooks.
+Calling `node bin/datamitsu.js` directly does not set those development inputs.
+
+A fresh worktree needs installed dependencies and the built configuration bundle before
+this launcher can load the local core and configuration. The recorded command is not a
+dependency-installation or build bootstrap. Published consumers use their own package-manager
+launcher; this override applies only to this repository's development script.
+
 ## Releases
 
 Releases are automated via GitHub Actions ([release.yml](.github/workflows/release.yml)).
