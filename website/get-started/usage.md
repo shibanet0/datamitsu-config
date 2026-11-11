@@ -100,6 +100,20 @@ the pnpm version this package ships with, so a reconciliation that moves it leav
 of date, and `pnpm install --frozen-lockfile` fails in CI. Run `pnpm install` after reconciling and
 commit `pnpm-lock.yaml` together with `package.json`.
 
+The managed `.config/wt.toml` cache-copy hook uses the launcher recorded by `datamitsu init`
+(`facts().binaryCommand`). It keeps the new worktree as the destination and adds the base
+worktree's `node_modules/.bin` to the hook's `PATH`. Package-manager commands can therefore
+find the base installation before the new worktree has installed dependencies, without a
+global `datamitsu` command. WorkTrunk escapes the source path, including spaces and apostrophes.
+This does not install dependencies for other project hooks or bootstrap custom scripts that
+themselves require files under the new worktree's `node_modules`.
+
+Existing string, table, and pipeline `post-start` hooks are preserved. A string hook becomes a
+named command in a table and runs alongside cache copy. In a pipeline, an existing cache-copy
+step is updated in place; otherwise cache copy joins the last step. It can run concurrently
+with dependency installation without waiting for a long-running server. An empty pipeline
+receives a cache-only step.
+
 **When to use:**
 
 - Standard development workflow
