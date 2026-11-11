@@ -70,6 +70,11 @@ Activity markers in `wt list`, and routing of a harness's own worktree creation 
 - `test:` adding or updating tests
 - `chore:` maintenance, dependency updates
 
+Write `<type>[optional scope][optional !]: <description>`, with a space after the colon.
+Keep the description concise and move details and rationale to the body. There is no hard
+header-length limit. Natural capitalization, acronyms, and exact identifier spelling are allowed.
+Keep the type lowercase.
+
 ## Dependency Management
 
 - **Internal packages**: Always use workspace protocol references (`workspace:*`)

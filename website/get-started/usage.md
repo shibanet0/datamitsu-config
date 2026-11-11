@@ -387,6 +387,11 @@ datamitsu integrates with [lefthook](https://github.com/evilmartians/lefthook) f
 - **commit-msg** — validates commit messages with commitlint (Conventional Commits)
 - **post-checkout** — reinstalls dependencies and reinitializes datamitsu
 
+Commit messages use `<type>[optional scope][optional !]: <description>`, with a space after
+the colon and a lowercase type. Descriptions may start with an uppercase letter and preserve
+acronyms or identifier spelling. Commitlint does not impose a header-length limit. Keep one
+concise summary in the header and put details and rationale in the body.
+
 ### Customizing Tool Behavior
 
 Individual tools (ESLint, Prettier, cspell, etc.) can be customized through their standard config files. datamitsu respects these files when present in your project root:

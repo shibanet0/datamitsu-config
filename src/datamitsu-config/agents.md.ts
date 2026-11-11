@@ -120,6 +120,11 @@ Activity markers in \`wt list\`, and routing of a harness's own worktree creatio
 - \`test:\` adding or updating tests
 - \`chore:\` maintenance, dependency updates
 
+Write \`<type>[optional scope][optional !]: <description>\`, with a space after the colon.
+Keep the description concise and move details and rationale to the body. There is no hard
+header-length limit. Natural capitalization, acronyms, and exact identifier spelling are allowed.
+Keep the type lowercase.
+
 ## Dependency Management
 
 - **Internal packages**: Always use workspace protocol references (\`workspace:*\`)
@@ -505,7 +510,7 @@ export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CO
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
 export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "99f787a9542bbe75d2214c94b20525b3b85e1c0bd2c209d622b5416288058db4"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "6a881c8bffbfa3c4fe387ae24576e9e5e1ca42604b0771fc5b58ac697204d02c"; // prettier-ignore
 export const CHUNK_00_CONFIG_INPUTS_HASH = "138dcb74fdd12336b8ccc87f1d589964996cc1e7d73f156b6870cb1ea6771542"; // prettier-ignore
 export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
