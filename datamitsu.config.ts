@@ -475,7 +475,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:a362f6aa7fb1abed6399aaf4b1212a30",
+      expectChainHash: "xxh3:615461a4153fcabc562e2f5398355687",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -620,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:09ad3e101606e414b67f785cb102fb72",
+      expectChainHash: "xxh3:3319a42168aa8577317358e92731e64b",
     },
   },
   tools: {
