@@ -70,6 +70,9 @@ export const goFormatExcludeGlobs: string[] = [
 
 export const sqlGlobs: string[] = ["**/*.sql"];
 
+// Schepherd resolves catalog associations and explicit mappings, including extensionless files.
+export const schepherdGlobs: string[] = ["**/*"];
+
 /**
  * What stylelint lints. Stylesheets, plus the three shapes that carry a `<style>` block — the
  * overrides that attach `postcss-html` to those live in src/apps/stylelint/index.ts.

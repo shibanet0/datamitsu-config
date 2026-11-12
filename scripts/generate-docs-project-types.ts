@@ -1,5 +1,4 @@
-import { execSync } from "node:child_process";
-
+import { configShow } from "./lib/datamitsu-cli.ts";
 import { sanitizeDescription } from "./lib/sanitize-markdown.ts";
 import { writeAndFix } from "./lib/write-and-fix.ts";
 
@@ -19,12 +18,7 @@ export interface ProjectTypeDocInfo {
 }
 
 export function executeConfigShow(): string {
-  return execSync("pnpm --silent dm config show", {
-    encoding: "utf8",
-    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
-    stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
-    timeout: 30_000,
-  });
+  return configShow();
 }
 
 export function extractProjectTypesInfo(config: ConfigShowOutput): ProjectTypeDocInfo[] {

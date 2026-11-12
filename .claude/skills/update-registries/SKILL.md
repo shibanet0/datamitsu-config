@@ -1,6 +1,6 @@
 ---
 name: update-registries
-description: Finish a dependency update in datamitsu-config after the user has pulled one — review what changed upstream, regenerate everything derived from it (lock files, pins, census, docs), migrate what the new versions require, run the checks, and report. Covers every registry under src/datamitsu-config/registries/ (uvVersions, nodeVersions, binaryApps, externalApps, runtimes), a datamitsu core bump, and the wrapper's own dependencies in package.json. Use whenever the user says they pulled or updated a registry, bumped the core or dependencies, and asks to check, review, regenerate lock files, migrate or "bring everything up to date" — including informal requests like "I updated binaryApps, take a look" or "the node registry moved, sort it out". Never pull registries unless the user explicitly asks: the human chooses what moves; this skill reviews and finishes the move.
+description: Finish a dependency update in datamitsu-config after the user has pulled one — review what changed upstream, regenerate everything derived from it (lock files, pins, census, docs), migrate what the new versions require, run the checks, and report. Covers every registry under src/datamitsu-config/registries/ (uvVersions, nodeVersions, binaryApps, externalApps, schepherdCatalog, runtimes), a datamitsu core bump, and the wrapper's own dependencies in package.json. Use whenever the user says they pulled or updated a registry, bumped the core or dependencies, and asks to check, review, regenerate lock files, migrate or "bring everything up to date" — including informal requests like "I updated binaryApps, take a look" or "the node registry moved, sort it out". Never pull registries unless the user explicitly asks: the human chooses what moves; this skill reviews and finishes the move.
 ---
 
 <!-- cspell:ignore illumos musllinux Temurin -->
@@ -213,6 +213,11 @@ Relay the conclusions to the user; they do not see the report.
 - Tools with no digests, or with one archive for every platform, can move to the Go runtime
   (`go: { packageName, version, lockFile }`; `env: { CGO_ENABLED: "0" }` when a dependency needs C
   headers; `versionCheck: { disabled: true }`, since source builds print `dev`).
+- **schepherd** publishes its catalog as releases of the same repository (`catalog-*`, no assets,
+  never marked latest). If `--update` lands on one of those instead of a `vX.Y.Z` client release,
+  put the client tag back by hand.
+- **jsonschema** decides which catalog schemas compile, so its bump makes `task pull:external` fail
+  on the recorded `validator` until `task pull:external:update` regenerates the catalog pin.
 - Tools that need files beside their binary (protoc's `include/`) get `extractDir: true` and an
   exact `binaryPath` set in `apps.ts` after the registry is loaded. `pull-releases` writes neither.
 
@@ -223,6 +228,11 @@ Relay the conclusions to the user; they do not see the report.
   `checksumUrlTemplate`, and without `--update` only verifies.
 - helm's default Kubernetes version follows its client-go, so a minor can add `helm lint`
   warnings.
+- `pull:external` also covers `schepherdCatalog.json` through `scripts/pull-schepherd-catalog.ts`.
+  It pins the newest `catalog-*` revision past the minimum release age (the revision is its UTC
+  publication minute), compiles every schema with the managed `jsonschema`, and regenerates
+  `globs` and `unusable`. Review the `unusable` diff: a schema that stopped compiling silently
+  stops validating its files. An ID in `JSONC_SCHEMA_IDS` that the catalog dropped fails the pull.
 
 ### runtimes.json
 

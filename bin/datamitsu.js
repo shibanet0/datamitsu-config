@@ -5,14 +5,16 @@ import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 
 import { detectBinaryCommand } from "./detect-binary-command.js";
+import { selectDatamitsuBin } from "./lib/datamitsu-bin.js";
 
-const args = process.argv.slice(2);
+const { bin, passthrough: args } = selectDatamitsuBin();
+
 if (!args.includes("--binary-command")) {
   args.unshift("--binary-command", detectBinaryCommand(process.env.npm_config_user_agent));
 }
 
 const result = spawnSync(
-  getExePath(),
+  bin || getExePath(),
   ["--before-config", join(import.meta.dirname, "../datamitsu.config.base.js"), ...args],
   {
     env: {

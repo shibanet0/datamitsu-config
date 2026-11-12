@@ -33,6 +33,11 @@
       "app": "bandit"
     },
     {
+      "subtree": ".apps/uv/check-jsonschema",
+      "kind": "app",
+      "app": "check-jsonschema"
+    },
+    {
       "subtree": ".apps/uv/checkov",
       "kind": "app",
       "app": "checkov"
@@ -148,6 +153,21 @@
       "app": "quicktype"
     },
     {
+      "subtree": ".apps/go/schepherd",
+      "kind": "app",
+      "app": "schepherd"
+    },
+    {
+      "subtree": ".apps/node/schepherd-ajv",
+      "kind": "app",
+      "app": "schepherd-ajv"
+    },
+    {
+      "subtree": ".apps/go/schepherd-check-jsonschema",
+      "kind": "app",
+      "app": "schepherd-check-jsonschema"
+    },
+    {
       "subtree": ".apps/uv/semgrep",
       "kind": "app",
       "app": "semgrep"
@@ -258,6 +278,11 @@
       "app": "dm-internal-lefthook-upstream"
     },
     {
+      "subtree": ".bin/dm-internal-schepherd-upstream",
+      "kind": "binary",
+      "app": "dm-internal-schepherd-upstream"
+    },
+    {
       "subtree": ".bin/dotenv-linter",
       "kind": "binary",
       "app": "dotenv-linter"
@@ -326,6 +351,11 @@
       "subtree": ".bin/jq",
       "kind": "binary",
       "app": "jq"
+    },
+    {
+      "subtree": ".bin/jsonschema",
+      "kind": "binary",
+      "app": "jsonschema"
     },
     {
       "subtree": ".bin/just",
@@ -481,6 +511,16 @@
       "subtree": ".parsers/core",
       "kind": "parser",
       "app": "core"
+    },
+    {
+      "subtree": ".parsers/schepherd",
+      "kind": "parser",
+      "app": "schepherd"
+    },
+    {
+      "subtree": ".prepared/schepherd",
+      "kind": "prepared",
+      "app": "schepherd"
     }
   ]
 }

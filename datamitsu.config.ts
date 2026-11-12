@@ -475,7 +475,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:a362f6aa7fb1abed6399aaf4b1212a30",
+      expectChainHash: "xxh3:668f21196832e2f611f7432812f401f3",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -493,7 +493,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261109.0573b76
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261111.8a2e8a9
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.28.1
@@ -620,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:09ad3e101606e414b67f785cb102fb72",
+      expectChainHash: "xxh3:4a129de4582311618860fbf661ed0fd5",
     },
   },
   tools: {

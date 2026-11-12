@@ -623,3 +623,41 @@ does not exercise every conditional branch.
 There is a separate YAML limitation: yamlfmt 0.21.0 can require a second formatting
 pass for comments in an unmodified `helm create` chart's `values.yaml`. The first
 `check` then fails its formatting check. This is not suppressed by the Helm integration.
+
+## JSON Schema validation
+
+Schepherd checks matching configuration files with a managed validator chain. It uses Sourcemeta first,
+then check-jsonschema and AJV when a schema or source format is unsupported by the earlier validator.
+The validators run in that order, with exact managed executable bindings; they do not retry an invalid
+document against another validator. Installation prepares the pinned schema catalog, checks use it
+offline, and findings retain the original input file. Catalog compatibility profiles are used when present;
+the pinned v2 catalog remains readable and is checked with runtime probes for the installed validators.
+
+The public installation catalog uses a dedicated empty credentials file, so preparation does not
+depend on Docker credential helpers or a Docker login. This applies only to the pinned installation
+catalog; project catalog mirrors retain their own registry credentials. Network access is still required
+for a cold installation.
+
+To run only this check:
+
+```bash
+pnpm dm lint --tools schepherd
+```
+
+The managed `schepherd.toml` retains project mappings, local schemas, catalog mirrors and explicit
+processor settings. Its generated defaults add the three validators only when the project has not
+already selected processors or inherited another configuration. Existing project selection and order
+are preserved. yq is bound as the Sourcemeta converter for formats Schepherd delegates to it. Documents
+are revalidated on every run so a changed local schema cannot reuse an earlier successful result.
+
+Schepherd resolves schemas for discovered files itself, including extensionless names and custom
+project mappings. `--safe-catalog` skips ambiguous or unknown-format automatic catalog associations
+with an explanation; explicit mappings and local schemas remain strict. Generic names such as
+`manifest.json` and `plugin.yml` have multiple catalog schemas, so add an explicit `[[mappings]]` entry
+to validate one rather than relying on an arbitrary schema choice. Files with no mapping are skipped.
+
+The validator client, source frontends and parser module use released artifacts and run with the
+package-pinned Datamitsu core; no local release candidate or development core is needed. The published
+v2 catalog remains supported. An explicit mapping selects a schema, not an input format: an
+extensionless document whose format is unknown needs a custom processor that owns that format and
+declares its structured `output` contract, such as `sourcemeta-json` for Sourcemeta JSON output.

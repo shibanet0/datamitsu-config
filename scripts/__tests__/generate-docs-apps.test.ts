@@ -5,6 +5,7 @@ import {
   type AppConfig,
   type AppInfo,
   categorizeApps,
+  extractAppInfo,
   extractRepositoryFromBinary,
   generateMarkdownTable,
 } from "../generate-docs-apps.ts";
@@ -79,6 +80,20 @@ describe("generateMarkdownTable", () => {
     );
     expect(table.find((line) => line.startsWith("| oxfmt |"))).toMatch(
       /^\| oxfmt \| Linters & Formatters \| binary \|/,
+    );
+  });
+});
+
+describe("extractAppInfo", () => {
+  it("prefers an explicit official URL to a type-derived package link", () => {
+    const app: AppConfig = {
+      description: "Schepherd CLI launcher",
+      go: { packageName: "datamitsu.local/schepherd" },
+      officialUrl: "https://github.com/ovineko/schepherd",
+    };
+
+    expect(extractAppInfo("schepherd", app).repository).toBe(
+      "https://github.com/ovineko/schepherd",
     );
   });
 });

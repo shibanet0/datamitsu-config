@@ -2,11 +2,18 @@ import { defineConfig } from "./.datamitsu/cspell.config.mjs";
 
 export default defineConfig((prev) => {
   const words = [
+    "barba",
     "browserslistrc",
     "datetimez",
     "extglobs",
+    "Fprintln",
+    "frontends",
     "frontmatter",
     "gomod",
+    "libcs",
+    "lockfiles",
+    "persistable",
+    "PYTHONDONTWRITEBYTECODE",
     "rightarg",
     "triaging",
     "errmsg",
@@ -210,13 +217,21 @@ export default defineConfig((prev) => {
     "blintdb",
     "btrfs",
     "digitalstudium",
-    "helmfmt",
     "gotmpl",
+    "helmfmt",
+    "kustomization",
+    "mirrord",
+    "mocharc",
   ];
 
   return {
     ...prev,
-    ignorePaths: [...(prev.ignorePaths ?? []), "**/dependabot_schema.d.ts"],
+    ignorePaths: [
+      ...(prev.ignorePaths ?? []),
+      "**/dependabot_schema.d.ts",
+      // Generated from the schema catalog: file names of a thousand tools, not prose.
+      "src/datamitsu-config/registries/schepherdCatalog.json",
+    ],
     words: [...(prev.words || []), ...words],
   };
 });

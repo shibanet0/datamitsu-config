@@ -168,6 +168,11 @@
       "source": "github",
       "tag": "jq-1.8.2"
     },
+    "jsonschema": {
+      "repository": "sourcemeta/jsonschema",
+      "source": "github",
+      "tag": "v16.12.0"
+    },
     "just": {
       "repository": "casey/just",
       "source": "github",
@@ -232,6 +237,11 @@
       "repository": "astral-sh/ruff",
       "source": "github",
       "tag": "0.17.1"
+    },
+    "schepherd": {
+      "repository": "ovineko/schepherd",
+      "source": "github",
+      "tag": "v0.3.1"
     },
     "scorecard": {
       "repository": "ossf/scorecard",
@@ -2504,6 +2514,70 @@
         "url": "https://github.com"
       }
     },
+    "jsonschema": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:8bbe9071c34900ba8c6a623febb636bd6ea0a22224c62000dcc5e5088e0b0197",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-darwin-x86_64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:3370d42567aa8aac7ffe714a6abaa7bc2b2226715d1251052c90a7309963cf78",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-darwin-arm64.zip"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:9808618bc9579a11412154ab329f6db81bbd8e51e05167e3a6fab8e771f54183",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-linux-x86_64.zip"
+            },
+            "musl": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:b67cc6c71881c88f3626c0adaceb58d42dc0cabca8bb145a6a8c6b6da00bd792",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-linux-x86_64-musl.zip"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:1dd4856c46c346f9139e296461508ba00d319af7310ad24c9acf504750d9953b",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-linux-arm64.zip"
+            },
+            "musl": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema",
+              "contentType": "zip",
+              "hash": "sha256:a3d25e564b6e7a7defcfa436aed3bb8ce4532812ed12bb9a4c1acf299702d660",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-linux-arm64-musl.zip"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "jsonschema-16.12.0/jsonschema.exe",
+              "contentType": "zip",
+              "hash": "sha256:ac47ac1a565e61686a7639baac6d8d40fdbfe91c7a22b8da06e19cfce04ff17c",
+              "url": "https://github.com/sourcemeta/jsonschema/releases/download/v16.12.0/jsonschema-16.12.0-windows-x86_64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "cdf7310224ed3ec6421696931fb78067",
+      "description": "The CLI for working with JSON Schema. Covers formatting, linting, testing, bundling, and more for both local development and CI/CD pipelines"
+    },
     "just": {
       "binaries": {
         "darwin": {
@@ -3372,6 +3446,73 @@
         "apiUrl": "https://api.github.com",
         "repository": "astral-sh/ruff",
         "tag": "0.17.1",
+        "type": "github",
+        "url": "https://github.com"
+      }
+    },
+    "schepherd": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "schepherd-0.3.1/schepherd",
+              "contentType": "tar.gz",
+              "hash": "sha256:8c61fd5b4b30a052a50f12e2ed12b1d7a67c064512edb2b70e44d84a689afd1c",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_darwin_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "schepherd-0.3.1/schepherd",
+              "contentType": "tar.gz",
+              "hash": "sha256:9fef220ecce55e237d2e3bd7e18fa7c970d9e90a12bf21b1334ee5978887045e",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_darwin_arm64.tar.gz"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "schepherd-0.3.1/schepherd",
+              "contentType": "tar.gz",
+              "hash": "sha256:6ba355c3065f93cda2d7e5a8c31fa39769008df3683048ca99f166c80905fbbb",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_linux_amd64.tar.gz"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "schepherd-0.3.1/schepherd",
+              "contentType": "tar.gz",
+              "hash": "sha256:31789c0aa5737d9d41888f3abea1f46c0b7bb3639331dad4a19c9f4e413a2f89",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_linux_arm64.tar.gz"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "schepherd-0.3.1/schepherd.exe",
+              "contentType": "zip",
+              "hash": "sha256:e02f76e8110aa5dc8c286f8e1db97d207bf54218ae968ea7f804b367989d7b22",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_windows_amd64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "schepherd-0.3.1/schepherd.exe",
+              "contentType": "zip",
+              "hash": "sha256:27c8a9bbbc1d2e59b40f0dc4b0ecbaf8537d6064fc5061fc9a0e338d332189ab",
+              "url": "https://github.com/ovineko/schepherd/releases/download/v0.3.1/schepherd_0.3.1_windows_arm64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "8547d4f45376124042277ae7f3e748fc",
+      "description": "Delivers pinned JSON Schemas from an OCI catalog to verified local files",
+      "source": {
+        "apiUrl": "https://api.github.com",
+        "repository": "ovineko/schepherd",
+        "tag": "v0.3.1",
         "type": "github",
         "url": "https://github.com"
       }

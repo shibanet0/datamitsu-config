@@ -5,6 +5,11 @@
 decorder = "decorder"
 importas = "importas"
 
+# Tools named in the schema catalog's file patterns (`mirrord.json`, `tye.yaml`), which reach the
+# generated schepherd globs and the tools reference.
+mirrord = "mirrord"
+tye = "tye"
+
 # The company that publishes Harper.
 Automattic = "Automattic"
 

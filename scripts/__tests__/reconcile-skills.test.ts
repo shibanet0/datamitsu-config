@@ -1,8 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { parse } from "yaml";
 
@@ -10,10 +9,6 @@ import { fixtureEnvironment } from "../../src/apps/test-support/env.js";
 import { SKILLS } from "../../src/datamitsu-config/skills.js";
 
 const ROOT = join(import.meta.dirname, "../..");
-const CORE_CLI = join(
-  dirname(fileURLToPath(import.meta.resolve("@datamitsu/datamitsu/package.json"))),
-  "bin/index.js",
-);
 const fixtures: string[] = [];
 
 afterEach(() => {
@@ -56,15 +51,11 @@ function getConfig(input) {
     const customPrompt = "# Project-specific prompt\n";
     writeFileSync(join(prompts, "custom.md"), customPrompt);
 
-    const args = [
-      CORE_CLI,
-      "--before-config",
-      join(ROOT, "datamitsu.config.base.js"),
-      "config",
-      "reconcile",
-      "--skip-fix",
-    ];
-    execFileSync(process.execPath, args, { cwd, env, stdio: "pipe" });
+    execFileSync(
+      process.execPath,
+      [resolve(ROOT, "bin/datamitsu.js"), "config", "reconcile", "--skip-fix"],
+      { cwd, env, stdio: "pipe" },
+    );
 
     for (const skill of SKILLS) {
       const skillPath = join(cwd, ".agents/skills", skill.name, "SKILL.md");
@@ -84,7 +75,11 @@ function getConfig(input) {
     const first = SKILLS.map((skill) =>
       readFileSync(join(cwd, ".agents/skills", skill.name, "SKILL.md"), "utf8"),
     );
-    execFileSync(process.execPath, args, { cwd, env, stdio: "pipe" });
+    execFileSync(
+      process.execPath,
+      [resolve(ROOT, "bin/datamitsu.js"), "config", "reconcile", "--skip-fix"],
+      { cwd, env, stdio: "pipe" },
+    );
     expect(
       SKILLS.map((skill) =>
         readFileSync(join(cwd, ".agents/skills", skill.name, "SKILL.md"), "utf8"),

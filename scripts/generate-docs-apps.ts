@@ -1,10 +1,8 @@
-import { execSync } from "node:child_process";
-
+import { configShow } from "./lib/datamitsu-cli.ts";
 import { sanitizeDescription } from "./lib/sanitize-markdown.ts";
 import { writeAndFix } from "./lib/write-and-fix.ts";
 
 export interface AppConfig {
-  archives?: Record<string, unknown>;
   binary?: {
     binaries?: BinaryPlatforms;
   };
@@ -26,6 +24,7 @@ export interface AppConfig {
     packageName?: string;
     version?: string;
   };
+  officialUrl?: string;
   uv?: {
     packageName?: string;
     version?: string;
@@ -86,6 +85,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "commitlint",
     "conventional-changelog",
     "dm-internal-lefthook-upstream",
+    "dm-internal-schepherd-upstream",
     "git-cliff",
     "lefthook",
     "lefthook-sort",
@@ -99,6 +99,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "alint",
     "ast-grep",
     "checkmake",
+    "check-jsonschema",
     "conftest",
     "dclint",
     "deptry",
@@ -109,6 +110,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "golangci-lint",
     "hadolint",
     "helmfmt",
+    "jsonschema",
     "knip",
     "ktfmt",
     "ktlint",
@@ -122,6 +124,9 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "protolint",
     "ruff",
     "rustfmt",
+    "schepherd",
+    "schepherd-ajv",
+    "schepherd-check-jsonschema",
     "shellcheck",
     "shfmt",
     "skywalking-eyes",
@@ -211,12 +216,7 @@ export function categorizeApps(
 }
 
 export function executeConfigShow(): string {
-  return execSync("pnpm --silent datamitsu config show", {
-    encoding: "utf8",
-    maxBuffer: 256 * 1024 * 1024, // config show output exceeds the 1MB default
-    stdio: ["pipe", "pipe", "ignore"], // Ignore stderr to avoid pnpm lockfile messages
-    timeout: 30_000,
-  });
+  return configShow();
 }
 
 export function extractAllApps(config: ConfigShowOutput): AppInfo[] {
@@ -227,7 +227,10 @@ export function extractAllApps(config: ConfigShowOutput): AppInfo[] {
 
 export function extractAppInfo(name: string, app: AppConfig): AppInfo {
   const runtime = detectRuntime(app);
-  let repository: string | undefined;
+  let repository: string | undefined = app.officialUrl;
+  if (repository) {
+    return { description: app.description, name, repository, runtime };
+  }
 
   if (app.binary) {
     repository = extractRepositoryFromBinary(app);

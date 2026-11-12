@@ -235,6 +235,13 @@ describe("tools", () => {
       expect(toolsConfig["sort-keys-properties"]!.operations.fix!.app).toBe("sort-keys");
     });
 
+    it("skips Schepherd where its mandatory Sourcemeta dependency has no release", () => {
+      expect(toolsConfig.schepherd!.skip).toBe(
+        facts().os === "windows" && facts().arch === "arm64",
+      );
+      expect(toolsConfig.schepherd!.skipReason).toContain("Windows ARM64");
+    });
+
     it("should have at least one operation for every tool", () => {
       for (const [toolName, tool] of Object.entries(toolsConfig)) {
         const operations = Object.keys(tool.operations);
