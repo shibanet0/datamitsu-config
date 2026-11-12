@@ -113,6 +113,7 @@ export const schepherdApp: BinManager.App = {
     "go.mod": schepherdGoMod,
     "main.go": schepherdLauncherMain,
     "schepherd-prepare.toml": schepherdPrepareToml,
+    "schepherd-public-registry.json": '{"auths":{}}',
   },
   go: {
     lockFile:

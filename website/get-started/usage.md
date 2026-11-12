@@ -633,6 +633,11 @@ document against another validator. Installation prepares the pinned schema cata
 offline, and findings retain the original input file. Catalog compatibility profiles are used when present;
 the pinned v2 catalog remains readable and is checked with runtime probes for the installed validators.
 
+The public installation catalog uses a dedicated empty credentials file, so preparation does not
+depend on Docker credential helpers or a Docker login. This applies only to the pinned installation
+catalog; project catalog mirrors retain their own registry credentials. Network access is still required
+for a cold installation.
+
 To run only this check:
 
 ```bash

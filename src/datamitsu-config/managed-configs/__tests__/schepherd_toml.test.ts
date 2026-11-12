@@ -5,7 +5,6 @@ import catalog from "../../registries/schepherdCatalog.json";
 import {
   schepherdDefaultProcessorOrder,
   schepherdDefaultProcessors,
-  schepherdPrepareConfig,
 } from "../../schepherd-processors";
 import { schepherdToml } from "../schepherd_toml";
 
@@ -42,16 +41,20 @@ describe("Schepherd configuration", () => {
     expect(render(generated)).toBe(generated);
   });
 
-  it("serializes the same processor recipe for preparation without project mappings", () => {
-    const recipe = toml.parse(toml.stringify(schepherdPrepareConfig));
+  it("preserves project registry credentials without installing public catalog credentials", () => {
+    const output = toml.parse(
+      render(`
+[catalog]
+repository = "registry.example/private/catalog"
+[registries."registry.example/private"]
+credentials_file = "project-docker.json"
+`),
+    );
 
-    expect(recipe).toEqual({
-      config_version: 1,
-      processors: defaultProcessors,
-      runner: { jobs: 4, processors: defaultProcessorOrder },
+    expect(output.registries).toEqual({
+      "registry.example/private": { credentials_file: "project-docker.json" },
     });
-    expect(recipe).not.toHaveProperty("mappings");
-    expect(recipe).not.toHaveProperty("schemas");
+    expect(output.catalog).toMatchObject({ repository: "registry.example/private/catalog" });
   });
 
   it("migrates the exact legacy generated command without discarding execution settings", () => {

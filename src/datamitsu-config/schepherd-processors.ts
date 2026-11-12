@@ -1,3 +1,5 @@
+import schepherdCatalog from "./registries/schepherdCatalog.json";
+
 const schepherdDefaultProcessors = {
   ajv: {
     command: "${AJV_FRONTEND}",
@@ -19,15 +21,6 @@ const schepherdDefaultProcessors = {
 } as const;
 
 const schepherdDefaultProcessorOrder = ["sourcemeta", "check_jsonschema", "ajv"] as const;
-
-export const schepherdPrepareConfig = {
-  config_version: 1,
-  processors: schepherdDefaultProcessors,
-  runner: {
-    jobs: 4,
-    processors: schepherdDefaultProcessorOrder,
-  },
-} as const;
 
 export const schepherdPrepareToml = `config_version = 1
 [processors]
@@ -52,6 +45,11 @@ convert = '\${YQ_BIN}'
 convert_args = ['-p={format}', '-o=json', '-I=0', '{file}']
 formats = ['toml']
 type = 'sourcemeta'
+
+# The installation catalog is public; do not consult ambient Docker credential helpers.
+[registries."${schepherdCatalog.repository}"]
+credentials_file = 'schepherd-public-registry.json'
+
 [runner]
 jobs = 4
 processors = ['sourcemeta', 'check_jsonschema', 'ajv']
