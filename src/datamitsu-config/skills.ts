@@ -1172,7 +1172,7 @@ Determine WHAT is being scaffolded and WHERE:
 - **Invocation mode:** is there a pnpm stack wired with this config (a \`package.json\` exposing the \`dm\`/\`datamitsu\` bin, a \`pnpm-workspace.yaml\`, or an existing \`.datamitsu/\`)?
   - Yes → drive managed tools via \`pnpm dm exec <tool>\`.
   - No → drive the system-installed \`datamitsu\` binary directly, or offer to initialize a pnpm stack first if the target belongs in one.
-- **Monorepo:** if inside (or creating) a Turborepo + pnpm workspace, every package — including Go and Rust — needs a \`package.json\` with standard script names so \`turbo run <script>\` can orchestrate it. Confirm placement.
+- **Monorepo:** if inside (or creating) a Turborepo + pnpm workspace, every package — including Go and Rust — needs a \`package.json\` with relevant scripts so \`turbo run <script>\` can orchestrate it; prefer standard names for everyday operations. Confirm placement.
 
 ---
 
@@ -1203,7 +1203,7 @@ Libraries (catalogue → resolved version):
 
 Structure:
 
-- <files/dirs to create, package.json wrapper, standard scripts, Taskfile tasks, turbo wiring>
+- <files/dirs to create, package.json wrapper with relevant scripts, package-local Taskfile.yaml steps, root Turbo graph wiring>
 
 Config inputs (per the Single Source rule):
 
@@ -1216,6 +1216,12 @@ Commands to run:
 Apply? Reply: yes / no / show details
 \`\`\`
 
+Prefer standard package script names for everyday operations and propose only the relevant subset, not every script for every package. Allow documented commands for distinct operations and names required by the package manager, runtime, or deployment (e.g. production \`start\`, lifecycle hooks, migrations, package/sign/publish). Document each command's purpose, prerequisites, and side effects; never hide publish in \`build\` or production start in \`dev\`. Script names do not authorize execution.
+
+- \`generate\` / \`generate:*\`: explicitly refresh committed generated outputs, including source files. \`codegen\` / \`codegen:*\`: produce source code and are called under \`generate\` for committed generated code or under build preparation only for disposable build outputs. Identify required outputs and name their explicit \`generate\` / \`generate:*\` refresh commands when committed; do not name \`codegen\` alone as their refresh command. Committed generated files must not be automatic build/dev/install prerequisites; missing required committed outputs should tell the user which explicit \`generate\` / \`generate:*\` refresh command to run.
+- \`test\`: the complete main unit/integration suite, including expensive members, which can be slow in aggregate even when individual tests are fast. Keep E2E and visual snapshot suites separate as \`test:e2e\` and \`test:snapshots\` by default; include them in \`test\` only by an explicit documented project decision. Ordinary text/object/inline snapshot assertions remain in their corresponding main unit/integration suite. \`test:fast\`: a subset with a project-appropriate elapsed-time budget measured for the whole command at its intended package or root scope, including preparation and orchestration. State runner resources, parallelism, and cold/warm cache conditions for that measurement. The budget is not a per-test duration or a unit-test label; do not impose a universal numeric runtime cutoff. Optional \`test:slow\`: expensive main-suite members, still included in \`test\`, not the complement of \`test:fast\`. E2E is a test type, not a speed tier.
+- Put package-local multi-step orchestration in \`Taskfile.yaml\` and keep package scripts as thin entry points. For monorepos, Turbo alone owns the cross-package task/dependency graph through workspace manifests and \`turbo.json\`; wire relevant scripts into that graph without introducing automatic refresh dependencies for committed generated files. Taskfile steps stay within their package: no sibling \`pnpm --filter\` builds duplicating Turbo, and no nested Turbo graph from Turbo-run package tasks. Route targeted dependency builds through the same root Turbo graph using a filter.
+
 - \`no\` → abort, write nothing.
 - \`show details\` → print full file contents / exact commands, then ask again.
 - \`yes\` → Step 5.
@@ -1227,7 +1233,7 @@ Apply? Reply: yes / no / show details
 After explicit \`yes\`:
 
 1. Run the scaffold/install commands exactly as proposed.
-2. Create the \`package.json\` wrapper with standard script names; move any multi-step build logic into a \`Taskfile.yml\` invoked via \`pnpm dm exec task -- <task>\`.
+2. Create the \`package.json\` wrapper with only the proposed relevant scripts, preferring standard names for everyday operations while allowing documented distinct-operation commands and package manager/runtime/deployment required names (e.g. production \`start\`, lifecycle hooks, migrations, package/sign/publish). Document each command's purpose, prerequisites, and side effects; never hide publish in \`build\` or production start in \`dev\`. Script names do not authorize execution. Put package-local multi-step orchestration in \`Taskfile.yaml\`, invoked via \`pnpm dm exec task -- <task>\` (or \`datamitsu exec task -- <task>\` in direct mode). Apply the proposed Turbo wiring for monorepos: Turbo alone owns the cross-package task/dependency graph through workspace manifests and \`turbo.json\`. Taskfile steps stay within their package: no sibling \`pnpm --filter\` builds duplicating Turbo, and no nested Turbo graph from Turbo-run package tasks. Route targeted dependency builds through the same root Turbo graph using a filter. Preserve the proposed \`generate\`/\`codegen\` distinction: \`generate\` explicitly refreshes committed generated outputs, including source files; \`codegen\` produces source code and is called under \`generate\` for committed generated code or under build preparation only for disposable build outputs. Preserve \`test\` as the complete main unit/integration suite, including expensive members and ordinary text/object/inline snapshot assertions. Keep \`test:e2e\` and visual \`test:snapshots\` separate by default; include them in \`test\` only by an explicit documented project decision. Preserve the proposed whole-command \`test:fast\` budget, scope, preparation/orchestration, runner resources, parallelism, and cache conditions. Optional \`test:slow\` selects expensive main-suite members still included in \`test\`, not the complement of \`test:fast\`; E2E is a test type, not a speed tier. Do not make committed generated files automatic build/dev/install prerequisites; when required committed outputs are missing, report the explicit \`generate\` / \`generate:*\` refresh command, not \`codegen\` alone.
 3. Set up the single env / constants / build-flag entry points per the Single Source rules — do not scatter \`process.env\` / \`os.Getenv\` / raw constants.
 4. Do not create backup files. Git is the backup.
 
@@ -1654,7 +1660,7 @@ export const SKILL_CONVENTIONAL_COMMIT_MESSAGE_ADAPTER_CODEX_HASH = "3995ec842b8
 export const SKILL_RELEASE_PIPELINES_INSTRUCTIONS_HASH = "e4e8928c675d2c8bca8f2cec4947f170e641a89a2e8d9361c8fd2089c17c5754"; // prettier-ignore
 export const SKILL_RELEASE_PIPELINES_ADAPTER_CLAUDE_HASH = "729a38ee5452da41afd34a3a72e261421ecb59f17132ee5f34b1907fef4d3e84"; // prettier-ignore
 export const SKILL_RELEASE_PIPELINES_ADAPTER_CODEX_HASH = "729a38ee5452da41afd34a3a72e261421ecb59f17132ee5f34b1907fef4d3e84"; // prettier-ignore
-export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "962b799e2cbafcae04fd096d331e193194e6d7a0251472efb7581a545858decb"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "874f04a764d758264767116c4c8a5aa0e1113d2e1a54e3a63edd1739877b4624"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "eb18cf165f1f7e2a8910c8a50a6974e9b7c867e66cfa335675e05b03b2238236"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "fddbcdcb5bd8d7928cfcf15fc885d2b8376b4d462acc157f341d9de6a1eeb0f0"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "db4dfb22d2e3e211e494826d9da9ecf365b68cfa1b44682fd67e40b50fa8c617"; // prettier-ignore

@@ -7,7 +7,7 @@ Every project (or set of apps in a monorepo) funnels its shared constants, envir
 - Declare shared constants in a single module per project (Go: one package; JS/TS: one module). No magic values scattered across files.
 - Constants that must be shared ACROSS languages (e.g. Go + JS in one monorepo): keep them in a single JSON manifest and generate the per-language files from it with a codegen script — do not maintain copies by hand.
   - Each generated file carries a header comment marking it as generated (naming the source manifest and the generator).
-  - Prefer generating on demand at build time (the artifact need not be committed) over static committed copies. The manifest is the only source of truth.
+- Keep the JSON manifest as the only source of truth. Generate per-language files during the build when they are disposable build outputs; when generated files are committed, refresh them explicitly with the applicable `generate` command instead of on every build.
   - The generator language is situational — TypeScript is a fine default.
 
 ### Environment Variables

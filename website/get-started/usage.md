@@ -70,6 +70,18 @@ Invoking it does not authorize creating tags, running remote workflows or publis
 It removes the previous managed `.codex/prompts/<name>.md` files while preserving
 unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
 
+The shared script policy and scaffold skill use `test` for the complete main
+unit/integration suite. E2E (`test:e2e`) and visual checks (`test:snapshots`) run
+separately by default; a project may explicitly include them in `test`.
+Ordinary text and inline snapshots remain in their unit/integration suites.
+`test:fast` budgets the whole selected command, not individual test durations.
+
+Turbo owns dependencies between workspace packages; Taskfile orchestrates steps
+inside a package without building sibling packages again. Standard script names
+remain the default for everyday work; documented extensions and tool-required
+names are allowed for distinct operations, with prerequisites and side effects
+made explicit.
+
 Shared agent instructions default to English for documentation, code comments, and
 commit messages, without setting the language of conversation with the user.
 ASD-STE100 principles guide the writing style: prefer short sentences, familiar
