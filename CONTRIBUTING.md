@@ -11,6 +11,11 @@ this launcher can load the local core and configuration. The recorded command is
 dependency-installation or build bootstrap. Published consumers use their own package-manager
 launcher; this override applies only to this repository's development script.
 
+The repository's `prepare` runs `pnpm run build INIT_QUIET=true`: the build creates the
+configuration bundle before its init step runs with `--quiet`. Ordinary `pnpm build`
+keeps normal init output, as do Lefthook hooks. Build output and actionable init warnings
+are not suppressed by the lifecycle's quiet setting.
+
 ## Releases
 
 Releases are automated via GitHub Actions ([release.yml](.github/workflows/release.yml)).

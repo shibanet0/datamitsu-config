@@ -39,6 +39,12 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+Managed root `package.json` files initialize tools from `prepare` with
+`datamitsu init --quiet`. The package manager adds local binaries to the lifecycle's
+`PATH`. An unchanged repeat suppresses routine output; managed-state changes,
+warnings, and errors remain visible. Workspace members keep their own lifecycle scripts.
+Lefthook initialization remains non-quiet so hook runs retain their normal diagnostics.
+
 The managed JVM is JDK 27, available on macOS arm64, Linux amd64/arm64 and
 Windows amd64. Intel Macs no longer have a managed JVM for ktfmt, ktlint or
 openapi-generator.
@@ -87,6 +93,10 @@ Existing `trustPolicyExclude` entries are retained and duplicates are removed wh
 merging the lists. Package selectors keep their versions and ranges. Repeating
 reconciliation preserves the result; modern scalar `trustPolicy` values are left intact.
 Malformed exclusion lists stop reconciliation with an error.
+
+The managed workspace config also adds `allowBuilds.esbuild: false` when no value exists,
+including when `allowBuilds` is absent. An explicit esbuild value is preserved, as are all other
+package selectors in `allowBuilds`.
 
 Reconciliation also brings the file up to pnpm 12, which fails every command on a workspace
 setting it does not recognize. The settings pnpm 12 removed — `confirmModulesPurge`,

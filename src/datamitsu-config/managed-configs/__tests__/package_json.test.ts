@@ -57,20 +57,9 @@ describe("packageJson content", () => {
     expect(render({ dependencies: { next: "15.0.0" }, type: "module" }).type).toBe("module");
   });
 
-  it("strips prepare/postinstall/preinstall at the root", () => {
-    const result = render({
-      scripts: { build: "tsc", postinstall: "x", preinstall: "y", prepare: "z" },
-    });
-    expect(result.scripts).toEqual({ build: "tsc" });
-  });
-
   it("leaves lifecycle scripts on non-root members but still drops fix/lint", () => {
     const result = render({ scripts: { build: "tsc", fix: "a", lint: "b", prepare: "z" } }, false);
     expect(result.scripts).toEqual({ build: "tsc", prepare: "z" });
-  });
-
-  it("drops the scripts key entirely when nothing survives", () => {
-    expect(render({ scripts: { fix: "a", lint: "b", prepare: "z" } }).scripts).toBeUndefined();
   });
 
   it("pins the datamitsu-config self dependency through the pnpm catalog", () => {

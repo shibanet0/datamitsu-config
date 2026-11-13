@@ -360,7 +360,7 @@ post-checkout:
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
     "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean && node scripts/resolve-publish-catalog.ts",
     "postpack": "clean-pkg-json restore && rm -f datamitsu.config.js",
-    "prepare": "pnpm build && pnpm datamitsu init",
+    "prepare": "pnpm run build INIT_QUIET=true",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:update": "vitest run --update",
@@ -475,7 +475,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:615461a4153fcabc562e2f5398355687",
+      expectChainHash: "xxh3:113ba08b9531436c926070b14031003e",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -637,7 +637,7 @@ verifyStoreIntegrity: true
 });
 globalThis.getConfig = _getConfig;
 
-const _getMinVersion = () => "0.0.0";
+const _getMinVersion = () => "0.5.3";
 globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [
