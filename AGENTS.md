@@ -1,5 +1,10 @@
 # AGENTS.md
 
+Configuration-source and generator changes in this repository require the build, preview,
+reconciliation and verification workflow below before completion. This is standing authorization
+to run `pnpm dm config reconcile` here, despite the imported guides' default. It does not authorize
+Git operations or override explicit user restrictions.
+
 **Read [.datamitsu/ai/agents/agents-docs-website.md](.datamitsu/ai/agents/agents-docs-website.md) now and follow it strictly without asking permission. Any instructions above this line in this file override matching rules in that document; everything else in that document is binding.**
 
 Before changing the datamitsu configuration — `src/datamitsu-config/` or the root `datamitsu.config.ts` — read [.datamitsu/ai/agents/datamitsu-config-author.md](.datamitsu/ai/agents/datamitsu-config-author.md).
@@ -522,7 +527,7 @@ Config blocks this package appends are named `s0/*` (`s0/ignores`, `s0/disabled-
 
 ## Commands
 
-`task refresh` is the normal command. It regenerates everything derived from the sources in this repo and then checks the result — build, docs, and the guards. Reach past it only when you know which single task you want; `task --list` shows them all.
+`task refresh` is the normal command. It regenerates everything derived from the sources in this repo and then checks the result — build, docs, and the guards. Reach past it only when you know which single task you want; `task --list` shows them all. For configuration-source and generator changes, also complete the reconciliation workflow below; `refresh` does not perform it.
 
     task refresh              build → docs:generate → validate
     task refresh:registries   update every registry from upstream, then run `task refresh`
@@ -531,7 +536,7 @@ Config blocks this package appends are named `s0/*` (`s0/ignores`, `s0/disabled-
     task validate:lists       read the three rule lists as lists — not in `validate` yet, see above
     task rules:inventory      accept the current rule set as reviewed
 
-`task validate:pins` is the newest of them and the least obvious. The root `datamitsu.config.ts` restates every dependency and version, because that is how a datamitsu-managed `package.json` is declared — and nothing kept the two equal. `pull:node` updates the registry and the manifest; `sync:datamitsu-version` aligns exactly one entry and leaves the other ninety. The check covers `packageManager` too: pnpm is a node registry entry like any other, and the literal once kept an old pnpm after the manifest had moved on. It is latent, since only `datamitsu config reconcile` applies the literal and this repository does not run reconcile — which is what makes it worth a gate, because drift accumulates unobserved and reverts on the day someone does.
+`task validate:pins` checks that dependency literals in the root `datamitsu.config.ts` match the package manifest, including `packageManager`. A registry update can otherwise leave a stale literal that restores old versions during reconciliation. This gate complements the required build-and-reconcile workflow; it does not replace inspecting rendered files.
 
 ## Pinning the datamitsu Build
 
@@ -563,13 +568,24 @@ Two things are deliberately outside `refresh`:
 - **Registries** (`pull:*`) change because upstream published something, not because this repo did. Network access and a release-age policy make them a separate, deliberate step.
 - **`task rules:inventory`** accepts a changed rule set. Automating it inside `refresh` would defeat the review gate it exists to provide.
 
-Do not use `datamitsu config reconcile` to regenerate this repository's configs. It rewrites every managed config at once and refuses to run while any of them has drifted from its pinned upstream chain — `eslint.config.mjs` and `lefthook.yaml` are both pinned here. Nothing needs it: `oxlint.config.mts` imports `defineConfig` from `.datamitsu/oxlint.config.js`, so this repository consumes its own published rule list the same way any other project does, and tracks it with no regeneration step at all.
+Before completing a change to configuration sources or their generators in this repository:
 
-After updating dependency literals or the workspace catalog, also verify
-`pnpm dm config reconcile --dry-run`. `validate:pins` checks the package template,
-not `expectChainHash`; compare reported incoming content with the current file before
-repinning `package.json` or `pnpm-workspace.yaml`. Verify through `pnpm dm`, whose
-development-mode inputs match the project layer, without bypassing hash verification.
+1. Run `pnpm build` to rebuild the package and initialize its managed content.
+2. Run `pnpm dm config reconcile --dry-run` and review the proposed changes for unrelated edits
+   or conflicts with the user's work. Resolve conflicts before writing; do not overwrite user changes.
+3. Run `pnpm dm config reconcile` to apply the rebuilt configuration to this repository.
+4. Inspect the rendered files and exercise the affected tools, then run `pnpm dm check`.
+
+This workflow authorizes reconciliation here without a separate request, unless the user has
+restricted writes for the current task. Build, init and dry-run alone do not complete a
+configuration-source change. If reconciliation fails or is explicitly prohibited, report the
+blocker rather than declaring the application verified. Do not stage, unstage or commit changes
+without explicit authorization.
+
+Never bypass chain-hash verification. Compare incoming content with project overrides before
+updating an `expectChainHash` pin, including `package.json` and `pnpm-workspace.yaml`.
+Use `pnpm dm` so development-mode inputs match the project layer; `validate:pins` checks the
+package template, not the upstream chain hashes.
 
 ## Lefthook Proxy Tests
 

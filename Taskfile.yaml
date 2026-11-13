@@ -30,7 +30,7 @@ tasks:
       # `npm pack`) so auto-discovery resolves the .ts, not the generated baseline.
       - mv dist-datamitsu-config/datamitsu.config.js datamitsu.config.base.js
       - rm -f datamitsu.config.js
-      - pnpm dm init
+      - pnpm dm init{{if eq (default "false" .INIT_QUIET) "true"}} --quiet{{end}}
     desc: Build datamitsu.config.base.js and reinitialise datamitsu
   build:inline:
     deps:

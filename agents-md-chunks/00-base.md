@@ -2,7 +2,19 @@
 
 ## Language Policy
 
-**All documentation, READMEs, code comments, commit messages, and identifiers (function/variable/type names) MUST be written in English only. No exceptions.** Non-English text is allowed only in explicit localization assets and tests that validate localized output.
+Write documentation, code comments, and commit messages in English unless
+explicitly instructed otherwise. This rule does not set the language of
+conversation with the user.
+
+Use clear, concise technical English, guided by ASD-STE100 principles:
+prefer short sentences, familiar words, active voice, and direct instructions
+where appropriate. Accuracy and completeness take priority over simplicity.
+Preserve precise technical terms, conditions, and normative requirements.
+This is style guidance, not a requirement for formal ASD-STE100 compliance.
+
+Keep new function, variable, and type names in English. Preserve existing identifiers,
+API names, commands, quoted text, and explicit localization assets or tests. An explicit
+request for another language or writing style takes precedence over this default.
 
 ## Code Commenting Guidelines
 
@@ -69,6 +81,11 @@ Activity markers in `wt list`, and routing of a harness's own worktree creation 
 - `refactor:` code restructuring (no behavior change)
 - `test:` adding or updating tests
 - `chore:` maintenance, dependency updates
+
+Write `<type>[optional scope][optional !]: <description>`, with a space after the colon.
+Keep the description concise and move details and rationale to the body. There is no hard
+header-length limit. Natural capitalization, acronyms, and exact identifier spelling are allowed.
+Keep the type lowercase.
 
 ## Dependency Management
 

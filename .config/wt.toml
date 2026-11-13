@@ -1,2 +1,2 @@
 [post-start]
-datamitsu-cache-copy = "sh -c 'datamitsu cache copy --source \"$1\"' sh '{{ base_worktree_path }}'"
+datamitsu-cache-copy = "sh -c 'PATH=\"$1/node_modules/.bin:$PATH\" pnpm dm cache copy --source \"$1\"' sh {{ base_worktree_path }}"

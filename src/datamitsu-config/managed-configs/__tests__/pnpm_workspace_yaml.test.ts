@@ -33,6 +33,29 @@ describe("pnpmWorkspaceYaml", () => {
     const keys = Object.keys(result.catalog);
     expect(keys).toEqual([...keys].sort());
   });
+  it("defaults esbuild builds to denied without replacing explicit values or other selectors", () => {
+    expect(render("{}").allowBuilds).toEqual({ esbuild: false });
+    expect(render("allowBuilds:\n  other-package: true\n").allowBuilds).toEqual({
+      esbuild: false,
+      "other-package": true,
+    });
+
+    for (const value of [true, false, null]) {
+      expect(
+        render(stringify({ allowBuilds: { esbuild: value, other: true } })).allowBuilds,
+      ).toEqual({
+        esbuild: value,
+        other: true,
+      });
+    }
+
+    const existingUndefined = { allowBuilds: { esbuild: undefined, other: true } };
+    expect(render(stringify(existingUndefined)).allowBuilds).toEqual({
+      esbuild: false,
+      other: true,
+    });
+    expect(render('allowBuilds:\n  esbuild: ""\n').allowBuilds.esbuild).toBe("");
+  });
 
   it("migrates nested downgrade exceptions and keeps package selectors intact", () => {
     const result = render(`

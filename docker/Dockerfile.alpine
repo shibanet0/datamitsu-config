@@ -345,6 +345,10 @@ FROM dm-build AS app-sqruff
 COPY --link --from=config-split /slices/app-sqruff.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install sqruff
 
+FROM dm-build AS app-stylua
+COPY --link --from=config-split /slices/app-stylua.js /opt/datamitsu-config/datamitsu.config.js
+RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install stylua
+
 FROM dm-build AS app-syft
 COPY --link --from=config-split /slices/app-syft.js /opt/datamitsu-config/datamitsu.config.js
 RUN datamitsu --config /opt/datamitsu-config/datamitsu.config.js install syft
@@ -503,6 +507,7 @@ COPY --link --from=app-snyk /dm/store/.bin/snyk /dm/store/.bin/snyk
 COPY --link --from=app-sops /dm/store/.bin/sops /dm/store/.bin/sops
 COPY --link --from=app-sqlc /dm/store/.bin/sqlc /dm/store/.bin/sqlc
 COPY --link --from=app-sqruff /dm/store/.bin/sqruff /dm/store/.bin/sqruff
+COPY --link --from=app-stylua /dm/store/.bin/stylua /dm/store/.bin/stylua
 COPY --link --from=app-syft /dm/store/.bin/syft /dm/store/.bin/syft
 COPY --link --from=app-task /dm/store/.bin/task /dm/store/.bin/task
 COPY --link --from=app-tflint /dm/store/.bin/tflint /dm/store/.bin/tflint

@@ -78,10 +78,12 @@ Home = "index.md"
 [[project.nav]]
 Reference = [
   { Apps = "reference/apps.md" },
+  { "Lua Formatting" = "reference/lua.md" },
   { Tools = "reference/tools.md" },
   { "Kotlin Configuration" = "reference/kotlin.md" },
   { "Project Types" = "reference/project-types.md" },
   { "Managed Configs" = "reference/managed-configs.md" },
   { "Lefthook Proxy" = "reference/lefthook-proxy.md" },
   { "TypeScript Configurations" = "reference/tsconfig.md" },
+  { "Shared Ignore Rules" = "reference/ignore-rules.md" },
 ]

@@ -1,34 +1,38 @@
 /**
- * Worktrunk (`wt`) project config. One post-start hook carries the invoking worktree's warm
- * datamitsu cache into the worktree `wt switch --create` just made: a new worktree is a new
- * absolute root, so without this its first lint run is cold even at the same commit.
- *
- * The hook runs in the new worktree with `{{ base_worktree_path }}` bound to the base it was
- * created from — exactly the root `datamitsu cache copy --source` wants. The path is passed as a
- * positional argument rather than interpolated into the shell body: wt substitutes template
- * variables before the shell parses the command, so a path with spaces would otherwise split into
- * several arguments.
- *
- * Post-start is background and once-per-worktree, which is the shape datamitsu's copy wants: it
- * takes ~20 ms and never blocks. wt asks the project to approve its commands on first run; the
- * approval is remembered per command.
+ * WorkTrunk runs the recorded launcher in the new worktree. Its dependency binaries can resolve
+ * from the base worktree before the new worktree has installed dependencies.
  */
 export const HOOK_NAME = "datamitsu-cache-copy";
 
-export const HOOK_COMMAND =
-  "sh -c 'datamitsu cache copy --source \"$1\"' sh '{{ base_worktree_path }}'";
+const quoteShell = (value: string): string => `'${value.replace(/'/g, `'\\''`)}'`;
+
+export const wtHookCommand = (binaryCommand: string): string =>
+  `sh -c ${quoteShell(`PATH="$1/node_modules/.bin:$PATH" ${binaryCommand} cache copy --source "$1"`)} sh {{ base_worktree_path }}`;
 
 export const wtToml: config.ManagedConfig = {
   content: (context) => {
     const data = TOML.parse(context.originalContent || "");
     const existing = data["post-start"];
+    const managedHook = { [HOOK_NAME]: wtHookCommand(facts().binaryCommand) };
+    const commands = typeof existing === "string" ? { project: existing } : existing;
+    let postStart: unknown;
+    if (Array.isArray(commands)) {
+      const steps = commands.map((step: Record<string, unknown>) =>
+        HOOK_NAME in step ? { ...step, ...managedHook } : step,
+      );
+      if (commands.every((step: Record<string, unknown>) => !(HOOK_NAME in step))) {
+        const lastIndex = steps.length - 1;
+        if (lastIndex < 0) steps.push(managedHook);
+        else steps[lastIndex] = { ...steps[lastIndex], ...managedHook };
+      }
+      postStart = steps;
+    } else {
+      postStart = { ...commands, ...managedHook };
+    }
 
     return TOML.stringify({
       ...data,
-      "post-start": {
-        ...(typeof existing === "object" && existing !== null ? existing : {}),
-        [HOOK_NAME]: HOOK_COMMAND,
-      },
+      "post-start": postStart,
     });
   },
   // wt reads the project config from the worktree a command runs in; the hook belongs to the

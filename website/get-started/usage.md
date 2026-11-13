@@ -39,6 +39,12 @@ pnpm dm config reconcile
 
 This creates all necessary configuration files for the managed tools in your project.
 
+Managed root `package.json` files initialize tools from `prepare` with
+`datamitsu init --quiet`. The package manager adds local binaries to the lifecycle's
+`PATH`. An unchanged repeat suppresses routine output; managed-state changes,
+warnings, and errors remain visible. Workspace members keep their own lifecycle scripts.
+Lefthook initialization remains non-quiet so hook runs retain their normal diagnostics.
+
 The managed JVM is JDK 27, available on macOS arm64, Linux amd64/arm64 and
 Windows amd64. Intel Macs no longer have a managed JVM for ktfmt, ktlint or
 openapi-generator.
@@ -50,9 +56,40 @@ installs continue to prohibit source builds.
 
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
-with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack` or `$setup-tsconfig`.
+with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack`, `$setup-tsconfig`,
+`$conventional-commit-message`, `$conventional-changelog` or `$release-pipelines`.
+The commit-message skill follows Conventional Commit conventions; the changelog
+skill uses the consumer's configured release tooling and project conventions.
+The release-pipelines skill audits or standardizes GitHub Actions release workflows
+with a default no-publication Verify mode and explicit Prerelease publication.
+It lets incomplete build or signing stages resume with verified inputs while keeping
+completed release artifacts immutable during publication recovery. It validates signed
+deliverables after finalization, separates publisher trust from product source, and
+guards mutable release channels against older runs replacing newer releases.
+Invoking it does not authorize creating tags, running remote workflows or publishing.
 It removes the previous managed `.codex/prompts/<name>.md` files while preserving
 unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
+
+The shared script policy and scaffold skill use `test` for the complete main
+unit/integration suite. E2E (`test:e2e`) and visual checks (`test:snapshots`) run
+separately by default; a project may explicitly include them in `test`.
+Ordinary text and inline snapshots remain in their unit/integration suites.
+`test:fast` budgets the whole selected command, not individual test durations.
+
+Turbo owns dependencies between workspace packages; Taskfile orchestrates steps
+inside a package without building sibling packages again. Standard script names
+remain the default for everyday work; documented extensions and tool-required
+names are allowed for distinct operations, with prerequisites and side effects
+made explicit.
+
+Shared agent instructions default to English for documentation, code comments, and
+commit messages, without setting the language of conversation with the user.
+ASD-STE100 principles guide the writing style: prefer short sentences, familiar
+words, active voice, and direct instructions where appropriate. Accuracy and
+completeness take priority over simplicity; preserve precise technical terms,
+conditions, normative requirements, exact identifiers, and syntax. An explicit
+request for another language or style overrides this default. Formal ASD-STE100
+compliance is not required.
 
 For existing `pnpm-workspace.yaml` files, reconciliation also migrates the legacy
 `trustPolicy.allowDowngrade` list to `trustPolicyExclude`:
@@ -76,6 +113,10 @@ merging the lists. Package selectors keep their versions and ranges. Repeating
 reconciliation preserves the result; modern scalar `trustPolicy` values are left intact.
 Malformed exclusion lists stop reconciliation with an error.
 
+The managed workspace config also adds `allowBuilds.esbuild: false` when no value exists,
+including when `allowBuilds` is absent. An explicit esbuild value is preserved, as are all other
+package selectors in `allowBuilds`.
+
 Reconciliation also brings the file up to pnpm 12, which fails every command on a workspace
 setting it does not recognize. The settings pnpm 12 removed — `confirmModulesPurge`,
 `ignoreDepScripts`, `ignorePatchFailures`, `managePackageManagerVersions`,
@@ -87,6 +128,20 @@ pnpm 12 records the `packageManager` version in `pnpm-lock.yaml`. The managed `p
 the pnpm version this package ships with, so a reconciliation that moves it leaves the lockfile out
 of date, and `pnpm install --frozen-lockfile` fails in CI. Run `pnpm install` after reconciling and
 commit `pnpm-lock.yaml` together with `package.json`.
+
+The managed `.config/wt.toml` cache-copy hook uses the launcher recorded by `datamitsu init`
+(`facts().binaryCommand`). It keeps the new worktree as the destination and adds the base
+worktree's `node_modules/.bin` to the hook's `PATH`. Package-manager commands can therefore
+find the base installation before the new worktree has installed dependencies, without a
+global `datamitsu` command. WorkTrunk escapes the source path, including spaces and apostrophes.
+This does not install dependencies for other project hooks or bootstrap custom scripts that
+themselves require files under the new worktree's `node_modules`.
+
+Existing string, table, and pipeline `post-start` hooks are preserved. A string hook becomes a
+named command in a table and runs alongside cache copy. In a pipeline, an existing cache-copy
+step is updated in place; otherwise cache copy joins the last step. It can run concurrently
+with dependency installation without waiting for a long-running server. An empty pipeline
+receives a cache-only step.
 
 **When to use:**
 
@@ -321,6 +376,18 @@ new as the Go version it analyzes: the standard importer embedded in an older
 compiler may not decode newer export data. Keep the managed Go runtime aligned
 with the projects you lint; disabling `gocritic` is not the compatibility fix.
 
+### Go linter migration
+
+The shared baseline enables `exhaustruct_v5`, which checks struct field initialization.
+Reconciliation replaces legacy `exhaustruct` references in enabled/disabled linter lists
+and exclusion rules. Its old `include`, `exclude` and `allow-empty-rx` settings become
+`enforce-patterns`, `ignore-patterns` and `allow-empty-patterns`.
+
+A nonempty legacy `include` list enables `explicit-mode` to preserve opt-in checking;
+an empty list keeps implicit checking. Explicit v5 settings take precedence, and arrays
+replace migrated arrays. Repeating reconciliation preserves the result. The baseline
+already uses the supported `gomodguard_v2` and `wsl_v5` names.
+
 ### Running a specific tool
 
 Execute any managed tool directly:
@@ -375,6 +442,11 @@ datamitsu integrates with [lefthook](https://github.com/evilmartians/lefthook) f
 - **commit-msg** — validates commit messages with commitlint (Conventional Commits)
 - **post-checkout** — reinstalls dependencies and reinitializes datamitsu
 
+Commit messages use `<type>[optional scope][optional !]: <description>`, with a space after
+the colon and a lowercase type. Descriptions may start with an uppercase letter and preserve
+acronyms or identifier spelling. Commitlint does not impose a header-length limit. Keep one
+concise summary in the header and put details and rationale in the body.
+
 ### Customizing Tool Behavior
 
 Individual tools (ESLint, Prettier, cspell, etc.) can be customized through their standard config files. datamitsu respects these files when present in your project root:
@@ -406,8 +478,11 @@ then run `pnpm dm init` and `pnpm dm config reconcile` so both the managed base 
 and your own file exist.
 
 - `.alint.yml` extends `.datamitsu/alint-managed.yml`. Redefine a rule by its `id` (for example
-  `s0-js-ts-file-names`) to narrow it. Keep `allow_out_of_root: true`: the managed file is linked
-  from outside the repository.
+  `s0-js-ts-file-names`) to narrow it. The managed filename rules reject Git-tracked `.key`,
+  `.p12` and `.pfx` files, including files force-added despite `.gitignore`. Ignored, untracked
+  local keys do not trigger this rule. It checks names, not contents. `.crt` and `.pem` filenames
+  remain allowed because they can hold public certificates. Keep `allow_out_of_root: true`:
+  the managed file is linked from outside the repository.
 - `.ls-lint.yml` layers over `.datamitsu/ls-lint-managed.yml`. `ignore` adds exclusions, and a
   literal path such as `apps/web/src/generated` is free. Redefining `.dir` replaces the base rule,
   so include `regex:\.[a-z0-9_-]+` to keep dot-directories valid.
