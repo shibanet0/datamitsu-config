@@ -85,4 +85,5 @@ Reference = [
   { "Managed Configs" = "reference/managed-configs.md" },
   { "Lefthook Proxy" = "reference/lefthook-proxy.md" },
   { "TypeScript Configurations" = "reference/tsconfig.md" },
+  { "Shared Ignore Rules" = "reference/ignore-rules.md" },
 ]
