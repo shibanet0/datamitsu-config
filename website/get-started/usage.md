@@ -57,9 +57,16 @@ installs continue to prohibit source builds.
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
 with `$backlog`, `$cleanup-agents-md`, `$scaffold-stack`, `$setup-tsconfig`,
-`$conventional-commit-message` or `$conventional-changelog`. The commit-message
-skill follows Conventional Commit conventions; the changelog skill uses the
-consumer's configured release tooling and project conventions.
+`$conventional-commit-message`, `$conventional-changelog` or `$release-pipelines`.
+The commit-message skill follows Conventional Commit conventions; the changelog
+skill uses the consumer's configured release tooling and project conventions.
+The release-pipelines skill audits or standardizes GitHub Actions release workflows
+with a default no-publication Verify mode and explicit Prerelease publication.
+It lets incomplete build or signing stages resume with verified inputs while keeping
+completed release artifacts immutable during publication recovery. It validates signed
+deliverables after finalization, separates publisher trust from product source, and
+guards mutable release channels against older runs replacing newer releases.
+Invoking it does not authorize creating tags, running remote workflows or publishing.
 It removes the previous managed `.codex/prompts/<name>.md` files while preserving
 unrelated custom prompts. Claude Code skills remain in `.claude/skills/`.
 
