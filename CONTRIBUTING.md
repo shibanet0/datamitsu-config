@@ -81,3 +81,15 @@ The linter also starts `go` from PATH to load the analyzed project. CI adds the
 configured SDK's bin directory to PATH through `datamitsu runtime run go -- env GOROOT`;
 building the linter alone does not select that subprocess's Go version. Consumer
 environments must likewise provide a Go SDK compatible with their project's go.mod.
+
+## OCI bundle annotations
+
+The OCI map describes Docker COPY roots, not necessarily exact owned store targets.
+For `python-data`, the publisher must observe and annotate
+`.runtime-data/<runtime>/<identity>/python` inside the layer. Annotating only the
+identity directory fails the seeder's integrity check, even when seeding unrelated apps.
+Keep that check strict; do not omit Python layers or weaken validation to pass release smoke.
+
+After changing layer annotations, verify subtree resolution against actual tar entry names
+and run the bundle seed/offline execution smoke on a newly produced bundle. Retrying a smoke
+job against an already published malformed bundle does not repair its annotations.
