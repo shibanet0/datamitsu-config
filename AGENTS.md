@@ -766,8 +766,10 @@ Native chart mode requires `templates/` to exist; a template-free library chart 
 Helm lint but fails helmfmt 0.7.0. yamlfmt 0.21.0 also needs a second pass on some
 comments from `helm create` values. Do not hide either with a wrapper, a global skip,
 or a weakened linter; they are native limitations, not successful checks.
-Chart-scoped `.datamitsuignore` excludes `templates/**` from sort-keys-yaml, yamlfmt
-and yamllint through the shared ignore catalog. Do not globally ignore every
-`templates/` directory or send Go templates to plain YAML parsers. Keep Chart.yaml
-and values.yaml on the ordinary YAML path. The static upstream needs force-inclusion
-in Alpine generation because the registry deduplicates its musl record.
+The package does not manage `.datamitsuignore` files. Datamitsu 0.6.0 exposes only static
+root `ignoreRules`, so chart locations cannot be discovered dynamically by the config layer.
+YAML-suffixed files under chart `templates/` therefore also reach repository-scoped YAML
+tools and may fail parsing or be reformatted. Do not add a global `templates/**` exclusion:
+it would also skip unrelated template directories. Keep `Chart.yaml` and `values.yaml` on
+the ordinary YAML path. The static upstream needs force-inclusion in Alpine generation
+because the registry deduplicates its musl record.

@@ -1,6 +1,5 @@
 import { alintYml } from "./managed-configs/_alint_yml";
 import { formatTerraformSpacingSh } from "./managed-configs/_datamitsu_scripts_format_terraform_spacing_sh";
-import { datamitsuignore } from "./managed-configs/_datamitsuignore";
 import { dclintYaml } from "./managed-configs/_dclint_yaml";
 import { dockerignore } from "./managed-configs/_dockerignore";
 import { editorconfig } from "./managed-configs/_editorconfig";
@@ -57,7 +56,6 @@ export const managedConfigs: config.MapOfManagedConfigs = {
   ".alint.yml": alintYml,
   ".config/wt.toml": wtToml,
   ".datamitsu/scripts/format-terraform-spacing.sh": formatTerraformSpacingSh,
-  ".datamitsuignore": datamitsuignore,
   ".dclint.yaml": dclintYaml,
   ".dockerignore": dockerignore,
   ".editorconfig": editorconfig,
