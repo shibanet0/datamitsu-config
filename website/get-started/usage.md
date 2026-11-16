@@ -666,15 +666,16 @@ for the exact rule decisions, Compose support, IDE settings and parser requireme
 
 ## Helm charts
 
-`Chart.yaml` identifies each Helm chart, including charts in a monorepo. Run
-`pnpm dm config reconcile` to create each chart's `.helmfmt` and merge template
-exclusions into its `.datamitsuignore`, preserving existing project rules.
+`Chart.yaml` identifies each Helm chart, including charts in a monorepo. Reconciliation
+creates each chart's `.helmfmt`; it does not create `.datamitsuignore` files.
 
-`pnpm dm check` formats `.yaml`, `.yml`, `.tpl` and `.gotmpl` files under the chart's
-`templates/` with helmfmt. Running from one chart, or naming one of its templates,
-processes that chart's templates without touching sibling charts. `Chart.yaml`,
-`values.yaml` and other ordinary YAML stay with yamlfmt, yamllint and the YAML key
-sorter; Go templates are excluded from those three tools.
+`pnpm dm check` formats `.yaml`, `.yml`, `.tpl` and `.gotmpl` files under each chart's
+`templates/` with helmfmt. YAML-suffixed template files also reach repository-scoped
+`yamlfmt`, `yamllint` and the YAML key sorter. Datamitsu 0.6.0 has no dynamic chart-scoped
+YAML exclusion in the root configuration API, so these tools may fail on Go template syntax
+or rewrite a template. Do not use a global `templates/**` exclusion because it would also
+skip unrelated directories. `Chart.yaml`, `values.yaml` and other ordinary YAML remain on
+the YAML tool path.
 
 The generated `.helmfmt` takes its indentation from the shared formatter settings
 and preserves project overrides. Managed checks read the chart's configuration,
