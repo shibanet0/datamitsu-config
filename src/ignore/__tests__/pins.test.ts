@@ -34,6 +34,7 @@ describe("consumer ignore pins", () => {
         "**/.parcel-cache/",
         "**/.temp/",
         "**/.tmp/",
+        "**/__pycache__/",
       ],
       "Claude Code project files": [".claude/*", "!.claude/skills/"],
       "Codex CLI project files": [".codex/*", "!.codex/prompts/"],

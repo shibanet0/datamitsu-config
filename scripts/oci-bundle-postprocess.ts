@@ -33,6 +33,7 @@ import { readFile } from "node:fs/promises";
 import { Readable } from "node:stream";
 import { createGunzip, createZstdDecompress } from "node:zlib";
 
+import { resolveLayerSubtree } from "./lib/oci-layer-subtree.ts";
 import { TarNameParser } from "./lib/tar-name-parser.ts";
 
 interface Descriptor {
@@ -59,7 +60,7 @@ interface OciMap {
 
 interface OciMapEntry {
   app?: string;
-  kind: "app" | "binary" | "runtime" | "uv-python";
+  kind: "app" | "binary" | "python-data" | "runtime" | "uv-python";
   subtree: string;
 }
 
@@ -411,9 +412,8 @@ function parseArgs(): {
 }
 
 /**
- * Derives the hash-level subtree for a map entry by reading the layer's tar listing: the annotation
- * contract is `.bin/<app>/<hash>` while the COPY root in the map is `.bin/<app>` — the single child
- * directory observed in the layer supplies the `<hash>` segment.
+ * COPY roots in the map can contain a broader directory than the owned target. Python-data layers
+ * own only `<identity>/python`, not the runtime-data identity directory itself.
  */
 async function resolveSubtree(
   registry: Registry,
@@ -428,21 +428,12 @@ async function resolveSubtree(
   // A subtree layer opens with the directory chain down to the COPY root,
   // then its content — the matching entry appears within the first handful of
   // names, so the probe needs only the first kilobytes of the blob.
-  const copyRoot = `${storeRootRelative}/${entry.subtree}/`;
-  let child: string | undefined;
+  let subtree: string | undefined;
   await scanLayerEntries(registry, layer.digest, 16, (rawName) => {
-    const name = rawName.replace(/^\.?\//, "");
-    if (!name.startsWith(copyRoot)) {
-      return false;
-    }
-    const segment = name.slice(copyRoot.length).split("/")[0];
-    if (!segment) {
-      return false;
-    }
-    child = segment;
-    return true;
+    subtree = resolveLayerSubtree(entry, storeRootRelative, rawName);
+    return subtree !== undefined;
   });
-  return child ? `${entry.subtree}/${child}` : undefined;
+  return subtree;
 }
 
 /**

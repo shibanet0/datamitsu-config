@@ -24,12 +24,15 @@ describe("alint configuration", () => {
     it("renders every rule into the managed base as an error", () => {
       const base = parse(buildManagedAlintYaml());
       expect(base.version).toBe(1);
-      expect(base.rules.map((rule: { id: string }) => rule.id)).toEqual(
-        alintNamingRules.map((rule) => rule.id),
-      );
+      expect(base.rules.map((rule: { id: string }) => rule.id)).toEqual([
+        ...alintNamingRules.map((rule) => rule.id),
+        "s0-sensitive-key-file-names",
+      ]);
       for (const rule of base.rules) {
         expect(rule.id).toMatch(/^s0-/u);
-        expect(rule.kind).toBe("filename_regex");
+        expect(rule.kind).toBe(
+          rule.id === "s0-sensitive-key-file-names" ? "git_no_denied_paths" : "filename_regex",
+        );
         expect(rule.level).toBe("error");
       }
     });

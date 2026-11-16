@@ -350,7 +350,7 @@ post-checkout:
   "scripts": {
     "build": "./node_modules/.bin/datamitsu --no-auto-config exec task -- build",
     "build:local": "pnpm run build && cp ./datamitsu.config.base.js ~/ghq/github.com/datamitsu/datamitsu/node_modules/@shibanet0/datamitsu-config/datamitsu.config.js",
-    "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\\"./dist\\" bin/datamitsu.js --binary-command \\"node bin/datamitsu.js\\"",
+    "datamitsu": "DATAMITSU_DEV_MODE=true DATAMITSU_PACKAGE_NAME=\\\"./dist\\\" bin/datamitsu.js --binary-command \\\"pnpm dm\\\"",
     "dm": "pnpm --silent datamitsu",
     "docker:build": "pnpm run docker:build:amd64 && pnpm run docker:build:alpine:amd64 && pnpm run docker:build:arm64 && pnpm run docker:build:alpine:arm64",
     "docker:build:alpine:amd64": "pnpm run docker:builder && node scripts/docker-build.ts alpine:amd64",
@@ -360,7 +360,7 @@ post-checkout:
     "docker:builder": "docker buildx inspect dm-config-local >/dev/null 2>&1 || docker buildx create --name dm-config-local --driver docker-container --driver-opt network=host --config docker/buildkitd.toml --bootstrap",
     "prepack": "pnpm build && cp datamitsu.config.base.js datamitsu.config.js && clean-pkg-json clean && node scripts/resolve-publish-catalog.ts",
     "postpack": "clean-pkg-json restore && rm -f datamitsu.config.js",
-    "prepare": "pnpm build && pnpm datamitsu init",
+    "prepare": "pnpm run build INIT_QUIET=true",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:update": "vitest run --update",
@@ -475,7 +475,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:a362f6aa7fb1abed6399aaf4b1212a30",
+      expectChainHash: "xxh3:113ba08b9531436c926070b14031003e",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -493,7 +493,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.3
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261109.0573b76
+  "@datamitsu/datamitsu": 0.6.0
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.28.1
@@ -620,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:09ad3e101606e414b67f785cb102fb72",
+      expectChainHash: "xxh3:1f3e353b88f8708117ba7c5a2823a27d",
     },
   },
   tools: {
@@ -637,7 +637,7 @@ verifyStoreIntegrity: true
 });
 globalThis.getConfig = _getConfig;
 
-const _getMinVersion = () => "0.0.0";
+const _getMinVersion = () => "0.5.3";
 globalThis.getMinVersion = _getMinVersion;
 
 const cspellWords: string[] = [

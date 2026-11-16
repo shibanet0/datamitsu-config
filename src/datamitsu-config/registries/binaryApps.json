@@ -268,6 +268,11 @@
       "source": "github",
       "tag": "v0.40.0"
     },
+    "stylua": {
+      "repository": "JohnnyMorganz/StyLua",
+      "source": "github",
+      "tag": "v2.6.0"
+    },
     "swag": {
       "repository": "swaggo/swag",
       "source": "github",
@@ -3793,6 +3798,77 @@
         "apiUrl": "https://api.github.com",
         "repository": "quarylabs/sqruff",
         "tag": "v0.40.0",
+        "type": "github",
+        "url": "https://github.com"
+      }
+    },
+    "stylua": {
+      "binaries": {
+        "darwin": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:90779aa873837b2dff8eb3361bd27950303914c24265a59cae0a0d0629d71585",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-macos-x86_64.zip"
+            }
+          },
+          "arm64": {
+            "unknown": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:dab9b66d340ca5ffc8225211f1dcf89b84783e09b8cbec8c518497eba81f3c42",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-macos-aarch64.zip"
+            }
+          }
+        },
+        "linux": {
+          "amd64": {
+            "glibc": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:a485f72bbfa22e4642e77a84b5edc2611a5cab7477b34e2e709dd8f78e919895",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-x86_64.zip"
+            },
+            "musl": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:48ee7db28346f96f4bd545e190ab080a88a7b5a664e97649cf5d5c60426f402d",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-x86_64-musl.zip"
+            }
+          },
+          "arm64": {
+            "glibc": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:8e67539e5fdf7a81cd03cf592b0df18d3bb96ee17a5ea5d9bf67b86387b903b0",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-aarch64.zip"
+            },
+            "musl": {
+              "binaryPath": "stylua",
+              "contentType": "zip",
+              "hash": "sha256:278495597e3827417f3af7b9ad38011ad4a5ec725503553160ab69b7301059bb",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-linux-aarch64-musl.zip"
+            }
+          }
+        },
+        "windows": {
+          "amd64": {
+            "unknown": {
+              "binaryPath": "stylua.exe",
+              "contentType": "zip",
+              "hash": "sha256:fd13b4014e3b779c244bbc03f2c282e357f15bc526de6a6fa5ecbc447538313c",
+              "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-windows-x86_64.zip"
+            }
+          }
+        }
+      },
+      "configHash": "39c7bcf1b3498357e7d6263e00a49bea",
+      "description": "A Lua code formatter",
+      "source": {
+        "apiUrl": "https://api.github.com",
+        "repository": "JohnnyMorganz/StyLua",
+        "tag": "v2.6.0",
         "type": "github",
         "url": "https://github.com"
       }

@@ -9,7 +9,6 @@ linters:
     - cyclop
     - dupl
     - err113
-    - exhaustruct_v5
     - funlen
     - gochecknoglobals
     - gochecknoinits
@@ -53,6 +52,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
+    - exhaustruct_v5
     - exptostd
     - fatcontext
     - forcetypeassert

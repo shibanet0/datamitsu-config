@@ -4,7 +4,49 @@ export const golangciYaml: config.ManagedConfig = {
     const prevLinters = previous.linters ?? {};
     const prevSettings = prevLinters.settings ?? {};
     const prevExclusions = prevLinters.exclusions ?? {};
-
+    const deprecatedExhaustruct = "exhaustruct";
+    const currentExhaustruct = "exhaustruct_v5";
+    const legacySettings = prevSettings[deprecatedExhaustruct];
+    if (legacySettings !== undefined) {
+      const migratedSettings = { ...legacySettings };
+      const settingNames = [
+        ["include", "enforce-patterns"],
+        ["exclude", "ignore-patterns"],
+        ["allow-empty-rx", "allow-empty-patterns"],
+      ] as const;
+      for (const [legacyName, currentName] of settingNames) {
+        if (legacyName in migratedSettings) {
+          migratedSettings[currentName] = migratedSettings[legacyName];
+          delete migratedSettings[legacyName];
+        }
+      }
+      if (
+        Array.isArray(legacySettings.include) &&
+        legacySettings.include.length > 0 &&
+        !("explicit-mode" in migratedSettings)
+      ) {
+        migratedSettings["explicit-mode"] = true;
+      }
+      prevSettings[currentExhaustruct] = merge(
+        migratedSettings,
+        prevSettings[currentExhaustruct] ?? {},
+      );
+      delete prevSettings[deprecatedExhaustruct];
+    }
+    for (const names of [prevLinters.enable, prevLinters.disable]) {
+      if (!Array.isArray(names)) continue;
+      for (let index = 0; index < names.length; index += 1) {
+        if (names[index] === deprecatedExhaustruct) {
+          names[index] = currentExhaustruct;
+        }
+      }
+    }
+    for (const rule of prevExclusions.rules ?? []) {
+      if (!Array.isArray(rule.linters)) continue;
+      rule.linters = rule.linters.map((name: string) =>
+        name === deprecatedExhaustruct ? currentExhaustruct : name,
+      );
+    }
     // Linter selection ported from the datamitsu core .golangci.yaml (golangci-lint v2).
     // Core-specific logic is intentionally NOT brought into this shared baseline:
     // depguard (xxh3/hashutil deny), forbidigo (os.Getenv policy), the gosec
@@ -27,6 +69,7 @@ export const golangciYaml: config.ManagedConfig = {
       "durationcheck",
       "embeddedstructfieldcheck",
       "errcheck",
+      "exhaustruct_v5",
       "errchkjson",
       "errname",
       "errorlint",
@@ -100,7 +143,6 @@ export const golangciYaml: config.ManagedConfig = {
       "cyclop",
       "dupl",
       "err113",
-      "exhaustruct_v5",
       "funlen",
       "gochecknoglobals",
       "gochecknoinits",

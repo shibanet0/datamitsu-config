@@ -433,6 +433,11 @@
       "app": "sqlc"
     },
     {
+      "subtree": ".bin/stylua",
+      "kind": "binary",
+      "app": "stylua"
+    },
+    {
       "subtree": ".bin/swag",
       "kind": "binary",
       "app": "swag"

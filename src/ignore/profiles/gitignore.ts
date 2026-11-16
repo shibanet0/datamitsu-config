@@ -17,6 +17,7 @@ export const gitignoreProfile: GitignoreProfile = {
       "parcelCache",
       "dotTemp",
       "dotTmp",
+      "pycache",
     ],
     "Claude Code project files": ["claude", "claudeSkills"],
     "Codex CLI project files": ["codex", "codexPrompts"],

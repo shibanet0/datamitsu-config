@@ -1,5 +1,6 @@
 import configConventional from "@commitlint/config-conventional";
 import { type UserConfig } from "@commitlint/types";
+import createConventionalPreset from "conventional-changelog-conventionalcommits";
 import { fileURLToPath } from "node:url";
 
 /**
@@ -20,11 +21,21 @@ const raiseWarningsToErrors = (rules: Rules): Rules =>
     ),
   ) as Rules;
 
+// The preset's published declaration omits its runtime return shape.
+const conventionalPreset = createConventionalPreset() as { parser: unknown };
+
 const baseConfig = {
   ...configConventional,
   formatter: fileURLToPath(import.meta.resolve("@commitlint/format")),
-  parserPreset: fileURLToPath(import.meta.resolve("conventional-changelog-conventionalcommits")),
-  rules: raiseWarningsToErrors(configConventional.rules),
+  parserPreset: {
+    name: fileURLToPath(import.meta.resolve("conventional-changelog-conventionalcommits")),
+    parserOpts: conventionalPreset.parser,
+  },
+  rules: {
+    ...raiseWarningsToErrors(configConventional.rules),
+    "header-max-length": [0],
+    "subject-case": [0],
+  },
 } satisfies UserConfig;
 
 export const defineConfig = (

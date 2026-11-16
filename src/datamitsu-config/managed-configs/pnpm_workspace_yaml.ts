@@ -34,6 +34,9 @@ export const pnpmWorkspaceYaml: config.ManagedConfig = {
     const allowBuilds = {
       ...base?.allowBuilds,
     };
+    if (allowBuilds.esbuild === undefined) {
+      allowBuilds.esbuild = false;
+    }
 
     delete allowBuilds["@shibanet0/datamitsu-config"];
 

@@ -408,6 +408,11 @@
       "app": "sqruff"
     },
     {
+      "subtree": ".bin/stylua",
+      "kind": "binary",
+      "app": "stylua"
+    },
+    {
       "subtree": ".bin/syft",
       "kind": "binary",
       "app": "syft"

@@ -58,7 +58,7 @@ Every datamitsu command follows the same rule:
 ### Monorepo
 
 - Turborepo + pnpm workspace. Every package — including Go and Rust — carries a `package.json` so `turbo run <script>` orchestrates builds in dependency order.
-- Script names follow the Project Scripts policy; heavy build logic goes to a Taskfile invoked via `pnpm dm exec task -- <task>`.
+- Script names follow the Project Scripts policy, including documented extensions and tool-required names. Turbo owns cross-package dependencies; Taskfile owns package-local steps, invoked via `pnpm dm exec task -- <task>`. Do not duplicate Turbo's package graph in Taskfile.
 
 ### Docs
 

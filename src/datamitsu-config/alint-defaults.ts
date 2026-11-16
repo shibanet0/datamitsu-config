@@ -91,14 +91,23 @@ export const alintNamingRules: NamingRule[] = [
 
 export function buildManagedAlintYaml(): string {
   return YAML.stringify({
-    rules: alintNamingRules.map((rule) => ({
-      id: rule.id,
-      kind: "filename_regex",
-      level: "error",
-      message: rule.message,
-      paths: rule.paths,
-      pattern: rule.pattern,
-    })),
+    rules: [
+      ...alintNamingRules.map((rule) => ({
+        id: rule.id,
+        kind: "filename_regex",
+        level: "error",
+        message: rule.message,
+        paths: rule.paths,
+        pattern: rule.pattern,
+      })),
+      {
+        denied: ["**/*.{key,p12,pfx}"],
+        id: "s0-sensitive-key-file-names",
+        kind: "git_no_denied_paths",
+        level: "error",
+        message: "Private key and PKCS#12 filenames are forbidden",
+      },
+    ],
     version: 1,
   });
 }

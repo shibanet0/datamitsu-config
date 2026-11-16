@@ -130,6 +130,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "sort-package-json",
     "sqruff",
     "stylelint",
+    "stylua",
     "syncpack",
     "tflint",
     "tombi",

@@ -1,5 +1,21 @@
 # Contributing
 
+## Development launcher
+
+Use `pnpm dm` in this repository. Its package script sets `DATAMITSU_DEV_MODE` and
+`DATAMITSU_PACKAGE_NAME`, and records `pnpm dm` for later invocations by generated hooks.
+Calling `node bin/datamitsu.js` directly does not set those development inputs.
+
+A fresh worktree needs installed dependencies and the built configuration bundle before
+this launcher can load the local core and configuration. The recorded command is not a
+dependency-installation or build bootstrap. Published consumers use their own package-manager
+launcher; this override applies only to this repository's development script.
+
+The repository's `prepare` runs `pnpm run build INIT_QUIET=true`: the build creates the
+configuration bundle before its init step runs with `--quiet`. Ordinary `pnpm build`
+keeps normal init output, as do Lefthook hooks. Build output and actionable init warnings
+are not suppressed by the lifecycle's quiet setting.
+
 ## Releases
 
 Releases are automated via GitHub Actions ([release.yml](.github/workflows/release.yml)).
@@ -70,3 +86,15 @@ The linter also starts `go` from PATH to load the analyzed project. CI adds the
 configured SDK's bin directory to PATH through `datamitsu runtime run go -- env GOROOT`;
 building the linter alone does not select that subprocess's Go version. Consumer
 environments must likewise provide a Go SDK compatible with their project's go.mod.
+
+## OCI bundle annotations
+
+The OCI map describes Docker COPY roots, not necessarily exact owned store targets.
+For `python-data`, the publisher must observe and annotate
+`.runtime-data/<runtime>/<identity>/python` inside the layer. Annotating only the
+identity directory fails the seeder's integrity check, even when seeding unrelated apps.
+Keep that check strict; do not omit Python layers or weaken validation to pass release smoke.
+
+After changing layer annotations, verify subtree resolution against actual tar entry names
+and run the bundle seed/offline execution smoke on a newly produced bundle. Retrying a smoke
+job against an already published malformed bundle does not repair its annotations.

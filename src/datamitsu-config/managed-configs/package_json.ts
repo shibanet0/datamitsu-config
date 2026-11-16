@@ -28,27 +28,14 @@ export const packageJson: config.ManagedConfig = {
       data = {};
     }
 
-    // TODO(less-opinionated): force-deleting these lifecycle/quality scripts is
-    // intentionally aggressive for now. `datamitsu init` already runs via
-    // lefthook, so the old `prepare: datamitsu init` injection just re-ran it
-    // (~1s wasted) — setting prepare to undefined cleans that stale injection out
-    // of every managed project on the next reconcile. Once all projects are migrated,
-    // stop clobbering these: public projects legitimately define their own
-    // prepare/postinstall/preinstall/fix/lint and overwriting them is exactly the
-    // opinionated behavior we want to drop.
-    const scripts: NonNullable<PackageJson["scripts"]> = {
-      ...data.scripts,
-      ...(isRoot
-        ? ({
-            postinstall: undefined,
-            preinstall: undefined,
-            prepare: undefined,
-          } as any)
-        : {}),
-
-      fix: undefined,
-      lint: undefined,
-    };
+    const scripts: NonNullable<PackageJson["scripts"]> = { ...data.scripts };
+    delete scripts.fix;
+    delete scripts.lint;
+    if (isRoot) {
+      delete scripts.postinstall;
+      delete scripts.preinstall;
+      scripts.prepare = "datamitsu init --quiet";
+    }
 
     const config: PackageJson = {
       ...data,

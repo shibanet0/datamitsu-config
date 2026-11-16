@@ -68,6 +68,7 @@ export const goFormatExcludeGlobs: string[] = [
   "**/.*/**",
 ];
 
+export const luaGlobs: string[] = ["**/*.lua", "**/*.luau"];
 export const sqlGlobs: string[] = ["**/*.sql"];
 
 /**

@@ -16,6 +16,7 @@ import {
   jsonGlobs,
   kotlinGlobs,
   lefthookConfigGlobs,
+  luaGlobs,
   makefileGlobs,
   markdownGlobs,
   oxfmtGlobs,
@@ -79,6 +80,7 @@ type Tool =
   | "sort-package-json"
   | "sqruff"
   | "stylelint"
+  | "stylua"
   | "syncpack"
   | "terraform-docs"
   | "terraform-fmt"
@@ -127,6 +129,7 @@ const _fixPriority: Tool[] = [
   "ruff-format",
   "sqruff",
   "ktfmt",
+  "stylua",
   "typstyle",
   "dotenv-linter",
   "shfmt",
@@ -174,6 +177,7 @@ const _lintPriority: Tool[] = [
   "ty",
   "ktfmt",
   "ktlint",
+  "stylua",
   "typstyle",
   "editorconfig-checker",
   "dotenv-linter",
@@ -1504,6 +1508,38 @@ export const toolsConfig: config.MapOfTools = {
       },
     },
     projectTypes: ["npm-package", "typescript-project"],
+  },
+  stylua: {
+    name: "StyLua - Lua Code Formatter",
+    operations: {
+      fix: {
+        app: "stylua",
+        args: [
+          "--respect-ignores",
+          "--config-path",
+          "{managedConfig:stylua.toml}",
+          "--verify",
+          "{file}",
+        ],
+        globs: luaGlobs,
+        priority: fixPriority.stylua,
+        scope: "per-file",
+      },
+      lint: {
+        app: "stylua",
+        args: [
+          "--respect-ignores",
+          "--config-path",
+          "{managedConfig:stylua.toml}",
+          "--check",
+          "{file}",
+        ],
+        globs: luaGlobs,
+        invalidateOn: [".styluaignore"],
+        priority: lintPriority.stylua,
+        scope: "per-file",
+      },
+    },
   },
   syncpack: {
     name: "syncpack",
