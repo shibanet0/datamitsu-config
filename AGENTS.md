@@ -555,7 +555,8 @@ Do not hand-edit `parsers.ts`.
 The minimum core is a feature floor, not an install pin: `sync:datamitsu-version`
 must reject stable pins below the existing floor rather than lower it. Config
 generators use native `merge`, introduced in stable 0.5.2; 0.5.1 is unsupported.
-The package-local wrapper pins 0.5.2 so clean consumers use that same stable core.
+The package-local wrapper pins 0.6.0; named-runtime execution and verified CPython
+provisioning require that stable core. Keep the parser pin and generated Docker base tags aligned.
 
 `task test:fresh-init` checks both sides: a SHA-256-verified published 0.5.1 binary
 must reject the built bundle before any managed-content callback runs; the pinned

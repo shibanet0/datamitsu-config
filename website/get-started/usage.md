@@ -21,9 +21,9 @@ pnpm dm init
 ```
 
 Use the package-local wrapper to run the exact core this configuration was tested
-with. The package pins its core dependency; a separately installed global binary
-does not inherit that pin. In particular, an older core cannot provide the verified
-Python provisioning and named-runtime execution this configuration uses.
+with. The package pins Datamitsu 0.6.0 and its matching parser module; a separately
+installed global binary does not inherit that pin. An older core cannot provide the
+verified Python provisioning and named-runtime execution this configuration uses.
 
 To bypass a shell alias that routes `dm` to a global binary, invoke the wrapper directly:
 
