@@ -149,7 +149,7 @@
     "eslint-plugin-turbo": "2.11.10",
     "eslint-plugin-unicorn": "79.0.0",
     "eslint-plugin-unused-imports": "4.4.1",
-    "eslint-typegen": "2.3.1",
+    "eslint-typegen": "2.3.2",
     "globals": "17.14.0",
     "json-schema-to-typescript": "16.0.0",
     "knip": "6.45.1",

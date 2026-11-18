@@ -410,8 +410,8 @@ importers:
         specifier: 4.4.1
         version: 4.4.1(@typescript-eslint/eslint-plugin@8.72.2(@typescript-eslint/parser@8.72.2(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       eslint-typegen:
-        specifier: 2.3.1
-        version: 2.3.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+        specifier: 2.3.2
+        version: 2.3.2(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       globals:
         specifier: 17.14.0
         version: 17.14.0
@@ -3483,8 +3483,8 @@ packages:
     peerDependencies:
       eslint: '>=8'
 
-  eslint-typegen@2.3.1:
-    resolution: {integrity: sha512-zVdh8rThBvv2o5T/K524Fr5iy1Jo0q09rHL7y7FbOhgMB177T2gw+shxfC4ChCEqdq6/y6LJA4j8Fbr/Xls9aw==}
+  eslint-typegen@2.3.2:
+    resolution: {integrity: sha512-6spoueTVxyuRaL57VmMgB3vVObOFemXEmmmyIHIyQ4dM/7kBsRoEy0zJ+YtdRM6M+Z8Gl1Rh1Zq/zcTJu0lKSA==}
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
@@ -7909,7 +7909,7 @@ snapshots:
       '@eslint-community/eslint-utils': 4.10.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
 
-  eslint-typegen@2.3.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0)):
+  eslint-typegen@2.3.2(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0)):
     dependencies:
       eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
       json-schema-to-typescript-lite: 15.0.0

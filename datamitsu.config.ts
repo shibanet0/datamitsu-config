@@ -443,7 +443,7 @@ post-checkout:
     "eslint-plugin-turbo": "2.11.10",
     "eslint-plugin-unicorn": "79.0.0",
     "eslint-plugin-unused-imports": "4.4.1",
-    "eslint-typegen": "2.3.1",
+    "eslint-typegen": "2.3.2",
     "globals": "17.14.0",
     "json-schema-to-typescript": "16.0.0",
     "knip": "6.45.1",
@@ -475,7 +475,7 @@ post-checkout:
   }
 }
 `,
-      expectChainHash: "xxh3:085db4f070d9619e53e37fc6f3a77b03",
+      expectChainHash: "xxh3:737c56f8b7e88a8cae574ba988ca4343",
     },
     "pnpm-workspace.yaml": {
       ...config.managedConfigs?.["pnpm-workspace.yaml"],
@@ -557,7 +557,7 @@ catalog:
   eslint-plugin-turbo: 2.11.10
   eslint-plugin-unicorn: 79.0.0
   eslint-plugin-unused-imports: 4.4.1
-  eslint-typegen: 2.3.1
+  eslint-typegen: 2.3.2
   execa: 10.2.1
   fast-glob: 3.3.3
   globals: 17.14.0
@@ -620,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:3fcf1e724c864145d8cf09fe6455015a",
+      expectChainHash: "xxh3:8d0709bc3887974a8b2d9c27ae6890bd",
     },
   },
   tools: {
