@@ -21,7 +21,7 @@ pnpm dm init
 ```
 
 Use the package-local wrapper to run the exact core this configuration was tested
-with. The package pins Datamitsu 0.6.0 and its matching parser module; a separately
+with. The package pins Datamitsu 0.6.1 and its matching parser module; a separately
 installed global binary does not inherit that pin. An older core cannot provide the
 verified Python provisioning and named-runtime execution this configuration uses.
 
@@ -51,8 +51,12 @@ openapi-generator.
 
 The default Python is 3.15.2. Apps whose locked native dependencies lack Python
 3.15 wheels explicitly select the separate `uv-python314` runtime (Python 3.14.8).
-Both runtimes use uv 0.13.6 and explicit SHA-256-pinned Python catalogs; managed
+Both runtimes use uv 0.13.7 and explicit SHA-256-pinned Python catalogs; managed
 installs continue to prohibit source builds.
+
+Managed Semgrep 1.185.0 is unavailable on Intel macOS because upstream no longer
+publishes x86_64 macOS wheels. Apple Silicon and the other supported targets retain
+the updated app; this does not remove any other tool from Intel Macs.
 
 Reconciliation installs Codex skills in `.agents/skills/<name>/SKILL.md`, with YAML
 `name` and `description` metadata. Codex discovers them automatically; invoke one
@@ -654,6 +658,18 @@ With the pinned Bun 1.4.1, ESLint can report a shifted column for TypeScript syn
 `.svelte` needs nothing configured. oxfmt formats components in every project, and oxlint reads the `<script>` block; ESLint adds `eslint-plugin-svelte` as soon as `svelte` (or `@sveltejs/kit`) is in the project's `package.json`, because its rules only mean something where components exist. stylelint lints the `<style>` block too, so a Svelte project gets CSS checks without naming anything either.
 
 The svelte compiler all of them need ships with the managed tools rather than being resolved from the project.
+
+## TOML manifests
+
+Tombi formats and checks TOML files. Version 1.11.2 also enables Cargo and
+pyproject metadata checks by default, including missing manifest paths and invalid
+Python dependency or entry-point declarations. These checks can fail manifests
+that passed the previous version. Project settings in `.tombi.toml` remain in
+effect; ordinary warning diagnostics do not fail unless `--error-on-warnings` is set.
+
+Cargo formatting now follows the embedded schema's updated `[features]` ordering.
+Tombi configuration inheritance uses arrays: write `extends = ["base.toml"]`,
+not a single string.
 
 ## Kotlin
 

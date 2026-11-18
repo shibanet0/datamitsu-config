@@ -31,7 +31,7 @@ const preset = (name: string): string => fileURLToPath(import.meta.resolve(name)
  *
  * The rules a formatter would fight over left stylelint in 16 — indentation, string quotes, brace
  * and whitespace placement are gone, not deprecated — which is why there is no `-config-prettier`
- * equivalent between this and oxfmt. Not _everything_ stylistic went with them: of standard's 41
+ * equivalent between this and oxfmt. Not _everything_ stylistic went with them: of standard's 40
  * rules, 9 are still conventions about blank lines and quoting (`rule-empty-line-before`,
  * `font-family-name-quotes`, `comment-whitespace-inside`). Those coexist rather than conflict —
  * measured: stylelint's `--fix` inserts the blank line before a comment, oxfmt leaves it, and the
@@ -120,6 +120,14 @@ const baseConfig: Config = {
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
   reportUnscopedDisables: true,
+  // Newly enabled by recommended 19; keep their prior off state pending review.
+  rules: {
+    "at-charset-rule-no-invalid": null,
+    "selector-no-deprecated": null,
+    "selector-no-invalid": null,
+    "selector-no-unmatchable": null,
+    "value-no-invalid": null,
+  },
 };
 
 /**

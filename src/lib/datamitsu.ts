@@ -1,4 +1,4 @@
-import { execa, type Options as ExecaOptions } from "execa";
+import { execa, type Options as ExecaOptions, type ResultPromise } from "execa";
 import { fileURLToPath } from "node:url";
 
 export interface DatamitsuGlobalFlags {
@@ -31,11 +31,12 @@ export class Datamitsu {
     toolName: string,
     args?: string[],
     options?: OptionsType,
-  ) {
+  ): ResultPromise<OptionsType> {
+    // Execa's internal option merge type is not assignable with exact optional properties.
     return execa(
       this.binaryPath,
       [...this.globalFlags, "exec", toolName, "--", ...(args || [])],
       options,
-    );
+    ) as unknown as ResultPromise<OptionsType>;
   }
 }
