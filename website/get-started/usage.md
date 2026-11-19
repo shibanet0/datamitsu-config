@@ -21,7 +21,7 @@ pnpm dm init
 ```
 
 Use the package-local wrapper to run the exact core this configuration was tested
-with. The package pins Datamitsu 0.6.1 and its matching parser module; a separately
+with. The package pins Datamitsu 0.6.2 and its matching parser module; a separately
 installed global binary does not inherit that pin. An older core cannot provide the
 verified Python provisioning and named-runtime execution this configuration uses.
 

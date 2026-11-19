@@ -493,7 +493,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.4
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.6.1
+  "@datamitsu/datamitsu": 0.6.2
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.30.1
@@ -620,7 +620,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:8d0709bc3887974a8b2d9c27ae6890bd",
+      expectChainHash: "xxh3:f7242a0ac7af6047c2ed1cbe74862236",
     },
   },
   tools: {
