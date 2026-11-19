@@ -20,11 +20,9 @@ const isTableArray = (value: unknown): boolean =>
   Array.isArray(value) && value.length > 0 && value.every(isTable);
 
 /**
- * Plain keys first, tables after. In TOML every key after a table header belongs to that table, so
- * the order is the meaning. datamitsu's `TOML.parse` returns keys sorted, which puts a project's
- * `[[overrides]]` between `no-roast` and `report-unused-suppressions`, and its `TOML.stringify`
- * writes an array of tables where it finds it — so the policy keys after it were written into the
- * last override, where droast reads them as override settings.
+ * Keep root keys ahead of tables for the minimum supported core, whose TOML.stringify writes array
+ * tables in property order. Newer cores fix this globally, but consumers may still use the older
+ * core allowed by getMinVersion().
  */
 export const plainKeysFirst = (data: Record<string, unknown>): Record<string, unknown> => {
   const entries = Object.entries(data);
