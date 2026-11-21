@@ -560,6 +560,32 @@ const allApps: BinManager.MapOfApps = {
       ...nodeVersions.syncpack,
     },
   },
+  terraform: {
+    ...externalApps["terraform"],
+    caches: ["providers"],
+    runtimeEnv: {
+      ...externalApps["terraform"]?.runtimeEnv,
+      TF_PLUGIN_CACHE_DIR: "{toolCache:providers}",
+    },
+  },
+  terragrunt: {
+    ...otherBinaryApps["terragrunt"],
+    caches: ["providers"],
+    dependsOn: [...(otherBinaryApps["terragrunt"]?.dependsOn ?? []), "terraform", "tofu"],
+    runtimeEnv: {
+      ...otherBinaryApps["terragrunt"]?.runtimeEnv,
+      TG_PROVIDER_CACHE: "1",
+      TG_PROVIDER_CACHE_DIR: "{toolCache:providers}",
+    },
+  },
+  tofu: {
+    ...otherBinaryApps["tofu"],
+    caches: ["providers"],
+    runtimeEnv: {
+      ...otherBinaryApps["tofu"]?.runtimeEnv,
+      TF_PLUGIN_CACHE_DIR: "{toolCache:providers}",
+    },
+  },
   tsc: {
     description: nodeVersions.typescript.description,
     files: {

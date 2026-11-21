@@ -93,7 +93,7 @@ export const APP_CATEGORIES: Record<string, string[]> = {
     "wt",
   ],
   "HTTP & gRPC Clients": ["grpcurl", "httpstat", "xh"],
-  "Infrastructure as Code": ["terraform-docs", "terragrunt", "tfupdate", "tofu"],
+  "Infrastructure as Code": ["terraform", "terraform-docs", "terragrunt", "tfupdate", "tofu"],
   "Linters & Formatters": [
     "actionlint",
     "alint",

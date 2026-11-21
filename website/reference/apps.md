@@ -11,7 +11,7 @@ To update, run: `pnpm dm exec task -- docs:generate`
 
 Apps are the actual applications managed by datamitsu. Unlike [Tools](tools.md) which are configurations, Apps are the binaries and packages that get installed and executed.
 
-This configuration manages **118 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
+This configuration manages **119 apps** across multiple runtimes (binary, bun, node, python, go, jvm).
 
 ## Apps by Category
 
@@ -22,7 +22,7 @@ This configuration manages **118 apps** across multiple runtimes (binary, bun, n
 - **Documentation & Spelling** (10 apps): cspell, d2, harper-cli, etc.
 - **Git & Releases** (8 apps): commitlint, conventional-changelog, dm-internal-lefthook-upstream, etc.
 - **HTTP & gRPC Clients** (3 apps): grpcurl, httpstat, xh
-- **Infrastructure as Code** (4 apps): terraform-docs, terragrunt, tfupdate, etc.
+- **Infrastructure as Code** (5 apps): terraform, terraform-docs, terragrunt, etc.
 - **Linters & Formatters** (43 apps): actionlint, alint, ast-grep, etc.
 - **Package Managers** (2 apps): pnpm, utpm
 - **Secrets & Signing** (4 apps): age, age-keygen, cosign, etc.
@@ -130,6 +130,7 @@ This configuration manages **118 apps** across multiple runtimes (binary, bun, n
 | syft                          | Security Scanners          | binary  | [Info](https://github.com/anchore/syft){:target="_blank"}                                                                              | CLI tool and library for generating a Software Bill of Materials from container images and filesystems                                                                                                  |
 | syncpack                      | Linters & Formatters       | node    | [Info](https://www.npmjs.com/package/syncpack){:target="_blank"}                                                                       | Consistent dependency versions in large JavaScript Monorepos                                                                                                                                            |
 | task                          | Task Runners & Dev Servers | binary  | [Info](https://github.com/go-task/task){:target="_blank"}                                                                              | A fast, cross-platform build tool inspired by Make, designed for modern workflows.                                                                                                                      |
+| terraform                     | Infrastructure as Code     | binary  | N/A                                                                                                                                    | Terraform infrastructure as code CLI                                                                                                                                                                    |
 | terraform-docs                | Infrastructure as Code     | binary  | [Info](https://github.com/terraform-docs/terraform-docs){:target="_blank"}                                                             | Generate documentation from Terraform modules in various output formats                                                                                                                                 |
 | terragrunt                    | Infrastructure as Code     | binary  | [Info](https://github.com/gruntwork-io/terragrunt){:target="_blank"}                                                                   | Terragrunt is a flexible orchestration tool that allows Infrastructure as Code written in OpenTofu/Terraform to scale.                                                                                  |
 | tflint                        | Linters & Formatters       | binary  | [Info](https://github.com/terraform-linters/tflint){:target="_blank"}                                                                  | A Pluggable Terraform Linter                                                                                                                                                                            |

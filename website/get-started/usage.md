@@ -374,6 +374,35 @@ Old store entries remain until an explicit `store clear`; `cache clear` does not
 remove runtime data. Clearing the store is not required for this upgrade and can
 disrupt tools already running from it.
 
+Managed Terraform, OpenTofu and Terragrunt declare `caches: ["providers"]`.
+The core creates each named app cache as a sibling beneath the same checkout-
+and app-identity-scoped parent as the implicit `default` cache. The `default`
+name is reserved; unknown names fail configuration loading. The former
+`cacheDirs` API has no compatibility path or data migration. No init command or
+separate user-directory path is needed.
+
+Terraform and OpenTofu use `TF_PLUGIN_CACHE_DIR={toolCache:providers}`.
+Terragrunt enables its provider cache server with `TG_PROVIDER_CACHE=1` and
+`TG_PROVIDER_CACHE_DIR={toolCache:providers}`. Its `terraform` and `tofu`
+dependencies put the managed native binaries before system commands on PATH;
+the engine choice is unchanged, and explicit absolute engine paths remain
+caller overrides. Standalone Terraform's plugin cache is not concurrency-safe;
+OpenTofu uses best-effort file locking. Terragrunt's provider cache server
+coordinates parallel initialization. Dependency lock-file verification stays on.
+
+For `terragrunt run --all`, select a non-default engine at stack level, for
+example `--tf-path terraform`, before `--`. Terragrunt 1.1.6 starts registry
+discovery for its cache server before per-unit `terraform_binary` overrides;
+those overrides alone can leave Terraform providers uncached when the stack
+defaults to OpenTofu. In a composed Terragrunt-to-OpenTofu source-shim run, the
+server owns provider artifacts; OpenTofu's declared standalone cache directory
+can remain empty.
+
+An app upgrade selects a fresh cache. `datamitsu cache clear` removes the
+checkout's caches without deleting installed tools. Stop affected tools before
+clearing; refresh source mode if its farm was removed, and rerun `init` for
+working directories with provider symlinks into a removed cache.
+
 golangci-lint is built from its locked Go module using the configured Go runtime,
 rather than downloaded as a prebuilt executable. Its compiler must be at least as
 new as the Go version it analyzes: the standard importer embedded in an older
