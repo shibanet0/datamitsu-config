@@ -21,8 +21,6 @@ const MANAGED_SECTIONS = [
   "Makefile",
 ] as const;
 
-type SectionName = (typeof MANAGED_SECTIONS)[number];
-
 /**
  * `utf8` is not one of the values the specification defines (latin1, utf-8, utf-8-bom, utf-16be,
  * utf-16le), and earlier versions of this generator wrote it. It is replaced rather than preserved:
@@ -42,6 +40,7 @@ const normalizeCharset = (properties: Record<string, string>): Record<string, st
 
 export const editorconfig: config.ManagedConfig = {
   content: (context) => {
+    type SectionName = (typeof MANAGED_SECTIONS)[number];
     // https://editorconfig.org
     // https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
     const parsed = INI.parse(context.originalContent || "");

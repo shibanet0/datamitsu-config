@@ -223,6 +223,11 @@
       "app": "allurectl"
     },
     {
+      "subtree": ".bin/ast-grep",
+      "kind": "binary",
+      "app": "ast-grep"
+    },
+    {
       "subtree": ".bin/buf",
       "kind": "binary",
       "app": "buf"

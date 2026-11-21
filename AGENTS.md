@@ -385,7 +385,7 @@ datamitsu runs eslint with `--quiet`, so a warn-level rule reports nothing and f
 
 A rule that should not fail the build goes in `src/lint-rules` with a reason, not to a severity nobody sees.
 
-knip's 17 issue types answer to the same rule: [src/apps/knip/index.ts](src/apps/knip/index.ts) emits every one of them as `error` or `off`, overriding knip's own default of `warn` for `cycles`.
+knip's 18 issue types answer to the same rule: [src/apps/knip/index.ts](src/apps/knip/index.ts) emits every one of them as `error` or `off`, overriding knip's own default of `warn` for `cycles`.
 
 ## Knip
 
@@ -426,7 +426,7 @@ Whatever patterns a project writes there carry no `!`, matching the plugin. Only
 
 `defineConfig(overrides, { adopted })` names the issue groups a project reports; everything outside the list is `off` unless the config names that issue type in `rules`, which still wins per type.
 
-The default is every group knip reports on its own terms. This package states the bar; a project declares its distance from it, in its own repository, where that decision has an author and a date. The opposite arrangement was tried first and is a trap: a default that quietly withholds twelve of seventeen checks reads as a clean codebase, and the project never learns what it is not checking. It is the same residual with no author behind it that `permanent-enabled.ts` exists to prevent.
+The default is every group knip reports on its own terms. This package states the bar; a project declares its distance from it, in its own repository, where that decision has an author and a date. The opposite arrangement was tried first and is a trap: a default that quietly withholds thirteen of eighteen checks reads as a clean codebase, and the project never learns what it is not checking. It is the same residual with no author behind it that `permanent-enabled.ts` exists to prevent.
 
 So the ladder runs the other way. A project adopting knip over existing code writes `{ adopted: ["correctness"] }` — the one group whose findings are defects rather than debt, and small at any age: 16 findings against 734 on the monorepo above. That line lives in the project's `knip.config.js`, is visible in its review, and is meant to shrink until it can go. Once most of the codebase passes a group, prefer knip's `ignoreIssues` — paths × issue types — over dropping the whole group again: it keeps new code covered, and it shrinks the way `src/lint-rules/temporary.ts` shrinks.
 

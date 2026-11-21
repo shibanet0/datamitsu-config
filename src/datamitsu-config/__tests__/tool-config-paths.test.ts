@@ -8,8 +8,6 @@ interface ConfigArg {
   tool: string;
 }
 
-type ManagedConfigs = typeof import("../cmd-managed-configs.js").managedConfigs;
-
 const placeholder = (key: string) => `{managedConfig:${key}}`;
 
 const referencedKeys = (value: string): string[] =>
@@ -46,6 +44,7 @@ const EJECTABLE = [
 ];
 
 describe("tool config paths", () => {
+  type ManagedConfigs = typeof import("../cmd-managed-configs.js").managedConfigs;
   let managedConfigs: ManagedConfigs;
 
   beforeAll(async () => {

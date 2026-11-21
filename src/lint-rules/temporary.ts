@@ -28,9 +28,19 @@ import type { KnownRuleName } from "./rule-names.generated";
  * enable a new check. Decide each rule before removing its entry.
  */
 const DEPENDENCY_UPDATE_RULES: Partial<Record<KnownRuleName, string>> = {
+  "@eslint-react/unstable-exhaustive-deps":
+    "new in @eslint-react/eslint-plugin 5.30.1 — off until decided",
   "@typescript-eslint/no-generated-empty-object-type": "new in oxlint 1.86.0 — off until decided",
+  "@typescript-eslint/no-unsafe-enum-assignment": "new in oxlint 1.93.0 — off until decided",
   "escompat/no-bigint-function": "new in eslint-plugin-escompat 4.1 — off until decided",
   "escompat/no-private-in": "new in eslint-plugin-escompat 4.0 — off until decided",
+  "import-x/avoid-barrel-files": "new in eslint-plugin-import-x 4.18.1 — off until decided",
+  "import-x/avoid-importing-barrel-files":
+    "new in eslint-plugin-import-x 4.18.1 — off until decided",
+  "import-x/avoid-namespace-import": "new in eslint-plugin-import-x 4.18.1 — off until decided",
+  "import-x/avoid-re-export-all": "new in eslint-plugin-import-x 4.18.1 — off until decided",
+  "perfectionist/sort-constructor-parameters":
+    "new in eslint-plugin-perfectionist 5.13.0 — off until decided",
   "playwright/no-identical-title": "new in eslint-plugin-playwright 2.12 — off until decided",
   "security/detect-invisible-characters": "new in eslint-plugin-security 4.2.0 — off until decided",
   "sonarjs/avoid-mutating-nested-properties-of-shallow-clones":

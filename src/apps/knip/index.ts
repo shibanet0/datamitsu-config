@@ -106,6 +106,7 @@ const ISSUE_TYPE_GROUPS = {
   nsExports: "namespaces",
   nsTypes: "namespaces",
   optionalPeerDependencies: "dependencies",
+  subpaths: "exports",
   types: "exports",
   unlisted: "correctness",
   unresolved: "correctness",
@@ -115,8 +116,8 @@ const ISSUE_TYPES = Object.keys(ISSUE_TYPE_GROUPS) as IssueType[];
 
 // Everything knip reports on its own terms. This config states the bar; a
 // project declares its distance from it, in its own repository, where the
-// decision has an author and a date. A default that quietly withholds twelve of
-// seventeen checks is the same residual with no author behind it that
+// decision has an author and a date. A default that quietly withholds thirteen of
+// eighteen checks is the same residual with no author behind it that
 // `src/lint-rules/permanent-enabled.ts` exists to prevent — and it reads as a
 // clean codebase, which is worse than a red one.
 //
