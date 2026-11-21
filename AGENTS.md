@@ -17,6 +17,18 @@ Build-time scripts (`scripts/*.ts`) run in Node.js and **can** use Node APIs —
 
 **Key constraint:** code in `src/datamitsu-config/` must never import `node:*` modules or use Node-specific APIs. All Node API usage must be confined to `scripts/`.
 
+Terraform, OpenTofu and Terragrunt declare `caches: ["providers"]` and use
+`{toolCache:providers}`. Named caches and the implicit `default` are siblings
+beneath the same checkout/app-identity parent. `default` is reserved and
+unknown names fail configuration loading. The removed `cacheDirs` API has no
+compatibility path or data migration. Cache clearing is unchanged.
+Terragrunt depends on managed `terraform` and `tofu` native binaries so engine
+names do not fall through to system versions; do not force one engine globally.
+Preserve checksum verification. Standalone Terraform plugin caching is not
+concurrency-safe; keep it distinct from Terragrunt's coordinated cache server.
+Stop tools before `cache clear`; refresh removed farms and reinitialize stale
+provider symlinks. Config publication remains blocked on a supporting core release.
+
 ## Skill Adapters
 
 `skills-chunks/<name>/adapters/codex.md` is a skill, not a slash-command prompt:

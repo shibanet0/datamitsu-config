@@ -453,6 +453,11 @@
       "app": "task"
     },
     {
+      "subtree": ".bin/terraform",
+      "kind": "binary",
+      "app": "terraform"
+    },
+    {
       "subtree": ".bin/terraform-docs",
       "kind": "binary",
       "app": "terraform-docs"

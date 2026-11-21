@@ -81,10 +81,21 @@ export function minReleaseAgeCutoff(minutes: string | undefined, now: Date): Dat
 }
 
 /**
- * The first sha256 in a checksum file: either a bare hash or `<hash> <file name>`.
+ * Read a bare checksum or the exact asset entry in a SHA256SUMS manifest.
  */
-export function parseChecksumFile(text: string): string | undefined {
-  return /\b[0-9a-f]{64}\b/i.exec(text)?.[0].toLowerCase();
+export function parseChecksumFile(text: string, filename?: string): string | undefined {
+  const trimmed = text.trim();
+  if (/^[0-9a-f]{64}$/iu.test(trimmed)) return trimmed.toLowerCase();
+  let selected: string | undefined;
+  for (const line of trimmed.split(/\r?\n/u)) {
+    const match = /^([0-9a-f]{64})[\t ]+\*?(.+)$/iu.exec(line.trim());
+    if (!match || (filename !== undefined && match[2] !== filename)) continue;
+    const hash = match[1]!.toLowerCase();
+    if (filename === undefined) return hash;
+    if (selected !== undefined && selected !== hash) return undefined;
+    selected = hash;
+  }
+  return selected;
 }
 
 export function parseVersion(tag: string): [number, number, number] | undefined {
@@ -128,6 +139,7 @@ function buildUrl(
       ? ".exe"
       : "";
   return template
+    .replaceAll("{versionBare}", replacements.version.replace(/^v/u, ""))
     .replaceAll("{version}", replacements.version)
     .replaceAll("{os}", replacements.os)
     .replaceAll("{arch}", replacements.arch)
@@ -243,8 +255,16 @@ async function main(): Promise<void> {
         const sha256 = await computeSha256(url);
 
         if (appMeta.checksumUrlTemplate) {
-          const checksumUrl = appMeta.checksumUrlTemplate.replaceAll("{url}", url);
-          const published = parseChecksumFile(await (await fetchOk(checksumUrl, undefined)).text());
+          const checksumUrl = buildUrl(
+            appMeta.checksumUrlTemplate,
+            { arch, os, version },
+            appMeta.extMap,
+          ).replaceAll("{url}", url);
+          const filename = decodeURIComponent(new URL(url).pathname.split("/").at(-1) ?? "");
+          const published = parseChecksumFile(
+            await (await fetchOk(checksumUrl, undefined)).text(),
+            filename,
+          );
           if (published !== sha256) {
             errors.push(
               `${appName} ${os}/${arch}: ${url} hashes to ${sha256}, ${checksumUrl} says ${published}`,

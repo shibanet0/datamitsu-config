@@ -100,6 +100,23 @@ describe("parseChecksumFile", () => {
   it("returns undefined without a hash", () => {
     expect(parseChecksumFile("<html>Not Found</html>")).toBeUndefined();
   });
+
+  it("selects the named archive rather than the first manifest checksum", () => {
+    const other = "a".repeat(64);
+    const manifest = `${other}  terraform_linux_amd64.zip\n${hash} *terraform_darwin_arm64.zip\n`;
+    expect(parseChecksumFile(manifest, "terraform_darwin_arm64.zip")).toBe(hash);
+    expect(parseChecksumFile(manifest, "missing.zip")).toBeUndefined();
+  });
+
+  it("accepts bare per-asset checksums but rejects a mismatched asset name", () => {
+    expect(parseChecksumFile(`${hash}\n`, "kubectl")).toBe(hash);
+    expect(parseChecksumFile(`${hash}  other.zip\n`, "terraform.zip")).toBeUndefined();
+  });
+
+  it("rejects conflicting duplicate checksums for the requested archive", () => {
+    const manifest = `${hash}  terraform.zip\n${"a".repeat(64)}  terraform.zip\n`;
+    expect(parseChecksumFile(manifest, "terraform.zip")).toBeUndefined();
+  });
 });
 
 describe("minReleaseAgeCutoff", () => {
