@@ -11,6 +11,10 @@ Minimize tokens, not lines. Losing even one unique rule, condition, exception, e
 
 Rewriting `AGENTS.md` and creating files are destructive: propose → confirm → apply. Never apply without explicit confirmation.
 
+**Deletion veto:** Never propose deleting a local classification that makes another rule apply. If an installed contract covers an action only because the project calls that action something else, retain both the classification and its dependent obligation. For example, a mandatory read before releases is not an independent read before CI tags. In contrast, a mandatory read before every package publication can cover an identical pre-publication obligation.
+
+Use the ordinary cleanup flow unless the user explicitly requests split recommendations. Length alone is not a split request. For split advice, stop after discovery and region mapping and use the advisory branch below; a `yes` to ordinary cleanup never authorizes splitting.
+
 ---
 
 ## Invariants
@@ -39,8 +43,8 @@ At every step, report rather than violate an invariant.
    - `.datamitsu/ai/agents/agents-base.md`
    - `.datamitsu/ai/agents/agents-docs-markdown.md`
    - `.datamitsu/ai/agents/agents-docs-website.md`
-4. Read the referenced chunk file. Treat it as read-only — never modify anything in `.datamitsu/`.
-5. If the bootstrap line is missing or points outside `.datamitsu/`, abort:
+4. Open the expected installed path from the project root. Use the managed `.datamitsu/` entry even if init links it to the local bundle store. Never substitute a different checkout, a web URL, or a guessed file.
+5. If the bootstrap is missing or does not name an expected installed path, abort:
    > This project's `AGENTS.md` does not reference any datamitsu chunk. This skill only works with
    > datamitsu-managed projects. Aborting.
 
@@ -67,6 +71,14 @@ Identify three regions in this exact order:
    headings. Subsections (`###` and deeper) belong to their parent section.
 
 Use sections for structure and reporting, not decisions (Step 3).
+
+### Explicit split advice only
+
+Before analyzing individual candidates, map the regions, task boundaries, shared definitions and read dependencies. Keep the bootstrap, override block, global constraints, definitions needed across tasks and unresolved conflicts in place.
+
+Consider only task-specific project rules below the bootstrap for routing. Recommend a rule module for binding instructions, a reference for lookup material, a skill for an explicitly invoked workflow, or ordinary prose for explanation. Neither optional reading nor skill discovery replaces a mandatory rule.
+
+For each candidate, show the reason, proposed destination and type, replacement root instruction and risk. The root must say when to **read before** the first affected action, with unchanged precedence and scope in every original situation. Decline if the route is ambiguous, circular, loses coverage or does not reduce what must normally be read. End with recommendations only: no writes, backups, automatic split or apply prompt.
 
 ---
 
@@ -123,11 +135,19 @@ Assign exactly one category per span. A section can yield deletions, extractions
 
 | Category              | Definition                                                | Action                         |
 | --------------------- | --------------------------------------------------------- | ------------------------------ |
-| `duplicate-of-chunk`  | Semantically covered by a rule in the active chunk        | Delete                         |
+| `duplicate-of-chunk`  | Guaranteed by the surviving read chain below              | Propose deletion only on proof |
 | `project-unique-rule` | Prescriptive rule specific to this project, not in chunks | Keep semantics (Step 5)        |
 | `project-exception`   | Extends or contradicts a chunk rule for this project      | Keep; never treat as duplicate |
 
 Do not use the old section-level `partial-duplicate` category. Classify mixed sections span by span: `duplicate-of-chunk` or kept.
+
+For each atomic obligation, inspect the installed active chunk itself or one installed contract it directly and explicitly requires the reader to read. Resolve the mandated path from the consumer project root through its managed `.datamitsu/` entry. Reject absolute paths, traversal, external URLs and unverified targets. Do not recurse through contracts or treat an example or bare link as a mandate.
+
+Evaluate the **entire proposed post-edit state**, including merges, extractions and compactions. For every situation originally covered, trace the surviving root bootstrap and triggers through each mandatory read to the actual replacement rule **before the first affected action**. Compare obligation and strength, priority, scope, triggers, exceptions and exact literals. Keep the original if any link or obligation is gone, narrower, late, ambiguous, unavailable or conflicting. Authorization to delete is not evidence of equivalence.
+
+Inventory definitions such as “X counts as Y” separately, even when they share a line with an obligation. For each proposed deletion, name the original action and the surviving words that require the read for that action. Try the action outside the named workflow. If it can happen without the read, or the only evidence is the text being deleted, keep the rule. Do not report zero lost rules with an unaccounted definition.
+
+For example, keep both "a CI tag counts as a release" and its approval rule if the shared trigger names only releases. Do not list either under deletions. An independent shared trigger before every CI tag would allow reassessing the approval rule, not dropping the local definition.
 
 ### Against the rest of the project file
 
@@ -179,7 +199,7 @@ These commands resolve differently. Keep both spans in place, list them under **
 
 ### Classification rules
 
-**Compare semantics, not wording.** Identical intent and content make a chunk duplicate.
+**Compare semantics, not wording.** Matching text or intent without a surviving binding read chain is not coverage.
 
 **Distinguish description from prescription, regardless of length.** A retry orchestrator's internals are `architectural-detail`; "always call `markRetryHealthyBoot` after a successful boot, otherwise X" is a `project-unique-rule`.
 
@@ -219,7 +239,7 @@ wrapped subsections one heading level up (e.g., `###` under `## Migrated From CL
 
 **When unsure** between `duplicate-of-chunk` and `project-unique-rule`, keep `project-unique-rule` rather than risk deleting project content.
 
-**Only deletion is irreversible.** Delete only `duplicate-of-chunk`: the rule survives in the chunk. If no category fits, relocate rather than delete (e.g., to docs, `CHANGELOG.md` or `docs/backlog/`) and report the destination.
+Delete a prescriptive span as shared only on the proof above. Keep unclassified prescriptions in place; relocate unclassified non-rule material rather than delete it and report the destination.
 
 ### Extraction target selection
 
@@ -324,16 +344,17 @@ Original atomic rule
   → retained (possibly reworded)
   → normalized into rule X
   → merged into equivalent rule X
-  → guaranteed by chunk rule X
+  → guaranteed by <surviving root trigger → active chunk → replacement rule, directly or in one mandated contract>
   → preserved as a project-specific exception
-  → relocated to <file>
+  → kept inline while surrounding non-rule material is relocated to <file>
   → reported as a conflict
 ```
 
 There is no valid disposition "disappeared".
 
-Then check literals: every exact literal recorded in Step 3 must appear verbatim in the result, in
-the file it was relocated to, or in a reported conflict.
+In ordinary cleanup, never move a binding rule out of the root merely because its example, template or explanation moves. Separate the obligation first; keep it inline unless independently covered by an allowed disposition.
+
+For every shared deletion, record the Step 4 chain and equivalence for each original situation against the combined plan. Check each recorded literal verbatim where its statement survives: in the result, relocation target, proven shared replacement or retained conflict.
 
 **If either check fails, abort before touching any file.** Report the unmapped statement or literal.
 
@@ -341,7 +362,7 @@ the file it was relocated to, or in a reported conflict.
 
 ## Step 7 — Propose
 
-Present the proposal in this exact format. Do not apply yet.
+Use this exact format. Do not apply yet.
 
 ```text
 ## Cleanup plan for AGENTS.md
@@ -352,8 +373,8 @@ Project AGENTS.md: <M> sections, <R> prescriptive rules, <K> lines
 ### To delete (guaranteed by the chunk)
 
 1. **"<heading>"** (lines a-b) — <N> spans
-   Covered by: chunk § "<chunk section>"
-   Why: <one-line semantic summary of the overlap>
+   Surviving chain: <root trigger → mandatory chunk read → actual rule or direct mandated contract and rule>
+   Proof per obligation: <why this chain still binds before action in every original situation, with equivalent priority, scope, triggers, exceptions, strength and literals>
 
 ### To merge (internal duplicates)
 
@@ -420,7 +441,7 @@ Apply changes? Reply: yes / no / show diff
 
 **`Unique rules removed` must be 0.** Otherwise do not offer to apply. Return to Step 6, find the unmapped statement and fix its classification.
 
-- `show diff`: Print the unified diff from the current `AGENTS.md` to the planned result and the content of each new file. Ask again.
+- `show diff`: Print the full unified diff from the current `AGENTS.md` to the planned result and the full content of each new file. Ask again.
 - `no`: Abort without modifying anything.
 - `yes`: Proceed to Step 8.
 
@@ -428,7 +449,7 @@ Apply changes? Reply: yes / no / show diff
 
 ## Step 8 — Apply
 
-After explicit `yes`:
+After explicit `yes`, **before the first write**, re-read the root, relevant extraction targets and installed sources used for approval. If any differ from the reviewed revision, write nothing and request fresh approval for an updated plan. Even if unchanged, recheck the binding read chains against the combined planned result; do not proceed on uncertain coverage.
 
 1. **Create extraction target files first.** For each extracted span:
    - Create parent directories if needed.
@@ -442,9 +463,7 @@ After explicit `yes`:
 6. Preserve everything not touched: the override block, the bootstrap line, the `# AGENTS.md`
    heading, all `potential-conflict` spans, and section ordering elsewhere.
 7. Write the result back to `AGENTS.md`.
-8. **Verify after writing.** Re-read the written file and confirm every literal recorded in Step 3
-   is present in it or in a file it moved to. If one is missing, say so immediately and loudly —
-   the user still has the pre-run state in git.
+8. **Verify after writing.** Re-read the result and relocation targets; check each Step 3 literal where its statement survives. Retrace each shared deletion's Step 6 chain from the written root and inspect the actual replacement in the installed chunk or directly mandated contract. Confirm timing and equivalence again; literal presence elsewhere in the root is not proof. Report any failed check immediately.
 
 Do not create backups. Rely on the user's pre-run git commit; do not abort at this stage if they skipped it.
 
@@ -452,7 +471,7 @@ Do not create backups. Rely on the user's pre-run git commit; do not abort at th
 
 ## Step 9 — Report
 
-After writing, print a final summary:
+After writing, report the results:
 
 ```text
 Done.
@@ -506,16 +525,14 @@ malformed input.
 datamitsu-managed projects.
 
 **Active chunk file does not exist on disk** (`.datamitsu/` was deleted or never generated). Abort:
-"Active chunk file `.datamitsu/ai/agents/agents-XXX.md` not found. Run `pnpm dm` (or your
-equivalent) to regenerate `.datamitsu/`, then re-run this skill."
+Report the missing installed chunk and recommend `pnpm dm init` (or `datamitsu init` without a pnpm stack). Do not initialize the repository as part of analysis.
 
 **`AGENTS.md` is empty or has only the bootstrap line.** Nothing to clean. Print: "AGENTS.md has no
 project content beyond the bootstrap. Nothing to do." Exit cleanly.
 
 **No "Known Pitfalls" parent heading.** Classify scattered, codebase-specific bugs or footguns as `pitfall` by content.
 
-**A span matches a chunk rule but adds a project-specific exception.** The rule half is
-`duplicate-of-chunk`; the exception half is `project-exception`. Delete the first, keep the second.
+**A span matches a shared rule but adds a project-specific exception.** Keep the exception. Propose deleting the matching part only if the complete plan passes the Step 4 proof and the exception still applies with the same priority; otherwise keep both.
 
 **One conflicting span is clearly stale** (e.g., its script is absent from `package.json`). Still report the conflict. State which variant the repository supports and why; leave the decision to the user.
 
@@ -537,8 +554,7 @@ meaning. Nothing to do." Exit cleanly.
 ## Interaction style
 
 - Be terse. Reports are scannable, not narrative.
-- Quote line numbers from the current `AGENTS.md` exactly.
-- Quote chunk section names exactly as they appear in the chunk.
+- Quote exact line numbers and chunk section names.
 - One-line "why" justifications. Do not explain the obvious.
 - Never apologize for findings. The duplicates are facts, not the author's failure.
 - Report conflicts flatly, without recommending a winner unless the repository itself provides the

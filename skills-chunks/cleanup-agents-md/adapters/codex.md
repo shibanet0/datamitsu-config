@@ -1,7 +1,7 @@
 ---
 name: cleanup-agents-md
 description: >-
-  Clean up and compact the project's AGENTS.md without losing rules, conditions, exceptions or commands. Use when deduplicating shared rules, extracting non-rule content, removing migration cruft or moving deferred work to docs/backlog/.
+  Clean up and compact the project's AGENTS.md without losing rules, conditions, exceptions or commands. Use when deduplicating shared rules, extracting non-rule content, removing migration cruft or moving deferred work to docs/backlog/. Also use for explicitly requested recommendations on splitting AGENTS.md (advice only).
 ---
 
 # Cleanup AGENTS.md
