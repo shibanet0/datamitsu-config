@@ -1,19 +1,19 @@
 ## Documentation Surface
 
-These rules are for documentation that is **not published**: Markdown files read in the repository itself, with no site built from them. If the project builds a documentation site, it needs `agents-docs-website.md` instead — tell the user rather than applying the rules below to the site.
+These rules cover unpublished Markdown read in the repository, with no documentation site. For a site built from these files, use `agents-docs-website.md` instead and tell the user.
 
-All user-facing documentation lives in Markdown files within the repository. Primary surfaces:
+User-facing docs live in repository Markdown:
 
-- **`docs/`** — detailed guides, API reference, architecture docs, command reference, config reference
-- **`README.md`** — entry point; keep focused but may include more detail than a website-backed project
+- **`docs/`** — detailed guides, API, architecture, command, and configuration references.
+- **`README.md`** — entry point; keep focused, but it may be more detailed than a website-backed project's README.
 
 ### README.md Scope
 
-README serves as the primary documentation entry point. Include:
+README is the primary entry point. Include:
 
-1. **What is this** — One paragraph description
-2. **Quick install** — Single command
-3. **Basic usage** — Minimal example (3-5 lines of code)
-4. **Links** — Point to relevant `docs/` files for deeper topics
+1. **What is this** — One-paragraph description.
+2. **Quick install** — One command.
+3. **Basic usage** — Minimal example (3-5 lines of code).
+4. **Links** — Relevant `docs/` files for deeper topics.
 
-Keep README focused. Detailed architecture explanations and full API references belong in `docs/`, not inline.
+Keep README focused; put detailed architecture explanations and full API references in `docs/`.

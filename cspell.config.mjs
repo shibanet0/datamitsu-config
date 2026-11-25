@@ -33,6 +33,8 @@ export default defineConfig((prev) => {
     "govulncheck",
     "GOPATH",
     "depguard",
+    "daemonpilot",
+    "procguard",
     "hashutil",
     "forbidigo",
     "gosec",

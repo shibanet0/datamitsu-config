@@ -1,28 +1,16 @@
 # Backlog
 
-Deferred work lives in `docs/backlog/`, one Markdown file per item, tracked in git alongside the
-code it describes.
-
-A backlog entry is what you write when you **stumble over something real and decide not to fix it
-now**: a defect nobody has time for, a design that has drifted, an idea worth keeping. It is not a
-plan. A plan (`docs/plans/`) is a sequence of tasks somebody is about to execute; a backlog entry
-is a note to whoever arrives next, and its job is to stop the same finding from being rediscovered,
-re-argued, and re-forgotten.
-
-Writing one costs a minute. Not writing one costs the next person the whole investigation.
+Track deferred work in git alongside the code, one Markdown file per item in `docs/backlog/`.
+Record a real finding you decide not to fix now: a defect, design drift, or an idea worth keeping.
+An entry spares the next reader another investigation or debate. A plan (`docs/plans/`) lists tasks someone is about to execute.
 
 ---
 
 ## Search it before you start
 
-The backlog is worth more as a **thing you read** than as a thing you write. What makes an entry
-valuable is _when_ it was written, not who wrote it: at the moment the problem was understood,
-while the context that made it understandable still existed. That context is the expensive part,
-it does not survive, and it sits in a directory nobody thinks to open.
-
-Search before investigating a defect, before a performance or correctness investigation, before
-writing a plan, before proposing a design change, and whenever the user asks why something is the
-way it is:
+Search the backlog for context captured when a problem was understood, regardless of who wrote it.
+Search before investigating a defect, performance, or correctness; before writing a plan or proposing
+a design change; and whenever the user asks why something is the way it is:
 
 ```bash
 rg -i "<symptom>" docs/backlog/           # matching lines — read these, they are the point
@@ -31,49 +19,31 @@ rg -il "<term>" docs/backlog/             # just the filenames, when a term hits
 ls docs/backlog/                          # the slugs alone are a table of contents
 ```
 
-`rg`, not `grep`: the two take different flags, `grep` is aliased on many machines, and ripgrep
-recurses by default (no `-r`). If `rg` is genuinely unavailable, `grep -ri` is the equivalent — but
-say which one you used, because a search that silently found nothing because of a flag is worse
-than no search.
+Use `rg`, not `grep`: flags differ, `grep` is often aliased, and ripgrep recurses by default (no `-r`).
+Only if `rg` is unavailable, use `grep -ri`. Say which tool you used: a wrong flag can hide matches.
 
-Read the **matching lines**, not just the filenames. The slug names one symptom; the body may
-mention the same subsystem for a different reason, and that is often the useful hit — which is why
-the plain form comes first and `-l` is the fallback for a term that matches everything.
+Read matching lines first. A slug names one symptom; the body may mention the subsystem for another reason.
+Use `-l` only as a fallback for a term that matches everywhere.
 
 ### What a hit gives you
 
-- **The investigation, already done.** A reproduction, a measurement, the approach that was tried
-  and abandoned, the constraint that rules out the obvious fix. Re-deriving it costs hours.
-- **A triage decision that is re-opened, not settled.** `later` and `no` were judgments made under
-  the circumstances of the `added:` date. Circumstances change: a cost nobody noticed at 1,000
-  files matters at 50,000; a fix blocked on an unreleased dependency stops being blocked once it
-  ships. Read _why_ it was deferred and check whether that reason still holds.
-- **A dead end worth respecting.** A `no` that explains itself saves you from re-arguing a finding
-  that was already argued.
+- **Prior investigation:** reproduction, measurement, abandoned approach, or constraint ruling out the obvious fix.
+- **Triage to revisit:** `later` and `no` reflect conditions on the `added:` date. A cost at 1,000 files may matter at 50,000; a blocking dependency may have shipped. Check whether the reason for deferral still holds.
+- **Known dead end:** a justified `no` need not be argued again.
 
 ### What to do with a hit
 
-1. **Verify the anchor.** The `where:` line may point at code that has since moved. If it has, say
-   so — the entry is evidence, not truth, and a stale anchor changes how much of it to trust.
-2. **Tell the user you found it**, with the `added:` date and the current `worth:`. Do not assume
-   they know it exists — an entry may predate the current conversation by a year, and whether a
-   person or an agent wrote it says nothing about whether it is still right.
-3. **Say whether the triage still holds.** If the premise behind a `later` or a `no` has expired,
-   name that explicitly rather than quietly proceeding as if the old verdict were binding, and
-   propose re-triaging it.
-4. **Fold its content into your work.** If you are writing a plan, the entry's measurements and
-   dead ends belong in the plan's context section, with the entry named as their source.
-5. **Sharpen the entry** if your work turned up detail it lacks, even when you are not fixing it.
-
-A search that finds nothing costs seconds. A search skipped can cost a day spent rediscovering
-something already written down.
+1. Verify the `where:` anchor. Report moved code: a stale reference weakens the evidence.
+2. Tell the user about the entry, its `added:` date and current `worth:`. Do not assume they know it exists or judge accuracy by human or agent authorship.
+3. Say whether triage still holds. If the premise for `later` or `no` has expired, say why and propose re-triage.
+4. Use the findings. In a plan, put measurements and dead ends in the context section and cite the entry.
+5. Add missing details your work uncovered, even if you are not fixing the item.
 
 ---
 
 ## The format
 
-`docs/backlog/<slug>.md`, where the slug names **the symptom, not the fix** — someone scanning the
-directory should recognize a problem they have hit.
+Use `docs/backlog/<slug>.md`. Name the symptom, not the fix, so readers recognize it in a listing.
 
 ```markdown
 ---
@@ -97,77 +67,54 @@ How it was found, if that context helps the next reader trust or re-check it.
 
 ### Frontmatter
 
-| Field   | Meaning                                                                                                                                                                                  |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worth` | `yes` — agreed worth fixing, unscheduled. `later` — the _value_ is undecided; the body must name what is unknown. `no` — decided against; the body must say why, so it is not re-argued. |
-| `where` | Optional anchor, `path:line`. Omit when the item is not tied to one place.                                                                                                               |
-| `added` | Creation date, `YYYY-MM-DD`. **Never modified** — its age is the signal.                                                                                                                 |
+| Field   | Meaning                                                                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `worth` | `yes`: agreed worth fixing, unscheduled. `later`: value undecided; state the unknown in the body. `no`: rejected; explain why in the body. |
+| `where` | Optional `path:line` anchor. Omit unless tied to one place.                                                                                |
+| `added` | Creation date, `YYYY-MM-DD`. Never change it: age matters.                                                                                 |
 
-`worth` is a judgment about **value**, not urgency and not effort. An item that is clearly worth
-fixing but will take a week is still `yes`.
+`worth` measures value, not urgency or effort. A worthwhile week-long fix is still `yes`.
 
 ### Body
 
-Prose, not checklists. Short — a reader should absorb it in under a minute. Include a measurement
-if one exists; a number is what turns "this feels slow" into something actionable later. Link to a
-PR or issue if one exists.
-
-Do not write an implementation plan. If the item is well-understood enough to plan, it does not
-belong in the backlog — write the plan instead.
+Write prose, not checklists, readable in under a minute. Include a measurement if available and link any existing PR or issue.
+Do not write an implementation plan here. If the item is understood well enough to plan, write a plan instead.
 
 ---
 
 ## Lifecycle
 
-Entries are created as part of whatever work uncovered them, and deleted by `git rm` **in the same
-commit as the work that resolves them**. The deletion is the record that it was done; git history
-holds the rest. Do not add a `status: done` field and leave the file behind.
-
-An item dropped as no-longer-relevant is removed the same way, with the reasoning in the commit
-message.
+Create entries during the work that uncovers them. Use `git rm` in the same commit as the resolving work.
+Deletion records completion; git keeps the history. Do not retain the file with `status: done`.
+Remove obsolete items the same way; explain why in the commit message.
 
 ---
 
 ## When not to write an entry
 
-A backlog nobody reads is worse than no backlog: it also creates the false impression that
-everything is written down. Every entry costs a reader attention, so the bar is that somebody could
-pick it up and act on it.
+Only record findings someone can act on. An unread backlog gives a false impression of coverage.
 
 Do not create an entry for:
 
 - **Something you are fixing now.** Fix it. The commit is the record.
 - **A preference.** "I would have structured this differently" is not a defect.
-- **An unexamined hypothesis.** If you have not checked it, you are asking the next reader to do
-  the investigation twice. Check it, or say plainly in the body that it is unverified and what
-  would verify it.
+- **An unexamined hypothesis.** Check it, or state in the body that it is unverified and what would verify it.
 - **Something already tracked** in an issue tracker or another entry. Link or sharpen instead.
-- **A note to yourself.** Session context, user preferences and reminders belong to agent-private
-  memory, not to a file every contributor pulls. The backlog is about the codebase, not about the
-  work session.
+- **A note to yourself.** Keep session context, user preferences and reminders in agent-private memory. The shared backlog describes the codebase.
 - **Something understood well enough to plan.** That is a plan (`docs/plans/`), not a backlog entry.
 
-If it does not clear the bar and you still think it matters, say so to the user rather than
-committing it.
+If an excluded item still matters, tell the user instead of committing it.
 
 ---
 
 ## Creating an entry
 
-0. **Create `docs/backlog/` if it does not exist.** No README, no index — the directory listing is
-   the table of contents, and an index file goes stale the first time somebody forgets it.
-1. **Check for a duplicate first.** Match on the slug _and_ on `where`. If an entry already covers
-   it, sharpen that one rather than adding a second — a backlog with two entries for one defect is
-   how a backlog stops being read.
-2. **Verify the anchor.** If you write `where: path:line`, open it and confirm the line still says
-   what you claim. A stale anchor is worse than none.
-3. **Pick `worth` honestly.** If you cannot tell whether it is worth fixing, that is `later`, and
-   the body must say what would settle it.
-4. **Apply the privacy rules.** Backlog entries are published. Measurements from a private
-   repository keep their shape and lose their identity; another project is not named without
-   explicit permission. See the Privacy and Attribution section of the shared agent rules.
-5. **Do not commit unasked.** Write the file and report it. Committing is the user's call unless
-   they have said otherwise.
+0. Create `docs/backlog/` if absent. No README or index: the listing is the table of contents.
+1. Check for duplicates by both slug and `where`. Sharpen an existing entry instead of duplicating it.
+2. If supplying `where: path:line`, open it and confirm the line supports the claim.
+3. Choose `worth` honestly. If value is uncertain, use `later` and state what would settle it in the body.
+4. Apply the Privacy and Attribution section of the shared agent rules. Entries are published: preserve the shape of private-repository measurements, not their identity. Name another project only with explicit permission.
+5. Write the file and report it. Do not commit unless the user has asked.
 
 ---
 
@@ -175,25 +122,18 @@ committing it.
 
 When asked to work on a backlog item, before touching anything:
 
-1. Read the file and **verify the anchor still holds**. If the code moved, say so — the entry may
-   be stale, and re-deriving it is part of the job.
-2. Report four things, briefly: what it is, roughly what it takes, what it touches, and whether it
-   still matters.
-3. Ask what to do with concrete options — fix it now, re-triage it (`worth` changed), sharpen the
-   entry, or drop it.
+1. Read the entry and verify its anchor. Report moved code and re-derive stale findings.
+2. Briefly report the item, rough effort, affected areas, and whether it still matters.
+3. Ask the user to choose: fix now, re-triage (`worth` changed), sharpen the entry, or drop it.
 
 Only then start. When the work lands, `git rm` the entry in the same commit.
 
-Working several items at once: verify every anchor first, name any ordering constraints between
-them, then take them one at a time with visible progress. Re-verify immediately before each change
-— an earlier item may have moved the code a later one points at. Run the project's tests and
-linters as usual. Never commit automatically.
+For multiple items, verify every anchor first, identify ordering constraints, then work one at a time with visible progress.
+Re-verify immediately before each change: earlier work may move later anchors. Run project tests and linters as usual. Never commit automatically.
 
 ---
 
 ## Branch safety
 
-Before writing or removing an entry, check the current branch against the repository's default
-branch. If they differ, confirm with the user first — a backlog edit stranded on a feature branch
-is invisible to everyone else, and one committed to the default branch by accident is noise in
-someone's history.
+Before writing or removing an entry, compare the current branch with the repository's default branch.
+If they differ, confirm with the user before proceeding.

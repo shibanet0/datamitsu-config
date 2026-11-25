@@ -235,6 +235,7 @@ pre-commit:
     ensure configs:
       priority: 15
       run: pnpm dm config reconcile --create-missing --no-verify-hash
+      stage_fixed: true
     sync-datamitsu-version:
       priority: 20
       run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu-config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
@@ -279,9 +280,6 @@ post-checkout:
     init datamitsu:
       priority: 2
       run: node bin/datamitsu.js init
-    ensure configs:
-      priority: 3
-      run: node bin/datamitsu.js config reconcile --create-missing --no-verify-hash
   parallel: false
 `,
       // No expectChainHash here, deliberately: the upstream render embeds
@@ -493,7 +491,7 @@ catalog:
   "@commitlint/config-conventional": 21.2.4
   "@commitlint/format": 21.2.3
   "@commitlint/types": 21.2.3
-  "@datamitsu/datamitsu": 0.0.0-unstable.20261121.ae608b8
+  "@datamitsu/datamitsu": 0.0.0-unstable.20261123.1b818be
   "@e18e/eslint-plugin": 0.8.1
   "@eslint-community/eslint-plugin-eslint-comments": 4.8.1
   "@eslint-react/eslint-plugin": 5.30.1
@@ -620,7 +618,7 @@ updateNotifier: false
 verifyDepsBeforeRun: install
 verifyStoreIntegrity: true
 `,
-      expectChainHash: "xxh3:3f36761aa3226ef29aa2961411348cee",
+      expectChainHash: "xxh3:3a954c3632cf11c0e620449315896457",
     },
   },
   tools: {
@@ -676,6 +674,8 @@ const cspellWords: string[] = [
   "govulncheck",
   "GOPATH",
   "depguard",
+  "daemonpilot",
+  "procguard",
   "hashutil",
   "forbidigo",
   "gosec",

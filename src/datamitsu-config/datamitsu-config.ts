@@ -1,6 +1,13 @@
 declare const __DATAMITSU_CONFIG_VERSION__: string;
 
-import { AGENTS_BASE, AGENTS_DOCS_MARKDOWN, AGENTS_DOCS_WEBSITE } from "./agents.md";
+import { preferredStackFile, preferredStackLink, skillsBundleLinkRoot } from "./agent-bundle-paths";
+import {
+  AGENTS_BASE,
+  AGENTS_DOCS_MARKDOWN,
+  AGENTS_DOCS_WEBSITE,
+  AGENTS_USAGE_EXAMPLES,
+  PREFERRED_STACK,
+} from "./agents.md";
 import { buildManagedAlintYaml } from "./alint-defaults";
 import { mapOfApps } from "./apps";
 import { initCommands, managedConfigs } from "./cmd-managed-configs";
@@ -35,11 +42,15 @@ function getConfig(cfg: config.Config): config.Config {
           "agents-docs-website.md": withTrailingNewline(
             [AGENTS_DOCS_WEBSITE, datamitsuAgentPrompt].filter(Boolean).join("\n\n---\n\n"),
           ),
+          "example-usage.md": withTrailingNewline(AGENTS_USAGE_EXAMPLES),
+          [preferredStackFile]: withTrailingNewline(PREFERRED_STACK),
         },
         links: {
           "ai/agents/agents-base.md": "agents-base.md",
           "ai/agents/agents-docs-markdown.md": "agents-docs-markdown.md",
           "ai/agents/agents-docs-website.md": "agents-docs-website.md",
+          "ai/agents/example-usage.md": "example-usage.md",
+          [preferredStackLink]: preferredStackFile,
         },
       },
       "alint-managed": {
@@ -71,7 +82,7 @@ function getConfig(cfg: config.Config): config.Config {
           SKILLS.map((s) => [`${s.name}/instructions.md`, withTrailingNewline(s.instructions)]),
         ),
         links: {
-          "ai/skills": ".",
+          [skillsBundleLinkRoot]: ".",
         },
       },
       tsconfig_guide: {

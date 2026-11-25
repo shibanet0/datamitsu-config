@@ -1,65 +1,27 @@
 ## Preferred Stack
 
-When creating a project, initializing an app, or adding a dependency, pick from this catalogue FIRST. Do not invent alternatives or reach for unmaintained/EOL packages. This is a priority list, not a hard mandate — if a project already uses a reasonable different choice, keep it.
+When creating projects or apps, or adding dependencies, read the preferred stack catalogue at [preferred stack catalogue]({{preferredStackProjectPath}}) from the project root and choose from it first. Do not invent alternatives or use unmaintained/EOL packages. Keep a reasonable existing choice; the catalogue is not a migration mandate.
 
 ### Version Policy
 
-- If the library is already used in the repo, match that exact version.
-- If it is not present, check the CURRENT latest stable release before adding. Never pick a stale major from memory — verify the version resolves first.
+- Preserve the target package's dependency declarations. For additions, reuse its workspace catalogue or the version used by a comparable package in the same workspace. Do not copy pins across independent workspaces or align unrelated versions.
+- For a new library, verify the latest stable release compatible with the target runtime, toolchain, peer ranges and install policy. Verify it resolves; do not guess versions or bypass release-age or trust controls.
 - Prefer runtimes and tools managed by `datamitsu`; do not hand-install what `dm` already provides.
 
 ### Invocation
 
-Every datamitsu command follows the same rule:
+Use `pnpm dm <command>` in a pnpm monorepo wired with this config (e.g. `pnpm dm check`, `pnpm dm config reconcile`, `pnpm dm exec <tool>` such as `pnpm dm exec air`, `pnpm dm exec goose`, or `pnpm dm exec task -- <task>`). Without an initialized pnpm stack, use the system-installed `datamitsu` binary (`datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`).
+Use the target workspace's scripts and CI to identify the working invocation. A `.datamitsu/` directory alone does not establish that `pnpm dm` is available.
+For a new monorepo subproject, the shipped hook runs `<invocation> config reconcile --create-missing`, creating only missing managed configs and never touching existing files. Run it manually after adding a subproject to avoid waiting for the next commit.
 
-- Inside a pnpm monorepo wired with this config: `pnpm dm <command>` — `pnpm dm check`, `pnpm dm config reconcile`, and managed tools via `pnpm dm exec <tool>` (`pnpm dm exec air`, `pnpm dm exec goose`, `pnpm dm exec task -- <task>`, …).
-- If the repo has no pnpm stack initialized: call the system-installed `datamitsu` binary directly — `datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`.
-- A subproject newly added to a monorepo is provisioned by the shipped hook: `<invocation> config reconcile --create-missing` creates only the managed configs that are missing and never touches an existing file. Run it by hand after adding a subproject if you do not want to wait for the next commit.
-
-### Web
-
-- App: Vite + React + TypeScript, with the React Compiler enabled.
-- Data fetching: SWR.
-- Routing: react-router with `@ovineko/react-router` — a type-safe React Router v7 wrapper (valibot-validated params, typed routes, automatic error handling).
-- SPA resilience: `@ovineko/spa-guard` — a top-level guard for single-page apps that recovers from chunk-load failures after deploys (cache-busting + automatic retry), plus version checking and error reporting. Wire it via `@ovineko/spa-guard-react` (hooks + error boundaries) and the `@ovineko/spa-guard-vite` plugin; server side via `@ovineko/spa-guard-fastify` / `-node`.
-- UI kit: admin panels → Ant Design; user-facing products → Mantine.
-- Styling: vanilla-extract (Mantine ships a vanilla-extract integration).
-- i18n: i18next.
-- Component catalogue: Storybook.
-- Emails: react-email. PDF: `@react-pdf/renderer` to generate, `react-pdf` to view.
-- Prefer the ovineko ecosystem — consult <https://ovineko.com/llms.txt> first.
-- **Banned: Tailwind CSS and anything built on top of it. Never introduce it.**
-
-### Node
-
-- Web framework: Fastify.
-- Schemas/validation: `typebox` — the npm package `typebox` (<https://www.npmjs.com/package/typebox>), NOT `@sinclair/typebox`.
-- Database: Kysely, a type-safe query builder (<https://kysely.dev>). Do NOT use TypeORM or any ORM — Kysely is a query builder, not an ORM.
-- CLI: commander with `@commander-js/extra-typings`.
-
-### Go
-
-- HTTP router: `github.com/go-chi/chi/v5`.
-- Logging: `go.uber.org/zap`.
-- CLI: `github.com/spf13/cobra`.
-- Database: sqlc — generate type-safe Go query functions from plain SQL. Pairs with goose for migrations. Run via `pnpm dm exec sqlc -- generate`.
-- Dev/tooling: air (live reload), swag (Swagger), goose (DB migrations) — run via `pnpm dm exec`.
+Never introduce Tailwind CSS or anything built on it. In Node projects, do not use TypeORM or any other ORM.
 
 ### Security & Hashing
 
 - Password hashing: argon2id. Never bcrypt, plain SHA, or MD5 for passwords.
 - Non-cryptographic hashing (cache keys, fingerprints, non-adversarial): consider `github.com/zeebo/xxh3` — fast. Never use it to verify external content; use a cryptographic hash (SHA-256 or stronger) there.
 
-### Testing
-
-- Unit: Vitest.
-- E2E: Testcontainers (<https://testcontainers.com>); browser E2E → Playwright (<https://playwright.dev>).
-
 ### Monorepo
 
-- Turborepo + pnpm workspace. Every package — including Go and Rust — carries a `package.json` so `turbo run <script>` orchestrates builds in dependency order.
+- New monorepos must use a pnpm workspace with Turbo for the cross-package graph. Every package, including Go and Rust, exposes commands through `package.json`; the wrapper does not determine the component's runtime. Do not migrate an existing graph as a side effect of adding a component.
 - Script names follow the Project Scripts policy, including documented extensions and tool-required names. Turbo owns cross-package dependencies; Taskfile owns package-local steps, invoked via `pnpm dm exec task -- <task>`. Do not duplicate Turbo's package graph in Taskfile.
-
-### Docs
-
-- Documents: Typst. Presentations: Slidev. Run both via `pnpm dm exec`.

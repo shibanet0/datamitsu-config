@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { skillInstructionsPath } from "../src/datamitsu-config/agent-bundle-paths.ts";
 import { generatedSourceBanner } from "../tsdown.config-banner.ts";
 
 const skillsDir = path.join(import.meta.dirname, "../skills-chunks");
@@ -34,16 +35,19 @@ interface SkillSource {
 const skills: SkillSource[] = await Promise.all(
   skillDirs.map(async (dir) => {
     const skillPath = path.join(skillsDir, dir.name);
+    const instructionsPath = skillInstructionsPath(dir.name);
+    const renderAdapter = (source: string) =>
+      source.trim().replaceAll("{{skillInstructionsPath}}", instructionsPath);
 
     const instructions = await fs
       .readFile(path.join(skillPath, "instructions.md"), "utf8")
       .then((r) => r.trim());
     const claude = await fs
       .readFile(path.join(skillPath, "adapters/claude.md"), "utf8")
-      .then((r) => r.trim());
+      .then(renderAdapter);
     const codex = await fs
       .readFile(path.join(skillPath, "adapters/codex.md"), "utf8")
-      .then((r) => r.trim());
+      .then(renderAdapter);
 
     const varName = `SKILL_${dir.name.replaceAll("-", "_").toUpperCase()}`;
 

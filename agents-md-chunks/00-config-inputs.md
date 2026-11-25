@@ -1,23 +1,19 @@
 ## Single Source for Constants, Env & Build Inputs
 
-Every project (or set of apps in a monorepo) funnels its shared constants, environment variables, and build-time flags through ONE declared, validated access point. Reading these values ad-hoc anywhere else is forbidden. This holds when STARTING a project AND while MAINTAINING one: if you see a constant, a raw env read, or a build flag used inline where it belongs in the central point, STOP and tell the user before continuing.
+Route shared constants, environment variables, and build-time flags for each project (or monorepo app set) through ONE declared, validated access point; ad-hoc reads are forbidden. During setup or maintenance, if you find an inline constant, raw env read, or build flag that belongs there, STOP and tell the user before continuing.
 
 ### Constants
 
-- Declare shared constants in a single module per project (Go: one package; JS/TS: one module). No magic values scattered across files.
-- Constants that must be shared ACROSS languages (e.g. Go + JS in one monorepo): keep them in a single JSON manifest and generate the per-language files from it with a codegen script — do not maintain copies by hand.
-  - Each generated file carries a header comment marking it as generated (naming the source manifest and the generator).
-- Keep the JSON manifest as the only source of truth. Generate per-language files during the build when they are disposable build outputs; when generated files are committed, refresh them explicitly with the applicable `generate` command instead of on every build.
-  - The generator language is situational — TypeScript is a fine default.
+Declare shared constants in one project module (Go package, JS/TS module); do not scatter magic values. For constants shared across languages (e.g. Go + JS), use one JSON manifest and generate language files with a codegen script, never hand-maintain copies. Generated files need header comments naming the manifest and generator. Keep the manifest as the sole source of truth: generate disposable outputs during builds, but explicitly refresh committed files with the applicable `generate` command, not every build. TypeScript is a suitable default generator language, but choice is situational.
 
 ### Environment Variables
 
-One env module per project (Go: an `env` package; TS: an `env.ts`). ALL env access goes through it.
+Use one env module per project (Go `env` package or TS `env.ts`) for all environment access.
 
-- Direct `process.env` (JS/TS) and `os.Getenv` (Go) are forbidden everywhere else — except the standard, non-app vars a child process genuinely needs (`PATH`, `HOME`, `CI`, …).
-- Expose each value via an accessor (a function, not a bare mutable export): it cannot be reassigned by accident, and its default lives next to it.
-- Do ALL parsing, normalization, and validation here — bool/int parsing, enum checks, coercion to the type the app expects. The rest of the app consumes an already-valid, typed value, never a raw string.
-- Centralize the KEYS too, so renaming a variable is a one-line change.
+- Forbid direct JS/TS `process.env` and Go `os.Getenv` elsewhere, except standard non-app vars genuinely needed by child processes (`PATH`, `HOME`, `CI`, …).
+- Expose values through accessor functions, not bare mutable exports, with defaults alongside them.
+- Parse, normalize, and validate all values here (including booleans, integers, enums, and app-specific coercion); the app consumes typed, valid values, never raw strings.
+- Centralize keys so a variable rename is a one-line change.
 
 ### Build-Time Flags
 

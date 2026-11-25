@@ -50,17 +50,12 @@ describe("lefthookYaml", () => {
 
   it("provisions new monorepo subprojects before check via create-missing", () => {
     const commands = preCommitCommands();
-    expect(commands["datamitsu-ensure-configs"].run).toBe(
-      "node bin/datamitsu.js config reconcile --create-missing --no-verify-hash",
-    );
-    // post-checkout gets the same treatment right after init: a branch switch
-    // can bring in a new subproject.
-    const postCheckout = render()["post-checkout"].commands as Record<string, any>;
-    expect(postCheckout["datamitsu-ensure-configs"]).toEqual({
-      priority: 3,
+    expect(commands["datamitsu-ensure-configs"]).toMatchObject({
       run: "node bin/datamitsu.js config reconcile --create-missing --no-verify-hash",
+      stage_fixed: true,
     });
-    expect(postCheckout["init datamitsu"].priority).toBeLessThan(3);
+    const postCheckout = render()["post-checkout"].commands as Record<string, any>;
+    expect(postCheckout["datamitsu-ensure-configs"]).toBeUndefined();
   });
 
   it("keeps hooks sequential so priority is honoured", () => {

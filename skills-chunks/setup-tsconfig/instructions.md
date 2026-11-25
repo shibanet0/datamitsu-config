@@ -1,10 +1,10 @@
 # Setup TypeScript Config
 
-You are about to configure or fix `tsconfig.json` in this project so that it extends the correct preset from `@shibanet0/datamitsu-config/tsconfig/*` according to the rules in `.datamitsu/tsconfig.md`.
+Configure or fix `tsconfig.json` to extend the `@shibanet0/datamitsu-config/tsconfig/*` preset specified by `.datamitsu/tsconfig.md`.
 
-`.datamitsu/tsconfig.md` is the **source of truth** for which preset applies to which project type. It is regenerated from the central `datamitsu-config` repository and may be more current than these instructions — when in doubt, defer to its preset table and warnings.
+`.datamitsu/tsconfig.md` is the source of truth for project-to-preset mapping. Regenerated from the central `datamitsu-config` repository, it may be newer than this skill. When in doubt, follow its table and warnings.
 
-This skill is destructive — it writes `tsconfig.json`. Always follow the propose → confirm → apply order. Never apply without explicit confirmation.
+Writing `tsconfig.json` is destructive. Always propose → confirm → apply; never write without explicit confirmation.
 
 ---
 
@@ -13,17 +13,17 @@ This skill is destructive — it writes `tsconfig.json`. Always follow the propo
 1. Read `.datamitsu/tsconfig.md` from the project root.
 2. If the file is missing, abort:
    > `.datamitsu/tsconfig.md` not found. Run `pnpm dm init` (or your equivalent) to regenerate `.datamitsu/`, then re-run this skill.
-3. Parse the "Quick Selection" table — it maps project type + monorepo flag → preset filename.
-4. Parse the "Configuration Descriptions" section — it lists what each preset adds on top of `base.json`.
-5. Parse the "Common Mistakes" section — these are the negative checks you will apply in Step 3.
+3. Parse "Quick Selection": project type + monorepo flag → preset filename.
+4. Parse "Configuration Descriptions": additions to `base.json` by preset.
+5. Parse "Common Mistakes" for Step 3's negative checks.
 
-Do **not** hardcode the preset list from memory. Read it from the file every run. If `.datamitsu/tsconfig.md` adds a new preset or removes one, this skill must pick that up automatically.
+Read the preset list every run; never hardcode it from memory. Honor additions and removals in `.datamitsu/tsconfig.md` automatically.
 
 ---
 
 ## Step 2 — Inspect the project
 
-Gather these signals (do all reads in parallel where possible):
+Read in parallel where possible:
 
 **`package.json` (project root):**
 
@@ -31,13 +31,13 @@ Gather these signals (do all reads in parallel where possible):
 - `bin` field — CLI tool.
 - `main` / `module` / `exports` / `types` fields — library that publishes artifacts.
 - `private: true` + `workspaces` field — monorepo root.
-- `peerDependencies` containing `react` (without it being in `dependencies`) — strong signal of a React library.
+- `react` in `peerDependencies` but not `dependencies` strongly suggests a React library.
 
 **Workspace detection (monorepo or not):**
 
-- Walk up from the project to find the nearest of: `pnpm-workspace.yaml`, `lerna.json`, `nx.json`, `turbo.json`, or a parent `package.json` with a `workspaces` field.
-- If found and the current `package.json` is one of the workspace members, this is a **package inside a monorepo**.
-- The monorepo flag affects library presets: `library.json` → `shared-library.json`, `react-library.json` → `shared-react-library.json`.
+- Walk up from the project to the nearest `pnpm-workspace.yaml`, `lerna.json`, `nx.json`, `turbo.json`, or parent `package.json` with `workspaces`.
+- If found, classify the project as a monorepo package if its `package.json` is a workspace member.
+- Monorepo library presets: `library.json` → `shared-library.json`, `react-library.json` → `shared-react-library.json`.
 
 **File markers (project root):**
 
@@ -51,23 +51,23 @@ Gather these signals (do all reads in parallel where possible):
 
 **Existing `tsconfig.json`:**
 
-- If present, read it. Capture the current `extends`, `compilerOptions.types`, `compilerOptions.jsx`, `compilerOptions.noEmit`, `compilerOptions.composite`, `include`, `exclude`.
-- If `extends` already points to a `@shibanet0/datamitsu-config/tsconfig/*.json`, that is the current preset.
-- If `extends` points to anything else (`@tsconfig/*`, a local file, nothing), note it — this is a candidate for replacement.
+- If present, read and record `extends`, `compilerOptions.types`, `compilerOptions.jsx`, `compilerOptions.noEmit`, `compilerOptions.composite`, `include`, `exclude`.
+- `extends` matching `@shibanet0/datamitsu-config/tsconfig/*.json` identifies the current preset.
+- Note any other `extends` (`@tsconfig/*`, local file, or absent) as a replacement candidate.
 
 **Source code spot-check (only if needed to disambiguate):**
 
-- If you cannot tell service vs library from `package.json` alone, grep for `node:` imports in `src/` — their presence + no React strongly suggests `service.json`.
+- If `package.json` cannot distinguish service from library, grep `src/` for `node:` imports. Such imports without React strongly suggest `service.json`.
 
-Do **not** read more files than needed to make the call. The signals above are usually enough.
+Read only what's needed to decide.
 
 ---
 
 ## Step 3 — Pick the preset
 
-Apply the rules from `.datamitsu/tsconfig.md` to the signals you gathered. The canonical decision order:
+Apply `.datamitsu/tsconfig.md` to the signals in this order:
 
-1. **Pulumi / IaC** (`Pulumi.yaml`/`Pulumi.*.yaml` at the root, or `@pulumi/*` in deps) → `infra-pulumi.json`. This is a **standalone** preset (does not extend `base.json`) and is the **only** preset that permits non-erasable syntax — Pulumi compiles via its own ts-node runtime, so decorators/`enum` are legal here.
+1. **Pulumi / IaC** (root `Pulumi.yaml`/`Pulumi.*.yaml` or `@pulumi/*` dependency) → `infra-pulumi.json`. Standalone (no `base.json`); only this preset permits non-erasable syntax. Pulumi's ts-node runtime supports decorators/`enum`.
 2. **Next.js** (any `next.config.*` or `next` in deps) → `nextjs.json`.
 3. **React library** (peerDep on `react` + no app markers + has `main`/`exports`):
    - monorepo → `shared-react-library.json`
@@ -83,22 +83,22 @@ Apply the rules from `.datamitsu/tsconfig.md` to the signals you gathered. The c
    - if it imports `node:*` heavily → `service.json`
    - otherwise → `base.json`
 8. **E2E tests** (only test code, no app source) → `base.json`.
-9. **Cannot determine** → do not guess. Ask the user which category their project falls into and re-run the decision with that input.
+9. **Unclear** → do not guess. Ask the user for the project category, then decide again.
 
 ### Apply the "Common Mistakes" checks
 
-Before finalizing the preset, validate against the negative rules in `.datamitsu/tsconfig.md`:
+Before finalizing, check the negative rules in `.datamitsu/tsconfig.md`:
 
-- **DOM types in a Node project.** If picked preset is `react-library.json`/`shared-react-library.json` but no React deps exist, downgrade to `library.json`/`shared-library.json` and note the correction.
-- **`library.json` in a monorepo.** If picked preset is `library.json` but the project is inside a monorepo, upgrade to `shared-library.json` (so project references work). Same for `react-library.json` → `shared-react-library.json`.
-- **Missing `types: ["node"]`.** If the picked preset is `base.json` or one of the library presets, but the source imports `node:*` modules, add `compilerOptions.types: ["node"]` to the override block of `tsconfig.json`.
-- **Node types in a Cloudflare Worker.** If the project has `wrangler.*` or `@cloudflare/workers-types` but was assigned `service.json` (Node types), switch to `service-worker.json`. `@types/node` globals (`process`, `Buffer`, etc.) don't exist on the Workers runtime.
-- **TypeScript version.** If `typescript` in devDependencies is `< 6.0.0`, flag it — `.datamitsu/tsconfig.md` requires TS 6.0+. Do not bump it automatically; surface it in the report so the user can update intentionally. Never recommend `typescript@latest`: that now resolves to 7.x, a different (Go) compiler with no JavaScript compiler API, which no released typescript-eslint accepts (`typescript >=4.8.4 <6.1.0`). Recommend `typescript@^6` unless the user asks for 7 specifically.
-- **Redundant `@typescript/native-preview`.** If it (or a `tsgo` script) is present, flag it as superseded — TypeScript 7 _is_ the native compiler. Removing it is the user's call; do not touch it.
+- **DOM types in Node.** Without React deps, switch `react-library.json`/`shared-react-library.json` to `library.json`/`shared-library.json` respectively. Note the correction.
+- **`library.json` in a monorepo.** For project references, switch `library.json` to `shared-library.json`; likewise `react-library.json` → `shared-react-library.json`.
+- **Missing `types: ["node"]`.** For `base.json` or any library preset with `node:*` source imports, add `compilerOptions.types: ["node"]` to the `tsconfig.json` overrides.
+- **Node types in Workers.** With `wrangler.*` or `@cloudflare/workers-types`, replace `service.json` with `service-worker.json`. Workers lack `@types/node` globals like `process` and `Buffer`.
+- **TypeScript version.** Report `typescript` in devDependencies if `< 6.0.0`; `.datamitsu/tsconfig.md` requires TS 6.0+. Never auto-bump. Never recommend `typescript@latest`: it resolves to 7.x, a Go compiler without a JavaScript compiler API, unsupported by all released typescript-eslint versions (`typescript >=4.8.4 <6.1.0`). Recommend `typescript@^6` unless the user specifically asks for 7.
+- **Redundant `@typescript/native-preview`.** Flag it or a `tsgo` script as superseded if present: TypeScript 7 is the native compiler. Leave removal to the user; do not edit it.
 
 ### Compute the override block
 
-The presets in `@shibanet0/datamitsu-config/tsconfig/*` are designed to be extended with minimal overrides. Default to just:
+For `@shibanet0/datamitsu-config/tsconfig/*`, default to:
 
 ```json
 {
@@ -112,15 +112,13 @@ Only add `compilerOptions` overrides when one of these applies:
 - Project layout deviates from `src/` → `dist/` and needs explicit `rootDir`/`outDir`.
 - `include`/`exclude` need to deviate from the preset defaults (e.g., include a generated `.d.ts` file).
 
-Never add overrides that just restate the preset defaults. The "Explicit Configuration" philosophy lives **inside** the preset, not in each consumer.
+Never restate preset defaults. "Explicit Configuration" belongs in the preset, not the consumer.
 
 ---
 
 ## Step 4 — Propose
 
-Build a report and present it to the user. Do not write yet.
-
-Structure the report exactly like this:
+Present this exact report structure. Do not write yet.
 
 ```markdown
 ## tsconfig setup plan
@@ -162,11 +160,9 @@ Why: <one-sentence justification, citing the row in the table>
 Apply changes? Reply: yes / no / show details
 ```
 
-If the user replies `show details`, print the full proposed file content and the relevant excerpt from `.datamitsu/tsconfig.md` for the chosen preset. Then ask again.
-
-If the user replies `no`, abort. Do not write anything.
-
-If the user replies `yes`, proceed to Step 5.
+- `show details`: print the full proposed file and the chosen preset's excerpt from `.datamitsu/tsconfig.md`. Ask again.
+- `no`: abort without writing.
+- `yes`: proceed to Step 5.
 
 ---
 
@@ -174,19 +170,19 @@ If the user replies `yes`, proceed to Step 5.
 
 After explicit `yes`:
 
-1. Write the new `tsconfig.json` content.
-2. Preserve any keys from the existing `tsconfig.json` that are clearly user intent and not preset duplication: `references`, `files`, custom `include` patterns (e.g., generated `.d.ts` paths), `ts-node`/`tsx`-specific sections.
-3. Drop keys that the preset already sets to the same value — the philosophy is explicit-in-preset, minimal-in-consumer.
-4. Sort `compilerOptions` keys alphabetically and root-level keys in this order: `$schema`, `extends`, `compilerOptions`, `include`, `exclude`, `references`, `files`. This matches the project's existing style (see the project's own `tsconfig.json`).
-5. Do not create backup files. Git is the backup.
+1. Write the new `tsconfig.json`.
+2. Preserve clearly intentional keys from the existing `tsconfig.json` that do not duplicate the preset: `references`, `files`, custom `include` patterns (e.g., generated `.d.ts` paths), `ts-node`/`tsx` sections.
+3. Drop keys matching preset values.
+4. Sort `compilerOptions` alphabetically. Follow project `tsconfig.json` root key order: `$schema`, `extends`, `compilerOptions`, `include`, `exclude`, `references`, `files`.
+5. Do not create backups; Git is the backup.
 
-Do not touch any other tsconfig files in the repo (`tsconfig.eslint.json`, `tsconfig.build.json`, package-level configs in a monorepo) unless the user explicitly asked you to set those up too. Each is a separate run.
+Leave other configs (`tsconfig.eslint.json`, `tsconfig.build.json`, monorepo package configs) untouched unless explicitly requested. Each needs a separate run.
 
 ---
 
 ## Step 6 — Report
 
-After writing, print a final summary:
+After writing, print:
 
 ```markdown
 Done.
@@ -205,12 +201,12 @@ Next steps:
 
 ## What this skill does NOT do
 
-- Does **not** install or update TypeScript itself. The version check is informational.
-- Does **not** modify `package.json`, `tsdown.config.*`, bundler configs, ESLint configs, or any other file. tsconfig only.
-- Does **not** set up project `references` in a monorepo. Reports the recommendation; the user wires the references because correct wiring requires knowing the dependency graph.
-- Does **not** delete or modify alternate tsconfig files (`tsconfig.build.json`, etc.).
-- Does **not** add path aliases. Per `.datamitsu/tsconfig.md`, the presets intentionally avoid path aliases — use relative paths.
-- Does **not** modify anything under `.datamitsu/`. That directory is read-only from this skill's perspective.
+- Never install or update TypeScript; the version check is informational.
+- Edit only tsconfig, not `package.json`, `tsdown.config.*`, bundler configs, ESLint configs, or other files.
+- Recommend monorepo project `references` but leave setup to the user; wiring depends on the dependency graph.
+- Never delete or modify alternate configs (`tsconfig.build.json`, etc.).
+- Use relative paths; `.datamitsu/tsconfig.md` presets intentionally avoid path aliases. Do not add them.
+- Treat `.datamitsu/` as read-only.
 
 ---
 
@@ -218,23 +214,23 @@ Next steps:
 
 **No `package.json` in project root.** Abort: "No `package.json` found. This skill expects a Node/TypeScript project."
 
-**Multiple `tsconfig*.json` files in root.** Operate only on `tsconfig.json`. If it does not exist but `tsconfig.base.json` does, surface it in the report and ask whether the user wants `tsconfig.json` created as a thin extender of the picked preset, or whether `tsconfig.base.json` should be modified instead.
+**Multiple root `tsconfig*.json` files.** Target only `tsconfig.json`. If absent but `tsconfig.base.json` exists, report it. Ask whether to create `tsconfig.json` as a thin extender of the picked preset or modify `tsconfig.base.json` instead.
 
-**`tsconfig.json` is a JSON5 file with comments.** Preserve user comments where possible by treating the file as text rather than re-serializing. If overrides need to be added/removed, do minimal textual edits.
+**JSON5 `tsconfig.json` with comments.** Edit as text rather than re-serializing to preserve comments where possible. Make minimal textual edits when adding/removing overrides.
 
-**Project already has the correct preset and no warnings apply.** Print: "tsconfig.json already extends the correct preset. Nothing to do." Exit cleanly.
+**Correct preset, no warnings.** Print: "tsconfig.json already extends the correct preset. Nothing to do." Exit cleanly.
 
-**Project is inside a monorepo but the user wants standalone behavior** (e.g., the package is published independently from a turborepo). Surface the monorepo detection in the proposal and let the user override the preset choice when they reply.
+**Monorepo package wants standalone behavior** (e.g., independently published from a turborepo). Report monorepo detection in the proposal; let the user override the preset in their reply.
 
-**Mixed signals (React + server framework, e.g. Next.js API routes).** Next.js wins — use `nextjs.json`. The Next plugin handles both client and server.
+**Mixed React + server framework signals** (e.g., Next.js API routes). Next.js wins: use `nextjs.json`. Its plugin handles client and server.
 
-**Astro / SvelteKit / SolidStart / other frameworks not in the table.** Do not pick a preset. Report the detected framework and ask the user to either pick manually from the table or open an issue against `datamitsu-config` to add a preset.
+**Astro / SvelteKit / SolidStart / other unlisted frameworks.** Do not pick a preset. Name the detected framework and ask the user to choose manually from the table or open a `datamitsu-config` issue to add a preset.
 
 ---
 
 ## Interaction style
 
-- Be terse. Reports are scannable, not narrative.
-- Quote the row of the "Quick Selection" table verbatim when justifying a preset choice.
-- One-line "why" justifications. Do not restate what the preset adds — the user can read `.datamitsu/tsconfig.md`.
-- Never apologize for warnings. They are facts, not the author's failure.
+- Keep reports terse and scannable, not narrative.
+- Quote the "Quick Selection" row verbatim to justify the preset.
+- Keep "why" to one line; do not repeat preset additions from `.datamitsu/tsconfig.md`.
+- Never apologize for warnings; state facts without assigning blame.
