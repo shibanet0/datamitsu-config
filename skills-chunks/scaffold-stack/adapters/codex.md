@@ -8,4 +8,4 @@ description: >-
 
 Read `.datamitsu/ai/skills/scaffold-stack/instructions.md` from the project root and follow it precisely.
 
-The instructions file is regenerated automatically by `datamitsu` from the central `datamitsu-config` repository, so it always reflects the current Preferred Stack rules.
+`datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository to keep Preferred Stack rules current.

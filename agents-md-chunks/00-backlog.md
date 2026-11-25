@@ -1,8 +1,6 @@
 ## Backlog
 
-If `docs/backlog/` exists, it holds work that was deliberately deferred — one Markdown file per
-item, written at the moment the problem was understood, by whoever had just finished investigating
-it.
+If `docs/backlog/` exists, it holds deliberately deferred work, one Markdown file per item, written by whoever finished investigating when the problem was understood.
 
 **Search it before you start investigating anything.** Search the bodies, not just the filenames:
 
@@ -10,21 +8,15 @@ it.
 rg -i "<symptom or subsystem>" docs/backlog/
 ```
 
-Do this before debugging a defect, before a performance or correctness investigation, before
-writing a plan, before proposing a design change, and whenever the user asks why something is the
-way it is. An entry may already hold the reproduction, the measurement, the approach that was tried
-and failed, or the constraint that rules out the obvious fix.
+Search before debugging defects, investigating performance or correctness, writing plans, proposing design changes, or answering why something is the way it is. An entry may contain reproduction, measurement, failed approaches, or constraints ruling out obvious fixes.
 
-A hit **re-opens the triage decision**, it does not close it. `worth: later` and `worth: no` were
-judgments made under the circumstances of the `added:` date. Read the reasoning, check whether its
-premises still hold, and say so rather than silently inheriting the old verdict.
+A hit **re-opens triage**; it does not settle it. `worth: later` and `worth: no` reflect circumstances on the `added:` date. Read the reasoning, check whether its premises still hold, and state that rather than silently inheriting the verdict.
 
-Treat an entry as evidence, not as truth: verify its `where:` anchor before relying on it, because
-the code may have moved since.
+Treat entries as evidence, not truth. Verify each `where:` anchor before relying on it; code may have moved.
 
 ### Where a finding goes
 
-Three places, and they are not interchangeable. Put a finding in exactly one:
+Use exactly one of these three non-interchangeable places:
 
 | Place                | Holds                                                               | Test                                              |
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------- |
@@ -32,12 +24,8 @@ Three places, and they are not interchangeable. Put a finding in exactly one:
 | `docs/backlog/`      | Work on this repository that was deliberately deferred              | Somebody could pick it up and act on it           |
 | Agent-private memory | How **this user** works — preferences, corrections, session context | It is about the person, not the codebase          |
 
-Agent-private facts must never be committed. Conversely, a real finding must not be left in
-agent-private memory, where the next contributor, the next agent and CI will never see it.
+Never commit agent-private facts. Do not leave real findings in private memory, where contributors, agents, and CI cannot see them.
 
-**The backlog is not a notebook.** It is not a place to park session notes, observations, ideas you
-have not examined, or anything an agent wants to remember. Every entry is a claim that something
-about this codebase is wrong or missing and that acting on it is possible. If a note fails that
-test, it does not become a backlog entry just because it has nowhere else to go.
+**The backlog is not a notebook.** Do not park session notes, observations, unexamined ideas, or anything an agent merely wants to remember. Each entry claims that something in this codebase is wrong or missing and actionable. If a note fails that test, do not add it just because it has nowhere else to go.
 
 The `backlog` skill holds the format and the workflow.

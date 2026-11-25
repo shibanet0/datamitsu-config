@@ -1,41 +1,30 @@
 # Cleanup AGENTS.md
 
-You are about to clean up the project's `AGENTS.md`. The job has two halves:
+Clean up the project's `AGENTS.md` in two stages:
 
-1. **Remove what is already guaranteed elsewhere** — content covered by the shared chunks deployed
-   via [datamitsu](https://datamitsu.com/) into `.datamitsu/ai/agents/agents-*.md`, and non-rule
-   content (architecture docs, templates, release notes) that belongs in its own file.
-2. **Compact what is left** — without changing what an agent reading the file would do.
+1. Remove rules guaranteed by shared chunks deployed via [datamitsu](https://datamitsu.com/) to `.datamitsu/ai/agents/agents-*.md`. Move non-rule content (architecture docs, templates, release notes) to its own file.
+2. Compact the rest without changing agent behavior.
 
-The shared chunks are the **source of truth**. The project's `AGENTS.md` should contain only what is
-specific to this project and not covered by the chunks. Additionally, `AGENTS.md` is for
-**prescriptive rules** — descriptive documentation of internals belongs in dedicated docs files, not
-in agent instructions.
+Shared chunks are authoritative. Keep only project-specific prescriptive content in `AGENTS.md`, not chunk duplicates. Document internals in dedicated docs, not `AGENTS.md`.
 
-The goal is **not** fewer lines. It is the smallest number of tokens an agent needs to reproduce the
-same behavior — with every rule, condition, exception, exact literal and degree of obligation
-intact. A cleanup that removes 60% of the lines and one unique rule is a failure.
+Minimize tokens, not lines. Losing even one unique rule, condition, exception, exact literal or degree of obligation fails the cleanup.
 
-This skill is destructive — it rewrites `AGENTS.md` and may create new files. Always follow the
-propose → confirm → apply order. Never apply without explicit confirmation.
+Rewriting `AGENTS.md` and creating files are destructive: propose → confirm → apply. Never apply without explicit confirmation.
 
 ---
 
 ## Invariants
 
-These hold at every step. If an action would break one, do not take it — report instead.
+At every step, report rather than violate an invariant.
 
-1. **No silent rule loss.** Every prescriptive statement in the original ends up with an explicit
-   disposition (Step 6). "It disappeared" is not a disposition.
-2. **No silent conflict resolution.** Similar-but-different statements are never canonicalized into
-   one without proven equivalence. Report them; do not pick a winner.
+1. **No silent rule loss.** Give every original prescriptive statement an explicit disposition (Step 6).
+2. **No silent conflict resolution.** Without proven equivalence, report similar but different statements; never merge them or pick a winner.
 3. **Normative strength is preserved.** `NEVER` does not become `avoid`; `prefer` does not become
    `always`.
 4. **Exact literals are preserved.** Commands, flags, paths, package names, identifiers, config keys
    and versions are never rewritten from memory, "corrected", or normalized.
 5. **The chunk is read-only.** Nothing under `.datamitsu/` is modified, ever.
-6. **Project exceptions survive.** A rule that extends or contradicts a chunk rule is not a
-   duplicate — it is the reason the project has an `AGENTS.md`.
+6. **Project exceptions survive.** A rule extending or contradicting a chunk rule belongs in `AGENTS.md`; it is not a duplicate.
 7. **Propose before mutate.** No destructive change without explicit confirmation.
 8. **Semantics over line count.** Quality is measured by behavior preserved, not by percentage
    removed.
@@ -77,18 +66,13 @@ Identify three regions in this exact order:
 3. **Project content** — everything below the bootstrap line. Split into sections by `##` (h2)
    headings. Subsections (`###` and deeper) belong to their parent section.
 
-Sections are the unit of **structure and reporting**. They are not the unit of decision — that is
-Step 3.
+Use sections for structure and reporting, not decisions (Step 3).
 
 ---
 
 ## Step 3 — Atomize
 
-A whole section is too coarse to classify. One section routinely contains a prescriptive rule, a
-paragraph of architecture, a rationale, an example, a project-specific exception and a chunk
-duplicate — all at once, and each wants a different action.
-
-Break the content down:
+Classify below section level: one section can mix rules, architecture, rationale, examples, project exceptions and chunk duplicates requiring different actions.
 
 ```text
 Section
@@ -110,13 +94,13 @@ Assign every span a **role**:
 
 ### Normative strength
 
-Modality is part of a rule's meaning. These tiers are **not** interchangeable:
+Modality tiers are not interchangeable:
 
 ```text
 NEVER / MUST NOT  >  MUST / ALWAYS  >  SHOULD  >  PREFER  >  MAY  >  descriptive
 ```
 
-Record the tier of every `rule` span. Compaction may not weaken it and may not strengthen it.
+Record each `rule` span's tier. Never weaken or strengthen it.
 
 > `Prefer X.` is not `Always use X.`
 > `Never bypass commit hooks.` is not `Do not normally bypass commit hooks.`
@@ -127,16 +111,13 @@ Record every literal verbatim: commands and their exact shape, paths, flags, scr
 names, identifiers, config keys, versions, environment variable names, and any `<!-- hits: N -->`
 markers.
 
-`pnpm exec dm check` and `pnpm dm check` are **different strings**. Never "improve" a literal from
-memory, and never reconcile two variants of one. If you believe a literal in the file is wrong,
-report it as a conflict — fixing it is not this skill's job.
+`pnpm exec dm check` and `pnpm dm check` differ. Never improve literals from memory or reconcile variants. Report suspected errors as conflicts; do not fix them.
 
 ---
 
 ## Step 4 — Classify each span
 
-Every span gets exactly one category. A single section may produce deletions, extractions and
-retained rules simultaneously — that is normal and expected.
+Assign exactly one category per span. A section can yield deletions, extractions and retained rules.
 
 ### Against the chunk
 
@@ -146,8 +127,7 @@ retained rules simultaneously — that is normal and expected.
 | `project-unique-rule` | Prescriptive rule specific to this project, not in chunks | Keep semantics (Step 5)        |
 | `project-exception`   | Extends or contradicts a chunk rule for this project      | Keep; never treat as duplicate |
 
-`partial-duplicate` is no longer a category — it was an artifact of classifying whole sections. At
-span level a mixed section simply yields some `duplicate-of-chunk` spans and some kept ones.
+Do not use the old section-level `partial-duplicate` category. Classify mixed sections span by span: `duplicate-of-chunk` or kept.
 
 ### Against the rest of the project file
 
@@ -182,69 +162,46 @@ statement that still carries the condition.
 
 ### Step 4.1 — Conflict detection
 
-**Similarity is not equivalence.** Two statements are duplicates only if you can demonstrate they
-mean the same thing. They are **not** duplicates if they differ in any of:
+Duplicates require proven equivalence. Any difference below rules it out:
 
 - command literal · path · flag · package name
 - scope · condition · exception · negation
 - normative strength
 
-When they differ and the context does not let you prove which is correct, classify both as
-`potential-conflict`:
+If context cannot establish which differing span is correct, classify both as `potential-conflict`:
 
 ```text
 pnpm exec dm check
 pnpm dm check
 ```
 
-The skill does not pick a winner because the two commands resolve differently. Keep both spans in
-place, list them under **Potential conflicts** in the proposal, and let the user decide. Destructive
-canonicalization without sufficient grounds is forbidden.
+These commands resolve differently. Keep both spans in place, list them under **Potential conflicts** in the proposal and let the user decide. Never canonicalize without sufficient grounds.
 
 ### Classification rules
 
-**Semantic, not textual.** Project spans often reword chunk rules in different words. Same intent
-and content = duplicate, regardless of wording.
+**Compare semantics, not wording.** Identical intent and content make a chunk duplicate.
 
-**Prescriptive vs descriptive distinguishes rule from architecture.** A 60-line description of how
-the retry orchestrator works internally is `architectural-detail`. A 2-line statement "always call
-`markRetryHealthyBoot` after a successful boot, otherwise X" is `project-unique-rule`. Length is not
-the criterion — the question is "does this tell the agent what to do (rule)" or "does this describe
-how the system works (architecture)".
+**Distinguish description from prescription, regardless of length.** A retry orchestrator's internals are `architectural-detail`; "always call `markRetryHealthyBoot` after a successful boot, otherwise X" is a `project-unique-rule`.
 
 **Pitfall detection.** A span is a `pitfall` if any of these match:
 
-- Its heading contains: `Pitfall`, `Known Pitfalls`, `Известные проблемы`, `Подводные камни`,
+- Its heading contains: `Pitfall`, `Known Pitfalls`, `Known Issues`, `Pitfalls`,
   `Gotcha`, `Common mistakes`, `Lessons learned`
 - It belongs to a parent section matching those patterns
 - It describes a specific bug, race, footgun, or mistake to avoid in this codebase
 - It contains `<!-- hits: N -->` markers — these are project state and must be preserved exactly
 
-**Deferred work vs pitfall.** Both describe something wrong, and they are told apart by what the
-reader is supposed to do:
+**Deferred work vs pitfall:** Does the reader need to act differently today?
 
-- A **pitfall** tells the reader how to avoid stepping on something. It changes what they do today.
-  "`pnpm test` must run with `umask 022` or the source-mode tests fail on the test binary's own
-  mode" is a pitfall — knowing it changes the next command you type.
-- **Deferred work** is a defect nobody is fixing right now, with nothing for the reader to do
-  differently. "The store grows without bound; every config-hash change orphans a directory" is
-  deferred work — there is no behavior it asks of the reader, only an action waiting for somebody.
+- A **pitfall** explains how to avoid a failure: "`pnpm test` must run with `umask 022` or the source-mode tests fail on the test binary's own mode."
+- **Deferred work** records an unfixed defect without changing current behavior: "The store grows without bound; every config-hash change orphans a directory."
 
 Markers of `deferred-work`: "TODO", "FIXME", "not implemented yet", "should eventually", "known
 limitation", "we plan to", a described bug with no workaround given.
 
-Relocate these to `docs/backlog/`, one file per item, in the format the `backlog` skill defines.
-**Never delete them.** They are the most expensive content in the file — written when the problem
-was understood — and deleting them destroys exactly what the backlog exists to preserve. When in
-doubt between `pitfall` and `deferred-work`, keep it as a pitfall: leaving it in `AGENTS.md` costs a
-few lines, and losing it costs the investigation.
+Never delete these items. Move each to its own file in `docs/backlog/` using the `backlog` skill's format. If unsure between `pitfall` and `deferred-work`, keep the pitfall in `AGENTS.md`.
 
-**Project context is judged by necessity, not by length.** Keep only the minimum context an agent
-needs to interpret the prescriptive rules that follow; extract the rest regardless of how short it
-is. "This repository contains the CLI and its documentation website" earns its place if later rules
-say "CLI" and "website". A mission statement, a repo tree, a full package catalog, a dependency
-list, or an architecture overview that prescribes nothing does not — a README-style paragraph does
-not become an agent instruction by being 19 lines long.
+**Keep only context needed to interpret later rules.** "This repository contains the CLI and its documentation website" helps if rules refer to "CLI" and "website". Extract unnecessary context regardless of length: a mission statement, repo tree, full package catalog, dependency list or non-prescriptive architecture overview.
 
 **Migration cruft detection.** A section is `migration-cruft` if:
 
@@ -258,20 +215,11 @@ When stripping migration cruft: remove the wrapper heading and any boilerplate l
 wrapped subsections one heading level up (e.g., `###` under `## Migrated From CLAUDE.md` becomes
 `##`). Preserve all prescriptive content inside.
 
-**Misplaced overrides.** If a span explicitly contradicts or extends a chunk rule (e.g., "in this
-fork, commits follow the upstream format, not Conventional Commits"), it is a legitimate override —
-but it should live in the override block above the bootstrap line, not below. Classify as
-`project-exception` and add a note: "Consider moving to override block above bootstrap line".
+**Misplaced overrides.** Below the bootstrap, classify explicit extensions or contradictions of chunk rules (e.g., "in this fork, commits follow the upstream format, not Conventional Commits") as `project-exception`. Note: "Consider moving to override block above bootstrap line".
 
-**Be conservative.** When in doubt between `duplicate-of-chunk` and `project-unique-rule`, choose
-`project-unique-rule`. False positive (deleting useful project content) is worse than false negative
-(leaving a small duplicate).
+**When unsure** between `duplicate-of-chunk` and `project-unique-rule`, keep `project-unique-rule` rather than risk deleting project content.
 
-**Deletion is the only irreversible action this skill takes.** Every other category relocates its
-content — to a docs file, to `CHANGELOG.md`, to `docs/backlog/` — and relocation is recoverable by
-reading the new file. Only `duplicate-of-chunk` deletes, and it is safe solely because the content
-still exists in the chunk. If a span does not fit a category, relocate it rather than delete it, and
-say where it went.
+**Only deletion is irreversible.** Delete only `duplicate-of-chunk`: the rule survives in the chunk. If no category fits, relocate rather than delete (e.g., to docs, `CHANGELOG.md` or `docs/backlog/`) and report the destination.
 
 ### Extraction target selection
 
@@ -288,16 +236,13 @@ When a span is classified for extraction, choose a target file:
 Slugify: lowercase, replace spaces with hyphens, remove special characters. E.g., "Important
 Implementation Details" → `important-implementation-details.md`.
 
-If the target file already exists, append the extracted content under a new `## <original heading>`
-at the end of that file.
+For an existing target, append under a new `## <original heading>`.
 
 ---
 
 ## Step 5 — Compact what is retained
 
-`Keep` means **preserve the semantics, not the wording**. A retained rule may be shortened,
-normalized, merged with an equivalent local rule, or moved next to a related rule — provided its
-scope, modality, conditions, exceptions and exact literals survive intact.
+`Keep` protects meaning, not wording. Shorten, normalize, merge equivalent local rules or group related rules only if scope, modality, conditions, exceptions and exact literals survive.
 
 ### Policy
 
@@ -324,12 +269,11 @@ After:
 - Never read `process.env` outside the central env module.
 ```
 
-The obligation (`never`), the literal (`process.env`) and the scope (outside the env module) all
-survive. The rationale is dropped because knowing _why_ does not change what the reader does.
+This keeps `never`, `process.env` and the scope (outside the env module); the rationale does not affect behavior.
 
 ### Order of optimization
 
-Always in this order — each step shrinks the input to the next:
+Always optimize in this order:
 
 1. Remove what the active chunk already guarantees.
 2. Remove internal semantic duplicates.
@@ -349,34 +293,29 @@ Always in this order — each step shrinks the input to the next:
 
 ### Pitfalls are protected, not frozen
 
-`Keep pitfall` does not mean "keep every sentence verbatim". A pitfall compacts well into:
+`Keep pitfall` permits compaction to:
 
 ```text
 trigger/context → failure mode → required action
 ```
 
-A long history of how a bug was discovered can become:
+For example, replace discovery history with:
 
 ```text
 - Before closing the DB, stop the checkpoint worker; otherwise shutdown races the WAL checkpoint.
 ```
 
-provided the history does not change what the reader does. `<!-- hits: N -->` markers are project
-state and are carried across exactly.
+Only omit history that does not affect behavior. Preserve `<!-- hits: N -->` markers exactly; they are project state.
 
 ### Wholesale restructuring is out of scope
 
-Grouping related rules under one heading is allowed — that is step 7 of the order above.
-Reorganizing the file's section structure wholesale is not: it buries the real changes in a diff the
-user cannot review, and it recovers no tokens. Keep section order stable unless a section becomes
-empty.
+Group related rules under one heading (optimization step 7), but do not restructure wholesale. Keep section order stable unless a section becomes empty.
 
 ---
 
 ## Step 6 — Coverage audit
 
-Run this **before writing anything**. It is the main defense against losing a rare but critical
-instruction.
+Audit **before writing anything**.
 
 Every atomic prescriptive statement in the original must map to exactly one disposition:
 
@@ -396,16 +335,13 @@ There is no valid disposition "disappeared".
 Then check literals: every exact literal recorded in Step 3 must appear verbatim in the result, in
 the file it was relocated to, or in a reported conflict.
 
-**If either check fails, abort before touching any file** and report which statement or literal has
-no disposition. An incomplete audit is a bug in the analysis, not a reason to proceed carefully.
+**If either check fails, abort before touching any file.** Report the unmapped statement or literal.
 
 ---
 
 ## Step 7 — Propose
 
-Build a report and present it to the user. Do not apply yet.
-
-Structure the report exactly like this:
+Present the proposal in this exact format. Do not apply yet.
 
 ```text
 ## Cleanup plan for AGENTS.md
@@ -482,15 +418,11 @@ Line count (secondary): <K> → ~<K_after>
 Apply changes? Reply: yes / no / show diff
 ```
 
-**`Unique rules removed` must be 0.** If it is not, the analysis is wrong — do not offer to apply.
-Go back to Step 6, find the statement with no disposition, and fix the classification.
+**`Unique rules removed` must be 0.** Otherwise do not offer to apply. Return to Step 6, find the unmapped statement and fix its classification.
 
-If the user replies `show diff`, print the unified diff between the current `AGENTS.md` and the
-planned result, plus the content of each file to be created. Then ask again.
-
-If the user replies `no`, abort. Do not modify anything.
-
-If the user replies `yes`, proceed to Step 8.
+- `show diff`: Print the unified diff from the current `AGENTS.md` to the planned result and the content of each new file. Ask again.
+- `no`: Abort without modifying anything.
+- `yes`: Proceed to Step 8.
 
 ---
 
@@ -502,11 +434,7 @@ After explicit `yes`:
    - Create parent directories if needed.
    - If the target file is new, write a `# <heading>` title and the extracted content.
    - If the target file exists, append `\n\n## <heading>\n\n` + content at the end.
-2. **Write backlog entries.** For each `deferred-work` item, create `docs/backlog/` if absent and
-   write one file per item in the format the `backlog` skill defines — slug naming the symptom,
-   `worth`/`where`/`added` frontmatter, `added` set to today. Carry the original wording across;
-   this is a move, not a summary. Apply the privacy rules: an item quoting a private path or another
-   project is anonymized on the way over.
+2. **Write backlog entries.** Create `docs/backlog/` if needed. For each `deferred-work` item, follow the `backlog` skill: one file, symptom slug, `worth`/`where`/`added` frontmatter, `added` set to today. Move the original wording without summarizing; anonymize quoted private paths or references to another project per the privacy rules.
 3. **Clean up migration cruft.** Strip wrapper headings and boilerplate, promote child sections.
 4. **Apply deletes, merges and compactions** in order from **bottom to top** of `AGENTS.md` (so line
    numbers don't shift mid-edit).
@@ -518,8 +446,7 @@ After explicit `yes`:
    is present in it or in a file it moved to. If one is missing, say so immediately and loudly —
    the user still has the pre-run state in git.
 
-Do not create backup files. Git is the backup. The user committed before running this — if they
-didn't, that's user error and aborting too late won't help.
+Do not create backups. Rely on the user's pre-run git commit; do not abort at this stage if they skipped it.
 
 ---
 
@@ -558,21 +485,13 @@ deleting CLAUDE.md as a separate manual step.
 
 ## What this skill does NOT do
 
-- Does **not** modify anything in `.datamitsu/`. That directory is gitignored and regenerated by
-  `datamitsu` itself. The chunks are read-only from this skill's perspective. Optimizing the shared
-  chunks themselves is a different task with a different risk profile and is not this skill's job.
-- Does **not** resolve conflicts on its own. Two plausible variants of a command are reported, never
-  silently reconciled.
-- Does **not** summarize. It normalizes under the invariants above — a summarizer is allowed to lose
-  detail, and this is not.
-- Does **not** touch symlinks like `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules`. They
-  reflect `AGENTS.md` automatically.
-- Does **not** add tracking markers, version numbers, or state files. The chunks are the source of
-  truth on every run; if a chunk grows, the next run picks it up.
-- Does **not** validate the contents of the override block. The author wrote it; the skill respects
-  it.
-- Does **not** modify `README.md` or `CHANGELOG.md` unless extracting content there (append only,
-  never rewrites existing content).
+- Never modify `.datamitsu/`: gitignored, read-only chunks regenerated by `datamitsu`. Shared chunk optimization is a separate task.
+- Never resolve conflicts independently. Report plausible command variants; do not reconcile them.
+- Normalize under the invariants; do not summarize or lose detail.
+- Leave symlinks like `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules` untouched; they reflect `AGENTS.md` automatically.
+- Do not add tracking markers, version numbers or state files. Use current chunks as the source of truth each run.
+- Do not validate the author's override block.
+- Modify `README.md` or `CHANGELOG.md` only to append extracted content; never rewrite existing content.
 
 ---
 
@@ -593,16 +512,12 @@ equivalent) to regenerate `.datamitsu/`, then re-run this skill."
 **`AGENTS.md` is empty or has only the bootstrap line.** Nothing to clean. Print: "AGENTS.md has no
 project content beyond the bootstrap. Nothing to do." Exit cleanly.
 
-**Pitfall span without an explicit "Known Pitfalls" parent heading.** If individual spans describe
-specific bugs/footguns scattered through the file, still classify them as `pitfall` based on
-content. Pitfalls are content-defined, not structurally-defined.
+**No "Known Pitfalls" parent heading.** Classify scattered, codebase-specific bugs or footguns as `pitfall` by content.
 
 **A span matches a chunk rule but adds a project-specific exception.** The rule half is
 `duplicate-of-chunk`; the exception half is `project-exception`. Delete the first, keep the second.
 
-**Two spans conflict and one is obviously stale** (e.g. it names a script that no longer exists in
-`package.json`). Still report it as a conflict — but say which one the repository supports, and why.
-The evidence goes in the report; the decision stays with the user.
+**One conflicting span is clearly stale** (e.g., its script is absent from `package.json`). Still report the conflict. State which variant the repository supports and why; leave the decision to the user.
 
 **Extraction target directory does not exist.** Create it. The skill creates `docs/architecture/`,
 `docs/templates/`, etc. as needed.

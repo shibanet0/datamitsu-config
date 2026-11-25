@@ -1,6 +1,6 @@
 ## Preferred Stack
 
-When creating a project, initializing an app, or adding a dependency, pick from this catalogue FIRST. Do not invent alternatives or reach for unmaintained/EOL packages. This is a priority list, not a hard mandate — if a project already uses a reasonable different choice, keep it.
+When creating projects or apps, or adding dependencies, choose from this catalogue first. Do not invent alternatives or use unmaintained/EOL packages. This is a priority list, not a mandate: keep a reasonable existing choice.
 
 ### Version Policy
 
@@ -10,11 +10,8 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 
 ### Invocation
 
-Every datamitsu command follows the same rule:
-
-- Inside a pnpm monorepo wired with this config: `pnpm dm <command>` — `pnpm dm check`, `pnpm dm config reconcile`, and managed tools via `pnpm dm exec <tool>` (`pnpm dm exec air`, `pnpm dm exec goose`, `pnpm dm exec task -- <task>`, …).
-- If the repo has no pnpm stack initialized: call the system-installed `datamitsu` binary directly — `datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`.
-- A subproject newly added to a monorepo is provisioned by the shipped hook: `<invocation> config reconcile --create-missing` creates only the managed configs that are missing and never touches an existing file. Run it by hand after adding a subproject if you do not want to wait for the next commit.
+Use `pnpm dm <command>` in a pnpm monorepo wired with this config (e.g. `pnpm dm check`, `pnpm dm config reconcile`, `pnpm dm exec <tool>` such as `pnpm dm exec air`, `pnpm dm exec goose`, or `pnpm dm exec task -- <task>`). Without an initialized pnpm stack, use the system-installed `datamitsu` binary (`datamitsu check`, `datamitsu config reconcile`, `datamitsu exec <tool>`).
+For a new monorepo subproject, the shipped hook runs `<invocation> config reconcile --create-missing`, creating only missing managed configs and never touching existing files. Run it manually after adding a subproject to avoid waiting for the next commit.
 
 ### Web
 

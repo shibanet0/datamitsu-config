@@ -1,10 +1,10 @@
 ## Dependabot (public GitHub repos only)
 
-Keep `.github/dependabot.yml` accurate **only when this is a public GitHub repository**. Confirm before acting — e.g. `gh repo view --json visibility,isPrivate`. If the repo is private, not on GitHub, or you cannot determine this, **do nothing** and leave the file absent.
+Maintain `.github/dependabot.yml` only in public GitHub repos. Confirm visibility first (e.g. `gh repo view --json visibility,isPrivate`); if private, not on GitHub, or unknown, do nothing and leave the file absent.
 
-When it is a public GitHub repo:
+For a public GitHub repo:
 
-1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal `version: 2` file with an empty `updates:` list is enough to opt in — `dm config reconcile` fills in the rest.
-2. **Own the `updates` entries** (the "what"): the `package-ecosystem` values and their `directory`/`directories`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
-3. **Do NOT hand-tune policy fields.** `commit-message`, `versioning-strategy`, `schedule`, `groups`, and `open-pull-requests-limit` are owned by datamitsu and are normalized on every `dm config reconcile` (conventional-commit prefixes such as `chore(deps):`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
-4. **Run `pnpm dm config reconcile` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.
+1. **Ensure the file exists** if any supported ecosystem is present (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal `version: 2` with empty `updates:` opts in; `dm config reconcile` fills in the rest.
+2. **Own `updates` entries**: keep `package-ecosystem` values and `directory`/`directories` aligned with the project layout, adding entries for new workspaces/services/ecosystems and removing obsolete ones.
+3. **Do NOT hand-tune policy fields.** datamitsu owns and normalizes `commit-message`, `versioning-strategy`, `schedule`, `groups`, and `open-pull-requests-limit` on every `dm config reconcile` (including conventional-commit prefixes such as `chore(deps):`, weekly cadence, and grouped PRs); manual edits are overwritten.
+4. **Run `pnpm dm config reconcile` after editing.** datamitsu only normalizes an existing file; it never creates one.

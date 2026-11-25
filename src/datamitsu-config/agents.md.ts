@@ -6,9 +6,7 @@
 
 const CHUNK_00_BACKLOG = `## Backlog
 
-If \`docs/backlog/\` exists, it holds work that was deliberately deferred — one Markdown file per
-item, written at the moment the problem was understood, by whoever had just finished investigating
-it.
+If \`docs/backlog/\` exists, it holds deliberately deferred work, one Markdown file per item, written by whoever finished investigating when the problem was understood.
 
 **Search it before you start investigating anything.** Search the bodies, not just the filenames:
 
@@ -16,21 +14,15 @@ it.
 rg -i "<symptom or subsystem>" docs/backlog/
 \`\`\`
 
-Do this before debugging a defect, before a performance or correctness investigation, before
-writing a plan, before proposing a design change, and whenever the user asks why something is the
-way it is. An entry may already hold the reproduction, the measurement, the approach that was tried
-and failed, or the constraint that rules out the obvious fix.
+Search before debugging defects, investigating performance or correctness, writing plans, proposing design changes, or answering why something is the way it is. An entry may contain reproduction, measurement, failed approaches, or constraints ruling out obvious fixes.
 
-A hit **re-opens the triage decision**, it does not close it. \`worth: later\` and \`worth: no\` were
-judgments made under the circumstances of the \`added:\` date. Read the reasoning, check whether its
-premises still hold, and say so rather than silently inheriting the old verdict.
+A hit **re-opens triage**; it does not settle it. \`worth: later\` and \`worth: no\` reflect circumstances on the \`added:\` date. Read the reasoning, check whether its premises still hold, and state that rather than silently inheriting the verdict.
 
-Treat an entry as evidence, not as truth: verify its \`where:\` anchor before relying on it, because
-the code may have moved since.
+Treat entries as evidence, not truth. Verify each \`where:\` anchor before relying on it; code may have moved.
 
 ### Where a finding goes
 
-Three places, and they are not interchangeable. Put a finding in exactly one:
+Use exactly one of these three non-interchangeable places:
 
 | Place                | Holds                                                               | Test                                              |
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------- |
@@ -38,53 +30,41 @@ Three places, and they are not interchangeable. Put a finding in exactly one:
 | \`docs/backlog/\`      | Work on this repository that was deliberately deferred              | Somebody could pick it up and act on it           |
 | Agent-private memory | How **this user** works — preferences, corrections, session context | It is about the person, not the codebase          |
 
-Agent-private facts must never be committed. Conversely, a real finding must not be left in
-agent-private memory, where the next contributor, the next agent and CI will never see it.
+Never commit agent-private facts. Do not leave real findings in private memory, where contributors, agents, and CI cannot see them.
 
-**The backlog is not a notebook.** It is not a place to park session notes, observations, ideas you
-have not examined, or anything an agent wants to remember. Every entry is a claim that something
-about this codebase is wrong or missing and that acting on it is possible. If a note fails that
-test, it does not become a backlog entry just because it has nowhere else to go.
+**The backlog is not a notebook.** Do not park session notes, observations, unexamined ideas, or anything an agent merely wants to remember. Each entry claims that something in this codebase is wrong or missing and actionable. If a note fails that test, do not add it just because it has nowhere else to go.
 
 The \`backlog\` skill holds the format and the workflow.`;
 
-const CHUNK_00_BASE = `**These rules are binding for every repository that references this file. Instructions placed above the reference to this file in the including \`AGENTS.md\` override matching rules here; all other rules below remain in full effect.**
+const CHUNK_00_BASE = `**These rules bind every repository referencing this file. Instructions above the reference in the including \`AGENTS.md\` override matching rules; all others below remain in full effect.**
 
 ## Language Policy
 
-Write documentation, code comments, and commit messages in English unless
-explicitly instructed otherwise. This rule does not set the language of
-conversation with the user.
+Write documentation, code comments, and commit messages in English unless explicitly instructed otherwise. This does not set the user conversation's language.
 
-Use clear, concise technical English, guided by ASD-STE100 principles:
-prefer short sentences, familiar words, active voice, and direct instructions
-where appropriate. Accuracy and completeness take priority over simplicity.
-Preserve precise technical terms, conditions, and normative requirements.
-This is style guidance, not a requirement for formal ASD-STE100 compliance.
+Use clear, concise technical English guided by ASD-STE100: prefer short sentences, familiar words, active voice, and direct instructions where appropriate. Accuracy and completeness take priority over simplicity. Preserve precise technical terms, conditions, and normative requirements. Formal ASD-STE100 compliance is not required.
 
-Keep new function, variable, and type names in English. Preserve existing identifiers,
-API names, commands, quoted text, and explicit localization assets or tests. An explicit
-request for another language or writing style takes precedence over this default.
+Keep new function, variable, and type names in English. Preserve existing identifiers, API names, commands, quoted text, and explicit localization assets or tests. Explicit requests for another language or style take precedence.
 
 ## Code Commenting Guidelines
 
-**Default to no comment.** Code that needs prose to be understood should be rewritten first — a clearer name, a smaller function, an extracted constant. A comment is the fallback for what genuinely cannot live in the code; it is never a way to describe code you just wrote.
+**Default to no comment.** First clarify code that needs prose with better names, smaller functions, or extracted constants. Comment only as a fallback for what genuinely cannot live in code; never describe code you just wrote.
 
-Write one ONLY in these cases:
+Write comments ONLY for:
 
-- **Non-obvious business logic** — a domain rule or algorithm whose _why_ is not derivable from the code.
-- **Architectural decisions** — why this approach, and over which specific alternative.
-- **Workarounds** — name the bug, version, or constraint that forces the unusual shape.
-- **Doc comments the language requires** — Go exported identifiers and packages (the shipped \`revive\` config enables \`exported\` and \`package-comments\`). Such a comment MUST say something the signature does not. \`// Foo does Foo\` satisfies the linter and is forbidden anyway, like any other restatement.
+- **Non-obvious business logic** — domain rules or algorithms whose _why_ code cannot show.
+- **Architectural decisions** — why this approach instead of a specific alternative.
+- **Workarounds** — the bug, version, or constraint requiring the unusual shape.
+- **Required doc comments** — Go exported identifiers and packages (the shipped \`revive\` config enables \`exported\` and \`package-comments\`). Such comments MUST add information beyond the signature. \`// Foo does Foo\` may satisfy the linter, but is forbidden restatement.
 
-**Everything else is forbidden.** Never write a comment that:
+**All other comments are forbidden.** Never:
 
-- restates what the code does, in any form;
-- states the obvious, labels a standard pattern (\`defer\`/\`finally\` cleanup, a loop, a getter), or captions a section of a function body;
-- narrates the edit — what changed, what it used to be, what you decided while writing it. That belongs in the commit message and git history;
-- repeats the signature: parameter names, types, or the return value.
+- restate what code does;
+- state the obvious, label a standard pattern (\`defer\`/\`finally\` cleanup, a loop, a getter), or caption a function-body section;
+- narrate edits, former behavior, or writing decisions. Put that in the commit message and git history;
+- repeat the signature's parameter names, types, or return value.
 
-**The test:** say what the comment adds that the line below it does not. If you cannot, delete it rather than reword it. Apply this to comments you are about to write, and to existing ones in code you are already changing.
+**Test:** State what the comment adds beyond the line below. If you cannot, delete it. Apply this test to new comments and existing ones in code you change.
 
 ## Testing
 
@@ -98,15 +78,15 @@ Write one ONLY in these cases:
 
 Follow GitHub Flow with feature branches from main.
 
-**Never bypass commit hooks or verification — under any circumstances.** Do not pass \`--no-verify\` (or any equivalent skip flag) to \`git commit\`/\`git push\`, and never disable, uninstall, or work around pre-commit, commit-msg, or pre-push hooks. They run the same checks as CI; skipping them only pushes a known breakage downstream and burns the maintainer's time.
+**Never bypass commit hooks or verification.** Do not pass \`--no-verify\` or an equivalent skip flag to \`git commit\`/\`git push\`, or disable, uninstall, or work around pre-commit, commit-msg, or pre-push hooks. They run CI's checks; skipping them pushes known breakage downstream and wastes maintainer time.
 
-- A failing hook is a real signal, not an obstacle to route around. Fix the root cause — the code, the commit contents, or the local environment (e.g. a broken toolchain/store) — then commit again.
-- **Commits must stay signed.** If commit signing is configured and signing fails (e.g. a passphrase-locked SSH key that is not loaded in the agent), STOP. Do not commit unsigned, and do not disable signing to get around it. Tell the user their commit signing needs attention and ask them to make it work so you can commit.
-- If you cannot commit cleanly, stop and report exactly why. Never trade a clean history or a green CI for a shortcut that only looks green.
+- A failing hook is a real signal. Fix the root cause — code, commit contents, or local environment (e.g. broken toolchain/store) — then commit again.
+- **Commits must stay signed.** If configured signing fails (e.g. a passphrase-locked SSH key is not loaded in the agent), STOP. Do not commit unsigned or disable signing. Tell the user signing needs attention and ask them to restore it.
+- If you cannot commit cleanly, stop and report why. Never trade clean history or green CI for a shortcut that only looks green.
 
 ### Worktrees
 
-Worktrees are managed with \`wt\`, which datamitsu installs. Never run \`git worktree add\`/\`remove\` by hand, and never install \`wt\` separately — no \`brew\`, no \`cargo\`, no \`curl | sh\`.
+Worktrees are managed with \`wt\`, installed by datamitsu. Never run \`git worktree add\`/\`remove\` manually or install \`wt\` separately (no \`brew\`, \`cargo\`, or \`curl | sh\`).
 
 | Task                            | Command                                       |
 | ------------------------------- | --------------------------------------------- |
@@ -115,13 +95,13 @@ Worktrees are managed with \`wt\`, which datamitsu installs. Never run \`git wor
 | Land the branch and clean up    | \`pnpm dm exec wt -- merge\`                    |
 | Drop a worktree and its branch  | \`pnpm dm exec wt -- remove <branch>\`          |
 
-\`wt switch\` changes the directory through shell integration, which a child process cannot do. An agent asks for the path instead and moves itself:
+\`wt switch\` changes directories through shell integration, which child processes cannot do. Ask for the path, then move there:
 
 \`\`\`bash
 pnpm dm exec wt -- switch --create <branch> --no-cd --format=json
 \`\`\`
 
-Activity markers in \`wt list\`, and routing of a harness's own worktree creation through \`wt\`, come from an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode|pi|omp> install\` to the user instead of running it yourself — it writes to their machine-wide harness config, not to this repository.
+Activity markers in \`wt list\` and routing harness-created worktrees through \`wt\` require an optional plugin that datamitsu does not install. Suggest \`wt config plugins <claude|codex|opencode|pi|omp> install\`; do not run it because it writes to the user's machine-wide harness config, not this repository.
 
 **Commit message format** (Conventional Commits):
 
@@ -132,10 +112,7 @@ Activity markers in \`wt list\`, and routing of a harness's own worktree creatio
 - \`test:\` adding or updating tests
 - \`chore:\` maintenance, dependency updates
 
-Write \`<type>[optional scope][optional !]: <description>\`, with a space after the colon.
-Keep the description concise and move details and rationale to the body. There is no hard
-header-length limit. Natural capitalization, acronyms, and exact identifier spelling are allowed.
-Keep the type lowercase.
+Use \`<type>[optional scope][optional !]: <description>\`, with a space after the colon. Keep the description concise; put details and rationale in the body. No hard header-length limit applies. Natural capitalization, acronyms, and exact identifier spelling are allowed; keep the type lowercase.
 
 ## Dependency Management
 
@@ -150,25 +127,23 @@ All linting and formatting runs through [datamitsu](https://datamitsu.com/) via 
 
 ## AGENTS.md Maintenance
 
-**Keep AGENTS.md in sync with code changes.** Whenever you make changes to the codebase, update AGENTS.md:
+**Keep AGENTS.md in sync with code changes.** Update it whenever code changes:
 
-1. **Add to "Known Pitfalls"** if you encountered an issue a contributor must know about to work
-   correctly today. A real defect that nobody is fixing now is not a pitfall — it belongs in
-   \`docs/backlog/\` (see the Backlog section)
-2. **Update commands** if scripts change
-3. **Add examples** for new patterns introduced
-4. **Update architecture notes** for significant refactoring
+1. Add to "Known Pitfalls" any issue contributors must know to work correctly today. A real defect nobody is fixing now belongs in \`docs/backlog/\` (see Backlog).
+2. Update commands when scripts change.
+3. Add examples for new patterns.
+4. Update architecture notes for significant refactoring.
 
-**Golden Rule**: If you had to figure something out, document it so others (and future AI agents) don't have to — routed per the Backlog section, and never only in an agent's private memory.
+**Golden Rule:** Document what you had to figure out so others (including future AI agents) need not repeat it. Route it per Backlog; never leave it only in agent-private memory.
 
 ## Verification Checklist
 
 Before completing any task:
 
-1. Run the test suite if tests exist
-2. Run \`pnpm dm check\`
-3. Verify build succeeds
-4. Update AGENTS.md if a new pattern or pitfall was discovered
+1. Run the test suite if tests exist.
+2. Run \`pnpm dm check\`.
+3. Verify the build succeeds.
+4. Update AGENTS.md if you discovered a new pattern or pitfall.
 
 ## TypeScript Configuration
 
@@ -176,24 +151,20 @@ When creating or modifying \`tsconfig.json\` files, consult the [TypeScript Conf
 
 const CHUNK_00_CONFIG_INPUTS = `## Single Source for Constants, Env & Build Inputs
 
-Every project (or set of apps in a monorepo) funnels its shared constants, environment variables, and build-time flags through ONE declared, validated access point. Reading these values ad-hoc anywhere else is forbidden. This holds when STARTING a project AND while MAINTAINING one: if you see a constant, a raw env read, or a build flag used inline where it belongs in the central point, STOP and tell the user before continuing.
+Route shared constants, environment variables, and build-time flags for each project (or monorepo app set) through ONE declared, validated access point; ad-hoc reads are forbidden. During setup or maintenance, if you find an inline constant, raw env read, or build flag that belongs there, STOP and tell the user before continuing.
 
 ### Constants
 
-- Declare shared constants in a single module per project (Go: one package; JS/TS: one module). No magic values scattered across files.
-- Constants that must be shared ACROSS languages (e.g. Go + JS in one monorepo): keep them in a single JSON manifest and generate the per-language files from it with a codegen script — do not maintain copies by hand.
-  - Each generated file carries a header comment marking it as generated (naming the source manifest and the generator).
-- Keep the JSON manifest as the only source of truth. Generate per-language files during the build when they are disposable build outputs; when generated files are committed, refresh them explicitly with the applicable \`generate\` command instead of on every build.
-  - The generator language is situational — TypeScript is a fine default.
+Declare shared constants in one project module (Go package, JS/TS module); do not scatter magic values. For constants shared across languages (e.g. Go + JS), use one JSON manifest and generate language files with a codegen script, never hand-maintain copies. Generated files need header comments naming the manifest and generator. Keep the manifest as the sole source of truth: generate disposable outputs during builds, but explicitly refresh committed files with the applicable \`generate\` command, not every build. TypeScript is a suitable default generator language, but choice is situational.
 
 ### Environment Variables
 
-One env module per project (Go: an \`env\` package; TS: an \`env.ts\`). ALL env access goes through it.
+Use one env module per project (Go \`env\` package or TS \`env.ts\`) for all environment access.
 
-- Direct \`process.env\` (JS/TS) and \`os.Getenv\` (Go) are forbidden everywhere else — except the standard, non-app vars a child process genuinely needs (\`PATH\`, \`HOME\`, \`CI\`, …).
-- Expose each value via an accessor (a function, not a bare mutable export): it cannot be reassigned by accident, and its default lives next to it.
-- Do ALL parsing, normalization, and validation here — bool/int parsing, enum checks, coercion to the type the app expects. The rest of the app consumes an already-valid, typed value, never a raw string.
-- Centralize the KEYS too, so renaming a variable is a one-line change.
+- Forbid direct JS/TS \`process.env\` and Go \`os.Getenv\` elsewhere, except standard non-app vars genuinely needed by child processes (\`PATH\`, \`HOME\`, \`CI\`, …).
+- Expose values through accessor functions, not bare mutable exports, with defaults alongside them.
+- Parse, normalize, and validate all values here (including booleans, integers, enums, and app-specific coercion); the app consumes typed, valid values, never raw strings.
+- Centralize keys so a variable rename is a one-line change.
 
 ### Build-Time Flags
 
@@ -204,34 +175,27 @@ Go \`ldflags\` and build tags, Rust \`build.rs\` / \`cfg\` / \`env!\`, and equiv
 
 const CHUNK_00_DEPENDABOT = `## Dependabot (public GitHub repos only)
 
-Keep \`.github/dependabot.yml\` accurate **only when this is a public GitHub repository**. Confirm before acting — e.g. \`gh repo view --json visibility,isPrivate\`. If the repo is private, not on GitHub, or you cannot determine this, **do nothing** and leave the file absent.
+Maintain \`.github/dependabot.yml\` only in public GitHub repos. Confirm visibility first (e.g. \`gh repo view --json visibility,isPrivate\`); if private, not on GitHub, or unknown, do nothing and leave the file absent.
 
-When it is a public GitHub repo:
+For a public GitHub repo:
 
-1. **Ensure the file exists** if the repo has any supported ecosystem (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` file with an empty \`updates:\` list is enough to opt in — \`dm config reconcile\` fills in the rest.
-2. **Own the \`updates\` entries** (the "what"): the \`package-ecosystem\` values and their \`directory\`/\`directories\`. Keep these in sync with the project's real layout — add an entry when a new workspace/service/ecosystem appears, remove one when it goes away.
-3. **Do NOT hand-tune policy fields.** \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` are owned by datamitsu and are normalized on every \`dm config reconcile\` (conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, grouped PRs). Editing them by hand is pointless — they will be overwritten.
-4. **Run \`pnpm dm config reconcile\` after editing** so datamitsu re-applies the managed policy. datamitsu never creates this file on its own; it only normalizes one that already exists.`;
+1. **Ensure the file exists** if any supported ecosystem is present (npm/pnpm, Go modules, pip/uv, Cargo, Terraform, Docker, GitHub Actions). A minimal \`version: 2\` with empty \`updates:\` opts in; \`dm config reconcile\` fills in the rest.
+2. **Own \`updates\` entries**: keep \`package-ecosystem\` values and \`directory\`/\`directories\` aligned with the project layout, adding entries for new workspaces/services/ecosystems and removing obsolete ones.
+3. **Do NOT hand-tune policy fields.** datamitsu owns and normalizes \`commit-message\`, \`versioning-strategy\`, \`schedule\`, \`groups\`, and \`open-pull-requests-limit\` on every \`dm config reconcile\` (including conventional-commit prefixes such as \`chore(deps):\`, weekly cadence, and grouped PRs); manual edits are overwritten.
+4. **Run \`pnpm dm config reconcile\` after editing.** datamitsu only normalizes an existing file; it never creates one.`;
 
 const CHUNK_00_PRIVACY = `## Privacy and Attribution
 
-Anything written into the repository is published: documentation, plans, backlog entries, commit
-messages, PR descriptions, code comments, test fixtures, issue text. Treat every one of them as
-public the moment it is written, not the moment it is pushed.
+Everything written into the repository is public as soon as it is written, not when pushed. This includes documentation, plans, backlog entries, commit messages, PR descriptions, code comments, test fixtures, and issue text.
 
 ### Never write into the repository
 
-- Absolute paths that name a person, machine, or organization (\`/home/<user>/…\`, \`C:\\Users\\…\`),
-  hostnames, IP addresses, ticket URLs from a private tracker.
-- Credentials, tokens, license keys, or the values of environment variables that hold them — an
-  environment variable's **name** is fine, its **value** is not.
-- Contents copied out of a private repository: file paths, package names, branch names, code
-  excerpts, error messages that quote them.
-- Customer, employer, or client names, and anything that identifies them indirectly (a product
-  name, a distinctive dependency, a domain).
+- Absolute paths identifying a person, machine, or organization (\`/home/<user>/…\`, \`C:\\Users\\…\`); hostnames, IP addresses, and private-tracker ticket URLs.
+- Credentials, tokens, license keys, and secret environment-variable values. Variable names are fine; values are not.
+- Private-repository content, including file paths, package or branch names, code excerpts, and error messages quoting them.
+- Customer, employer, or client names and indirect identifiers such as product names, distinctive dependencies, or domains.
 
-If a measurement, a bug report, or an example needs one of these to make sense, **anonymize it and
-keep the shape**, which is what carries the meaning:
+If these details are needed for a measurement, bug report, or example, **anonymize it but preserve its shape**; that carries the meaning:
 
 > ❌ \`Measured on acme-storefront: apps/landing/pages/sitemap.xml.tsx fails to typecheck.\`
 > ✅ \`Measured on a private TypeScript monorepo (≈15k tracked files, ~60 workspace packages): one
@@ -239,86 +203,81 @@ keep the shape**, which is what carries the meaning:
 
 ### Naming other projects requires explicit permission
 
-Do not name another project, repository, author, or product — or describe an approach as coming
-from one — unless the user has explicitly said you may in this conversation. This applies to
-private and public projects alike, and to links as much as to names.
+Do not name another project, repository, author, or product, or attribute an approach to one, without the user's explicit permission in this conversation. This covers public and private projects and links as well as names.
 
 Without that permission, describe the **idea** rather than its source:
 
 > ❌ \`Backlog entries follow the format used by <author>/<repo>.\`
 > ✅ Backlog entries carry \`worth\`/\`where\`/\`added\` frontmatter and a one-symptom title.
 
-A user pasting a link is not the same as a user granting permission to cite it. If the attribution
-genuinely matters — a license obligation, a quoted excerpt, a design credit — ask before writing it
-down.
+A pasted link is not permission to cite it. If attribution matters (for example, for a license obligation, quote, or design credit), ask before writing it down.
 
 ### Scope
 
-These rules bind everything an agent writes into the repository and everything an agent copies into
-it. When in doubt, anonymize.`;
+These rules cover everything an agent writes or copies into the repository. When in doubt, anonymize.`;
 
 const CHUNK_00_SCRIPTS = `## Project Scripts
 
-Every package in the repository — regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin) — exposes a \`package.json\` with a unified set of scripts. This makes project entry points identical across the monorepo: the same command names work everywhere, and \`turbo\` orchestrates them from the root.
+Every repository package, regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin), exposes a \`package.json\` with unified scripts so monorepo entry points stay consistent and Turbo can orchestrate them.
 
 ### Standard Scripts
 
-Implement the relevant subset in each package. Names and meanings are fixed.
+Implement the relevant subset; names and meanings are fixed.
 
 #### Run
 
-- **\`dev\`** — Start everything required for the package to run: dev server, backend, infrastructure containers (without \`-d\`), workers. From the monorepo root, \`dev\` brings the whole project up. Persistent.
-- **\`dev:mock\`** — Same as \`dev\`, with external dependencies mocked. Optional. Persistent.
+- **\`dev\`** — Start everything the package needs (dev server, backend, foreground infrastructure containers, workers); root \`dev\` starts the whole project. Persistent.
+- **\`dev:mock\`** — \`dev\` with external dependencies mocked. Optional and persistent.
 
 #### Generate
 
-- **\`generate\` / \`generate:*\`** — Explicitly refresh derived files kept in version control: images, icons, fonts, manifests, or generated code. This describes the output lifecycle, not how long the command takes. The root command refreshes all declared outputs in its scope; a specialization refreshes only its named outputs.
-- **\`codegen\` / \`codegen:*\`** — Generate source code from schemas or other declared inputs: SDKs, database types, or shared constants. Use it under \`generate\` for committed code or under build preparation for disposable code needed by the build. Do not use this name for image or other asset generation.
-- Generators must be repeatable without accumulating duplicate outputs. Document their inputs, outputs, prerequisites, and behavior after interruption. An interrupted or failed run must not be reported as a complete refresh. Generation updates files; it does not stage, commit, or push them.
-- Committed generated files are ordinary build inputs. Do not implicitly refresh them from \`build\`, \`build:lib\`, \`dev\`, or install hooks. If a required file is missing, fail with the explicit refresh command instead of starting an expensive refresh. Freshness checks must state whether they inspect inputs cheaply or reproduce the full generation; neither speed nor byte reproducibility is implied by the command name.
+- **\`generate\` / \`generate:*\`** — Explicitly refresh derived files committed to version control (images, icons, fonts, manifests, generated code). Root refreshes all declared outputs in scope; a specialization refreshes only its named outputs. This defines output lifecycle, not duration.
+- **\`codegen\` / \`codegen:*\`** — Generate source from schemas or other declared inputs (SDKs, database types, shared constants). Use under \`generate\` for committed code, or build preparation for disposable build inputs; never for images or other assets.
+- Generators must be repeatable without duplicate outputs. Document inputs, outputs, prerequisites, and interruption behavior; failed or interrupted runs are not complete refreshes. Generation updates files only; it does not stage, commit, or push.
+- Committed generated files are ordinary build inputs. Never refresh them implicitly from \`build\`, \`build:lib\`, \`dev\`, or install hooks. If one is missing, fail with its explicit refresh command rather than starting an expensive refresh. Freshness checks must say whether they inspect inputs cheaply or reproduce generation; command names imply neither speed nor byte reproducibility.
 
 #### Build
 
-- **\`build:lib\`** — Preparatory steps required before \`dev\` or \`build\`: asset prelinking, intermediate internal libraries, or disposable generated code. Depend on \`codegen\` only when that generation is required at build time and its outputs are not committed. Manual refreshes are not build prerequisites.
-- **\`build\`** — Final application or library build. Depends on applicable \`build:lib\` steps. Same name regardless of target (SPA, binary, npm package, WebAssembly artifact).
+- **\`build:lib\`** — Prepare \`dev\` or \`build\` (asset prelinking, intermediate internal libraries, disposable generated code). Depend on \`codegen\` only for required build-time generation whose outputs are uncommitted; manual refreshes are not prerequisites.
+- **\`build\`** — Final application or library build, depending on applicable \`build:lib\` steps. Same name for every target (SPA, binary, npm package, WebAssembly artifact).
 
 #### Test
 
-- **\`test\`** — The complete non-interactive main unit/integration suite in the command's scope, including expensive tests in that suite. A package command covers that package; the monorepo root covers all packages. E2E and visual/screenshot suites run separately by default; including them in \`test\` requires an explicit documented project decision. Run each test once even when subsets overlap. Missing prerequisites for an included suite fail explicitly rather than silently excluding it. This command does not update baselines or install test dependencies.
-- **\`test:fast\`** — An explicit short-feedback subset of the main suite with a project-defined budget for the whole command, including preparation and orchestration. It is not a synonym for unit tests or for individually quick tests.
-- **\`test:slow\`** — An optional separately runnable set of expensive tests from the main suite. It need not be the complement of \`test:fast\`: a large collection of individually quick tests can make the full main suite slow without belonging to this set.
-- **\`test:watch\`** — A persistent watch mode for the main suite. State which suites it watches; if it cannot watch the complete main suite, make that limitation explicit rather than claiming full coverage. Use \`test:fast:watch\` for a fast-subset watch command.
-- **\`test:coverage\`** — Collect coverage for the same scope as \`test\`. Report unsupported suites explicitly; never present partial coverage as complete. A subset-specific coverage command names its subset, such as \`test:fast:coverage\`.
-- **\`test:e2e\`** — Separately runnable end-to-end behavior tests, excluded from \`test\` by default. Browser use, infrastructure, or Testcontainers alone does not make a test E2E; expensive integration tests are not automatically E2E, and E2E does not mean slow.
-- **\`test:e2e:ui\`** — UI mode for the e2e runner, where supported.
-- **\`test:e2e:install\`** — Install e2e runner dependencies (e.g., browsers). Idempotent.
-- **\`test:snapshots\`** — Separately runnable visual/screenshot tests, excluded from \`test\` by default. Ordinary text, object, and inline snapshot assertions remain part of their unit/integration suites; they are not moved here merely because they use snapshots.
+- **\`test\`** — Complete non-interactive main unit/integration suite in scope, including its expensive tests. Package commands cover that package; root covers all packages. E2E and visual/screenshot suites are separate by default; include only by explicit documented project decision. Run overlapping tests once. Missing prerequisites for included suites fail explicitly. Never update baselines or install test dependencies.
+- **\`test:fast\`** — Explicit short-feedback subset with a project-defined whole-command budget, including preparation and orchestration; not a synonym for unit tests or individually quick tests.
+- **\`test:slow\`** — Optional separately runnable expensive tests from the main suite; need not complement \`test:fast\` (many individually quick tests can make the full suite slow without belonging here).
+- **\`test:watch\`** — Persistent main-suite watch. State watched suites; disclose if coverage is incomplete. Use \`test:fast:watch\` for a fast-subset watch.
+- **\`test:coverage\`** — Coverage for the same scope as \`test\`; explicitly report unsupported suites and never claim partial coverage is complete. Name subset coverage, e.g. \`test:fast:coverage\`.
+- **\`test:e2e\`** — Separate end-to-end behavior tests, excluded from \`test\` by default. Browser use, infrastructure, or Testcontainers alone does not make tests E2E; expensive integration tests are not automatically E2E, and E2E need not be slow.
+- **\`test:e2e:ui\`** — E2E runner UI mode, where supported.
+- **\`test:e2e:install\`** — Idempotently install E2E runner dependencies (e.g., browsers).
+- **\`test:snapshots\`** — Separate visual/screenshot tests, excluded from \`test\` by default. Ordinary text, object, and inline snapshot assertions stay in unit/integration suites; snapshots alone do not make them visual tests.
 - **\`test:snapshots:update\`** — Update screenshot baselines.
 - **\`test:update\`** — Update inline snapshots.
 
-Define a fast-run budget at the scope where feedback is needed: a fast package run does not establish that the root run is fast. State runner resources, parallelism, and cold or warm cache conditions; cache hits alone do not establish suite speed. Include setup costs, not just test-body timings. There is no universal time threshold. If the command exceeds its budget as the suite grows, optimize execution or explicitly revise the subset, budget, or hook placement without silently dropping tests from the complete suite.
+Set a fast-run budget where feedback is needed: package speed does not establish root speed. Specify runner resources, parallelism, cache conditions, and setup costs; cache hits alone do not prove speed. No universal time threshold applies. If growth exceeds budget, optimize or explicitly revise the subset, budget, or hook placement; never silently drop tests from the complete suite.
 
-Selecting changed or affected packages is a separate scope reduction, not a test type or a complete root run. Use explicit runner/Turbo filters and report the reduced scope. Hooks may select a short-feedback check, but must not redefine \`test\` or silently replace the complete verification required by the project. Do not add placeholder fast/slow scripts when no meaningful subset exists.
+Changed/affected-package selection is scope reduction, not a test type or complete root run. Use explicit runner/Turbo filters and report reduced scope. Hooks may select short-feedback checks but cannot redefine \`test\` or replace required complete verification. Do not add placeholder fast/slow scripts without a meaningful subset.
 
 #### Quality
 
-Always run \`pnpm dm check\` after completing a task. This runs fixers (formatters, auto-fixes) followed by linters (type checking, ESLint). It should complete with no errors.
+Always run \`pnpm dm check\` after a task. It runs fixers (formatters, auto-fixes), then linters (type checking, ESLint), and should finish without errors.
 
 #### Misc
 
-- **\`pull:*\`** — Fetch external inputs (OpenAPI schemas, translations, auth context, etc.). Local transformation belongs to \`generate\` or \`codegen\`; make any fetch-then-generate dependency explicit instead of hiding network access inside an ordinary build.
+- **\`pull:*\`** — Fetch external inputs (OpenAPI schemas, translations, auth context, etc.). Put local transformations in \`generate\` or \`codegen\`; make fetch-then-generate dependencies explicit, not hidden in ordinary builds.
 - **\`upgrade:deps\`** — Update dependencies.
 
 ### Naming Rules
 
-- A colon means specialization of an existing command. \`test:fast\`, \`test:slow\`, and \`test:e2e\` specialize \`test\`; \`build:lib\` specializes \`build\`; \`generate:images\` specializes \`generate\`. Prefer these standard entry points for everyday development: \`dev\`, \`generate\`, \`codegen\`, \`build\`, \`build:lib\`, \`test\`, \`pull:*\`, and \`upgrade:deps\`. Document additional commands when a distinct operation or tool contract needs them, including their purpose, prerequisites, and side effects. Preserve names required by package managers, runtimes, or deployment tools, such as lifecycle hooks or a production \`start\`; do not force them into an unrelated standard command.
-- Environment is passed via variables, never encoded in the script name. No \`dev:fast\`, \`build:prod\`, \`test:ci\`.
+- A colon specializes a command: \`test:fast\`, \`test:slow\`, \`test:e2e\`, \`build:lib\`, \`generate:images\`. Prefer standard everyday entry points: \`dev\`, \`generate\`, \`codegen\`, \`build\`, \`build:lib\`, \`test\`, \`pull:*\`, \`upgrade:deps\`. Document additional commands when distinct operations or tool contracts require them, including purpose, prerequisites, and side effects. Preserve runtime/package-manager/deployment names (e.g. lifecycle hooks, production \`start\`); do not force them into unrelated commands.
+- Pass environments via variables, never script names. No \`dev:fast\`, \`build:prod\`, or \`test:ci\`.
 
 ### Complex Orchestration
 
-When a script grows past a single command — multiple steps, parallelism, dependencies, conditions, intermediate variables — it moves to \`Taskfile.yaml\`. The \`package.json\` script becomes a thin entry point that delegates:
+Move scripts exceeding one command (multiple steps, parallelism, dependencies, conditions, intermediate variables) to \`Taskfile.yaml\`; keep the \`package.json\` script as a thin delegating entry point.
 
-In a Turborepo workspace, Turbo alone owns dependencies between packages; Taskfile owns steps within a package. Declare package dependencies in workspace manifests and task ordering in \`turbo.json\`. A package-local Taskfile must not independently build sibling packages with \`pnpm --filter ... build\` or start another Turbo graph from a task Turbo is already running. A root entry point may invoke Turbo once; a targeted build that also needs dependency builds enters that same root graph with an explicit package/dependency filter, not a second Taskfile dependency graph.
+In Turborepo workspaces, Turbo owns cross-package dependencies; Taskfile owns steps within a package. Declare package dependencies in workspace manifests and task ordering in \`turbo.json\`. A package Taskfile must not build siblings with \`pnpm --filter ... build\` or start a second Turbo graph from a task already run by Turbo. A root entry point may invoke Turbo once; targeted builds needing dependency builds must enter that same root graph with an explicit package/dependency filter, not a second Taskfile graph.
 
 For example, keep build and explicit refresh separate in \`package.json\`:
 
@@ -331,7 +290,7 @@ For example, keep build and explicit refresh separate in \`package.json\`:
 }
 \`\`\`
 
-The build path does not call the committed-file refresh. A project may add the applicable script subset and task dependencies it needs.
+Build does not refresh committed files. Add only the applicable script subset and task dependencies.
 
 #### Taskfile Conventions
 
@@ -371,27 +330,24 @@ tasks:
 
 Pipeline tasks are declared in \`turbo.json\`:
 
-- Turbo owns cross-package dependency ordering through \`dependsOn: ["^build"]\`; package-local Taskfile steps must not repeat those dependency builds.
-- \`"cache": false\` for non-cacheable tasks (\`dev\`, \`pull:*\`).
-- \`"persistent": true\` for long-running tasks (\`dev\`, \`dev:mock\`, \`test:watch\`).
-- \`"outputs"\` for cacheable build artifacts (\`dist/**\`, \`.next/**\`, etc.).
-- The root \`test\` graph covers every package's main unit/integration suite. Wire E2E and visual/screenshot suites as separate tasks or CI jobs by default; include them in \`test\` only by explicit documented project decision. Separate root and package orchestration so an aggregate does not invoke itself. Filters and \`test:fast\` narrow the main-suite graph explicitly, never by an implicit default.
-- Include all generator inputs and configuration in cache keys and all outputs in \`outputs\` when caching generation. Cacheability does not make an explicit committed-file refresh an automatic build dependency.
+- Turbo owns cross-package dependency order via \`dependsOn: ["^build"]\`; package Taskfile steps must not repeat dependency builds.
+- Set \`"cache": false\` for non-cacheable tasks (\`dev\`, \`pull:*\`), \`"persistent": true\` for long-running tasks (\`dev\`, \`dev:mock\`, \`test:watch\`), and \`"outputs"\` for cacheable build artifacts (\`dist/**\`, \`.next/**\`, etc.).
+- Root \`test\` covers every package's main unit/integration suite. Keep E2E and visual/screenshot suites separate in tasks or CI by default; include them only by explicit documented decision. Separate root/package orchestration to prevent aggregate self-invocation. Filters and \`test:fast\` explicitly narrow the main-suite graph, never implicitly.
+- When caching generation, include all generator inputs and configuration in cache keys and all outputs in \`outputs\`. Cacheability does not make explicit committed-file refresh an automatic build dependency.
 
 ### Anti-Patterns
 
 DO NOT:
 
-- Rename a standard everyday operation to an arbitrary alias, or hide a distinct operation under the wrong standard name. Document justified extensions and tool-required names instead; production startup, migrations, packaging, signing, and publication must not be disguised as development startup or ordinary builds. Naming exceptions do not authorize running side-effecting operations or override the separate cleanup rule below.
-- Chain commands with \`&&\` in \`package.json\`. Move to Taskfile.
-- Write \`.sh\` scripts for orchestration. Move to Taskfile.
-- Use Makefiles. Use Taskfile.
-- Encode environment in the script name. Use variables.
-- Add a \`clean\` script. Use \`git clean -fdx\`.`;
+- Do not rename standard everyday operations arbitrarily or hide distinct operations under the wrong standard name. Document justified extensions and tool-required names. Never disguise production startup, migrations, packaging, signing, or publication as dev startup or ordinary builds. Naming exceptions do not authorize side effects or override the separate cleanup rule below.
+- Do not chain commands with \`&&\` in \`package.json\`; move orchestration to Taskfile.
+- Do not write \`.sh\` orchestration scripts or use Makefiles; use Taskfile.
+- Do not encode environments in script names; use variables.
+- Do not add a \`clean\` script. Use \`git clean -fdx\`.`;
 
 const CHUNK_00_STACK = `## Preferred Stack
 
-When creating a project, initializing an app, or adding a dependency, pick from this catalogue FIRST. Do not invent alternatives or reach for unmaintained/EOL packages. This is a priority list, not a hard mandate — if a project already uses a reasonable different choice, keep it.
+When creating projects or apps, or adding dependencies, choose from this catalogue first. Do not invent alternatives or use unmaintained/EOL packages. This is a priority list, not a mandate: keep a reasonable existing choice.
 
 ### Version Policy
 
@@ -401,11 +357,8 @@ When creating a project, initializing an app, or adding a dependency, pick from 
 
 ### Invocation
 
-Every datamitsu command follows the same rule:
-
-- Inside a pnpm monorepo wired with this config: \`pnpm dm <command>\` — \`pnpm dm check\`, \`pnpm dm config reconcile\`, and managed tools via \`pnpm dm exec <tool>\` (\`pnpm dm exec air\`, \`pnpm dm exec goose\`, \`pnpm dm exec task -- <task>\`, …).
-- If the repo has no pnpm stack initialized: call the system-installed \`datamitsu\` binary directly — \`datamitsu check\`, \`datamitsu config reconcile\`, \`datamitsu exec <tool>\`.
-- A subproject newly added to a monorepo is provisioned by the shipped hook: \`<invocation> config reconcile --create-missing\` creates only the managed configs that are missing and never touches an existing file. Run it by hand after adding a subproject if you do not want to wait for the next commit.
+Use \`pnpm dm <command>\` in a pnpm monorepo wired with this config (e.g. \`pnpm dm check\`, \`pnpm dm config reconcile\`, \`pnpm dm exec <tool>\` such as \`pnpm dm exec air\`, \`pnpm dm exec goose\`, or \`pnpm dm exec task -- <task>\`). Without an initialized pnpm stack, use the system-installed \`datamitsu\` binary (\`datamitsu check\`, \`datamitsu config reconcile\`, \`datamitsu exec <tool>\`).
+For a new monorepo subproject, the shipped hook runs \`<invocation> config reconcile --create-missing\`, creating only missing managed configs and never touching existing files. Run it manually after adding a subproject to avoid waiting for the next commit.
 
 ### Web
 
@@ -457,85 +410,77 @@ Every datamitsu command follows the same rule:
 
 const CHUNK_10_DOCS = `## Documentation Policy
 
-Documentation is a required deliverable for every user-facing change — not optional.
+Documentation is required for every user-facing change. Update it in the same PR/commit:
 
-When implementing features or making changes, documentation MUST be updated in the same PR/commit:
-
-- **User-facing features** → update docs with examples and guides
-- **API changes** → update reference docs
-- **CLI commands** → update the command reference
-- **Configuration options** → update the config reference
-- **Breaking changes** → document migration path
+- **User-facing features:** add examples and guides.
+- **API changes:** update reference docs.
+- **CLI commands:** update the command reference.
+- **Configuration options:** update the config reference.
+- **Breaking changes:** document the migration path.
 
 ### Documentation Quality
 
-- Review documentation changes with the same rigor as code
-- Check for clarity, accuracy, and completeness
-- **Test all code examples before merging** — examples that don't work erode trust
+- Review documentation as rigorously as code for clarity, accuracy, and completeness.
+- **Test every code example before merging**; broken examples erode trust.
 
 ### Diagrams
 
-- Use Mermaid for architectural diagrams — GitHub renders them natively in Markdown
-- Keep diagrams as code for version control
-- Prefer diagrams over lengthy textual explanations for flows, architecture, and data pipelines
+- Use Mermaid for architectural diagrams; GitHub renders it natively in Markdown. Keep diagrams as code, and prefer them to long explanations of flows, architecture, or data pipelines.
 
 ### llms.txt Maintenance
 
-If the project provides an \`llms.txt\` file (served via website or accessible via raw git URL, per [llmstxt.org](https://llmstxt.org/)):
+If the project provides an \`llms.txt\` file (via its website or raw git URL, per [llmstxt.org](https://llmstxt.org/)):
 
-- Keep it in sync with the actual documentation structure
-- All links must point to valid, existing pages
-- Update when adding new major sections, packages, or resources
-- Do not add internal or draft documentation links`;
+- Keep it aligned with the documentation structure, with valid links to existing pages.
+- Update it when adding major sections, packages, or resources; omit internal and draft documentation links.`;
 
 const CHUNK_20_DOCS_MARKDOWN = `## Documentation Surface
 
-These rules are for documentation that is **not published**: Markdown files read in the repository itself, with no site built from them. If the project builds a documentation site, it needs \`agents-docs-website.md\` instead — tell the user rather than applying the rules below to the site.
+These rules cover unpublished Markdown read in the repository, with no documentation site. For a site built from these files, use \`agents-docs-website.md\` instead and tell the user.
 
-All user-facing documentation lives in Markdown files within the repository. Primary surfaces:
+User-facing docs live in repository Markdown:
 
-- **\`docs/\`** — detailed guides, API reference, architecture docs, command reference, config reference
-- **\`README.md\`** — entry point; keep focused but may include more detail than a website-backed project
+- **\`docs/\`** — detailed guides, API, architecture, command, and configuration references.
+- **\`README.md\`** — entry point; keep focused, but it may be more detailed than a website-backed project's README.
 
 ### README.md Scope
 
-README serves as the primary documentation entry point. Include:
+README is the primary entry point. Include:
 
-1. **What is this** — One paragraph description
-2. **Quick install** — Single command
-3. **Basic usage** — Minimal example (3-5 lines of code)
-4. **Links** — Point to relevant \`docs/\` files for deeper topics
+1. **What is this** — One-paragraph description.
+2. **Quick install** — One command.
+3. **Basic usage** — Minimal example (3-5 lines of code).
+4. **Links** — Relevant \`docs/\` files for deeper topics.
 
-Keep README focused. Detailed architecture explanations and full API references belong in \`docs/\`, not inline.`;
+Keep README focused; put detailed architecture explanations and full API references in \`docs/\`.`;
 
 const CHUNK_20_DOCS_WEBSITE = `## Documentation Surface
 
-These rules are for documentation **published as a site** built from the repository. If the documentation is only Markdown files read in the repository, the project needs \`agents-docs-markdown.md\` instead — tell the user.
+These rules cover documentation published as a site. For repository-only Markdown, use \`agents-docs-markdown.md\` instead and tell the user.
 
-**All user-facing documentation lives in the documentation website. README.md files must remain minimal.** Reference pages, the command reference and the config reference all live there.
+**All user-facing documentation lives on the website; keep README.md minimal.** Put reference, command, and configuration pages there.
 
 ### Website Sources
 
-Keep the site's sources in \`website/\` at the repository root, and point the generator's content directory there. Start new sites in \`website/\`; for an existing site kept elsewhere, propose migrating it. This is a default, not a hard rule — when the user or the project says the sources belong in \`docs/\` or anywhere else, do that.
+By default, keep site sources in root-level \`website/\` and point the generator there. Start new sites there. If an existing site keeps its sources elsewhere, propose moving them to \`website/\`. Follow the user's or project's chosen location instead, including \`docs/\`.
 
-\`docs/\` is for what is never published, such as \`docs/backlog/\` and \`docs/plans/\`. Most generators publish every file under their content directory, so a site built from \`docs/\` publishes those too.
+Reserve \`docs/\` for unpublished material such as \`docs/backlog/\` and \`docs/plans/\`. Most generators publish every file in their content directory, so using \`docs/\` for site content also publishes that material.
 
 ### README.md Scope
 
-README must be kept **minimal** and focused on:
+Keep README minimal and focused on:
 
-1. **What is this** — One paragraph description
-2. **Quick install** — Single command or link to installation docs
-3. **Basic usage** — Minimal example (3-5 lines of code)
-4. **Link to full documentation** — Point to docs website
+1. **What is this** — One-paragraph description.
+2. **Quick install** — One command or a link to installation docs.
+3. **Basic usage** — Minimal example (3-5 lines of code).
+4. **Full documentation** — Link to the documentation website.
 
-**Do NOT add to README.md:** detailed usage guides, configuration examples, architecture explanations, or API reference. These belong in the documentation website.
+Do not add detailed usage guides, configuration examples, architecture explanations, or API references; put them on the website.
 
 ### Visual Documentation
 
-- Add diagrams for complex architectural concepts
-- Use screenshots for UI-related features — show, don't just tell
-- Store screenshots in the website's static assets with descriptive names`;
+- Add diagrams for complex architecture.
+- Use screenshots to show UI features; store them in the website's static assets with descriptive names.`;
 
 // ── Joined combinations ─────────────────────────────────────────────────────
 export const AGENTS_BASE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK].join("\n\n"); // prettier-ignore
@@ -543,15 +488,15 @@ export const AGENTS_DOCS_MARKDOWN = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_C
 export const AGENTS_DOCS_WEBSITE = [CHUNK_00_BACKLOG, CHUNK_00_BASE, CHUNK_00_CONFIG_INPUTS, CHUNK_00_DEPENDABOT, CHUNK_00_PRIVACY, CHUNK_00_SCRIPTS, CHUNK_00_STACK, CHUNK_10_DOCS, CHUNK_20_DOCS_WEBSITE].join("\n\n"); // prettier-ignore
 
 // ── Chunk hashes (sha256, computed at build time) ────────────────────────────
-export const CHUNK_00_BACKLOG_HASH = "8d8068ab184a1e2888d6fec12ef6e59fa172061cb712db734c42f7834a914209"; // prettier-ignore
-export const CHUNK_00_BASE_HASH = "622db73a20a8443e123b09fcb34989cf6dc04f3a342feeef6c56fb7acbaead1d"; // prettier-ignore
-export const CHUNK_00_CONFIG_INPUTS_HASH = "3dacf7da2ac244a24ea38f77eead6ed76d3ef4569c948f8f462b854ebc21d3bd"; // prettier-ignore
-export const CHUNK_00_DEPENDABOT_HASH = "dcebf1f24d6a413ba1ae5dae29656d23a6b532c8e38d0e45409510a8441d285f"; // prettier-ignore
-export const CHUNK_00_PRIVACY_HASH = "238a04c344d0ab79988dedf0b6ed608945c3bb8ac1c40ccf7b855a79e8b59634"; // prettier-ignore
-export const CHUNK_00_SCRIPTS_HASH = "42b8b179fa867a16039373f5f4049b244974f451c675e554b4ed2cc4e9bbb089"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "132ad353309f37ead32067c239baffa7100ac263258744417e2c473955fc6e3f"; // prettier-ignore
-export const CHUNK_10_DOCS_HASH = "e4357d5d90b2f3e3f6cc982e821d3a76f92eee058311e7746ebb2937278a6d75"; // prettier-ignore
-export const CHUNK_20_DOCS_MARKDOWN_HASH = "c966e49af479f77fc45d99b41dce062b873f3ab1af62c44ab5324b05374d505a"; // prettier-ignore
-export const CHUNK_20_DOCS_WEBSITE_HASH = "c2e1ca1dd5e32d27e2f82955bbf703b3cb4c6e0b4d9427a78907e01844cb6dbf"; // prettier-ignore
+export const CHUNK_00_BACKLOG_HASH = "49d051d4d1b1dcd48ba0e18e56e3623ab0533dc343f2abb1067cdf446d66019e"; // prettier-ignore
+export const CHUNK_00_BASE_HASH = "1bfe27618ad468d737dda713fec2555e773691705983004b1412962ad62bebc3"; // prettier-ignore
+export const CHUNK_00_CONFIG_INPUTS_HASH = "adabc6b28e5665a3cf50fe6b27eaab2aa4b732cab67d23df4d25da13c839ae94"; // prettier-ignore
+export const CHUNK_00_DEPENDABOT_HASH = "56599ea78fa9f5184e061da0935c58c14d1a471ff9793ca61bc44d9e329af37c"; // prettier-ignore
+export const CHUNK_00_PRIVACY_HASH = "b223e93847d12a17124ce5b4c0cd867c5fa84f4e32977a4e60865bd0228f2be1"; // prettier-ignore
+export const CHUNK_00_SCRIPTS_HASH = "6fe318053f387c1057d2b98d3545d932b1795c82beda601b098775fac1155f85"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "e281a0cf5cd26af2e85681b118bfff38a0648b175c20da12d92c1e9d16d240ff"; // prettier-ignore
+export const CHUNK_10_DOCS_HASH = "100a7287715cbd6510e43ca746766df66bb6d657d46d846ba22852c7e1877ecc"; // prettier-ignore
+export const CHUNK_20_DOCS_MARKDOWN_HASH = "bdbf590e919a0d1afd8ea85f1e71116c05f6acec43724b9690ab7abfbf5cc7ff"; // prettier-ignore
+export const CHUNK_20_DOCS_WEBSITE_HASH = "9aaea02394a2b4f42b94faff07071d2029dc21926341c5c0f40777d37b1ead8c"; // prettier-ignore
 
 export const ALL_AGENTS_HASHES = [CHUNK_00_BACKLOG_HASH, CHUNK_00_BASE_HASH, CHUNK_00_CONFIG_INPUTS_HASH, CHUNK_00_DEPENDABOT_HASH, CHUNK_00_PRIVACY_HASH, CHUNK_00_SCRIPTS_HASH, CHUNK_00_STACK_HASH, CHUNK_10_DOCS_HASH, CHUNK_20_DOCS_MARKDOWN_HASH, CHUNK_20_DOCS_WEBSITE_HASH]; // prettier-ignore
