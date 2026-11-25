@@ -6,6 +6,6 @@ description: >-
 
 # Scaffold Preferred Stack
 
-Read `.datamitsu/ai/skills/scaffold-stack/instructions.md` from the project root and follow it precisely.
+Read `{{skillInstructionsPath}}` from the project root and follow it precisely.
 
 `datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository to keep Preferred Stack rules current.

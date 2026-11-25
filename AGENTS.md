@@ -39,6 +39,9 @@ in `.datamitsu/ai/skills/`. Regenerate `src/datamitsu-config/skills.ts` with
 `task build:skills`, never by editing it. The reconciliation integration test
 checks metadata, legacy-prompt migration, custom-prompt preservation and idempotence.
 
+In both adapter templates, use `{{skillInstructionsPath}}` for the skill's instructions.
+The generator resolves it from the installed skills directory and the skill name.
+
 ## Documentation Generation
 
 Documentation is built with Zensical from `website/`, with its theme overrides in `overrides/`.

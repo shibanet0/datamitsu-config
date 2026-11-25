@@ -2,7 +2,7 @@
 
 Use the preferred stack to scaffold a project, app or library, or add a major dependency to an existing one.
 
-Library source of truth: `## Preferred Stack` in the loaded agent rules (`.datamitsu/ai/agents/*.md`, referenced by the project's `AGENTS.md`). Read it every run to pick up catalogue changes; never hardcode it or reconstruct it from memory. Apply `## Single Source for Constants, Env & Build Inputs` to everything scaffolded.
+Library source of truth: the catalogue linked from `## Preferred Stack` in the loaded agent rules (`.datamitsu/ai/agents/*.md`, referenced by the project's `AGENTS.md`). Never hardcode the catalogue or reconstruct it from memory. Apply `## Single Source for Constants, Env & Build Inputs` to everything scaffolded.
 
 Propose → confirm → apply. Never install dependencies or write files without explicit confirmation.
 
@@ -12,7 +12,9 @@ Propose → confirm → apply. Never install dependencies or write files without
 
 1. Find `## Preferred Stack` in the loaded rules. If absent, abort:
    > Preferred Stack rules not found in the loaded agent rules. Ensure `AGENTS.md` references `.datamitsu/ai/agents/*.md` and run `pnpm dm init` to regenerate `.datamitsu/`, then re-run this skill.
-2. Note relevant picks (Web / Node / Go / Testing / Docs / Monorepo), the Version Policy, the Invocation rule and bans (e.g. Tailwind).
+2. On every run, resolve the catalogue link's href in the loaded `## Preferred Stack` section relative to the consumer project root and open the resulting file. Reading it requires neither reconciliation nor an adapter. If the href is missing or the file cannot be read, abort:
+   > Run `pnpm dm init` (or `datamitsu init` without a pnpm stack), verify that the loaded Preferred Stack rule links to a readable catalogue, then re-run this skill.
+3. Use the relevant catalogue picks unless the project overrides them. Apply the loaded Version Policy, Invocation, Monorepo, and security rules and bans.
 
 ---
 
@@ -68,12 +70,7 @@ Commands to run:
 Apply? Reply: yes / no / show details
 ```
 
-Propose only relevant scripts per package. Prefer standard names for everyday operations; allow documented distinct operations and names required by the package manager, runtime or deployment (e.g. production `start`, lifecycle hooks, migrations, package/sign/publish). Document each command's purpose, prerequisites and side effects. Never hide publish in `build` or production start in `dev`. Script names do not authorize execution.
-
-- `generate` / `generate:*`: explicitly refresh committed generated outputs, including source files. `codegen` / `codegen:*`: produce source code under `generate` for committed code, or under build preparation only for disposable outputs. Identify required outputs; for committed ones, name the explicit `generate` / `generate:*` refresh command, never `codegen` alone. Never make committed generated files automatic build/dev/install prerequisites. If required committed outputs are missing, tell the user which refresh command to run.
-- `test`: complete main unit/integration suite, including expensive members and ordinary text/object/inline snapshot assertions in their corresponding suites. Even fast tests can be slow in aggregate. Keep E2E and visual snapshots separate as `test:e2e` and `test:snapshots` unless an explicit documented project decision includes them in `test`.
-- `test:fast`: subset with a project-specific elapsed-time budget. Measure the whole command at its intended package or root scope, including preparation and orchestration. State runner resources, parallelism and cold/warm cache conditions. The budget is neither a per-test duration nor a unit-test label; no universal numeric cutoff. Optional `test:slow` selects expensive members still in `test`, not the complement of `test:fast`. E2E is a type, not a speed tier.
-- Keep package scripts thin; put package-local multi-step orchestration in `Taskfile.yaml`. In monorepos, Turbo alone owns the cross-package task/dependency graph via workspace manifests and `turbo.json`. Wire relevant scripts into it without automatic refresh dependencies for committed generated files. Keep Taskfile steps local: no sibling `pnpm --filter` builds duplicating Turbo or nested Turbo graphs from Turbo-run tasks. Filter the same root Turbo graph for targeted dependency builds.
+Before proposing scripts, read the full contract linked from `## Project Scripts` in the loaded rules; resolve its path from the project root. Propose only relevant scripts per package and document each command's purpose, prerequisites, and side effects. Identify required generated outputs and name the explicit refresh command for any committed outputs. Script names do not authorize execution.
 
 - `no` → abort, write nothing.
 - `show details` → print full file contents / exact commands, then ask again.
@@ -86,7 +83,7 @@ Propose only relevant scripts per package. Prefer standard names for everyday op
 After explicit `yes`:
 
 1. Run the scaffold/install commands exactly as proposed.
-2. Create the `package.json` wrapper with only the proposed scripts. Apply all Step 4 rules for command names and documentation, generation and missing outputs, test suites and timing, package-local orchestration and monorepo Turbo wiring. Invoke `Taskfile.yaml` tasks via `pnpm dm exec task -- <task>` (direct mode: `datamitsu exec task -- <task>`).
+2. Create the `package.json` wrapper with only the proposed scripts, following the Project Scripts contract linked in Step 4. Invoke `Taskfile.yaml` tasks via `pnpm dm exec task -- <task>` (direct mode: `datamitsu exec task -- <task>`).
 3. Set up single env / constants / build-flag entry points per the Single Source rules; never scatter `process.env` / `os.Getenv` / raw constants.
 4. Do not create backup files. Git is the backup.
 

@@ -6,6 +6,6 @@ description: >-
 
 # Backlog
 
-Read `.datamitsu/ai/skills/backlog/instructions.md` from the project root and follow it precisely.
+Read `{{skillInstructionsPath}}` from the project root and follow it precisely.
 
 `datamitsu` automatically regenerates this source of truth from the current chunks in the central `datamitsu-config` repository.

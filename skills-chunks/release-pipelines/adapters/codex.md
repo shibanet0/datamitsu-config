@@ -6,4 +6,4 @@ description: >-
 
 # Release Pipelines
 
-From the project root, read `.datamitsu/ai/skills/release-pipelines/instructions.md` and follow it exactly. `datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository.
+From the project root, read `{{skillInstructionsPath}}` and follow it exactly. `datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository.

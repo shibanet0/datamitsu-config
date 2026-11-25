@@ -882,6 +882,159 @@ description: >-
 
 From the project root, read \`.datamitsu/ai/skills/conventional-commit-message/instructions.md\` and follow it exactly. \`datamitsu\` automatically regenerates this source of truth from the central \`datamitsu-config\` repository.`;
 
+// ── Skill: project-scripts ─────────────────────────────────────────────────
+
+const SKILL_PROJECT_SCRIPTS_INSTRUCTIONS = `# Project Scripts
+
+When designing or reviewing scripts, check names, test scope and budgets, build and generation dependencies, hook checks, and orchestration against this contract. Preserve explicit project overrides. This contract does not authorize running scripts, performing destructive operations, or deploying.
+
+## Package Contract
+
+Every repository package, regardless of language (TypeScript, Go, Python, Rust, Swift, Kotlin), exposes a \`package.json\` with unified scripts so monorepo entry points stay consistent and Turbo can orchestrate them.
+
+### Standard Scripts
+
+Implement the relevant subset; names and meanings are fixed.
+
+#### Run
+
+- **\`dev\`** — Start everything the package needs (dev server, backend, foreground infrastructure containers, workers); root \`dev\` starts the whole project. Persistent.
+- **\`dev:mock\`** — \`dev\` with external dependencies mocked. Optional and persistent.
+
+#### Generate
+
+- **\`generate\` / \`generate:*\`** — Explicitly refresh derived files committed to version control (images, icons, fonts, manifests, generated code). Root refreshes all declared outputs in scope; a specialization refreshes only its named outputs. This defines output lifecycle, not duration.
+- **\`codegen\` / \`codegen:*\`** — Generate source from schemas or other declared inputs (SDKs, database types, shared constants). Use under \`generate\` for committed code, or build preparation for disposable build inputs; never for images or other assets.
+- Generators must be repeatable without duplicate outputs. Document inputs, outputs, prerequisites, and interruption behavior; failed or interrupted runs are not complete refreshes. Generation updates files only; it does not stage, commit, or push.
+- Committed generated files are ordinary build inputs. Never refresh them implicitly from \`build\`, \`build:lib\`, \`dev\`, or install hooks. If one is missing, fail with its explicit refresh command rather than starting an expensive refresh. Freshness checks must say whether they inspect inputs cheaply or reproduce generation; command names imply neither speed nor byte reproducibility.
+
+#### Build
+
+- **\`build:lib\`** — Prepare \`dev\` or \`build\` (asset prelinking, intermediate internal libraries, disposable generated code). Depend on \`codegen\` only for required build-time generation whose outputs are uncommitted; manual refreshes are not prerequisites.
+- **\`build\`** — Final application or library build, depending on applicable \`build:lib\` steps. Same name for every target (SPA, binary, npm package, WebAssembly artifact).
+
+#### Test
+
+- **\`test\`** — Complete non-interactive main unit/integration suite in scope, including its expensive tests. Package commands cover that package; root covers all packages. E2E and visual/screenshot suites are separate by default; include only by explicit documented project decision. Run overlapping tests once. Missing prerequisites for included suites fail explicitly. Never update baselines or install test dependencies.
+- **\`test:fast\`** — Explicit short-feedback subset with a project-defined whole-command budget, including preparation and orchestration; not a synonym for unit tests or individually quick tests.
+- **\`test:slow\`** — Optional separately runnable expensive tests from the main suite; need not complement \`test:fast\` (many individually quick tests can make the full suite slow without belonging here).
+- **\`test:watch\`** — Persistent main-suite watch. State watched suites; disclose if coverage is incomplete. Use \`test:fast:watch\` for a fast-subset watch.
+- **\`test:coverage\`** — Coverage for the same scope as \`test\`; explicitly report unsupported suites and never claim partial coverage is complete. Name subset coverage, e.g. \`test:fast:coverage\`.
+- **\`test:e2e\`** — Separate end-to-end behavior tests, excluded from \`test\` by default. Browser use, infrastructure, or Testcontainers alone does not make tests E2E; expensive integration tests are not automatically E2E, and E2E need not be slow.
+- **\`test:e2e:ui\`** — E2E runner UI mode, where supported.
+- **\`test:e2e:install\`** — Idempotently install E2E runner dependencies (e.g., browsers).
+- **\`test:snapshots\`** — Separate visual/screenshot tests, excluded from \`test\` by default. Ordinary text, object, and inline snapshot assertions stay in unit/integration suites; snapshots alone do not make them visual tests.
+- **\`test:snapshots:update\`** — Update screenshot baselines.
+- **\`test:update\`** — Update inline snapshots.
+
+Set a fast-run budget where feedback is needed: package speed does not establish root speed. Specify runner resources, parallelism, cache conditions, and setup costs; cache hits alone do not prove speed. No universal time threshold applies. If growth exceeds budget, optimize or explicitly revise the subset, budget, or hook placement; never silently drop tests from the complete suite.
+
+Changed/affected-package selection is scope reduction, not a test type or complete root run. Use explicit runner/Turbo filters and report reduced scope. Hooks may select short-feedback checks but cannot redefine \`test\` or replace required complete verification. Do not add placeholder fast/slow scripts without a meaningful subset.
+
+#### Quality
+
+Always run \`pnpm dm check\` after a task. It runs fixers (formatters, auto-fixes), then linters (type checking, ESLint), and should finish without errors.
+
+#### Misc
+
+- **\`pull:*\`** — Fetch external inputs (OpenAPI schemas, translations, auth context, etc.). Put local transformations in \`generate\` or \`codegen\`; make fetch-then-generate dependencies explicit, not hidden in ordinary builds.
+- **\`upgrade:deps\`** — Update dependencies.
+
+### Naming Rules
+
+- A colon specializes a command: \`test:fast\`, \`test:slow\`, \`test:e2e\`, \`build:lib\`, \`generate:images\`. Prefer standard everyday entry points: \`dev\`, \`generate\`, \`codegen\`, \`build\`, \`build:lib\`, \`test\`, \`pull:*\`, \`upgrade:deps\`. Document additional commands when distinct operations or tool contracts require them, including purpose, prerequisites, and side effects. Preserve runtime/package-manager/deployment names (e.g. lifecycle hooks, production \`start\`); do not force them into unrelated commands.
+- Pass environments via variables, never script names. No \`dev:fast\`, \`build:prod\`, or \`test:ci\`.
+
+### Complex Orchestration
+
+Move scripts exceeding one command (multiple steps, parallelism, dependencies, conditions, intermediate variables) to \`Taskfile.yaml\`; keep the \`package.json\` script as a thin delegating entry point.
+
+In Turborepo workspaces, Turbo owns cross-package dependencies; Taskfile owns steps within a package. Declare package dependencies in workspace manifests and task ordering in \`turbo.json\`. A package Taskfile must not build siblings with \`pnpm --filter ... build\` or start a second Turbo graph from a task already run by Turbo. A root entry point may invoke Turbo once; targeted builds needing dependency builds must enter that same root graph with an explicit package/dependency filter, not a second Taskfile graph.
+
+For example, keep build and explicit refresh separate in \`package.json\`:
+
+\`\`\`json
+{
+  "scripts": {
+    "build": "pnpm dm exec task -- build",
+    "generate": "pnpm dm exec task -- generate"
+  }
+}
+\`\`\`
+
+Build does not refresh committed files. Add only the applicable script subset and task dependencies.
+
+#### Taskfile Conventions
+
+- Every task has a \`desc\` field.
+- \`deps\` for parallel prerequisites, \`cmds\` for sequential steps.
+- Namespacing matches script names: \`generate:*\`, \`codegen:*\`, \`build:*\`, \`test:*\`, \`dev:*\`.
+
+\`\`\`yaml
+version: "3"
+
+tasks:
+  build:
+    desc: Full application build
+    deps: [build:lib]
+    cmds:
+      - pnpm exec tsdown
+
+  build:lib:
+    desc: Prepare local build artifacts
+    cmds:
+      - pnpm exec tsc --emitDeclarationOnly --declaration
+
+  generate:
+    desc: Refresh committed generated sources explicitly
+    cmds:
+      - task: codegen
+
+  codegen:
+    desc: Generate committed types from OpenAPI schema
+    sources: [schema.yaml]
+    generates: [src/generated/api.ts]
+    cmds:
+      - pnpm exec openapi-typescript ./schema.yaml -o ./src/generated/api.ts
+\`\`\`
+
+### Turborepo
+
+Pipeline tasks are declared in \`turbo.json\`:
+
+- Turbo owns cross-package dependency order via \`dependsOn: ["^build"]\`; package Taskfile steps must not repeat dependency builds.
+- Set \`"cache": false\` for non-cacheable tasks (\`dev\`, \`pull:*\`), \`"persistent": true\` for long-running tasks (\`dev\`, \`dev:mock\`, \`test:watch\`), and \`"outputs"\` for cacheable build artifacts (\`dist/**\`, \`.next/**\`, etc.).
+- Root \`test\` covers every package's main unit/integration suite. Keep E2E and visual/screenshot suites separate in tasks or CI by default; include them only by explicit documented decision. Separate root/package orchestration to prevent aggregate self-invocation. Filters and \`test:fast\` explicitly narrow the main-suite graph, never implicitly.
+- When caching generation, include all generator inputs and configuration in cache keys and all outputs in \`outputs\`. Cacheability does not make explicit committed-file refresh an automatic build dependency.
+
+### Anti-Patterns
+
+DO NOT:
+
+- Do not rename standard everyday operations arbitrarily or hide distinct operations under the wrong standard name. Document justified extensions and tool-required names. Never disguise production startup, migrations, packaging, signing, or publication as dev startup or ordinary builds. Naming exceptions do not authorize side effects or override the separate cleanup rule below.
+- Do not chain commands with \`&&\` in \`package.json\`; move orchestration to Taskfile.
+- Do not write \`.sh\` orchestration scripts or use Makefiles; use Taskfile.
+- Do not encode environments in script names; use variables.
+- Do not add a \`clean\` script. Use \`git clean -fdx\`.`;
+
+const SKILL_PROJECT_SCRIPTS_ADAPTER_CLAUDE = `---
+name: project-scripts
+description: Use when designing, modifying, or reviewing project scripts and their orchestration, not for running existing scripts or making unrelated edits.
+---
+
+# Project Scripts
+
+Read and apply \`.datamitsu/ai/skills/project-scripts/instructions.md\` relative to the project root.`;
+
+const SKILL_PROJECT_SCRIPTS_ADAPTER_CODEX = `---
+name: project-scripts
+description: Use when designing, modifying, or reviewing project scripts and their orchestration, not for running existing scripts or making unrelated edits.
+---
+
+# Project Scripts
+
+Read and apply \`.datamitsu/ai/skills/project-scripts/instructions.md\` relative to the project root.`;
+
 // ── Skill: release-pipelines ───────────────────────────────────────────────
 
 const SKILL_RELEASE_PIPELINES_INSTRUCTIONS = `# Release Pipelines
@@ -989,7 +1142,7 @@ const SKILL_SCAFFOLD_STACK_INSTRUCTIONS = `# Scaffold Preferred Stack
 
 Use the preferred stack to scaffold a project, app or library, or add a major dependency to an existing one.
 
-Library source of truth: \`## Preferred Stack\` in the loaded agent rules (\`.datamitsu/ai/agents/*.md\`, referenced by the project's \`AGENTS.md\`). Read it every run to pick up catalogue changes; never hardcode it or reconstruct it from memory. Apply \`## Single Source for Constants, Env & Build Inputs\` to everything scaffolded.
+Library source of truth: the catalogue linked from \`## Preferred Stack\` in the loaded agent rules (\`.datamitsu/ai/agents/*.md\`, referenced by the project's \`AGENTS.md\`). Never hardcode the catalogue or reconstruct it from memory. Apply \`## Single Source for Constants, Env & Build Inputs\` to everything scaffolded.
 
 Propose → confirm → apply. Never install dependencies or write files without explicit confirmation.
 
@@ -999,7 +1152,9 @@ Propose → confirm → apply. Never install dependencies or write files without
 
 1. Find \`## Preferred Stack\` in the loaded rules. If absent, abort:
    > Preferred Stack rules not found in the loaded agent rules. Ensure \`AGENTS.md\` references \`.datamitsu/ai/agents/*.md\` and run \`pnpm dm init\` to regenerate \`.datamitsu/\`, then re-run this skill.
-2. Note relevant picks (Web / Node / Go / Testing / Docs / Monorepo), the Version Policy, the Invocation rule and bans (e.g. Tailwind).
+2. On every run, resolve the catalogue link's href in the loaded \`## Preferred Stack\` section relative to the consumer project root and open the resulting file. Reading it requires neither reconciliation nor an adapter. If the href is missing or the file cannot be read, abort:
+   > Run \`pnpm dm init\` (or \`datamitsu init\` without a pnpm stack), verify that the loaded Preferred Stack rule links to a readable catalogue, then re-run this skill.
+3. Use the relevant catalogue picks unless the project overrides them. Apply the loaded Version Policy, Invocation, Monorepo, and security rules and bans.
 
 ---
 
@@ -1055,12 +1210,7 @@ Commands to run:
 Apply? Reply: yes / no / show details
 \`\`\`
 
-Propose only relevant scripts per package. Prefer standard names for everyday operations; allow documented distinct operations and names required by the package manager, runtime or deployment (e.g. production \`start\`, lifecycle hooks, migrations, package/sign/publish). Document each command's purpose, prerequisites and side effects. Never hide publish in \`build\` or production start in \`dev\`. Script names do not authorize execution.
-
-- \`generate\` / \`generate:*\`: explicitly refresh committed generated outputs, including source files. \`codegen\` / \`codegen:*\`: produce source code under \`generate\` for committed code, or under build preparation only for disposable outputs. Identify required outputs; for committed ones, name the explicit \`generate\` / \`generate:*\` refresh command, never \`codegen\` alone. Never make committed generated files automatic build/dev/install prerequisites. If required committed outputs are missing, tell the user which refresh command to run.
-- \`test\`: complete main unit/integration suite, including expensive members and ordinary text/object/inline snapshot assertions in their corresponding suites. Even fast tests can be slow in aggregate. Keep E2E and visual snapshots separate as \`test:e2e\` and \`test:snapshots\` unless an explicit documented project decision includes them in \`test\`.
-- \`test:fast\`: subset with a project-specific elapsed-time budget. Measure the whole command at its intended package or root scope, including preparation and orchestration. State runner resources, parallelism and cold/warm cache conditions. The budget is neither a per-test duration nor a unit-test label; no universal numeric cutoff. Optional \`test:slow\` selects expensive members still in \`test\`, not the complement of \`test:fast\`. E2E is a type, not a speed tier.
-- Keep package scripts thin; put package-local multi-step orchestration in \`Taskfile.yaml\`. In monorepos, Turbo alone owns the cross-package task/dependency graph via workspace manifests and \`turbo.json\`. Wire relevant scripts into it without automatic refresh dependencies for committed generated files. Keep Taskfile steps local: no sibling \`pnpm --filter\` builds duplicating Turbo or nested Turbo graphs from Turbo-run tasks. Filter the same root Turbo graph for targeted dependency builds.
+Before proposing scripts, read the full contract linked from \`## Project Scripts\` in the loaded rules; resolve its path from the project root. Propose only relevant scripts per package and document each command's purpose, prerequisites, and side effects. Identify required generated outputs and name the explicit refresh command for any committed outputs. Script names do not authorize execution.
 
 - \`no\` → abort, write nothing.
 - \`show details\` → print full file contents / exact commands, then ask again.
@@ -1073,7 +1223,7 @@ Propose only relevant scripts per package. Prefer standard names for everyday op
 After explicit \`yes\`:
 
 1. Run the scaffold/install commands exactly as proposed.
-2. Create the \`package.json\` wrapper with only the proposed scripts. Apply all Step 4 rules for command names and documentation, generation and missing outputs, test suites and timing, package-local orchestration and monorepo Turbo wiring. Invoke \`Taskfile.yaml\` tasks via \`pnpm dm exec task -- <task>\` (direct mode: \`datamitsu exec task -- <task>\`).
+2. Create the \`package.json\` wrapper with only the proposed scripts, following the Project Scripts contract linked in Step 4. Invoke \`Taskfile.yaml\` tasks via \`pnpm dm exec task -- <task>\` (direct mode: \`datamitsu exec task -- <task>\`).
 3. Set up single env / constants / build-flag entry points per the Single Source rules; never scatter \`process.env\` / \`os.Getenv\` / raw constants.
 4. Do not create backup files. Git is the backup.
 
@@ -1452,6 +1602,14 @@ export const SKILLS: SkillDefinition[] = [
   },
   {
     adapters: {
+      claude: SKILL_PROJECT_SCRIPTS_ADAPTER_CLAUDE,
+      codex: SKILL_PROJECT_SCRIPTS_ADAPTER_CODEX,
+    },
+    instructions: SKILL_PROJECT_SCRIPTS_INSTRUCTIONS,
+    name: "project-scripts",
+  },
+  {
+    adapters: {
       claude: SKILL_RELEASE_PIPELINES_ADAPTER_CLAUDE,
       codex: SKILL_RELEASE_PIPELINES_ADAPTER_CODEX,
     },
@@ -1493,10 +1651,13 @@ export const SKILL_CONVENTIONAL_CHANGELOG_ADAPTER_CODEX_HASH = "6f4a820a30be1eda
 export const SKILL_CONVENTIONAL_COMMIT_MESSAGE_INSTRUCTIONS_HASH = "906bfd6e0b4bef84796130d1a6e3d33943e0a84fb8bb4f1e215d34d139cafec5"; // prettier-ignore
 export const SKILL_CONVENTIONAL_COMMIT_MESSAGE_ADAPTER_CLAUDE_HASH = "645b927e3e1292d6645c469f338cc6ff374ce04059a0df8953b3e0bfe1e66316"; // prettier-ignore
 export const SKILL_CONVENTIONAL_COMMIT_MESSAGE_ADAPTER_CODEX_HASH = "645b927e3e1292d6645c469f338cc6ff374ce04059a0df8953b3e0bfe1e66316"; // prettier-ignore
+export const SKILL_PROJECT_SCRIPTS_INSTRUCTIONS_HASH = "a6bb746b097562d86abb40c2740cff419764ab49e5e81716ed55ba0a201de217"; // prettier-ignore
+export const SKILL_PROJECT_SCRIPTS_ADAPTER_CLAUDE_HASH = "d00784c13f06c3850d8e5eec1cc5557d6f37f8ff2ce7a198a3a4c300a757c08e"; // prettier-ignore
+export const SKILL_PROJECT_SCRIPTS_ADAPTER_CODEX_HASH = "d00784c13f06c3850d8e5eec1cc5557d6f37f8ff2ce7a198a3a4c300a757c08e"; // prettier-ignore
 export const SKILL_RELEASE_PIPELINES_INSTRUCTIONS_HASH = "6e968db9a4960ca8374a0da45e4175464fb2de5966427810442af4f8fb5b2c3b"; // prettier-ignore
 export const SKILL_RELEASE_PIPELINES_ADAPTER_CLAUDE_HASH = "38ff9058fc2e2efa17b1fd5b0f3200476b6046138035565e7217f9eb0a8b5f3e"; // prettier-ignore
 export const SKILL_RELEASE_PIPELINES_ADAPTER_CODEX_HASH = "38ff9058fc2e2efa17b1fd5b0f3200476b6046138035565e7217f9eb0a8b5f3e"; // prettier-ignore
-export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "e99ef28bcb8d7efcea2e5f34c2d49fff5ee07897d3b6503f1ec0242ea8663a98"; // prettier-ignore
+export const SKILL_SCAFFOLD_STACK_INSTRUCTIONS_HASH = "bca439a86a63a256ab5d5db3e8598806cdef53007b5208cf13eb43af2973760b"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CLAUDE_HASH = "16790773b6dbb6414cc242c17a1a49207e09bd6f3c737d3ecb8c0392dda76cdd"; // prettier-ignore
 export const SKILL_SCAFFOLD_STACK_ADAPTER_CODEX_HASH = "88ca08e3ba48b1750d8c811d84fba829d994eeffba467436e28dcd7157d3cab0"; // prettier-ignore
 export const SKILL_SETUP_TSCONFIG_INSTRUCTIONS_HASH = "9bc2ea1662ec092e8906681767226ec510e357f720e9ac0a7de3aecbd47ba732"; // prettier-ignore

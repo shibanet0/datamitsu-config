@@ -5,6 +5,6 @@ description: Configure or fix the project's tsconfig.json to extend the correct 
 
 # Setup TypeScript Config
 
-Read `.datamitsu/ai/skills/setup-tsconfig/instructions.md` from the project root and follow it precisely.
+Read `{{skillInstructionsPath}}` from the project root and follow it precisely.
 
 `datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository, keeping it current with `.datamitsu/tsconfig.md` presets and rules.

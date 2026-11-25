@@ -6,5 +6,5 @@ description: >-
 
 # Cleanup AGENTS.md
 
-From the project root, read `.datamitsu/ai/skills/cleanup-agents-md/instructions.md` and follow it exactly.
+From the project root, read `{{skillInstructionsPath}}` and follow it exactly.
 `datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository to match current chunks.
