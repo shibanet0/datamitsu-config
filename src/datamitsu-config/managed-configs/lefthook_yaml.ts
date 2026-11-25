@@ -16,12 +16,6 @@ export const lefthookYaml: config.ManagedConfig = {
         ...existing?.["post-checkout"],
         commands: {
           ...existing?.["post-checkout"]?.commands,
-          // A branch switch can bring in new subprojects; init refreshes the
-          // launcher marker and this creates their missing configs.
-          [`${facts().packageName}-ensure-configs`]: {
-            priority: 3,
-            run: `${facts().binaryCommand} config reconcile --create-missing --no-verify-hash`,
-          },
           [`init ${facts().packageName}`]: {
             priority: 2,
             run: `${facts().binaryCommand} init`,
@@ -66,6 +60,7 @@ export const lefthookYaml: config.ManagedConfig = {
           [`${facts().packageName}-ensure-configs`]: {
             priority: 15,
             run: `${facts().binaryCommand} config reconcile --create-missing --no-verify-hash`,
+            stage_fixed: true,
           },
           [`${facts().packageName}-init`]: {
             priority: 10,

@@ -235,6 +235,7 @@ pre-commit:
     ensure configs:
       priority: 15
       run: pnpm dm config reconcile --create-missing --no-verify-hash
+      stage_fixed: true
     sync-datamitsu-version:
       priority: 20
       run: "node bin/datamitsu.js exec task -- sync:datamitsu-version && node bin/datamitsu.js exec task -- docker:generate && git add datamitsu.config.ts src/datamitsu-config/datamitsu-config.ts src/datamitsu-config/parsers.ts docker/Dockerfile docker/Dockerfile.alpine docker/oci-map.json docker/oci-map.alpine.json"
@@ -279,9 +280,6 @@ post-checkout:
     init datamitsu:
       priority: 2
       run: node bin/datamitsu.js init
-    ensure configs:
-      priority: 3
-      run: node bin/datamitsu.js config reconcile --create-missing --no-verify-hash
   parallel: false
 `,
       // No expectChainHash here, deliberately: the upstream render embeds
@@ -676,6 +674,8 @@ const cspellWords: string[] = [
   "govulncheck",
   "GOPATH",
   "depguard",
+  "daemonpilot",
+  "procguard",
   "hashutil",
   "forbidigo",
   "gosec",

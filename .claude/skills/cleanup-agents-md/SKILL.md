@@ -5,6 +5,5 @@ description: Cleanup and compact the project AGENTS.md — remove duplicates of 
 
 # Cleanup AGENTS.md
 
-Read `.datamitsu/ai/skills/cleanup-agents-md/instructions.md` from the project root and follow it precisely.
-
-The instructions file is the source of truth for this skill — it is regenerated automatically by `datamitsu` from the central `datamitsu-config` repository, so it is always up to date with the current chunks.
+From the project root, read `.datamitsu/ai/skills/cleanup-agents-md/instructions.md` and follow it exactly.
+`datamitsu` automatically regenerates this source of truth from the central `datamitsu-config` repository to match current chunks.
