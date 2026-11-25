@@ -1,7 +1,7 @@
 ---
 name: scaffold-stack
 description: >-
-  Scaffold or extend a project using the preferred stack, resolve dependency versions and wire pnpm-workspace, Turborepo and Taskfile conventions. Use when creating a project, app or library, or adding a major dependency to an existing one.
+  Use when scaffolding a project, monorepo, app, service, or library, or adding a major dependency to an existing component.
 ---
 
 # Scaffold Preferred Stack

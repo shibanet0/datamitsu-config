@@ -1,132 +1,42 @@
 # Scaffold Preferred Stack
 
-Use the preferred stack to scaffold a project, app or library, or add a major dependency to an existing one.
+Propose → confirm → apply. Discovery is read-only: never install dependencies or write files before explicit confirmation.
 
-Library source of truth: the catalogue linked from `## Preferred Stack` in the loaded agent rules (`.datamitsu/ai/agents/*.md`, referenced by the project's `AGENTS.md`). Never hardcode the catalogue or reconstruct it from memory. Apply `## Single Source for Constants, Env & Build Inputs` to everything scaffolded.
+## Read the project rules
 
-Propose → confirm → apply. Never install dependencies or write files without explicit confirmation.
+On every run, find `## Preferred Stack` in the loaded agent rules (`.datamitsu/ai/agents/*.md`, referenced by `AGENTS.md`). Resolve its catalogue link relative to the consumer project root and open it. If the rule, link, or readable catalogue is missing, stop and identify what needs restoring. Do not reconstruct the catalogue from memory, initialize tooling, or run reconciliation.
 
----
+Use the linked catalogue and loaded Version Policy, Invocation, Monorepo, and security rules. Project overrides take precedence over catalogue defaults. Keep existing non-preferred libraries unless migration was requested; note the divergence. Never introduce Tailwind or libraries built on it. If a capability is missing, label any proposed alternative as outside the catalogue and explain why.
 
-## Step 1 — Read the source of truth
+## Identify the component and its build path
 
-1. Find `## Preferred Stack` in the loaded rules. If absent, abort:
-   > Preferred Stack rules not found in the loaded agent rules. Ensure `AGENTS.md` references `.datamitsu/ai/agents/*.md` and run `pnpm dm init` to regenerate `.datamitsu/`, then re-run this skill.
-2. On every run, resolve the catalogue link's href in the loaded `## Preferred Stack` section relative to the consumer project root and open the resulting file. Reading it requires neither reconciliation nor an adapter. If the href is missing or the file cannot be read, abort:
-   > Run `pnpm dm init` (or `datamitsu init` without a pnpm stack), verify that the loaded Preferred Stack rule links to a readable catalogue, then re-run this skill.
-3. Use the relevant catalogue picks unless the project overrides them. Apply the loaded Version Policy, Invocation, Monorepo, and security rules and bans.
+- Classify the component by what runs it, who consumes it, and what gets deployed or published. A `package.json` that delegates to another toolchain is a script wrapper, not evidence of a Node runtime.
+- Find the nearest workspace that actually includes the target. Check pnpm inclusion and exclusion globs, Go module roots and `go.work` use entries, or Cargo workspace members and exclusions as applicable. Distinguish native build membership from orchestration membership. For a new path, state any membership change needed.
+- Inspect a comparable package in that workspace if one exists. Trace its script through the underlying build and CI packaging or release step to the final artifact. Use that evidence for placement, commands, and outputs; flag gaps rather than inventing a pipeline.
+- Preserve working local and CI invocations. Use `pnpm dm exec` only where the project's pnpm setup provides `dm`; `.datamitsu/` alone proves neither workspace membership nor command availability. Use direct `datamitsu` where appropriate. If a prerequisite is missing, identify it; do not silently bootstrap a stack.
+- New monorepos must use pnpm workspaces and Turbo for the cross-package task graph. Give participating packages, including native components, thin `package.json` scripts for relevant tasks. Keep Taskfile steps package-local. Extend existing orchestration in place; do not migrate it as a side effect.
 
----
+## Resolve dependencies
 
-## Step 2 — Understand the request and detect context
+Preserve target declarations, pins, workspace catalog references, and peer constraints. Inspect the comparable package in the same workspace for an established compatible choice; do not align unrelated packages or search the whole repo for a version to copy.
 
-Identify the target and its location:
+When a new version is needed, verify against the relevant registry and choose the most recent resolvable stable release compatible with the toolchain, runtime, peers, and existing install policy (including minimum release age). Record the declaration and verified resolution. Do not guess, relax policy silently, or introduce unmaintained or EOL dependencies. If no supported choice resolves, surface the conflict rather than substituting a package or changing pins.
 
-- **Target kind:** Go service, Node service, Vite + React web app, shared library, monorepo root, or docs (Typst / Slidev). Ask the user if genuinely ambiguous.
-- **Invocation mode:** Check for a configured pnpm stack: a `package.json` exposing the `dm`/`datamitsu` bin, a `pnpm-workspace.yaml`, or an existing `.datamitsu/`.
-  - Present: run managed tools via `pnpm dm exec <tool>`.
-  - Absent: use the system-installed `datamitsu` binary directly, or offer to initialize a pnpm stack first if the target belongs in one.
-- **Monorepo:** In a new or existing Turborepo + pnpm workspace, confirm placement. Every package, including Go and Rust, needs a `package.json` with relevant scripts for `turbo run <script>`; prefer standard names for everyday operations.
+## Propose one plan
 
----
+Apply documented defaults. Explain justified deviations in the same plan; ask only about material tradeoffs that project evidence and defaults cannot settle. Do not seek separate approvals for individual picks.
 
-## Step 3 — Resolve versions
+Keep the plan to the target, artifact and consumer; catalogue choices and versions with brief reasons; files, workspace wiring, invocation, and exact commands. Apply `## Single Source for Constants, Env & Build Inputs` to relevant configuration. Before proposing scripts, read the full `## Project Scripts` contract linked in the loaded rules, resolving it from the project root. Use `project-scripts` and `setup-tsconfig` guidance where applicable. For each relevant command, state its purpose, prerequisites, and side effects; name generated outputs and the refresh command for committed ones.
 
-Apply the Version Policy to each library:
+Include only boundaries the change affects:
 
-1. Reuse the exact version if used elsewhere in the repo.
-2. Otherwise check the registry (npm, Go module proxy, crates.io) for the current latest stable release. Never guess a major from memory. Record the resolved version.
-3. Never introduce unmaintained/EOL packages or stale majors. If a catalogue pick looks abandoned, stop and flag it to the user; do not silently substitute.
+- **App children:** Identify who starts, supervises, stops, and reaps them. State what guarantees cleanup on container stop or parent failure and whether, and by whom, children restart.
+- **Storage:** Name the owner of persisted data, who runs migrations, and who rolls back or restores data if deployment fails.
+- **API:** Trace the authoritative source to the generated or published artifact and its consumer. Name the check and a concrete breakage it detects, such as a removed field still read by that consumer.
+- **Tests:** Map each proposed check to the boundary it exercises and the observable outcome, rather than listing test tools.
 
----
+End with **Apply? yes / no / show details**. On `no`, stop without changes. On `show details`, show file contents and exact commands, then ask again. Script names do not authorize execution.
 
-## Step 4 — Propose
+## Apply and report
 
-Present this plan without writing files:
-
-```markdown
-## scaffold plan
-
-Building: <e.g. "Vite + React + TS web app inside the existing pnpm monorepo">
-Invocation: <pnpm dm exec | direct datamitsu>
-
-Libraries (catalogue → resolved version):
-
-- <lib> — <version> (<reused from repo | latest stable>)
-- …
-
-Structure:
-
-- <files/dirs to create, package.json wrapper with relevant scripts, package-local Taskfile.yaml steps, root Turbo graph wiring>
-
-Config inputs (per the Single Source rule):
-
-- <env module / constants module / build-flag module to create, if any>
-
-Commands to run:
-
-- <exact install/scaffold commands>
-
-Apply? Reply: yes / no / show details
-```
-
-Before proposing scripts, read the full contract linked from `## Project Scripts` in the loaded rules; resolve its path from the project root. Propose only relevant scripts per package and document each command's purpose, prerequisites, and side effects. Identify required generated outputs and name the explicit refresh command for any committed outputs. Script names do not authorize execution.
-
-- `no` → abort, write nothing.
-- `show details` → print full file contents / exact commands, then ask again.
-- `yes` → Step 5.
-
----
-
-## Step 5 — Apply
-
-After explicit `yes`:
-
-1. Run the scaffold/install commands exactly as proposed.
-2. Create the `package.json` wrapper with only the proposed scripts, following the Project Scripts contract linked in Step 4. Invoke `Taskfile.yaml` tasks via `pnpm dm exec task -- <task>` (direct mode: `datamitsu exec task -- <task>`).
-3. Set up single env / constants / build-flag entry points per the Single Source rules; never scatter `process.env` / `os.Getenv` / raw constants.
-4. Do not create backup files. Git is the backup.
-
----
-
-## Step 6 — Report
-
-```markdown
-Done.
-
-Scaffolded: <what>
-Libraries: <lib@version, …>
-Invocation: <mode>
-
-Next steps:
-
-- Run `pnpm dm check` (or `datamitsu check`) to fix + lint.
-- <if monorepo:> add the new package to the workspace / turbo pipeline if needed.
-- <if a runtime like Go/Rust is required:> ensure the toolchain is installed.
-```
-
----
-
-## What this skill does NOT do
-
-- Never choose outside the loaded Preferred Stack catalogue without telling the user. Flag missing capabilities and ask.
-- Never introduce Tailwind or anything built on it.
-- Never bump or change pinned repo library versions.
-- Never run `dm config reconcile` or mutate managed configs beyond the proposal.
-
----
-
-## Edge cases
-
-- **Missing capability:** Don't guess a trendy package. Propose the closest ecosystem fit, mark it "not in catalogue", and ask the user to confirm or add it to `datamitsu-config`.
-- **Existing non-preferred library for the same concern:** Keep it. The catalogue sets priorities, not mandatory migrations. Report the divergence; migrate only on request.
-- **No pnpm stack present or needed** (e.g. standalone Go binary): use `datamitsu` directly; do not force a pnpm workspace.
-- **Ambiguous target kind:** Ask; never scaffold on a guess.
-
----
-
-## Interaction style
-
-- Keep the plan terse and scannable, not narrative.
-- Cite each catalogue pick with a one-line justification.
-- Report verified versions as facts; never invent one.
+Only after explicit `yes`, make the proposed changes and run only the approved commands. Do not create backup files, run `dm config reconcile`, or change managed configs beyond the plan. Report the resulting artifact, dependency resolutions, working invocation, checks actually run, and any remaining prerequisites.

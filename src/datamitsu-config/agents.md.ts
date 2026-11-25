@@ -8,9 +8,9 @@ export const PREFERRED_STACK = `# Preferred Stack Catalogue
 
 - App: Vite + React + TypeScript, with the React Compiler enabled.
 - Data fetching: SWR.
-- Routing: react-router with \`@ovineko/react-router\` — a type-safe React Router v7 wrapper (valibot-validated params, typed routes, automatic error handling).
+- Routing: use plain React Router by default when a new React app needs routing. Keep an existing component's router. For typed routes with validated parameters, consider \`@ovineko/react-router\`. Check the selected version's React Router and Valibot peer ranges against the target workspace; do not downgrade the router or bypass peer checks to add the wrapper.
 - SPA resilience: \`@ovineko/spa-guard\` — a top-level guard for single-page apps that recovers from chunk-load failures after deploys (cache-busting + automatic retry), plus version checking and error reporting. Wire it via \`@ovineko/spa-guard-react\` (hooks + error boundaries) and the \`@ovineko/spa-guard-vite\` plugin; server side via \`@ovineko/spa-guard-fastify\` / \`-node\`.
-- UI kit: admin panels → Ant Design; user-facing products → Mantine.
+- UI kit: prefer Ant Design for admin panels and Mantine for user-facing products. A small embedded dashboard may need neither.
 - Styling: vanilla-extract (Mantine ships a vanilla-extract integration).
 - i18n: i18next.
 - Component catalogue: Storybook.
@@ -20,22 +20,34 @@ export const PREFERRED_STACK = `# Preferred Stack Catalogue
 ## Node
 
 - Web framework: Fastify.
-- Schemas/validation: \`typebox\` — the npm package \`typebox\` (<https://www.npmjs.com/package/typebox>), NOT \`@sinclair/typebox\`.
-- Database: Kysely, a type-safe query builder (<https://kysely.dev>).
+- Validate external input at runtime with [\`typebox\`](https://www.npmjs.com/package/typebox), not \`@sinclair/typebox\`. Derive the TypeScript type from the schema instead of maintaining a second DTO.
+- Database: [Kysely](https://kysely.dev) for typed SQL. For PostgreSQL, consider \`@ovineko/kysely\` and \`@ovineko/kysely-cli\` before building migration tooling. Creating a migration file does not authorize applying it to a database.
 - CLI: commander with \`@commander-js/extra-typings\`.
 
 ## Go
 
 - HTTP router: \`github.com/go-chi/chi/v5\`.
-- Logging: \`go.uber.org/zap\`.
-- CLI: \`github.com/spf13/cobra\`.
-- Database: sqlc — generate type-safe Go query functions from plain SQL. Pairs with goose for migrations. Run via \`pnpm dm exec sqlc -- generate\`.
+- Logging: prefer \`go.uber.org/zap\` for application logs. Respect the component's existing logger and library interfaces; an integration accepting \`slog\` need not change the application's logging stack.
+- CLI: prefer \`github.com/spf13/cobra\` for a user-facing command tree. Extend an existing tree; \`flag.FlagSet\` suffices for a small internal mode.
+- Database: use Goose for migrations and sqlc for typed queries (\`pnpm dm exec sqlc -- generate\`). Prefer \`pgx/v5\` for PostgreSQL; consider SQLite for a standalone binary, checking CGO requirements. Identify sqlc's schema input: if it is independent of migrations, specify how to detect drift. State whether rollback means reverting SQL or running the previous binary on the new schema.
 - Dev/tooling: air (live reload), swag (Swagger), goose (DB migrations) — run via \`pnpm dm exec\`.
+
+### Child processes and services
+
+- For a one-shot build tool that waits for a command and checks its exit status, \`os/exec\` suffices unless process-tree control is required.
+- If shipped Go code launches children, consider [procguard](https://github.com/ovineko/procguard) first, even for short-lived commands. Identify who waits and reaps, stops descendants, and handles cancellation, restarts, container shutdown and parent death. Use \`os/exec\` if it meets those requirements. Check the [platform guarantees](https://procguard.ovineko.com/guides/platform-guarantees/): supervision is not container PID 1 reaping or a universal parent-death guarantee.
+- For a self-managing host service that needs service registration, watchdog/worker supervision, readiness or signed updates, consider [daemonpilot](https://github.com/ovineko/daemonpilot). It uses procguard for its worker. Do not add a second watchdog if the platform already owns that lifecycle. Before writing custom supervision or installation logic, name the missing guarantee, unsupported platform or incompatible requirement.
+
+## TypeScript and API contracts
+
+- For closed sets used at runtime, derive the union and input check from the same values (e.g. an \`as const\` list). Isolate generated SDK compiler settings rather than weakening the application. Consider ESM and \`tsdown\` for Node libraries; use the installed \`setup-tsconfig\` guide for preset selection.
+- For an API with a separate consumer, identify the contract source, specification generator, validation, SDK generator and actual import. For example: Go annotations → Swag → validated OpenAPI → \`typescript-fetch\` → UI. Fastify can emit a spec without starting a listener or applying migrations. Do not introduce an SDK without a consumer.
+- Identify committed vs. disposable outputs and the failure the check detects: URL inventory does not check HTTP methods or field types; a runtime spec snapshot checks the served document; compiling the client checks consumer types. Use the applicable check, not all three by default.
 
 ## Testing
 
-- Unit: Vitest.
-- E2E: Testcontainers (<https://testcontainers.com>); browser E2E → Playwright (<https://playwright.dev>).
+- JS/TS: default to Vitest for unit and integration tests, ordinary text/object/inline snapshots, and server or CLI E2E that needs no browser. Keep native test runners for Go and Rust.
+- Use [Playwright](https://playwright.dev) for browser E2E and visual screenshot comparisons. Complexity alone does not require a browser. [Testcontainers](https://testcontainers.com/) provides isolated dependencies; using a container does not make a test E2E.
 
 ## Docs
 
@@ -350,13 +362,14 @@ When creating projects or apps, or adding dependencies, read the preferred stack
 
 ### Version Policy
 
-- If the library is already used in the repo, match that exact version.
-- If it is not present, check the CURRENT latest stable release before adding. Never pick a stale major from memory — verify the version resolves first.
+- Preserve the target package's dependency declarations. For additions, reuse its workspace catalogue or the version used by a comparable package in the same workspace. Do not copy pins across independent workspaces or align unrelated versions.
+- For a new library, verify the latest stable release compatible with the target runtime, toolchain, peer ranges and install policy. Verify it resolves; do not guess versions or bypass release-age or trust controls.
 - Prefer runtimes and tools managed by \`datamitsu\`; do not hand-install what \`dm\` already provides.
 
 ### Invocation
 
 Use \`pnpm dm <command>\` in a pnpm monorepo wired with this config (e.g. \`pnpm dm check\`, \`pnpm dm config reconcile\`, \`pnpm dm exec <tool>\` such as \`pnpm dm exec air\`, \`pnpm dm exec goose\`, or \`pnpm dm exec task -- <task>\`). Without an initialized pnpm stack, use the system-installed \`datamitsu\` binary (\`datamitsu check\`, \`datamitsu config reconcile\`, \`datamitsu exec <tool>\`).
+Use the target workspace's scripts and CI to identify the working invocation. A \`.datamitsu/\` directory alone does not establish that \`pnpm dm\` is available.
 For a new monorepo subproject, the shipped hook runs \`<invocation> config reconcile --create-missing\`, creating only missing managed configs and never touching existing files. Run it manually after adding a subproject to avoid waiting for the next commit.
 
 Never introduce Tailwind CSS or anything built on it. In Node projects, do not use TypeORM or any other ORM.
@@ -368,7 +381,7 @@ Never introduce Tailwind CSS or anything built on it. In Node projects, do not u
 
 ### Monorepo
 
-- Turborepo + pnpm workspace. Every package — including Go and Rust — carries a \`package.json\` so \`turbo run <script>\` orchestrates builds in dependency order.
+- New monorepos must use a pnpm workspace with Turbo for the cross-package graph. Every package, including Go and Rust, exposes commands through \`package.json\`; the wrapper does not determine the component's runtime. Do not migrate an existing graph as a side effect of adding a component.
 - Script names follow the Project Scripts policy, including documented extensions and tool-required names. Turbo owns cross-package dependencies; Taskfile owns package-local steps, invoked via \`pnpm dm exec task -- <task>\`. Do not duplicate Turbo's package graph in Taskfile.`;
 
 const CHUNK_10_DOCS = `## Documentation Policy
@@ -457,7 +470,7 @@ export const CHUNK_00_CONFIG_INPUTS_HASH = "adabc6b28e5665a3cf50fe6b27eaab2aa4b7
 export const CHUNK_00_DEPENDABOT_HASH = "56599ea78fa9f5184e061da0935c58c14d1a471ff9793ca61bc44d9e329af37c"; // prettier-ignore
 export const CHUNK_00_PRIVACY_HASH = "b223e93847d12a17124ce5b4c0cd867c5fa84f4e32977a4e60865bd0228f2be1"; // prettier-ignore
 export const CHUNK_00_SCRIPTS_HASH = "e8c6a9d8c5221c574be5dbd1d7a54bf15ca06c1a3414ad8ff5b54211d3f22535"; // prettier-ignore
-export const CHUNK_00_STACK_HASH = "00bea1fcdc2fbda5556e60a9dd1211cff9a0b9aa345e8b38f91890bb2aaa8390"; // prettier-ignore
+export const CHUNK_00_STACK_HASH = "ec97a6f02ecad3aa6e417be902579fcb5272e022baefee2a7609d6260e35f779"; // prettier-ignore
 export const CHUNK_10_DOCS_HASH = "100a7287715cbd6510e43ca746766df66bb6d657d46d846ba22852c7e1877ecc"; // prettier-ignore
 export const CHUNK_20_DOCS_MARKDOWN_HASH = "bdbf590e919a0d1afd8ea85f1e71116c05f6acec43724b9690ab7abfbf5cc7ff"; // prettier-ignore
 export const CHUNK_20_DOCS_WEBSITE_HASH = "9aaea02394a2b4f42b94faff07071d2029dc21926341c5c0f40777d37b1ead8c"; // prettier-ignore
